@@ -1,0 +1,324 @@
+#ds-plugin, #ds-plugin * {
+	box-sizing: border-box;
+}
+
+#ds-plugin img {
+	margin-right: 5px;
+}
+
+.ds-action img {
+	width: 23px;
+	cursor: pointer;
+}
+
+#ds-plugin ul, #ds-plugin ol {
+	margin: 30px 0 30px 60px;
+}
+
+#ds-plugin ul ul, #ds-plugin ol ol, #ds-plugin ul ol, #ds-plugin ol ul {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+#ds-plugin ol {
+	list-style: decimal outside;
+	list-style-type: decimal-leading-zero;
+	margin-left: 70px;
+}
+
+#ds-plugin ul li {
+	list-style-type: '— ';
+}
+
+#ds-plugin li {
+	line-height: 125%;
+	margin: 20px 0;
+}
+
+#ds-plugin input[type="text"] {
+	max-width: 400px;
+}
+
+#ds-plugin textarea {
+	width: 100% !important;
+	max-width: 500px !important;
+}
+
+#ds-plugin select.ds-small-dropbox{
+	vertical-align: baseline;
+}
+
+#ds-plugin #dsinput {
+	width: 170px !important;
+	max-width: 170px !important;
+}
+
+#ds-plugin #ds-head {
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+	font-size: 30px;
+	font-weight: bold;
+}
+
+#ds-plugin .ds-subhead, #ds-plugin .ds-subhead2 {
+	color: #333;
+	font-size: 20px !important;
+	font-weight: 500;
+}
+
+#ds-plugin .ds-subhead2 {
+	font-size: 16px;
+}
+
+#ds-plugin .ds-subhead div.container {
+	padding: 5% 0;
+}
+
+#ds-plugin .keyhead {
+	display: block;
+	font-size: 16px !important;
+}
+
+#ds-plugin div.mainsection {
+	font-weight: bold;
+	font-size: 18px;
+	margin: 30px 0 15px;
+}
+
+#ds-plugin .ds-info-box {
+	background: white !important;
+	width: 100%;
+	padding: 0.1em 1.5em 1.5em;
+	margin: 20px 0;
+	box-sizing: border-box;
+}
+
+#ds-plugin .ds-small-box {
+	width: 35px;
+	text-align: center;
+	display: initial !important;
+}
+
+#ds-plugin .stat-box {
+	padding: 5px 10px;
+	background: #fff;
+	margin: 5px;
+	border-radius: 2;
+	float: left;
+}
+
+#ds-plugin .postbox .inside {
+	padding-bottom: 0;
+}
+
+#ds-plugin #dstable {
+	width: 100%;
+	background-color: #eee;
+}
+
+#ds-plugin td {
+	padding: 10px;
+}
+
+#ds-plugin .filterhead {
+	cursor: pointer;
+}
+
+#ds-plugin th.ds-cleanup {
+	position: sticky;
+	top: 32px;
+	background: #675682;
+	text-transform: uppercase;
+	color: #fff;
+}
+
+#ds-plugin .ds-cleanup-tr:hover {
+	background: #F1F1F1 !important;
+}
+
+#ds-plugin .phpinfodisplay table {
+	width: 100%;
+}
+
+#ds-plugin .button-primary {
+	padding: 5px 15px;
+}
+
+#ds-plugin .center {
+	text-align: center;
+}
+
+/* checkbox toggle switch */
+#ds-plugin div.checkbox.switcher label, #ds-plugin div.radio.switcher label {
+	padding: 0;
+}
+
+#ds-plugin div.checkbox.switcher label *, #ds-plugin div.radio.switcher label * {
+	vertical-align: middle;
+	font-size: 12px;
+}
+
+#ds-plugin div.checkbox.switcher label input, #ds-plugin div.radio.switcher label input {
+	display: none;
+}
+
+#ds-plugin div.checkbox.switcher label input + span, div.radio.switcher label input + span {
+	position: relative;
+	display: inline-block;
+	margin-right: 10px;
+	width: 56px;
+	height: 28px;
+	background: #d9534f;
+	border: 1px solid #d43f3a;
+	border-radius: 50px;
+	transition: all 0.3s ease-in-out;
+}
+
+#ds-plugin div.checkbox.switcher label input[disabled="disabled"] + span {
+	background: gray;
+	border-color: gray;
+}
+
+#ds-plugin div.checkbox.switcher label input + span small, #ds-plugin div.radio.switcher label input + span small {
+	position: absolute;
+	display: block;
+	width: 50%;
+	height: 100%;
+	background: #fff;
+	border-radius: 50%;
+	transition: all 0.3s ease-in-out;
+	left: 0;
+}
+
+#ds-plugin div.checkbox.switcher label input + span small:before, #ds-plugin div.radio.switcher label input + span small:before {
+	content: 'Off';
+	position: absolute;
+	top: 4.5px;
+	left: 31px;
+	width: 26px;
+	height: 26px;
+	border-radius: 90px;
+	transition: 0.3s;
+	text-indent: 0;
+	color: #fff;
+}
+
+#ds-plugin div.checkbox.switcher label input:checked + span, #ds-plugin div.radio.switcher label input:checked + span {
+	background: #5cb85c;
+	border-color: #4cae4c;
+}
+
+#ds-plugin div.checkbox.switcher label input:checked + span small, #ds-plugin div.radio.switcher label input:checked + span small {
+	left: 50%;
+}
+
+#ds-plugin div.checkbox.switcher label input:checked + span small:before, #ds-plugin div.radio.switcher label input:checked + span small:before {
+	content: 'On';
+	position: absolute;
+	top: 4.5px;
+	left: -20px;
+	width: 26px;
+	height: 26px;
+	border-radius: 90px;
+	transition: 0.3s;
+	text-indent: 0;
+	color: #fff;
+}
+
+#ds-plugin div.checkbox.switcher label input:checked + span small:after, #ds-plugin div.radio.switcher label input:checked + span small:after {
+	left: calc(100% - 2px);
+	transform: translateX(-100%);
+}
+
+#ds-plugin div.checkbox.switcher label:active:after {
+	width: 60px;
+}
+
+/* responsive layout */
+@media(max-width: 680px) {
+
+	#ds-plugin th.ds-cleanup {
+		top: 48px;
+	}
+
+}
+
+/* not prefixed with #ds-plugin for reasons */
+.icon-action {
+	max-width: 16px;
+	max-height: 16px;
+}
+
+.wrap > div.notice {
+	margin-bottom: 30px;
+}
+
+.ds-hide-links {
+	position: absolute;
+	right: 0;
+	margin: 5px 25px 0 0;
+}
+
+.ds-hide-links a {
+	font-size: 12px;
+	color: gray;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.update-nag.notice.notice-warning.inline .ds-hide-notices {
+	margin-bottom: 10px;
+}
+
+.ds-disable-admin-emails-wraps {
+	margin-left: 20px;
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 15px;
+	margin-top: 15px;
+}
+
+/* ds firewall */
+.column-created, .column-duration {
+	width: 10%;
+}
+
+.column-code, .column-created, .column-postdata, .column-state {
+	width: 8%;
+	font-family: inherit;
+}
+
+.ds-firewall-hidden {
+	display: none;
+}
+
+.type-ds-firewall td {
+	height: 100%;
+	position: relative;
+	padding-bottom: 24px;
+}
+
+.type-ds-firewall .label {
+	top: -2px;
+	left: 0;
+	width: 4px;
+	height: 100%;
+	display: inline-block;
+	position: absolute;
+	background: #0ee162;
+}
+
+.type-ds-firewall .label.blacklisted_1 {
+	background: #d54e21;
+}
+
+.type-ds-firewall .column-state .blocked, .type-ds-firewall .row-actions .block {
+	color: #bc0b0b;
+}
+
+.type-ds-firewall .column-state .authorized, .type-ds-firewall .row-actions .unblock {
+	color: #006505;
+}
+
+input#ds-firewall_delete_all {
+	float: right;
+	margin: 1px 0 0 16px;
+}
