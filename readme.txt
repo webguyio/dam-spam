@@ -5,7 +5,8 @@ Donate link: https://calmestghost.com/donate
 Tags: spam, security, anti-spam, spam protection, no spam
 Tested up to: 6.5
 Stable tag: 0.1
-License: https://www.gnu.org/licenses/gpl.html
+License: GPL
+License URI: https://www.gnu.org/licenses/gpl.html
 
 Fork of Stop Spammers.
 

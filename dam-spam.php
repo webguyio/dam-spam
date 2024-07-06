@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Dam Spam
-Plugin URI: https://calmestghost.com/
+Plugin URI: https://github.com/bhadaway/dam-spam
 Description: Fork of Stop Spammers.
 Version: 0.1
 Author: Bryan Hadaway
