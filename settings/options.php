@@ -220,7 +220,7 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
 		$options[$check] = $v;
 	}
 	$options['chkwooform'] = $_POST['chkwooform'];
-	$options['chkgvfor']   = $_POST['chkwooform'];
+	$options['chkgvfor']   = $_POST['chkgvform'];
 	$options['chkwpform']  = $_POST['chkwpform'];
 	// text options
 	if ( array_key_exists( 'sesstime', $_POST ) ) {
@@ -267,21 +267,21 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkwooform">
-				<input class="ds_toggle" type="checkbox" id="chkwooform" name="chkwooform" value="Y" <?php if ( $chkwooform == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+				<input class="ds_toggle" type="checkbox" id="chkwooform" name="chkwooform" value="Y" <?php if ( $chkwooform == 'Y' ) { echo 'checked="checked"'; } ?> <?php if ( $chkform == 'Y' ) { echo 'disabled'; } ?>><span><small></small></span>
 				<small><span style="font-size:16px!important"><?php _e( 'WooCommerce Forms', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 	 	<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkgvform">
-				<input class="ds_toggle" type="checkbox" id="chkgvform" name="chkgvform" value="Y" <?php if ( $chkgvform == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+				<input class="ds_toggle" type="checkbox" id="chkgvform" name="chkgvform" value="Y" <?php if ( $chkgvform == 'Y' ) { echo 'checked="checked"'; } ?> <?php if ( $chkform == 'Y' ) { echo 'disabled'; } ?>><span><small></small></span>
 				<small><span style="font-size:16px!important"><?php _e( 'Gravity Forms', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkwpform">
-				<input class="ds_toggle" type="checkbox" id="chkwpform" name="chkwpform" value="Y" <?php if ( $chkwpform == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+				<input class="ds_toggle" type="checkbox" id="chkwpform" name="chkwpform" value="Y" <?php if ( $chkwpform == 'Y' ) { echo 'checked="checked"'; } ?> <?php if ( $chkform == 'Y' ) { echo 'disabled'; } ?>><span><small></small></span>
 				<small><span style="font-size:16px!important"><?php _e( 'WP Forms', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>

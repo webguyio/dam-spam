@@ -39,6 +39,15 @@
 	max-width: 400px;
 }
 
+#ds-plugin input:disabled, #ds-plugin input:disabled *, #ds-plugin #chkform:checked + #chkwooform, #ds-plugin #chkform:checked + #chkwooform *, #ds-plugin #chkform:checked + #chkgvform, #ds-plugin #chkform:checked + #chkgvform *, #ds-plugin #chkform:checked + #chkwpform, #ds-plugin #chkform:checked + #chkwpform * {
+	color: gray !important;
+	border-color: gray !important;
+	background: gray !important;
+	opacity: 0.5 !important;
+	cursor: not-allowed !important;
+	pointer-events: none !important;
+}
+
 #ds-plugin textarea {
 	width: 100% !important;
 	max-width: 500px !important;
@@ -171,11 +180,16 @@
 	border: 1px solid #d43f3a;
 	border-radius: 50px;
 	transition: all 0.3s ease-in-out;
+	cursor: pointer;
 }
 
-#ds-plugin div.checkbox.switcher label input[disabled="disabled"] + span {
-	background: gray;
-	border-color: gray;
+#ds-plugin div.checkbox.switcher label input:disabled + span {
+	color: gray !important;
+	background: gray !important;
+	border-color: gray !important;
+	opacity: 0.5 !important;
+	cursor: not-allowed !important;
+	pointer-events: none !important;
 }
 
 #ds-plugin div.checkbox.switcher label input + span small, #ds-plugin div.radio.switcher label input + span small {
