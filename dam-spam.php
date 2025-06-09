@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Dam Spam
-Plugin URI: https://github.com/bhadaway/dam-spam
+Plugin URI: https://github.com/webguyio/dam-spam
 Description: Fork of Stop Spammers.
 Version: 0.1
-Author: Bryan Hadaway
-Author URI: https://calmestghost.com/
+Author: Web Guy
+Author URI: https://webguy.io/
 License: https://www.gnu.org/licenses/gpl.html
 Domain Path: /languages
 Text Domain: dam-spam
@@ -41,7 +41,7 @@ function ds_admin_notice() {
 	$admin_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http' ) . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 	$param = ( count( $_GET ) ) ? '&' : '?';
 	if ( !get_user_meta( $user_id, 'ds_notice_dismissed_1' ) && current_user_can( 'manage_options' ) ) {
-		echo '<div class="notice notice-info"><p><a href="' . $admin_url, $param . 'dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a>' . wp_kses_post( __( '<big><strong>Dam Spam</strong> — Thank you for helping us dam spam! 💜</big>', 'dam-spam' ) ) . '<p><a href="https://calmestghost.com/donate" class="button-primary" style="border-color:green;background:green" target="_blank">' . esc_html__( 'Donate', 'dam-spam' ) . '</a></p></div>';
+		echo '<div class="notice notice-info"><p><a href="' . $admin_url, $param . 'dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a>' . wp_kses_post( __( '<big><strong>Dam Spam</strong> — Thank you for helping us dam spam! 💜</big>', 'dam-spam' ) ) . '<p><a href="https://webguy.io/donate" class="button-primary" style="border-color:green;background:green" target="_blank">' . esc_html__( 'Donate', 'dam-spam' ) . '</a></p></div>';
 	}
 }
 add_action( 'admin_notices', 'ds_admin_notice' );

@@ -1,9 +1,9 @@
 === Dam Spam! ===
 
 Contributors: bhadaway
-Donate link: https://calmestghost.com/donate
+Donate link: https://webguy.io/donate
 Tags: spam, security, anti-spam, spam protection, no spam
-Tested up to: 6.5
+Tested up to: 6.8
 Stable tag: 0.1
 License: GPL
 License URI: https://www.gnu.org/licenses/gpl.html
