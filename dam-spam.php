@@ -6,7 +6,8 @@ Description: Fork of Stop Spammers.
 Version: 0.1
 Author: Web Guy
 Author URI: https://webguy.io/
-License: https://www.gnu.org/licenses/gpl.html
+License: GPL
+License URI: https://www.gnu.org/licenses/gpl.html
 Domain Path: /languages
 Text Domain: dam-spam
 */
@@ -23,12 +24,6 @@ if ( !defined( 'ABSPATH' ) ) {
 	die();
 }
 
-// making translation-ready
-function ds_load_plugin_textdomain() {
-	load_plugin_textdomain( 'dam-spam', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
-}
-add_action( 'plugins_loaded', 'ds_load_plugin_textdomain' );
-
 // load admin styles
 function ds_styles() {
 	wp_enqueue_style( 'ds-admin', plugin_dir_url( __FILE__ ) . 'css/admin.css' );
@@ -41,7 +36,7 @@ function ds_admin_notice() {
 	$admin_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http' ) . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 	$param = ( count( $_GET ) ) ? '&' : '?';
 	if ( !get_user_meta( $user_id, 'ds_notice_dismissed_1' ) && current_user_can( 'manage_options' ) ) {
-		echo '<div class="notice notice-info"><p><a href="' . $admin_url, $param . 'dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a>' . wp_kses_post( __( '<big><strong>Dam Spam</strong> — Thank you for helping us dam spam! 💜</big>', 'dam-spam' ) ) . '<p><a href="https://webguy.io/donate" class="button-primary" style="border-color:green;background:green" target="_blank">' . esc_html__( 'Donate', 'dam-spam' ) . '</a></p></div>';
+		echo '<div class="notice notice-info"><p><a href="' . $admin_url, $param . 'dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a><big><strong>Dam Spam</strong> — ' . esc_html__( 'Thank you for helping us dam spam!', 'dam-spam' ) . ' 💜</big><p><a href="https://webguy.io/donate" class="button-primary" style="border-color:green;background:green" target="_blank">' . esc_html__( 'Donate', 'dam-spam' ) . '</a></p></div>';
 	}
 }
 add_action( 'admin_notices', 'ds_admin_notice' );
@@ -51,11 +46,6 @@ function ds_notice_dismissed() {
 	$user_id = get_current_user_id();
 	if ( isset( $_GET['dismiss'] ) ) {
 		add_user_meta( $user_id, 'ds_notice_dismissed_1', 'true', true );
-	}
-	// Notification Control: handles notices
-	add_action( 'admin_print_scripts', 'ds_replace_admin_notices', 998 );
-	if ( get_option( 'ds_hide_admin_notices', 'no' ) !== 'yes' ) {
-		add_action( 'admin_head', 'ds_show_admin_notices_func', 998 );
 	}
 }
 add_action( 'admin_init', 'ds_notice_dismissed' );
@@ -67,7 +57,7 @@ function ds_wc_admin_notice() {
 		$admin_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http' ) . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 		$param = ( count( $_GET ) ) ? '&' : '?';
 		if ( !get_user_meta( $user_id, 'ds_wc_notice_dismissed' ) && current_user_can( 'manage_options' ) ) {
-			echo '<div class="notice notice-info"><p style="color:purple"><a href="' . $admin_url, $param . 'dswc-dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a>' . __( '<big><strong>WooCommerce Detected</strong></big> | We recommend <a href="admin.php?page=ds-options">adjusting these options</a> if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ) . '</p></div>';
+			echo '<div class="notice notice-info"><p style="color:purple"><a href="' . $admin_url, $param . 'dswc-dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a>' . esc_html__( '<big><strong>WooCommerce Detected</strong></big> | We recommend <a href="admin.php?page=ds-protections">adjusting these options</a> if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ) . '</p></div>';
 		}
 	}
 }
@@ -83,165 +73,6 @@ function ds_wc_notice_dismissed() {
 	}
 }
 add_action( 'admin_init', 'ds_wc_notice_dismissed' );
-
-// replace notifications with new notifications
-function ds_replace_admin_notices() { 
-	global $ds_all_notices;
-	$options = ds_get_options();
-	try {
-		$admin_notices 	   = &ds_get_admin_notices( "admin_notices" );
-		$all_admin_notices = &ds_get_admin_notices( "all_admin_notices" );
-		$wp_filter_notices = ds_merge_notices( $admin_notices, $all_admin_notices );
-	} catch ( Exception $e ) {
-		$wp_filter_notices = array();
-	}
-	$content = array();
-	$ds_notice_preference = get_user_meta( get_current_user_id(), 'ds_notice_preference', true );
-	foreach ( ( array ) $wp_filter_notices as $filters ) {
-		foreach ( $filters as $callback => $callback_array ) {
-			if ( $callback === 'usof_hide_admin_notices_start' || $callback === 'usof_hide_admin_notices_end' ) {
-				continue;
-			}
-			ob_start();
-			$args = array();
-			$accepted_args = isset( $callback_array['accepted_args'] ) && !empty( $callback_array['accepted_args'] ) ? $callback_array['accepted_args'] : 0;
-			if ( $accepted_args > 0 ) {
-				for ( $i = 0; $i < ( int ) $accepted_args; $i ++ ) {
-					$args[] = null;
-				}
-			}
-			call_user_func_array( $callback_array['function'], $args );
-			$cont = ob_get_clean();
-			if ( empty( $cont ) ) {
-				continue;
-			}
-			$salt     = is_multisite() ? get_current_blog_id() : '';
-			$txt      = preg_replace( '/<(script|style)([^>]+)?>(.*?)<\/(script|style)>/is', '', $cont );
-			$uniq_id1 = md5( strip_tags( str_replace( ["\t", "\r", "\n", " "], "", $txt ) ) . $salt );
-			$uniq_id2 = md5( $callback . $salt );
-			if ( is_array( $callback_array['function'] ) && sizeof( $callback_array['function'] ) == 2 ) {
-				$class = $callback_array['function'][0];
-				if ( is_object( $class ) ) {
-					$class_name  = get_class( $class );
-					$method_name = $callback_array['function'][1];
-					$uniq_id2    = md5( $class_name . ':' . $method_name );
-				}
-			}
-			if ( isset( $ds_notice_preference["{$uniq_id1}_{$uniq_id2}"] ) ) {
-				continue;
-			}
-			$hide_for_user = '';
-			$hide_for_all  = '';
-			if ( $options['ds_keep_hidden_btn'] === 'Y' ) {
-				$hide_for_user = "<a data-target='user' data-notice-id='{$uniq_id1}_{$uniq_id2}' class='ds-hide-notice'>" . __( 'Keep Hidden', 'dam-spam' ) . "</a>";
-			}
-			if ( $options['ds_hide_all_btn'] === 'Y' ) {
-				$hide_for_all = "<a data-target='all' data-notice-id='{$uniq_id1}_{$uniq_id2}' class='ds-hide-notice' href='admin.php?page=ds-options#notificationcontrol'>" . __( 'Hide All Notices', 'dam-spam' ) . "</a>";
-			}
-			// fix for WooCommerce membership and Jetpack message
-			if ( $cont != '<div class="js-wc-memberships-admin-notice-placeholder"></div>' && false === strpos( $cont, 'jetpack-jitm-message' ) ) {
-				$cont = preg_replace( '/<(noscript|script|style)([^>]+)?>(.*?)<\/(noscript|script|style)>(<\/(noscript|script|style)>)*/is', '', $cont );
-				$cont = preg_replace( '/<!--(.*?)-->/is', '', $cont );
-				$cont = rtrim( trim( $cont ) );
-				$cont = preg_replace( '/^(<div[^>]+>)(.*?)(<\/div>)$/is', "$1<div class='ds-hide-notices'>$2</div><div class='ds-hide-links'>{$hide_for_user} {$hide_for_all}</div>$3", $cont );
-			}
-			if ( empty( $cont ) ) {
-				continue;
-			}
-			$content[] = $cont;
-		}
-		$ds_all_notices = $content;
-	}
-	ds_clear_notices( 'user_admin_notices' );
-	ds_clear_notices( 'network_admin_notices' );
-	ds_clear_notices( 'admin_notices', array( 'Learndash_Admin_Menus_Tabs', 'WC_Memberships_Admin', 'YIT_Plugin_Panel_WooCommerce' ), array( 'et_pb_export_layouts_interface' ) );
-	ds_clear_notices( 'all_admin_notices', array( 'Learndash_Admin_Menus_Tabs', 'WC_Memberships_Admin', 'YIT_Plugin_Panel_WooCommerce' ), array( 'et_pb_export_layouts_interface' ) );
-}
-
-// get admin notifications
-function &ds_get_admin_notices( $key ) {
-	global $wp_filter;
-	$default = array();
-	if ( $key === 'admin_notices' && is_multisite() && is_network_admin() ) {
-		$key = 'network_admin_notices';
-	}
-	if ( !isset( $wp_filter[$key] ) ) {
-		return $default;
-	}
-	return $wp_filter[$key]->callbacks;
-}
-
-// merges admin and network notifications
-function ds_merge_notices ( $array1, $array2 ) {
-	if ( !empty( $array2 ) ) {
-		foreach ( $array2 as $key => $value ) {
-			if ( !isset( $array1[$key] ) ) {
-				$array1[$key] = $value;
-			} else if ( is_array( $array1[$key] ) ) {
-				$array1[$key] = $array1[$key] + $value;
-			}
-		}
-	}
-	return $array1;
-}
-
-// clear existing notifications so it doesn't show twice
-function ds_clear_notices ( $key, $excluded_classes = array(), $excluded_callback_names = array() ) {
-	$wp_filter = &ds_get_admin_notices( $key );
-	if ( !empty( $wp_filter ) ) {
-		foreach ( ( array ) $wp_filter as $f_key => $f ) {
-			foreach ( $f as $callback => $callback_array ) {
-				if ( is_array( $callback_array['function'] ) && sizeof( $callback_array['function'] ) == 2 ) {
-					$class = $callback_array['function'][0];
-					if ( is_object( $class ) ) {
-						$class_name = get_class( $class );
-						if ( in_array( $class_name, $excluded_classes ) ) {
-							continue;
-						}
-					}
-				}
-				if ( in_array( $callback, $excluded_callback_names ) ) {
-					continue;
-				}
-				unset( $wp_filter[$f_key][$callback] );
-			}
-		}
-	}
-}
-
-// show notifications based on admin
-function ds_show_admin_notices_func() {
-	if ( is_multisite() && is_network_admin() ) {
-		add_action( 'network_admin_notices', 'ds_show_admin_notices' );
-	} else {
-		add_action( 'admin_notices', 'ds_show_admin_notices' );
-	}
-}
-
-// show notifications
-function ds_show_admin_notices() {
-	global $ds_all_notices;
-	if ( empty( $ds_all_notices ) ) {
-		return;
-	}
-	foreach ( $ds_all_notices as $val ) {
-		echo $val;
-	}
-}
-
-// add hidden notification to user meta
-function ds_update_notice_preference() {
-	$user_id = get_current_user_id();
-	$ds_notice_preference = get_user_meta( $user_id, 'ds_notice_preference', true );
-	if ( !is_array( $ds_notice_preference ) ) {
-		$ds_notice_preference = array();
-	}
-	$notice_id = sanitize_text_field( $_POST['notice_id'] );
-	$ds_notice_preference[$notice_id] = $notice_id;
-	update_user_meta( $user_id, 'ds_notice_preference', $ds_notice_preference );
-	wp_die();
-}
-add_action( 'wp_ajax_ds_update_notice_preference', 'ds_update_notice_preference' );
 
 // hook the init event to start work
 add_action( 'init', 'ds_init', 0 );
@@ -558,7 +389,7 @@ function ds_log_akismet() {
 	}
 	// not on Allow Lists
 	$post		    = get_post_variables();
-	$post['reason'] = __( 'from Akismet', 'dam-spam' );
+	$post['reason'] = esc_html__( 'from Akismet', 'dam-spam' );
 	$post['chk']	= 'chkakismet';
 	$ansa		    = be_load( 'ds_log_bad', ds_get_ip(), $stats, $options, $post );
 	sfs_errorsonoff( 'off' );
@@ -613,7 +444,7 @@ function be_load( $file, $ip, &$stats = array(), &$options = array(), &$post = a
 	if ( is_array( $file ) ) { // add-ons pass their array
 		// this is an absolute location so load it directly
 		if ( !file_exists( $file[0] ) ) {
-			sfs_debug_msg( __( 'not found ', 'dam-spam' ) . print_r( $add, true ) );
+			sfs_debug_msg( esc_html__( 'not found ', 'dam-spam' ) . print_r( $add, true ) );
 			return false;
 		}
 		// require_once( $file[0] );
@@ -640,7 +471,7 @@ function be_load( $file, $ip, &$stats = array(), &$options = array(), &$post = a
 		$fd	= str_replace( "/", DIRECTORY_SEPARATOR, $fd ); // Windows fix
 	}
 	if ( !file_exists( $fd ) ) {
-		_e( '<br><br>Missing ' . $file, $fd . '<br><br>', 'dam-spam' );
+		printf( esc_html__( '<br><br>Missing %1$s %2$s<br><br>', 'dam-spam' ), $file, $fd );
 		return false;
 	}
 	require_once( $fd );
@@ -954,22 +785,22 @@ function ds_user_reg_filter( $user_login ) {
 	sfs_errorsonoff();
 	if ( $reason !== false ) {
 		$rejectmessage  = $options['rejectmessage'];
-		$post['reason'] = __( 'Failed Registration: Bad Cache', 'dam-spam' );
+		$post['reason'] = esc_html__( 'Failed Registration: Bad Cache', 'dam-spam' );
 		$host['chk']	= 'chkbcache';
 		$ansa		    = be_load( 'ds_log_bad', ds_get_ip(), $stats, $options, $post );
-		wp_die( '$rejectmessage', __( 'Login Access Blocked', 'dam-spam' ), array( 'response' => 403 ) );
+		wp_die( '$rejectmessage', esc_html__( 'Login Access Blocked', 'dam-spam' ), array( 'response' => 403 ) );
 		exit();
 	}
 	// check periods
 	$reason = be_load( 'chkperiods', ds_get_ip(), $stats, $options, $post );
 	if ( $reason !== false ) { 
-		wp_die( 'Registration Access Blocked', __( 'Login Access Blocked', 'dam-spam' ), array( 'response' => 403 ) );
+		wp_die( 'Registration Access Blocked', esc_html__( 'Login Access Blocked', 'dam-spam' ), array( 'response' => 403 ) );
 	}
 	// check the whitelist
 	$reason = ds_check_white();
 	sfs_errorsonoff();
 	if ( $reason !== false ) {
-		$post['reason'] = __( 'Passed Registration:', 'dam-spam' ) . $reason;
+		$post['reason'] = esc_html__( 'Passed Registration: ', 'dam-spam' ) . $reason;
 		$ansa		    = be_load( 'ds_log_good', ds_get_ip(), $stats, $options, $post );
 		sfs_errorsonoff( 'off' );
 		return $user_login;
@@ -977,7 +808,7 @@ function ds_user_reg_filter( $user_login ) {
 	// check the blacklist
 	// sfs_debug_msg( "Checking blacklist on registration: /r/n" . print_r( $post, true ) );
 	$ret			= be_load( 'ds_check_post', ds_get_ip(), $stats, $options, $post );
-	$post['reason'] = __( 'Passed Registration ', 'dam-spam' ) . $ret;
+	$post['reason'] = esc_html__( 'Passed Registration ', 'dam-spam' ) . $ret;
 	$ansa		    = be_load( 'ds_log_good', ds_get_ip(), $stats, $options, $post );
 	return $user_login;
 }
@@ -1003,14 +834,14 @@ function ds_add_captcha() {
 			$recaptchaapisite = $options['recaptchaapisite'];
 			$html  = '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
 			$html .= '<input type="hidden" name="recaptcha" value="recaptcha">';
-			$html .= '<div class="g-recaptcha" data-sitekey="' . $recaptchaapisite . '"></div>';
+			$html .= '<div class="g-recaptcha" data-sitekey="' . esc_attr( $recaptchaapisite ) . '"></div>';
 		break;
 		case 'H':
 			// hCaptcha
 			$hcaptchaapisite = $options['hcaptchaapisite'];
 			$html  = '<script src="https://hcaptcha.com/1/api.js" async defer></script>';
 			$html .= '<input type="hidden" name="h-captcha" value="h-captcha">';
-			$html .= '<div class="h-captcha" data-sitekey="' . $hcaptchaapisite . '"></div>';
+			$html .= '<div class="h-captcha" data-sitekey="' . esc_attr( $hcaptchaapisite ) . '"></div>';
 		break;
 		case 'S':
 			$solvmediaapivchallenge = $options['solvmediaapivchallenge'];
@@ -1036,13 +867,13 @@ function ds_captcha_verify() {
 				$recaptchaapisecret = $options['recaptchaapisecret'];
 				$recaptchaapisite   = $options['recaptchaapisite'];
 				if ( empty( $recaptchaapisecret ) || empty( $recaptchaapisite ) ) {
-					return __( '<strong>Error:</strong> reCAPTCHA keys are not set.', 'dam-spam' );
+					return esc_html__( 'Error: reCAPTCHA keys are not set.', 'dam-spam' );
 				} else { 
 					$g    = sanitize_textarea_field( $_REQUEST['g-recaptcha-response'] );
 					$url  = "https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaapisecret&response=$g&remoteip=$ip";
 					$resp = ds_read_file( $url );
 					if ( strpos( $resp, '"success": true' ) === false ) {
-						$msg = __( '<strong>Error:</strong> Google reCAPTCHA entry does not match. Try again.', 'dam-spam' );
+						$msg = esc_html__( 'Error: Google reCAPTCHA entry does not match. Try again.', 'dam-spam' );
 					}
 				}
 			}
@@ -1053,14 +884,14 @@ function ds_captcha_verify() {
 				$hcaptchaapisecret = $options['hcaptchaapisecret'];
 				$hcaptchaapisite   = $options['hcaptchaapisite'];
 				if ( empty( $hcaptchaapisecret ) || empty( $hcaptchaapisite ) ) {
-					return __( '<strong>Error:</strong> hCaptcha keys are not set.', 'dam-spam' );
+					return esc_html__( 'Error: hCaptcha keys are not set.', 'dam-spam' );
 				} else {
 					$h    = sanitize_textarea_field( $_REQUEST['h-captcha-response'] );
 					$url  = "https://hcaptcha.com/siteverify?secret=$hcaptchaapisecret&response=$h&remoteip=$ip";
 					$resp = ds_read_file( $url );
 					$response = json_decode( $resp );
 					if ( !isset( $response->success ) or $response->success !== true ) { 
-						return __( '<strong>Error:</strong> hCaptcha entry does not match. Try again.', 'dam-spam' );
+						return esc_html__( 'Error: hCaptcha entry does not match. Try again.', 'dam-spam' );
 					}
 				}
 			}
@@ -1108,7 +939,7 @@ function ds_captcha_verify() {
 				$resultarray = wp_remote_post( $url, $args );
 				$result	     = $resultarray['body'];
 				if ( strpos( $result, 'true' ) === false ) {
-					return __( '<strong>Error:</strong> CAPTCHA entry does not match. Try again.', 'dam-spam' );
+					return esc_html__( 'Error: CAPTCHA entry does not match. Try again.', 'dam-spam' );
 				}
 			}
 		break;
@@ -1157,7 +988,7 @@ add_filter( 'pre_comment_approved', 'ds_comment_captcha_verify', 99, 1 );
 
 // action links
 function ds_summary_link( $links ) {
-	$links = array_merge( array( '<a href="' . admin_url( 'admin.php?page=dam-spam' ) . '">' . __( 'Settings', 'dam-spam' ) . '</a>' ), $links );
+	$links = array_merge( array( '<a href="' . admin_url( 'admin.php?page=dam-spam' ) . '">' . esc_html__( 'Settings', 'dam-spam' ) . '</a>' ), $links );
 	return $links;
 }
 add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'ds_summary_link' );

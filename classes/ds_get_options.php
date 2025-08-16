@@ -39,18 +39,7 @@ class ds_get_options {
 			'chkauthorizenet'    => 'Y',
 			'chkbraintree'	     => 'Y',
 			'chkrecurly'	     => 'Y',
-			'chksquare'			 => 'Y',
-		    'new_user_notification_to_admin' => 'Y',
-			'ds_new_user_notification_to_user'=> 'Y',
-			'ds_password_change_notification_to_admin' => 'Y',
-			'ds_send_password_forgotten_email' => 'Y',
-			'ds_auto_core_update_send_email' => 'Y',
-			'ds_auto_plugin_update_send_email' => 'Y',
-		    'ds_auto_theme_update_send_email' => 'Y',
-		    'ds_send_email_change_email' => 'Y',
-			'ds_wp_notify_moderator' => 'Y',
-			'ds_wp_notify_post_author' => 'Y',
-	        'ds_password_change_notification_to_user' => 'Y'
+			'chksquare'			 => 'Y'
 		);
 		// Block List Y/N settings
 		$defaultBL = array(

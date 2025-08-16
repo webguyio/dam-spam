@@ -58,23 +58,23 @@ class chkvalidip {
 	}
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( empty( $ip ) ) {
-			return __( 'Invalid IP: ', 'dam-spam' ) . $ip;
+			return esc_html__( 'Invalid IP: ', 'dam-spam' ) . $ip;
 		}
 		if ( strpos( $ip, ':' ) === false && strpos( $ip, '.' ) === false ) {
-			return __( 'Invalid IP: ', 'dam-spam' ) . $ip;
+			return esc_html__( 'Invalid IP: ', 'dam-spam' ) . $ip;
 		}
 		if ( defined( 'AF_INET6' ) && strpos( $ip, ':' ) !== false ) {
 			try {
 				if ( !@inet_pton( $ip ) ) {
-					return __( 'Invalid IP: ', 'dam-spam' ) . $ip;
+					return esc_html__( 'Invalid IP: ', 'dam-spam' ) . $ip;
 				}
 			} catch ( Exception $e ) {
-				return __( 'Invalid IP: ', 'dam-spam' ) . $ip;
+				return esc_html__( 'Invalid IP: ', 'dam-spam' ) . $ip;
 			}
 		}
 		// check IPv4 for local private IP addresses
 		if ( $ip == '127.0.0.1' ) {
-			return __( 'Accessing Site Through localhost', 'dam-spam' );
+			return esc_html__( 'Accessing Site Through localhost', 'dam-spam' );
 		}
 		$priv = array(
 			array( '100000000000', '100255255255' ),
@@ -84,7 +84,7 @@ class chkvalidip {
 		$ip2  = be_module::ip2numstr( $ip );
 		foreach ( $priv as $ips ) {
 			if ( $ip2 >= $ips[0] && $ip2 <= $ips[1] ) {
-				return __( 'Local IP Address: ', 'dam-spam' ) . $ip;
+				return esc_html__( 'Local IP Address: ', 'dam-spam' ) . $ip;
 			}
 			if ( $ip2 < $ips[1] ) {
 				break;
@@ -104,24 +104,24 @@ class chkvalidip {
 		// check for IPv6
 		$lip = "127.0.0.1";
 		if ( substr( $ip, 0, 2 ) == 'FB' || substr( $ip, 0, 2 ) == 'fb' ) {
-			return __( 'Local IP Address: ', 'dam-spam' ) . $ip;
+			return esc_html__( 'Local IP Address: ', 'dam-spam' ) . $ip;
 		}
 		// see if server and browser are running on same server
 		if ( array_key_exists( 'SERVER_ADDR', $_SERVER ) ) {
 			$lip = $_SERVER["SERVER_ADDR"];
 			if ( $ip == $lip ) {
-				return __( 'IP Same as Server: ', 'dam-spam' ) . $ip;
+				return esc_html__( 'IP Same as Server: ', 'dam-spam' ) . $ip;
 			}
 		} else if ( array_key_exists( 'LOCAL_ADDR', $_SERVER ) ) { // IIS 7?
 			$lip = $_SERVER["LOCAL_ADDR"];
 			if ( $ip == $lip ) {
-				return __( 'IP Same as Server: ', 'dam-spam' ) . $ip;
+				return esc_html__( 'IP Same as Server: ', 'dam-spam' ) . $ip;
 			}
 		} else { // IIS 6 no server address use a gethost by name? hope we never get here
 			try {
 				$lip = @gethostbyname( $_SERVER['SERVER_NAME'] );
 				if ( $ip == $lip ) {
-					return __( 'IP Same as Server: ', 'dam-spam' ) . $ip;
+					return esc_html__( 'IP Same as Server: ', 'dam-spam' ) . $ip;
 				}
 			} catch ( Exception $e ) {
 			// can't make this work - ignore
@@ -137,7 +137,7 @@ class chkvalidip {
 			return false;
 		}
 		if ( substr( $ip, 0, $j ) == substr( $lip, 0, $k ) ) {
-			return __( 'IP same /24 subnet as server ', 'dam-spam' ) . $ip;
+			return esc_html__( 'IP same /24 subnet as server ', 'dam-spam' ) . $ip;
 		}
 		return false;
 	}

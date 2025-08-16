@@ -15,7 +15,7 @@ class chkurlshort {
 			if ( !empty( $data ) ) {
 				foreach ( $blockurlshortners as $urlshort ) {
 					if ( stripos( $data, $urlshort ) !== false and ( stripos( $data, $urlshort ) == 0 or substr( $data, stripos( $data, $urlshort ) - 1, 1 ) == " " or substr( $data, stripos( $data, $urlshort ) - 1, 1 ) == "/" or substr( $data, stripos( $data, $urlshort ) - 1, 1 ) == "@" or substr( $data, stripos( $data, $urlshort ) - 1, 1 ) == "." ) ) {
-						return __( 'URL Shortener: ' . $urlshort . ' in ' . $key . '', 'dam-spam' );
+						sprintf( esc_html__( 'URL Shortener: %1$s in %2$s', 'dam-spam' ), $urlshort, $key );
 					}
 				}
 			}

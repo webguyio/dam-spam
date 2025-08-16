@@ -1,4 +1,4 @@
-=== Dam Spam! ===
+=== Dam Spam ===
 
 Contributors: bhadaway
 Donate link: https://webguy.io/donate

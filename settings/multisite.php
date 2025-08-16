@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
-	die( __( 'Access Blocked', 'dam-spam' ) );
+	die( esc_html__( 'Access Blocked', 'dam-spam' ) );
 }
 
 ds_fix_post_vars();
@@ -14,7 +14,7 @@ ds_fix_post_vars();
 ?>
 
 <div id="ds-plugin" class="wrap">
-	<h1 id="ds-head">Dam Spam — <?php _e( 'Multisite', 'dam-spam' ); ?></h1>
+	<h1 id="ds-head"><?php esc_html_e( 'Multisite — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php
 	$now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 	// $ip = ds_get_ip();
@@ -39,7 +39,7 @@ ds_fix_post_vars();
 				$muswitch = 'N';
 			}
 			update_option( 'ds_muswitch', $muswitch );
-			_e( '<h2>Options Updated</h2>', 'dam-spam' );
+			esc_html_e( 'Options Updated', 'dam-spam' );
 		}
 	} else {
 	// echo "no nonce<br>";
@@ -49,12 +49,12 @@ ds_fix_post_vars();
 	<form method="post" action="">
 		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
 		<input type="hidden" name="action" value="update mu settings">
-		<span style="font-weight:bold;font-size:1.2em"><?php _e( 'Network Blog Option', 'dam-spam' ); ?></span>
-		<p><?php _e( 'Networked ON:', 'dam-spam' ); ?> <input name="muswitch" type="radio" value='Y' <?php if ( $muswitch == 'Y' ) { echo 'checked="true"'; } ?>>
+		<span style="font-weight:bold;font-size:1.2em"><?php esc_html_e( 'Network Blog Option', 'dam-spam' ); ?></span>
+		<p><?php esc_html_e( 'Networked ON:', 'dam-spam' ); ?> <input name="muswitch" type="radio" value='Y' <?php if ( $muswitch == 'Y' ) { echo 'checked="true"'; } ?>>
 		<br>
-		<?php _e( 'Networked OFF:', 'dam-spam' ); ?> <input name="muswitch" type="radio" value='N' <?php if ( $muswitch != 'Y' ) { echo 'checked="true"'; } ?>>
+		<?php esc_html_e( 'Networked OFF:', 'dam-spam' ); ?> <input name="muswitch" type="radio" value='N' <?php if ( $muswitch != 'Y' ) { echo 'checked="true"'; } ?>>
 		<br>
-		<?php _e( 'If you are running WPMU and want to control options and history through the main login admin panel, select ON. If you select OFF, each blog will have to configure the plugin separately, and each blog will have a separte history.', 'dam-spam' ); ?></p>
-		<p class="submit"><input class="button-primary" value="<?php _e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
+		<?php esc_html_e( 'If you are running WPMU and want to control options and history through the main login admin panel, select ON. If you select OFF, each blog will have to configure the plugin separately, and each blog will have a separte history.', 'dam-spam' ); ?></p>
+		<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
 	</form>
 </div>

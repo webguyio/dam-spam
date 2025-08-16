@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
-	die( __( 'Access Blocked', 'dam-spam' ) );
+	die( esc_html__( 'Access Blocked', 'dam-spam' ) );
 }
 
 ds_fix_post_vars();
@@ -51,9 +51,9 @@ if ( wp_verify_nonce( $nonce, 'ds_update' ) ) {
 		$stats['badips']  = $badips;
 		$stats['goodips'] = $goodips;
 		ds_set_stats( $stats );
-		echo '<div class="notice notice-success"><p>' . __( 'Cache Cleared', 'dam-spam' ) . '</p></div>';
+		echo '<div class="notice notice-success"><p>' . esc_html__( 'Cache Cleared', 'dam-spam' ) . '</p></div>';
 	}
-	$msg = '<div class="notice notice-success is-dismissible"><p>' . __( 'Options Updated', 'dam-spam' ) . '</p></div>';
+	$msg = '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
 }
 
 $nonce = wp_create_nonce( 'ds_update' );
@@ -61,24 +61,24 @@ $nonce = wp_create_nonce( 'ds_update' );
 ?>
 
 <div id="ds-plugin" class="wrap">
-	<h1 id="ds-head">Dam Spam — <?php _e( 'Cache', 'dam-spam' ); ?></h1>
+	<h1 id="ds-head"><?php esc_html_e( 'Cache — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php
 	if ( !empty( $msg ) ) {
 		echo $msg;
 	} ?>
 	<br>
 	<div class="ds-info-box">
-	<?php _e( '
-		<p>Whenever a user tries to leave a comment, register, or log in, they are
+	<p><?php esc_html_e( '
+		Whenever a user tries to leave a comment, register, or log in, they are
 		recorded in the Good Cache if they pass or the Bad Cache if they fail.
 		If a user is blocked from access, they are added to the Bad Cache. You
-		can see the caches here.</p>
-	', 'dam-spam' ); ?>
+		can see the caches here.
+	', 'dam-spam' ); ?></p>
 	<form method="post" action="">
 		<input type="hidden" name="update_options" value="update">
 		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
 		<label class="keyhead">
-			<?php _e( 'Bad IP Cache Size', 'dam-spam' ); ?>
+			<?php esc_html_e( 'Bad IP Cache Size', 'dam-spam' ); ?>
 			<br>
 			<select name="ds_cache">
 				<option value="0" <?php if ( $ds_cache == '0' ) { echo 'selected="true"'; } ?>>0</option>
@@ -95,7 +95,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<br>
 		<label class="keyhead">
-			<?php _e( 'Good IP Cache Size', 'dam-spam' ); ?>
+			<?php esc_html_e( 'Good IP Cache Size', 'dam-spam' ); ?>
 			<br>
 			<select name="ds_good">
 				<option value="1" <?php if ( $ds_good == '1' ) { echo 'selected="true"'; } ?>>1</option>
@@ -113,18 +113,18 @@ $nonce = wp_create_nonce( 'ds_update' );
 			</select>
 		</label>
 		<br>
-		<p class="submit"><input class="button-primary" value="<?php _e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
+		<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
 	</form>
 	<?php
 	if ( count( $badips ) == 0 && count( $goodips ) == 0 ) {
-		_e( 'Nothing in the cache.', 'dam-spam' );
+		esc_html_e( 'Nothing in the cache.', 'dam-spam' );
 	} else {
 		?>
-		<h2><?php _e( 'Cached Values', 'dam-spam' ); ?></h2>
+		<h2><?php esc_html_e( 'Cached Values', 'dam-spam' ); ?></h2>
 		<form method="post" action="">
 			<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
 			<input type="hidden" name="ds_clear_cache" value="true">
-			<p class="submit"><input class="button-primary" value="<?php _e( 'Clear the Cache', 'dam-spam' ); ?>" type="submit"></p>
+			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Clear the Cache', 'dam-spam' ); ?>" type="submit"></p>
 		</form>
 		<table>
 			<tr>
@@ -132,14 +132,14 @@ $nonce = wp_create_nonce( 'ds_update' );
 				if ( count( $badips ) > 0 ) {
 					arsort( $badips );
 					?>
-					<td width="30%"><?php _e( 'Bad IPs', 'dam-spam' ); ?></td>
+					<td width="30%"><?php esc_html_e( 'Bad IPs', 'dam-spam' ); ?></td>
 					<?php
 				}
 				?>
 				<?php
 				if ( count( $goodips ) > 0 ) {
 					?>
-					<td width="30%"><?php _e( 'Good IPs', 'dam-spam' ); ?></td>
+					<td width="30%"><?php esc_html_e( 'Good IPs', 'dam-spam' ); ?></td>
 					<?php
 				}
 				?>

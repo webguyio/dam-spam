@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
-	die( __( 'Access Blocked', 'dam-spam' ) );
+	die( esc_html__( 'Access Blocked', 'dam-spam' ) );
 }
 
 ds_fix_post_vars();
@@ -219,9 +219,6 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
 		}
 		$options[$check] = $v;
 	}
-	$options['chkwooform'] = $_POST['chkwooform'];
-	$options['chkgvfor']   = $_POST['chkgvform'];
-	$options['chkwpform']  = $_POST['chkwpform'];
 	// text options
 	if ( array_key_exists( 'sesstime', $_POST ) ) {
 		$sesstime			 = stripslashes( sanitize_text_field( $_POST['sesstime'] ) );
@@ -237,7 +234,7 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
 	}
 	ds_set_options( $options );
 	extract( $options ); // extract again to get the new options
-	$msg = '<div class="notice notice-success is-dismissible"><p>' . __( 'Options Updated', 'dam-spam' ) . '</p></div>';
+	$msg = '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
 }
 
 $nonce = wp_create_nonce( 'ds_update' );
@@ -245,7 +242,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 ?>
 
 <div id="ds-plugin" class="wrap">
-	<h1 id="ds-head">Dam Spam — <?php _e( 'Protection Options', 'dam-spam' ); ?></h1>
+	<h1 id="ds-head"><?php esc_html_e( 'Protections — Dam Spam', 'dam-spam' ); ?></h1>
 	<br>
 	<?php if ( !empty( $msg ) ) {
 		echo $msg;
@@ -254,142 +251,127 @@ $nonce = wp_create_nonce( 'ds_update' );
 	<form method="post" action="" name="ss">
 		<input type="hidden" name="action" value="update">
 		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
-		<div id="formchecking" class="mainsection"><?php _e( 'Form Checking', 'dam-spam' ); ?></div>
+		<div id="formchecking" class="mainsection"><?php esc_html_e( 'Form Checking', 'dam-spam' ); ?></div>
 		<?php if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			_e( '<p><span style="color:purple">WooCommerce detected. If you experience any issues using WooCommerce and Dam Spam together, you may need to adjust these settings.</span></p>', 'dam-spam' );
+			echo '<p><span style="color:purple">' . esc_html__( 'WooCommerce detected. If you experience any issues using WooCommerce and Dam Spam together, you may need to adjust these settings.', 'dam-spam' ) . '</span></p>';
 		} ?>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkform">
 				<input class="ds_toggle" type="checkbox" id="chkform" name="chkform" value="Y" <?php if ( $chkform == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Only Check Native WordPress Forms', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Only Check Native WordPress Forms', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkwooform">
 				<input class="ds_toggle" type="checkbox" id="chkwooform" name="chkwooform" value="Y" <?php if ( $chkwooform == 'Y' ) { echo 'checked="checked"'; } ?> <?php if ( $chkform == 'Y' ) { echo 'disabled'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'WooCommerce Forms', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'WooCommerce Forms', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 	 	<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkgvform">
 				<input class="ds_toggle" type="checkbox" id="chkgvform" name="chkgvform" value="Y" <?php if ( $chkgvform == 'Y' ) { echo 'checked="checked"'; } ?> <?php if ( $chkform == 'Y' ) { echo 'disabled'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Gravity Forms', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Gravity Forms', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkwpform">
 				<input class="ds_toggle" type="checkbox" id="chkwpform" name="chkwpform" value="Y" <?php if ( $chkwpform == 'Y' ) { echo 'checked="checked"'; } ?> <?php if ( $chkform == 'Y' ) { echo 'disabled'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'WP Forms', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'WP Forms', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
-		<div id="membersonly" class="mainsection"><?php _e( 'Members-only Mode', 'dam-spam' ); ?></div>
+		<div id="membersonly" class="mainsection"><?php esc_html_e( 'Members-only Mode', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="ds_private_mode">
 				<input class="ds_toggle" type="checkbox" id="ds_private_mode" name="ds_private_mode" value="Y" <?php if ( $ds_private_mode == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Require Users to Be Logged in to View Site', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Require Users to Be Logged in to View Site', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
-		<div id="preventlockouts" class="mainsection"><?php _e( 'Prevent Lockouts', 'dam-spam' ); ?></div>
+		<div id="preventlockouts" class="mainsection"><?php esc_html_e( 'Prevent Lockouts', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="addtoallowlist">
 				<input class="ds_toggle" type="checkbox" id="addtoallowlist" name="addtoallowlist" value="Y" <?php if ( $addtoallowlist == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Automatically Add Admins to Allow List', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Automatically Add Admins to Allow List', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkadminlog">
 				<input class="ds_toggle" type="checkbox" id="chkadminlog" name="chkadminlog" value="Y" <?php if ( $chkadminlog == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check Credentials on All Login Attempts', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check Credentials on All Login Attempts', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
-		<div id="notificationcontrol" class="mainsection"><?php _e( 'Notification Control', 'dam-spam' ); ?></div>
-		<div class="checkbox switcher">
-			<label class="ds-subhead" for="ds_keep_hidden_btn">
-				<input class="ds_toggle" type="checkbox" id="ds_keep_hidden_btn" name="ds_keep_hidden_btn" value="Y" <?php if ( $ds_keep_hidden_btn == 'Y' ) { echo 'checked="checked"'; } ?> onChange="(this.checked? '': jQuery('#ds_hide_all_btn').prop('checked', false) );"><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Show Keep Hidden Button', 'dam-spam' ); ?></span></small>
-			</label>
-		</div>
-		<br>
-		<div class="checkbox switcher">
-			<label class="ds-subhead" for="ds_hide_all_btn">
-				<input class="ds_toggle" type="checkbox" id="ds_hide_all_btn" name="ds_hide_all_btn" value="Y" <?php if ( $ds_hide_all_btn == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Show Hide All Notices Button', 'dam-spam' ); ?></span></small>
-			</label>
-		</div>
-		<br>
-		<div id="validaterequests" class="mainsection"><?php _e( 'Validate Requests', 'dam-spam' ); ?></div>
+		<div id="validaterequests" class="mainsection"><?php esc_html_e( 'Validate Requests', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkaccept">
 				<input class="ds_toggle" type="checkbox" id="chkaccept" name="chkaccept" value="Y" <?php if ( $chkaccept == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Block Spam Missing the HTTP_ACCEPT Header', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Block Spam Missing the HTTP_ACCEPT Header', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkreferer">
 				<input class="ds_toggle" type="checkbox" id="chkreferer" name="chkreferer" value="Y" <?php if ( $chkreferer == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Block Invalid HTTP_REFERER', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Block Invalid HTTP_REFERER', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkdisp">
 				<input class="ds_toggle" type="checkbox" id="chkdisp" name="chkdisp" value="Y" <?php if ( $chkdisp == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Block Disposable Email Addresses', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Block Disposable Email Addresses', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chklong">
 				<input class="ds_toggle" type="checkbox" id="chklong" name="chklong" value="Y" <?php if ( $chklong == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check for Long Emails, Author Name, or Password', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for Long Emails, Author Name, or Password', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkshort">
 				<input class="ds_toggle" type="checkbox" id="chkshort" name="chkshort" value="Y" <?php if ( $chkshort == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check for Short Emails or Author Name', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for Short Emails or Author Name', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkbbcode">
 				<input class="ds_toggle" type="checkbox" id="chkbbcode" name="chkbbcode" value="Y" <?php if ( $chkbbcode == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check for BBCodes', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for BBCodes', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkperiods">
 				<input class="ds_toggle" type="checkbox" id="chkperiods" name="chkperiods" value="Y" <?php if ( $chkperiods == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check for Periods', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for Periods', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkhyphens">
 				<input class="ds_toggle" type="checkbox" id="chkhyphens" name="chkhyphens" value="Y" <?php if ( $chkhyphens == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check for Hyphens', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for Hyphens', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chksession">
 				<input class="ds_toggle" type="checkbox" id="chksession" name="chksession" value="Y" onclick="ds_show_quick()" <?php if ( $chksession == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check for Quick Responses', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for Quick Responses', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<span id="ds_show_quick" style="margin-bottom:15px;display:none">
-			<p><?php _e( 'Response Timeout Value: ', 'dam-spam' ); ?>
+			<p><?php esc_html_e( 'Response Timeout Value: ', 'dam-spam' ); ?>
 			<input name="sesstime" type="text" value="<?php echo esc_attr( $sesstime ); ?>" size="2"><br></p>
 		</span>
 		<script>
@@ -408,60 +390,60 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chk404">
 				<input class="ds_toggle" type="checkbox" id="chk404" name="chk404" value="Y" <?php if ( $chk404 == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Block 404 Exploit Probing', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Block 404 Exploit Probing', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkakismet">
 				<input class="ds_toggle" type="checkbox" id="chkakismet" name="chkakismet" value="Y" <?php if ( $chkakismet == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Block IPs Detected by Akismet', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Block IPs Detected by Akismet', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkexploits">
 				<input class="ds_toggle" type="checkbox" id="chkexploits" name="chkexploits" value="Y" <?php if ( $chkexploits == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check for Exploits', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for Exploits', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkadmin">
 				<input class="ds_toggle" type="checkbox" id="chkadmin" name="chkadmin" value="Y" <?php if ( $chkadmin == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Block Login Attempts Using "admin" in Username', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Block Login Attempts Using "admin" in Username', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkubiquity">
 				<input class="ds_toggle" type="checkbox" id="chkubiquity" name="chkubiquity" value="Y" <?php if ( $chkubiquity == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check Against List of Ubiquity-Nobis and Other Spam Server IPs', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check Against List of Ubiquity-Nobis and Other Spam Server IPs', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkhosting">
 				<input class="ds_toggle" type="checkbox" id="chkhosting" name="chkhosting" value="Y" <?php if ( $chkhosting == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check for Major Hosting Companies and Cloud Services', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for Major Hosting Companies and Cloud Services', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chktor">
 				<input class="ds_toggle" type="checkbox" id="chktor" name="chktor" value="Y" <?php if ( $chktor == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check for Tor Exit Nodes', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for Tor Exit Nodes', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkmulti">
 				<input class="ds_toggle" type="checkbox" id="chkmulti" name="chkmulti" value="Y" onclick="ds_show_chkmulti()" <?php if ( $chkmulti == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check for Many Hits in a Short Time', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for Many Hits in a Short Time', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<span id="ds_show_chkmulti" style="margin-bottom:15px;display:none">
-			<p><?php _e( 'Block access when there are', 'dam-spam' ); ?>
+			<p><?php esc_html_e( 'Block access when there are', 'dam-spam' ); ?>
 				<select name="multicnt">
 					<option val="4" <?php if ( $multicnt <= 4 ) { echo 'selected="selected"'; } ?>>4</option>
 					<option val="5" <?php if ( $multicnt == 5 ) { echo 'selected="selected"'; } ?>>5</option>
@@ -471,7 +453,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 					<option val="9" <?php if ( $multicnt == 9 ) { echo 'selected="selected"'; } ?>>9</option>
 					<option val="10" <?php if ( $multicnt >= 10 ) { echo 'selected="selected"'; } ?>>10</option>
 				</select>
-				<?php _e( 'comments or logins in less than', 'dam-spam' ); ?>
+				<?php esc_html_e( 'comments or logins in less than', 'dam-spam' ); ?>
 				<select name="multitime">
 					<option val="1" <?php if ( $multitime <= 1 ) { echo 'selected="selected"'; } ?>>1</option>
 					<option val="2" <?php if ( $multitime == 2 ) { echo 'selected="selected"'; } ?>>2</option>
@@ -484,7 +466,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 					<option val="9" <?php if ( $multitime == 9 ) { echo 'selected="selected"'; } ?>>9</option>
 					<option val="10" <?php if ( $multitime >= 10 ) { echo 'selected="selected"'; } ?>>10</option>
 				</select>
-				<?php _e( 'minutes.', 'dam-spam' ); ?><br>
+				<?php esc_html_e( 'minutes.', 'dam-spam' ); ?><br>
 			</p>
 		</span>
 		<script>
@@ -505,24 +487,24 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkamazon">
 				<input class="ds_toggle" type="checkbox" id="chkamazon" name="chkamazon" value="Y" <?php if ( $chkamazon == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check for Amazon Cloud', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for Amazon Cloud', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="filterregistrations">
 				<input class="ds_toggle" type="checkbox" id="filterregistrations" name="filterregistrations" value="Y" <?php if ( $filterregistrations == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Filter Login Requests', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Filter Login Requests', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<br>
-		<div id="blockcountries" class="mainsection"><?php _e( 'Block Countries', 'dam-spam' ); ?></div>
+		<div id="blockcountries" class="mainsection"><?php esc_html_e( 'Block Countries', 'dam-spam' ); ?></div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="countries">
 				<input class="ds_toggle" type="checkbox" id="countries" name="ds_set" value="1" onclick='var t=ss.ds_set.checked;var els=document.getElementsByTagName("INPUT");for (index = 0; index < els.length; ++index){if (els[index].type=="checkbox"){if (els[index].name.length==5){els[index].checked=t;}}}'/>
-				<small><span class="button-primary" style="font-size:16px!important"><?php _e( 'Check All', 'dam-spam' ); ?></span></small>
+				<small><span class="button-primary" style="font-size:16px!important"><?php esc_html_e( 'Check All', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
@@ -947,6 +929,6 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<input name="chkYE" type="checkbox" value="Y" <?php if ( $chkYE == "Y" ) { echo 'checked="checked"'; } ?>>Yemen
 		</div>
 		<br style="clear:both">
-		<p class="submit"><input class="button-primary" value="<?php _e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
+		<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
 	</form>
 </div>

@@ -395,10 +395,10 @@ function ds_html_state( $post_id ) {
 		DS_AUTHORIZED => 'Authorized'
 	);
 	// print the state
-	echo sprintf( '<span class="%s">%s</span>', strtolower( $states[$state] ), esc_html__( $states[$state], 'dam-spam' ) );
+
 	// colorize blocked item
 	if ( $state == DS_BLOCKED ) {
-		echo sprintf( '<style>#post-%1$d{background:rgba(248, 234, 232, 0.8)}#post-%1$d.alternate{background:#f8eae8}</style>', $post_id );
+		printf( '<style>#post-%1$d{background:rgba(248, 234, 232, 0.8)}#post-%1$d.alternate{background:#f8eae8}</style>', $post_id );
 	}
 }
 	
@@ -408,12 +408,12 @@ function ds_html_code( $post_id ) {
 	
 function ds_html_duration( $post_id ) {
 	if ( $duration = ds_get_meta( $post_id, 'duration' ) ) {
-		echo sprintf( __( '%s seconds', 'dam-spam' ), $duration );
+		echo sprintf( esc_html__( '%s seconds', 'dam-spam' ), $duration );
 	}
 }
 
 function ds_html_created( $post_id ) {
-	echo sprintf( __( '%s ago', 'dam-spam' ), human_time_diff( get_post_time( 'G', true, $post_id ) ) );
+	echo sprintf( esc_html__( '%s ago', 'dam-spam' ), human_time_diff( get_post_time( 'G', true, $post_id ) ) );
 }
 
 function ds_html_postdata( $post_id ) {
@@ -456,7 +456,7 @@ function ds_action_link( $post_id, $type, $blacklisted = false ) {
 		'<a href="%s" class="%s">%s</a>',
 		esc_url( wp_nonce_url( add_query_arg( array( 'id' => $post_id, 'paged' => ds_get_pagenum(), 'ds-type' => $type, 'ds-action' => $action, 'post_type' => 'ds-firewall' ), admin_url( 'edit.php' ) ), 'ds-firewall' ) ),
 		$action,
-		esc_html__( sprintf( '%s this %s', ucfirst( $action ), str_replace( '-', ' ', $type ) ), 'ds-firewall' )
+		sprintf( esc_html__( '%1$s this %2$s', 'dam-spam' ), ucfirst( $action ), str_replace( '-', ' ', $type ) )
 	);
 }
 

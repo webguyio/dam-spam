@@ -47,7 +47,7 @@ class chkmulti extends be_module {
 		$stats['multi'] = $multi;
 		ds_set_stats( $stats );
 		if ( $row[1] >= $multicnt ) {
-			return __( '' . $row[1] . ' hits in last 3 minutes', 'dam-spam' );
+			sprintf( esc_html__( '%s hits in last 3 minutes', 'dam-spam' ), $row[1] );
 		}
 		return false;
 	}

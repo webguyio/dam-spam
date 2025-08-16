@@ -20,7 +20,7 @@ class ds_check_404s {
 		ds_log_bad( $ip, $reason, 'chk404' );
 		// need to block access
 		$rejectmessage = $options['rejectmessage'];
-		wp_die( '$rejectmessage', __( 'Login Access Blocked', 'dam-spam' ), array( 'response' => 403 ) );
+		wp_die( '$rejectmessage', esc_html__( 'Login Access Blocked', 'dam-spam' ), array( 'response' => 403 ) );
 		exit();
 	}
 }

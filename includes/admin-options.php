@@ -53,9 +53,9 @@ function ds_action_links( $links, $file ) {
 		return $links;
 	}
 	if ( DS_MU == 'Y' ) {
-		$link = '<a href="' . admin_url( 'network/admin.php?page=dam-spam' ) . '">' . __( 'Settings', 'dam-spam' ) . '</a>';
+		$link = '<a href="' . admin_url( 'network/admin.php?page=dam-spam' ) . '">' . esc_html__( 'Settings', 'dam-spam' ) . '</a>';
 	} else {
-		$link = '<a href="' . admin_url( 'admin.php?page=dam-spam' ) . '">' . __( 'Settings', 'dam-spam' ) . '</a>';
+		$link = '<a href="' . admin_url( 'admin.php?page=dam-spam' ) . '">' . esc_html__( 'Settings', 'dam-spam' ) . '</a>';
 	}
 	// check to see if we are in network
 	// to-do
@@ -69,12 +69,12 @@ function ds_rightnow() {
 	$options = ds_get_options();
 	if ( $spmcount > 0 ) {
 		// get the path to the plugin
-		_e( '<p>Dam Spam has prevented <strong>' . $spmcount . '</strong> spammers from registering or leaving comments.</p>', 'dam-spam' );
+		printf( esc_html__( '<p>Dam Spam has prevented %1$s%2$s%3$s spammers from registering or leaving comments.</p>', 'dam-spam' ), '<strong>', $spmcount, '</strong>' );
 	}
 	if ( count( $wlrequests ) == 1 ) {
-		echo '<p><strong>' . count( $wlrequests ) . '</strong> ' . __( 'user has been blocked and <a href="admin.php?page=ds-allow-list">requested</a> that you add them to the Allow List.</p>', 'dam-spam' );
+		echo '<p><strong>' . count( $wlrequests ) . '</strong> ' . printf( esc_html__( 'user has been blocked and %1$srequested%2$s that you add them to the Allow List.</p>', 'dam-spam' ), '<a href="admin.php?page=ds-allowed">', '</a>' );
 	} else if ( count( $wlrequests ) > 0 ) {
-		echo '<p><strong>' . count( $wlrequests ) . '</strong> ' . __( 'users have been blocked and <a href="admin.php?page=ds-allow-list">requested</a> that you add them to the Allow List.</p>', 'dam-spam' );
+		echo '<p><strong>' . count( $wlrequests ) . '</strong> ' . printf( esc_html__( 'users have been blocked and %1$srequested%2$s that you add them to the Allow List.</p>', 'dam-spam' ), '<a href="admin.php?page=ds-allowed">', '</a>' );
 	}
 }
 
@@ -144,7 +144,7 @@ function ds_row( $actions, $comment ) {
 	}
 	if ( !empty( $email ) ) {
 		$action .= "|";
-		$action .= "<a $exst title=\"" . esc_attr__( 'Report to Stop Forum Spam (SFS)', 'dam-spam' ) . "\" $target $href $onclick class='delete:the-comment-list:comment-$ID::delete=1 delete vim-d vim-destructive'>" . __( ' Report to SFS', 'dam-spam' ) . "</a>";
+		$action .= "<a $exst title=\"" . esc_attr__( 'Report to Stop Forum Spam (SFS)', 'dam-spam' ) . "\" $target $href $onclick class='delete:the-comment-list:comment-$ID::delete=1 delete vim-d vim-destructive'>" . esc_html__( ' Report to SFS', 'dam-spam' ) . "</a>";
 	}
 	$action .= '<span class="ds-action" title="' . esc_attr__( 'Add to block list', 'dam-spam' ) . '" onclick="sfs_ajax_process(\'' . $comment->comment_author_ip . '\',\'log\',\'add_black\',\'' . $ajaxurl . '\');return false;"><img src="' . DS_PLUGIN_URL . 'images/tdown.png">|</span>';
 	$action .= '<span class="ds-action" title="' . esc_attr__( 'Add to allow list', 'dam-spam' ) . '" onclick="sfs_ajax_process(\'' . $comment->comment_author_ip . '\',\'log\',\'add_white\',\'' . $ajaxurl . '\');return false;"><img src="' . DS_PLUGIN_URL . 'images/tup.png">|</span>';
@@ -177,7 +177,7 @@ function sfs_handle_ajax_sub( $data ) {
 	// get the configuration items
 	$options = get_option( 'ds_options' ); // for some reason the main call is not available?
 	if ( empty( $options ) ) { // can't happen?
-		_e( ' No Options Set', 'dam-spam' );
+		esc_html_e( ' No Options Set', 'dam-spam' );
 		exit();
 	}
 	// print_r( $options );
@@ -185,7 +185,7 @@ function sfs_handle_ajax_sub( $data ) {
 	// get the comment_id parameter	
 	$comment_id = sanitize_text_field( urlencode( $_GET['comment_id'] ) );
 	if ( empty( $comment_id ) ) {
-		_e( ' No Comment ID Found', 'dam-spam' );
+		esc_html_e( ' No Comment ID Found', 'dam-spam' );
 		exit();
 	}
 	// need to pass the blog ID also
@@ -207,7 +207,7 @@ function sfs_handle_ajax_sub( $data ) {
 		);
 	} else {
 		if ( empty( $comment ) ) {
-			_e( ' No Comment Found for ' . $comment_id . '', 'dam-spam' );
+			printf( esc_html__( ' No Comment Found for %s', 'dam-spam' ), $comment_id );
 			exit();
 		}
 	}
@@ -250,18 +250,18 @@ function sfs_handle_ajax_sub( $data ) {
 		$evidence = substr( $evidence, 0, 125 ) . '...';
 	}
 	if ( empty( $apikey ) ) {
-		_e( 'Cannot Report Spam without API Key', 'dam-spam' );
+		esc_html_e( 'Cannot Report Spam without API Key', 'dam-spam' );
 		exit();
 	}
 	$hget = "https://www.stopforumspam.com/add.php?ip_addr=$ip_addr&api_key=$apikey&email=$email&username=$uname&evidence=$evidence";
 	// echo $hget;
 	$ret  = ds_read_file( $hget );
-	if ( stripos( $ret, __( 'data submitted successfully', 'dam-spam' ) ) !== false ) {
+	if ( stripos( $ret, esc_html__( 'data submitted successfully', 'dam-spam' ) ) !== false ) {
 		echo $ret;
-	} else if ( stripos( $ret, __( 'recent duplicate entry', 'dam-spam' ) ) !== false ) {
-		_e( ' Recent Duplicate Entry ', 'dam-spam' );
+	} else if ( stripos( $ret, esc_html__( 'recent duplicate entry', 'dam-spam' ) ) !== false ) {
+		esc_html_e( ' Recent Duplicate Entry ', 'dam-spam' );
 	} else {
-		_e( ' Returning from AJAX: ', 'dam-spam' ) . $hget . ' - ' . $ret;
+		esc_html_e( ' Returning from AJAX: ', 'dam-spam' ) . $hget . ' - ' . $ret;
 	}
 	exit();
 }
@@ -295,7 +295,7 @@ function sfs_get_urls( $content ) {
 
 function sfs_handle_ajax_check( $data ) {
 	if ( !ipChkk() ) {
-		_e( ' Not Enabled', 'dam-spam' );
+		esc_html_e( ' Not Enabled', 'dam-spam' );
 		exit();
 	}
 	// this does a call to the SFS site to check a known spammer
@@ -307,19 +307,19 @@ function sfs_handle_ajax_check( $data ) {
 		$check = trim( $check );
 		$check = trim( $check, '0' );
 		if ( substr( $check, 0, 4 ) == "ERR:" ) {
-			_e( ' Access to the Stop Forum Spam Database Shows Errors\r\n', 'dam-spam' );
-			_e( ' Response Was: ' . $check . '\r\n', 'dam-spam' );
+			esc_html_e( ' Access to the Stop Forum Spam Database Shows Errors\r\n', 'dam-spam' );
+			printf( esc_html__( ' Response Was: %s\r\n', 'dam-spam' ), $check );
 		}
 		// access to the Stop Forum Spam database is working
 		$n = strpos( $check, '<response success="true">' );
 		if ( $n === false ) {
-			_e( ' Access to the Stop Forum Spam Database is Not Working\r\n', 'dam-spam' );
-			_e( ' Response was\r\n ' . $check . '\r\n', 'dam-spam' );
+			esc_html_e( ' Access to the Stop Forum Spam Database is Not Working\r\n', 'dam-spam' );
+			printf( esc_html__( ' Response was\r\n %s\r\n', 'dam-spam' ), $check );
 		} else {
-			_e( ' Access to the Stop Forum Spam Database is Working', 'dam-spam' );
+			esc_html_e( ' Access to the Stop Forum Spam Database is Working', 'dam-spam' );
 		}
 	} else {
-		_e( ' No Response from the Stop Forum Spam API Call\r\n', 'dam-spam' );
+		esc_html_e( ' No Response from the Stop Forum Spam API Call\r\n', 'dam-spam' );
 	}
 	return;
 }
@@ -341,7 +341,7 @@ function sfs_handle_ajax_sfs_proceds_watch( $data ) {
 	// get the things out of the get
 	// check for valid get
 	if ( !array_key_exists( 'func', $_GET ) ) {
-		_e( ' Function Not Found', 'dam-spam' );
+		esc_html_e( ' Function Not Found', 'dam-spam' );
 		exit();
 	}
 	$trash	   = DS_PLUGIN_URL . 'images/trash.png';
@@ -395,7 +395,7 @@ function sfs_handle_ajax_sfs_proceds_watch( $data ) {
 				be_load( 'ds_remove_gcache', $ip, $stats, $options );
 			}
 			be_load( 'ds_addtoallowlist', $ip, $stats, $options );
-// if it is not good or bad IP we don't need the container as it is the log
+			// if it is not good or bad IP we don't need the container as it is the log
 			break;
 		case 'delete_wl_row': // this is from the Allow Requests list
 			$ansa = be_load( 'ds_get_alreq', $ip, $stats, $options );
@@ -413,7 +413,7 @@ function sfs_handle_ajax_sfs_proceds_watch( $data ) {
 			exit();
 			break;
 		default:
-			_e( '\r\n\r\nUnrecognized function "' . $func . '"', 'dam-spam' );
+			printf( esc_html__( '\r\n\r\nUnrecognized function "%s"', 'dam-spam' ), $func );
 			exit();
 	}
 	$ajaxurl  = admin_url( 'admin-ajax.php' );
@@ -435,7 +435,7 @@ function sfs_handle_ajax_sfs_proceds_watch( $data ) {
 			exit();
 		default:
 			// coming from logs report we need to display an appropriate message, I think
-			_e( 'Something is missing ' . $container . ' ', 'dam-spam' );
+			printf( esc_html__( 'Something is missing %s ', 'dam-spam' ), $container );
 			exit();
 	}
 }

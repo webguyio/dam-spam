@@ -5,42 +5,42 @@
 		<td colspan="2">
 			<h3>
 				<div class="section-title">
-					<?php _e( 'Flags', 'dam-spam' ) ?>
+					<?php esc_html_e( 'Flags', 'dam-spam' ) ?>
 				</div>
 			</h3>
 			<hr width="50%" align="left">
 			<br>
-			<?php _e( 'Show in list if... ', 'dam-spam' ) ?>
+			<?php esc_html_e( 'Show in list if... ', 'dam-spam' ) ?>
 			<select name="flagsCND">
 				<option value="intersept" <?php echo !empty( $_POST[ 'flagsCND'] ) &&$_POST[ 'flagsCND'] == 'intersept' ? 'selected' : '' ?>>
-					<?php _e( 'ALL are true', 'dam-spam' ) ?>
+					<?php esc_html_e( 'ALL are true', 'dam-spam' ) ?>
 				</option>
 				<option value="add" <?php echo !empty( $_POST[ 'flagsCND'] ) && $_POST['flagsCND'] == 'add' ? 'selected' : '' ?>>
-					<?php _e( 'ANY are true', 'dam-spam' ) ?>
+					<?php esc_html_e( 'ANY are true', 'dam-spam' ) ?>
 				</option>
 			</select>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="2">
-			<?php _e( 'User has...', 'dam-spam' ) ?>
+			<?php esc_html_e( 'User has...', 'dam-spam' ) ?>
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<?php _e( 'Approved Comments', 'dam-spam' ) ?>
+			<?php esc_html_e( 'Approved Comments', 'dam-spam' ) ?>
 		</td>
 		<td align="left" width="250">
 			<label for="flag_approve_no">
-				<?php _e( 'No', 'dam-spam' ) ?>
+				<?php esc_html_e( 'No', 'dam-spam' ) ?>
 				<input id="flag_approve_no" type="radio" name="f_approve" value="no" <?php if ( isset( $_POST[ 'f_approve'] ) and $_POST[ 'f_approve'] === 'no' ) { echo 'checked'; } ?>>
 			</label>
 			<label for="flag_approve_yes">
-				<?php _e( 'Yes', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Yes', 'dam-spam' ) ?>
 				<input id="flag_approve_yes" type="radio" name="f_approve" value="yes" <?php if ( isset( $_POST[ 'f_approve'] ) and $_POST[ 'f_approve'] === 'yes' ) { echo 'checked'; } ?>>
 			</label>
 			<label for="flag_approve_nomatter">
-				<?php _e( 'Ignore', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Ignore', 'dam-spam' ) ?>
 				<input id="flag_approve_nomatter" type="radio" name="f_approve" value="0" <?php echo empty( $_POST[ 'f_approve'] ) ? 'checked' : '' ?>>
 			</label>
 		</td>
@@ -48,49 +48,49 @@
 	<tr>
 	<?php // if ( !isset( $_POST[ 'has_spam'] ) ) $_POST[ 'has_spam'] = 'yes'; ?>
 		<td>
-			<?php _e( 'Spam Comments', 'dam-spam' ) ?>
+			<?php esc_html_e( 'Spam Comments', 'dam-spam' ) ?>
 		</td>
 		<td align="left">
 			<label for="flag_has_spam_no">
-				<?php _e( 'No', 'dam-spam' ) ?>
+				<?php esc_html_e( 'No', 'dam-spam' ) ?>
 				<input id="flag_has_spam_no" type="radio" name="has_spam" value="no" <?php if ( isset( $_POST[ 'has_spam'] ) and $_POST[ 'has_spam']==='no' ) { echo 'checked'; } ?>>
 			</label>
 			<label for="flag_has_spam_yes">
-				<?php _e( 'Yes', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Yes', 'dam-spam' ) ?>
 				<input id="flag_has_spam_yes" type="radio" name="has_spam" value="yes" <?php if ( isset( $_POST[ 'has_spam'] ) and $_POST[ 'has_spam'] === 'yes' ) { echo 'checked'; } ?>>
 			</label>
 			<label for="flag_has_spam_nomatter">
-				<?php _e( 'Ignore', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Ignore', 'dam-spam' ) ?>
 				<input id="flag_has_spam_nomatter" type="radio" name="has_spam" value="0" <?php echo empty( $_POST[ 'has_spam'] ) ? 'checked' : '' ?>>
 			</label>
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<?php _e( 'Same First/Last Name', 'dam-spam' ) ?>
+			<?php esc_html_e( 'Same First/Last Name', 'dam-spam' ) ?>
 		</td>
 		<td align="left" width="250">
 			<label for="ds_check_name_no">
-				<?php _e( 'No', 'dam-spam' ) ?>
+				<?php esc_html_e( 'No', 'dam-spam' ) ?>
 				<input id="ds_domain_no" type="radio" name="ds_check_name" value="no" <?php echo empty( $_POST[ 'ds_check_name'] ) ? 'checked' : '' ?> <?php if ( isset( $_POST[ 'ds_check_name'] ) and $_POST[ 'ds_domain'] === 'no' ) { echo 'checked';} ?>>
 			</label>
 			<label for="ds_check_name_yes">
-				<?php _e( 'Yes', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Yes', 'dam-spam' ) ?>
 				<input id="ds_check_name_yes" type="radio" name="ds_check_name" value="yes" <?php if ( isset( $_POST[ 'ds_check_name'] ) and $_POST[ 'ds_check_name'] === 'yes' ) { echo 'checked';} ?>>
 			</label>
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<?php _e( 'Specific TLD (e.g. .xxx, .blog)', 'dam-spam' ) ?>
+			<?php esc_html_e( 'Specific TLD (e.g. .xxx, .blog)', 'dam-spam' ) ?>
 		</td>
 		<td align="left" width="250">
 			<label for="ds_domain_no">
-				<?php _e( 'No', 'dam-spam' ) ?>
+				<?php esc_html_e( 'No', 'dam-spam' ) ?>
 				<input id="ds_domain_no" type="radio" name="ds_domain" value="no" <?php echo empty( $_POST[ 'ds_domain'] ) ? 'checked' : '' ?> <?php if ( isset( $_POST[ 'ds_domain'] ) and $_POST[ 'ds_domain'] === 'no' ) { echo 'checked'; } ?>>
 			</label>
 			<label for="ds_domain_yes">
-				<?php _e( 'Yes', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Yes', 'dam-spam' ) ?>
 				<input id="ds_domain_yes" type="radio" name="ds_domain" value="yes" <?php if ( isset( $_POST[ 'ds_domain'] ) and $_POST[ 'ds_domain'] === 'yes' ) { echo 'checked'; } ?>>
 			</label>
 			<textarea cols="100" rows="2" name="ds_domain_text">
@@ -102,73 +102,73 @@
 		<td colspan="2">
 			<h3>
 				<div class="section-title">
-					<?php _e( 'Filters', 'dam-spam' ) ?>
+					<?php esc_html_e( 'Filters', 'dam-spam' ) ?>
 				</div>
 			</h3>
 			<hr width="50%" align="left">
 			<br>
 			<label for="usernameFilter">
-				<?php _e( 'Username', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Username', 'dam-spam' ) ?>
 			</label>
 			<input type="text" size="15" name="ds_username" value="<?php echo isset( $_POST['ds_username'] ) ? htmlspecialchars( $_POST['ds_username'] ) : '' ?>" id="usernameFilter">
 			<br>
 			<small>
-				<?php _e( 'Refine list by a username (e.g. test, example, etc.).', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Refine list by a username (e.g. test, example, etc.).', 'dam-spam' ) ?>
 			</small>
 		</td>
 	</tr>
 	<tr valign="top">
 		<td colspan="2">
 			<label for="flag_daysleft">
-			<?php _e( 'User was created', 'dam-spam' ) ?>
+			<?php esc_html_e( 'User was created', 'dam-spam' ) ?>
 				<select name="f_daysleft">
 				<?php if ( !isset( $_POST[ 'f_daysleft'] ) ) $_POST[ 'f_daysleft'] = 1; ?>
 					<option value="1" <?php !empty( $_POST[ 'f_daysleft'] ) ? 'selected' : '' ?>>
-						<?php _e( 'more', 'dam-spam' ) ?>
+						<?php esc_html_e( 'more', 'dam-spam' ) ?>
 					</option>
 					<option value="0" <?php empty( $_POST[ 'f_daysleft'] ) ? 'selected' : '' ?>>
-						<?php _e( 'less', 'dam-spam' ) ?>
+						<?php esc_html_e( 'less', 'dam-spam' ) ?>
 					</option>
 				</select>
-				<?php _e( 'than', 'dam-spam' ) ?>
+				<?php esc_html_e( 'than', 'dam-spam' ) ?>
 				<input type="text" size="4" name="daysleft" value="<?php echo isset( $_POST['daysleft'] ) ? intval( $_POST['daysleft'] ) : 7 ?>">
-				<?php _e( 'days ago.', 'dam-spam' ) ?>
+				<?php esc_html_e( 'days ago.', 'dam-spam' ) ?>
 			</label>
 			<br>
 			<small>
-				<?php _e( 'Users need time to begin commenting. This filter can show recent registrations.', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Users need time to begin commenting. This filter can show recent registrations.', 'dam-spam' ) ?>
 			</small>
 		</td>
 	</tr>
 	<tr valign="top">
 		<td colspan="2">
 			<label for="f_lastlogin">
-			<?php _e( 'Last time user logged in is more than', 'dam-spam' ) ?>
+			<?php esc_html_e( 'Last time user logged in is more than', 'dam-spam' ) ?>
 				<select name="f_lastlogin">
 					<option value="0">
-						<?php _e( 'No Filter', 'dam-spam' ) ?>
+						<?php esc_html_e( 'No Filter', 'dam-spam' ) ?>
 					</option>
 					<?php $columns = array( 15, 30, 60, 90, 180, 360, 720 ); foreach ( $columns as $v ) { print '<option value="' . $v . '" ' . ( $_POST[ 'f_lastlogin'] == $v ? 'selected' : '' ) . '>' . $v . '</option>'; } ?>
 				</select>
-				<?php _e( 'days ago.', 'dam-spam' ) ?>
+				<?php esc_html_e( 'days ago.', 'dam-spam' ) ?>
 			</label>
 			<br>
 			<small>
-				<?php _e( 'Search by last login.', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Search by last login.', 'dam-spam' ) ?>
 			</small>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="2">
 			<label for="user_role">
-				<?php _e( 'User role ', 'dam-spam' ) ?>
+				<?php esc_html_e( 'User role ', 'dam-spam' ) ?>
 			</label>
 			<select name="user_role">
 				<?php global $wp_roles; $roles = array( '' => 'Any Role' ) + $wp_roles->get_names(); foreach ( $roles as $roleId => $roleName ) { print '<option value="' . $roleId . '" ' . ($_POST['user_role'] == $roleId ? 'selected ' : ' ' ) . '>' . $roleName . '</option>'; } ?>
 			</select>
 			<br>
 			<small>
-				<?php _e( 'Filter by user role.', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Filter by user role.', 'dam-spam' ) ?>
 			</small>
 		</td>
 	</tr>
@@ -176,31 +176,31 @@
 		<td align="left" colspan="2">
 			<h3>
 				<div class="section-title">
-					<?php _e( 'Table Formatting', 'dam-spam' ) ?>
+					<?php esc_html_e( 'Table Formatting', 'dam-spam' ) ?>
 				</div>
 			</h3>
 			<hr width="50%" align="left">
 			<br>
 			<label for="sort_order">
-				<?php _e( 'Show', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Show', 'dam-spam' ) ?>
 			</label>
 			<select id="max_size_output" name="max_size_output">
 			<?php $columns = array( '150', '300', '500', '1000', '3000', 'All' ); foreach ( $columns as $v ) {
 				print '<option value="' . $v . '" ' . ( $_POST['max_size_output'] == $v ? 'selected' : '' ) . '>' . $v . '</option>';
 			} ?>
 			</select>
-			<?php _e( 'records', 'dam-spam' ) ?>
+			<?php esc_html_e( 'records', 'dam-spam' ) ?>
 			<br>
 			<small>
-				<?php _e( 'Max sent allowed is', 'dam-spam' ) . ' ' . ini_get( 'max_input_vars' ) . ' ' . __( 'input vars.' ) ?>
+				<?php esc_html_e( 'Max sent allowed is', 'dam-spam' ) . ' ' . ini_get( 'max_input_vars' ) . ' ' . esc_html__( 'input vars.' ) ?>
 			</small>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="2">
-			<input class="button-primary" type="submit" value="<?php _e( 'Search' ) ?>" name="ds_search">
+			<input class="button-primary" type="submit" value="<?php esc_html_e( 'Search' ) ?>" name="ds_search">
 			<button class="button-primary" onclick="window.open('<?php echo admin_url( "admin-ajax.php" ) ?>' + '?action=iud_getCsvUserList&' + jQuery('#inactive-user-deleter-form').serialize()); return false;">
-				<?php _e( 'Export to CSV', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Export to CSV', 'dam-spam' ) ?>
 			</button>
 		</td>
 	</tr>
@@ -217,7 +217,7 @@ if ( isset( $_POST['ds_search'] ) ) {
 		$user_list = $userListObject->rows;
 		$total = $userListObject->total;
 		if ( empty( $userListObject->rows ) ) {
-			echo __( '<p><strong>No users are found.</strong></p>', 'dam-spam' );
+			echo esc_html__( '<p><strong>No users are found.</strong></p>', 'dam-spam' );
 		} else {
 			include_once 'user_list.php';
 		}
@@ -228,15 +228,15 @@ function ds_isVIPUser( $userID ) {
 	global $user_ID;
 	if ( $userID == $user_ID ) {
 		// i never will delete current user
-		return __( 'I can\'t delete your profile!', 'dam-spam' );
+		return esc_html__( 'I can\'t delete your profile!', 'dam-spam' );
 	}
 	if ( $userID == 1 ) {
-		return __( 'I will never delete the super user!', 'dam-spam' );
+		return esc_html__( 'I will never delete the super user!', 'dam-spam' );
 	}
 	return false;
 }
 
-function ds_getUsersList( $ARGS = array(), $environment ) {
+function ds_getUsersList( $environment, $ARGS = array() ) {
 	global $wpdb;
 	$conditions = array();
 	$conditions_sec2 = array( 1 );
@@ -423,7 +423,7 @@ if ( isset( $_POST['op'] ) ) {
 	switch ( $_POST['op'] ) {
 		case 'disable':
 		// disable accounts
-		echo __( 'Disabling...', 'dam-spam' ) . '<br>';
+		echo esc_html__( 'Disabling...', 'dam-spam' ) . '<br>';
 		$cnt_disabled = 0;
 		foreach ( $_POST['f_users'] as $user_id_to_disable ) {
 			$result = ds_isVIPUser( $user_id_to_disable );
@@ -439,14 +439,14 @@ if ( isset( $_POST['op'] ) ) {
 		}
 		// output actions status
 		if ( $cnt_disabled == 1 ) {
-			echo $cnt_disabled . ' ' . __( 'user was disabled.', 'dam-spam' );
+			echo $cnt_disabled . ' ' . esc_html__( 'user was disabled.', 'dam-spam' );
 		} else {
-			echo $cnt_disabled . ' ' . __( 'users were disabled.', 'dam-spam' );
+			echo $cnt_disabled . ' ' . esc_html__( 'users were disabled.', 'dam-spam' );
 		}
 		break;
 		case 'activate':
 		// enable accounts
-		echo __( 'Enabling accounts...', 'dam-spam' ) . '<br>';
+		echo esc_html__( 'Enabling accounts...', 'dam-spam' ) . '<br>';
 		$cnt_enabled = 0;
 		foreach ( $_POST['f_users'] as $user_id_to_enable ) {
 			$tm = get_user_meta( $user_id_to_enable, '_IUD_userBlockedTime', true );
@@ -457,9 +457,9 @@ if ( isset( $_POST['op'] ) ) {
 		}
 		// output actions status
 		if ( $cnt_enabled == 1 ) {
-			echo $cnt_enabled . ' ' . __( 'user was enabled.', 'dam-spam' );
+			echo $cnt_enabled . ' ' . esc_html__( 'user was enabled.', 'dam-spam' );
 		} else {
-			echo $cnt_enabled . ' ' . __( 'users were enabled.', 'dam-spam' );
+			echo $cnt_enabled . ' ' . esc_html__( 'users were enabled.', 'dam-spam' );
 		}
 		break;
 	}

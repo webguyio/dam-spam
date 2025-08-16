@@ -1,34 +1,34 @@
 <p><strong>
 <?php
 echo count( $user_list );
-echo __( ' record(s) are shown.', 'dam-spam' );
+echo esc_html__( ' record(s) are shown.', 'dam-spam' );
 if ( $total > count( $user_list ) ) {
-	echo ' ' . $total . ' ' . __( 'are found total.', 'dam-spam' );
+	echo ' ' . $total . ' ' . esc_html__( 'are found total.', 'dam-spam' );
 }
 ?>
 </strong></p>
 
 <hr>
 
-<input type="button" value="<?php echo __( 'Select all', 'dam-spam' ) ?>" onclick="ds_markALL(this.form['f_users[]']);">
-<input type="button" value="<?php echo __( 'Deselect all', 'dam-spam' ) ?>" onclick="ds_unmarkALL(this.form['f_users[]']);">
-<input type="button" class="button-secondary-red" value="<?php echo __( 'Disable users', 'dam-spam' ) ?>" onclick="if(confirm('Yes, disable all marked users.')){this.form.op.value='disable';this.form.submit();}">
-<input type="button" class="button-primary" value="<?php echo __( 'Enable users', 'dam-spam' ) ?>" onclick="if(confirm('Yes, activate all marked users.')){this.form.op.value='activate';this.form.submit();}">
+<input type="button" value="<?php echo esc_html__( 'Select all', 'dam-spam' ) ?>" onclick="ds_markALL(this.form['f_users[]']);">
+<input type="button" value="<?php echo esc_html__( 'Deselect all', 'dam-spam' ) ?>" onclick="ds_unmarkALL(this.form['f_users[]']);">
+<input type="button" class="button-secondary-red" value="<?php echo esc_html__( 'Disable users', 'dam-spam' ) ?>" onclick="if(confirm('Yes, disable all marked users.')){this.form.op.value='disable';this.form.submit();}">
+<input type="button" class="button-primary" value="<?php echo esc_html__( 'Enable users', 'dam-spam' ) ?>" onclick="if(confirm('Yes, activate all marked users.')){this.form.op.value='activate';this.form.submit();}">
 
 <table cellpadding="3"><tr>
 	<th>No.</th>
 	<th>Check</th>
-	<th class="clickable header sort" width="150" align="left" onclick="jQuery('#sort_order').val('login'); jQuery('#inactive-user-deleter-form').submit();"><?php echo __( 'Username' ) ?></th>
-	<th class="clickable header sort" align="left" onclick="jQuery('#sort_order').val('mail'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	__( 'Email' ) ?></th>
-	<th class="clickable header sort" align="left" onclick="jQuery('#sort_order').val('disabled'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	__( 'Status' ) ?></th>
-	<th class="clickable header sort" align="left" onclick="jQuery('#sort_order').val('disabled'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	__( 'First Name ') ?></th>
-	<th class="clickable header sort" align="left" onclick="jQuery('#sort_order').val('disabled'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	__( 'Last Name' ) ?></th>
-	<th class="clickable header sort" onclick="jQuery('#sort_order').val('userlevel'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	__( 'Role' ) ?></th>
-	<th class="clickable header sort" width="120" onclick="jQuery('#sort_order').val('regdate'); jQuery('#inactive-user-deleter-form').submit();"><?php echo __( 'Reg date' ) ?></th>
-	<th class="clickable header sort" width="120" onclick="jQuery('#sort_order').val('logindate'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	__( 'Last login' ) ?></th>
-	<th class="clickable header sort" width="120" onclick="jQuery('#sort_order').val('logindate'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	__( 'Published posts' ) ?></th>
-	<th class="clickable header sort" onclick="jQuery('#sort_order').val('spam'); jQuery('#inactive-user-deleter-form').submit();"><?php echo __( 'Spam comments' ) ?></th>
-	<th class="clickable header sort" onclick="jQuery('#sort_order').val('comments'); jQuery('#inactive-user-deleter-form').submit();"><?php echo __( 'Approved comments' ) ?></th></tr>
+	<th class="clickable header sort" width="150" align="left" onclick="jQuery('#sort_order').val('login'); jQuery('#inactive-user-deleter-form').submit();"><?php echo esc_html__( 'Username' ) ?></th>
+	<th class="clickable header sort" align="left" onclick="jQuery('#sort_order').val('mail'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	esc_html__( 'Email' ) ?></th>
+	<th class="clickable header sort" align="left" onclick="jQuery('#sort_order').val('disabled'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	esc_html__( 'Status' ) ?></th>
+	<th class="clickable header sort" align="left" onclick="jQuery('#sort_order').val('disabled'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	esc_html__( 'First Name ') ?></th>
+	<th class="clickable header sort" align="left" onclick="jQuery('#sort_order').val('disabled'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	esc_html__( 'Last Name' ) ?></th>
+	<th class="clickable header sort" onclick="jQuery('#sort_order').val('userlevel'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	esc_html__( 'Role' ) ?></th>
+	<th class="clickable header sort" width="120" onclick="jQuery('#sort_order').val('regdate'); jQuery('#inactive-user-deleter-form').submit();"><?php echo esc_html__( 'Reg date' ) ?></th>
+	<th class="clickable header sort" width="120" onclick="jQuery('#sort_order').val('logindate'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	esc_html__( 'Last login' ) ?></th>
+	<th class="clickable header sort" width="120" onclick="jQuery('#sort_order').val('logindate'); jQuery('#inactive-user-deleter-form').submit();"><?php echo	esc_html__( 'Published posts' ) ?></th>
+	<th class="clickable header sort" onclick="jQuery('#sort_order').val('spam'); jQuery('#inactive-user-deleter-form').submit();"><?php echo esc_html__( 'Spam comments' ) ?></th>
+	<th class="clickable header sort" onclick="jQuery('#sort_order').val('comments'); jQuery('#inactive-user-deleter-form').submit();"><?php echo esc_html__( 'Approved comments' ) ?></th></tr>
 	<?php
 	$i = 0;
 	$stroked = 0;
@@ -54,7 +54,7 @@ if ( $total > count( $user_list ) ) {
 			}
 			//last_login_classipress date preferable
 			$last_login = $UR['last_login_classipress'] ? strtotime( $UR['last_login_classipress'] ) : $UR['last_login'];
-			$status = $UR['disabled_time'] ? __( 'blocked' ) . date( ' [d M Y]', $UR['disabled_time'] ) : __( 'active' );
+			$status = $UR['disabled_time'] ? esc_html__( 'blocked' ) . date( ' [d M Y]', $UR['disabled_time'] ) : esc_html__( 'active' );
 			echo "</td>\n<td align=\"left\">{$login}</td>"
 			. "<td align=\"left\">$UR[mail]</td>"
 			. "<td align=\"left\">{$status}</td>"

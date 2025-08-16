@@ -249,7 +249,7 @@ class ds_check_post extends be_module {
 		// sfs_debug_msg( "check post $ip, " . print_r( $post,true ) );
 		// for testing the cache without doing spam
 		if ( array_key_exists( 'email', $post ) && $post['email'] == 'email@example.com' ) {
-			$post['reason'] = __( 'Testing Email (will always be blocked)', 'dam-spam' ); // use to test plugin
+			$post['reason'] = esc_html__( 'Testing Email (will always be blocked)', 'dam-spam' ); // use to test plugin
 			be_load( 'ds_challenge', ds_get_ip(), $stats, $options, $post );
 			return;
 		}

@@ -21,7 +21,7 @@ class chkbbcode { // change name
 			foreach ( $bbcodes as $bb ) {
 				// sfs_debug_msg( "looking for $key - $bb in $data" );
 				if ( stripos( $data, $bb ) !== false ) {
-					return __( 'BBCode ' . $bb . ' in ' . $key . '', 'dam-spam' );
+					sprintf( esc_html__( 'BBCode %1$s in %2$s', 'dam-spam' ), $bb, $key );
 				}
 			}
 		}

@@ -16,16 +16,16 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 ?>
 
 <div id="ds-plugin" class="wrap">
-	<h1 id="ds-head">Dam Spam — Cleanup</h1>
+	<h1 id="ds-head"><?php esc_html_e( 'Cleanup — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php if ( array_key_exists( 'autol', $_POST ) || array_key_exists( 'delo', $_POST ) ) {
-		echo '<div class="notice notice-success is-dismissible"><p>' . __( 'Options Updated', 'dam-spam' ) . '</p></div>';
+		echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
 	}
 	?>
 	<div class="ds-info-box">
 		<h2 class="nav-tab-wrapper">
-        	<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-maintenance&tab=disable-users' ) ); ?>" class="nav-tab <?php echo 'disable-users' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Disable Users', 'dam-spam' ); ?></a>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-maintenance&tab=delete-comments' ) ); ?>" class="nav-tab <?php echo 'delete-comments' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Delete Comments', 'dam-spam' ); ?></a>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-maintenance&tab=db-cleanup' ) ); ?>" class="nav-tab <?php echo 'db-cleanup' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Database Cleanup', 'dam-spam' ); ?></a>
+        	<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-cleanup&tab=disable-users' ) ); ?>" class="nav-tab <?php echo 'disable-users' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Disable Users', 'dam-spam' ); ?></a>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-cleanup&tab=delete-comments' ) ); ?>" class="nav-tab <?php echo 'delete-comments' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Delete Comments', 'dam-spam' ); ?></a>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-cleanup&tab=db-cleanup' ) ); ?>" class="nav-tab <?php echo 'db-cleanup' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Database Cleanup', 'dam-spam' ); ?></a>
 		</h2>
 		<br>
 		<?php
@@ -44,7 +44,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 				}
 				$v = print_r( $v, true );
 				$v = htmlentities( $v );
-				_e( '<h2>contents of ' . $op . '</h2><pre>' . $v . '</pre>', 'dam-spam' );
+				printf( __( '<h2>contents of %1$s</h2><pre>%2$s</pre>', 'dam-spam' ), $op, $v );
 			}
 			if ( array_key_exists( 'autol', $_POST ) ) {
 				foreach ( $_POST['autol'] as $name ) {
@@ -55,7 +55,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 						$au = 'no';
 					}
 					$name = substr( $name, strpos( $name, '_' ) + 1 );
-					_e( 'changing ' . $name . ' autoload to $au<br>', 'dam-spam' );
+					printf( esc_html__( 'changing %1$s autoload to %2$s', 'dam-spam' ), $name, $au . '<br>' );
 					$sql  = "update $ptab set autoload='$au' where option_name='$name'";
 					$wpdb->query( $sql );
 				}
@@ -63,7 +63,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 			if ( array_key_exists( 'delo', $_POST ) ) {
 				foreach ( $_POST['delo'] as $name ) {
 					$name = sanitize_key( $name );
-					_e( 'deleting ' . $name . ' <br>', 'dam-spam' );
+					printf( esc_html__( 'deleting %s ', 'dam-spam' ), $name . '<br>' );
 					$sql = "delete from $ptab where option_name='$name'";
 					$wpdb->query( $sql );
 				}
@@ -75,7 +75,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 				return;
 			}
 			$wpdb->query( "DELETE FROM $wpdb->comments WHERE comment_approved = 0" );
-			_e( 'Comments','dam-spam' );
+			esc_html_e( 'Comments', 'dam-spam' );
 		}
 		$sysops = array(
 			'_transient_',
@@ -267,8 +267,8 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 		?>
 		<form method="post" name="DOIT2" action="">
 			<!-- <input type="hidden" name="ds_opt_control" value="<?php echo $nonce; ?>"> -->
-			<?php if ( !isset( $_GET['tab'] ) or $_GET['tab'] == 'disable-users' ): ?>
-				<?php include_once plugin_dir_path( __DIR__ ) . 'includes/user_filter_list.php' ?>
+			<?php if ( !isset( $_GET['tab'] ) or $_GET['tab'] == 'disable-users' ) : ?>
+				<?php include_once DS_PLUGIN_FILE . '/includes/user_filter_list.php' ?>
 			<?php endif; ?>
 			<?php
 			$pending_comment_ids    = $wpdb->get_col( "SELECT comment_ID FROM $wpdb->comments WHERE comment_approved = 0" );
@@ -290,7 +290,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 						?>
 					</p>
 					<p>
-						<?php _e( 'You have to type the following text into the textbox to delete all the pending comments:', 'dam-spam' ); ?>
+						<?php esc_html_e( 'You have to type the following text into the textbox to delete all the pending comments:', 'dam-spam' ); ?>
 					</p>
 					<blockquote>
 						<em>
@@ -298,28 +298,28 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 						</em>
 					</blockquote>
 					<textarea name="ds_delete_pending_comment_confirmation_text"></textarea>
-					<button name="ds_delete_pending_comment" class="button-primary"><?php _e( 'Delete', 'dam-spam' ); ?></button>
+					<button name="ds_delete_pending_comment" class="button-primary"><?php esc_html_e( 'Delete', 'dam-spam' ); ?></button>
 					<?php
 				} else {
 					?>
 					<p>
-						<?php _e( 'There are no pending or spam comments in your site.', 'dam-spam' ); ?>
+						<?php esc_html_e( 'There are no pending or spam comments in your site.', 'dam-spam' ); ?>
 					</p>
 					<?php
 				}
 			}
 			?>
 			<?php if ( isset ( $_GET['tab'] ) and $_GET['tab'] == 'db-cleanup' ): ?>
-			<p><?php _e( 'Inspect and delete orphan or suspicious options or change plugin options so that they don&acute;t autoload. Be aware that you can break some plugins by deleting their options. Before making updates, please <a href="https://calmestghost.com/documentation/database-cleanup/" target="_blank">review our documentation</a>.', 'dam-spam' ); ?></p>
+			<p><?php esc_html_e( 'Inspect and delete orphan or suspicious options or change plugin options so that they don&acute;t autoload. Be aware that you can break some plugins by deleting their options.', 'dam-spam' ); ?></p>
 			<table id="dstable" name="sstable" cellspacing="2">
 				<thead>
 					<tr bgcolor="#fff">
-						<th class="ds-cleanup"><?php _e( 'Option', 'dam-spam' ); ?></th>
-						<th class="ds-cleanup"><?php _e( 'Autoload', 'dam-spam' ); ?></th>
-						<th class="ds-cleanup"><?php _e( 'Size', 'dam-spam' ); ?></th>
-						<th class="ds-cleanup"><?php _e( 'Change Autoload', 'dam-spam' ); ?></th>
-						<th class="ds-cleanup"><?php _e( 'Delete', 'dam-spam' ); ?></th>
-						<th class="ds-cleanup"><?php _e( 'View Contents', 'dam-spam' ); ?></th>
+						<th class="ds-cleanup"><?php esc_html_e( 'Option', 'dam-spam' ); ?></th>
+						<th class="ds-cleanup"><?php esc_html_e( 'Autoload', 'dam-spam' ); ?></th>
+						<th class="ds-cleanup"><?php esc_html_e( 'Size', 'dam-spam' ); ?></th>
+						<th class="ds-cleanup"><?php esc_html_e( 'Change Autoload', 'dam-spam' ); ?></th>
+						<th class="ds-cleanup"><?php esc_html_e( 'Delete', 'dam-spam' ); ?></th>
+						<th class="ds-cleanup"><?php esc_html_e( 'View Contents', 'dam-spam' ); ?></th>
 					</tr>
 				</thead>
 				<?php
@@ -336,13 +336,13 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 						<td align="center"><?php echo $sz; ?></td>
 						<td align="center"><input type="checkbox" value="<?php echo $autoload . '_' . $option_name; ?>" name="autol[]">&nbsp;<?php echo $autoload; ?></td>
 						<td align="center"><input type="checkbox" value="<?php echo $option_name; ?>" name="delo[]"></td>
-						<td align="center"><button type="submit" name="view" value="<?php echo $option_name; ?>"><?php _e( 'view', 'dam-spam' ); ?></button></td>
+						<td align="center"><button type="submit" name="view" value="<?php echo $option_name; ?>"><?php esc_html_e( 'view', 'dam-spam' ); ?></button></td>
 					</tr>
 					<?php
 				}
 				?>
 			</table>
-			<p class="submit"><input class="button-primary" value="<?php _e( 'Update', 'dam-spam' ); ?>" type="submit" onclick="return confirm('Are you sure? These changes are permenant.');"></p>
+			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Update', 'dam-spam' ); ?>" type="submit" onclick="return confirm('Are you sure? These changes are permenant.');"></p>
 			<?php endif;?>
 		</form>
 		<?php
@@ -350,15 +350,15 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 		$m3 = memory_get_peak_usage();
 		$m1 = number_format( $m1 );
 		$m3 = number_format( $m3 );
-		_e( '<p>Memory Usage Currently: ' . $m1 . ' Peak: ' . $m3 . '</p>', 'dam-spam' );
+		printf( '<p>' . esc_html__( 'Memory Usage Currently: %1$s Peak: %2$s', 'dam-spam' ), $m1, $m3 . '</p>' );
 		$nonce		    = wp_create_nonce( 'ds_update2' );
 		$showtransients = false; // change to true to clean up transients
 		if ( $showtransients && countTransients() > 0 ) { // personal use - probably too dangerous for casual users ?>
 			<hr>
-			<p><?php _e( 'WordPress creates temporary objects in the database called transients.<br>WordPress is not good about cleaning them up afterwards. You can clean these up safely and it might speed things up.', 'dam-spam' ); ?></p>
+			<p><?php esc_html_e( 'WordPress creates temporary objects in the database called transients. WordPress is not good about cleaning them up afterwards. You can clean these up safely and it might speed things up.', 'dam-spam' ); ?></p>
 			<form method="post" name="DOIT2" action="">
 				<input type="hidden" name="ds_opt_tdel" value="<?php echo $nonce; ?>">
-				<p class="submit"><input class="button-primary" value="<?php _e( 'Delete Transients', 'dam-spam' ); ?>" type="submit"></p>
+				<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Delete Transients', 'dam-spam' ); ?>" type="submit"></p>
 			</form>
 			<?php
 			$nonce = '';
@@ -370,7 +370,10 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 				deleteTransients();
 			}
 			?>
-			<p><?php _e( 'Currently there are ' . countTransients() . ' found.', 'dam-spam' ); ?></p>
+			<p><?php
+			$countT = countTransients();
+			printf( esc_html__( 'Currently there are %s found.', 'dam-spam' ), $countT );
+			?></p>
 		<?php
 		}
 		?>

@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
-	die( __( 'Access Blocked', 'dam-spam' ) );
+	die( esc_html__( 'Access Blocked', 'dam-spam' ) );
 }
 
 ds_fix_post_vars();
@@ -21,7 +21,7 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 ?>
 
 <div id="ds-plugin" class="wrap">
-	<h1 id="ds-head">Dam Spam — <?php _e( 'Log Report', 'dam-spam' ); ?></h1>
+	<h1 id="ds-head"><?php esc_html_e( 'Logs — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php
 	// $ip = ds_get_ip();
 	$stats = ds_get_stats();
@@ -45,14 +45,14 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 			$stats['spdate']  = $spdate;
 			ds_set_stats( $stats );
 			extract( $stats ); // extract again to get the new options
-			$msg			  = '<div class="notice notice-success"><p>' . __( 'Activity Log Cleared', 'dam-spam' ) . '</p></div>';
+			$msg			  = '<div class="notice notice-success"><p>' . esc_html__( 'Activity Log Cleared', 'dam-spam' ) . '</p></div>';
 		}
 		if ( array_key_exists( 'ds_update_log_size', $_POST ) ) {
 			// update log size
 			if ( array_key_exists( 'ds_hist', $_POST ) ) {
 				$ds_hist			= stripslashes( sanitize_text_field( $_POST['ds_hist'] ) );
 				$options['ds_hist'] = $ds_hist;
-				$msg				= '<div class="notice notice-success"><p>' . __( 'Options Updated', 'dam-spam' ) . '</p></div>';
+				$msg				= '<div class="notice notice-success"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
 				// update the options
 				ds_set_options( $options );
 			}
@@ -64,12 +64,12 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->spam );
 	if ( $num_comm->spam > 0 && DS_MU != 'Y' ) { ?>
-		<p><?php _e( 'There are <a href="edit-comments.php?comment_status=spam">' . $num . '</a> spam comments waiting for you to report them.', 'dam-spam' ); ?></p>
+		<p><?php printf( __( 'There are <a href="edit-comments.php?comment_status=spam">%s</a> spam comments waiting for you to report them.', 'dam-spam' ), $num ); ?></p>
 	<?php }
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->moderated );
 	if ( $num_comm->moderated > 0 && DS_MU != 'Y' ) { ?>
-		<p><?php _e( 'There are <a href="edit-comments.php?comment_status=moderated">' . $num . '</a> comments waiting to be moderated.', 'dam-spam' ); ?></p>
+		<p><?php printf( __( 'There are <a href="edit-comments.php?comment_status=moderated">%s</a> comments waiting to be moderated.', 'dam-spam' ), $num ); ?></p>
 	<?php }
 	$nonce = wp_create_nonce( 'ds_update' );
 	?>
@@ -81,8 +81,8 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 	<form method="post" action="">
 		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
 		<input type="hidden" name="ds_update_log_size" value="true">
-		<h2><?php _e( 'History Size', 'dam-spam' ); ?></h2>
-		<?php _e( 'Select the number of events to save in the history.', 'dam-spam' ); ?><br>
+		<h2><?php esc_html_e( 'History Size', 'dam-spam' ); ?></h2>
+		<?php esc_html_e( 'Select the number of events to save in the history.', 'dam-spam' ); ?><br>
 		<p class="submit">
 			<select name="ds_hist">
 				<option value="10" <?php if ( $ds_hist == '10' ) { echo 'selected="true"'; } ?>>10</option>
@@ -92,28 +92,29 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 				<option value="100" <?php if ( $ds_hist == '100' ) { echo 'selected="true"'; } ?>>100</option>
 				<option value="150" <?php if ( $ds_hist == '150' ) { echo 'selected="true"'; } ?>>150</option>
 			</select>
-			<input class="button-primary" value="<?php _e( 'Update Log Size', 'dam-spam' ); ?>" type="submit">
+			<input class="button-primary" value="<?php esc_html_e( 'Update Log Size', 'dam-spam' ); ?>" type="submit"><br>
+			<em><small><?php esc_html_e( 'Warning: Changing the log size will wipe current logs.', 'dam-spam' ); ?></small></em>
 		</p>
 		<form method="post" action="">
 			<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
 			<input type="hidden" name="ds_clear_hist" value="true">
-			<p class="submit"><input class="button-primary" value="<?php _e( 'Clear Recent Activity', 'dam-spam' ); ?>" type="submit"></p>
+			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Clear Recent Activity', 'dam-spam' ); ?>" type="submit"></p>
 		</form>
 		<?php
 		if ( empty( $hist ) ) {
-			_e( '<p>Nothing in the log.</p>', 'dam-spam' );
+			esc_html_e( 'Nothing in the log.', 'dam-spam' );
 		} else { ?>
 		<br>
-		<input type="text" id="dsinput" onkeyup="ds_search()" placeholder="<?php _e( 'Date Search', 'dam-spam' ); ?>" title="<?php _e( 'Filter by a Value', 'dam-spam' ); ?>">
+		<input type="text" id="dsinput" onkeyup="ds_search()" placeholder="<?php esc_html_e( 'Date Search', 'dam-spam' ); ?>" title="<?php esc_html_e( 'Filter by a Value', 'dam-spam' ); ?>">
 		<table id="dstable" name="sstable" cellspacing="2">
 			<thead>
 				<tr style="background-color:#675682;color:white;text-align:center;text-transform:uppercase;font-weight:600">
-					<th onclick="sortTable(0)" class="filterhead ds-cleanup"><?php _e( 'Date/Time', 'dam-spam' ); ?></th>
-					<th class="ds-cleanup"><?php _e( 'Email', 'dam-spam' ); ?></th>
-					<th class="ds-cleanup"><?php _e( 'IP', 'dam-spam' ); ?></th>
-					<th class="ds-cleanup"><?php _e( 'Author, User/Pwd', 'dam-spam' ); ?></th>
-					<th class="ds-cleanup"><?php _e( 'Script', 'dam-spam' ); ?></th>
-					<th class="ds-cleanup"><?php _e( 'Reason', 'dam-spam' ); ?></th>
+					<th onclick="sortTable(0)" class="filterhead ds-cleanup"><?php esc_html_e( 'Date/Time', 'dam-spam' ); ?></th>
+					<th class="ds-cleanup"><?php esc_html_e( 'Email', 'dam-spam' ); ?></th>
+					<th class="ds-cleanup"><?php esc_html_e( 'IP', 'dam-spam' ); ?></th>
+					<th class="ds-cleanup"><?php esc_html_e( 'Author, User/Pwd', 'dam-spam' ); ?></th>
+					<th class="ds-cleanup"><?php esc_html_e( 'Script', 'dam-spam' ); ?></th>
+					<th class="ds-cleanup"><?php esc_html_e( 'Reason', 'dam-spam' ); ?></th>
 			<?php if ( function_exists( 'is_multisite' ) && is_multisite() ) { ?>
 			</thead>
 			<tbody>
@@ -164,7 +165,7 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 						$href = 'href="#"';
 						$onclick = 'onclick="sfs_ajax_report_spam(this,\'registration\',\'' . $blog . '\',\'' . $ajaxurl . '\',\'' . $em . '\',\'' . $ip . '\',\'' . $au . '\');return false;"';
 						echo '| ';
-						echo '<a title="' . esc_attr__( 'Report to Stop Forum Spam (SFS)', 'dam-spam' ) . '" ' . $href, $onclick . ' class="delete:the-comment-list:comment-$id::delete=1 delete vim-d vim-destructive">' . __( 'Report to SFS', 'dam-spam' ) . '</a>';
+						echo '<a title="' . esc_attr__( 'Report to Stop Forum Spam (SFS)', 'dam-spam' ) . '" ' . $href, $onclick . ' class="delete:the-comment-list:comment-$id::delete=1 delete vim-d vim-destructive">' . esc_html__( 'Report to SFS', 'dam-spam' ) . '</a>';
 					}
 				}
 				echo '

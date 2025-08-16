@@ -29,7 +29,7 @@ class chkbotscout extends be_module {
 		$check   = $this->getafile( $query, 'GET' );
 		if ( !empty( $check ) ) {
 			if ( substr( $check, 0, 4 ) == "ERR:" ) {
-				return $check . __( 'BotScout Error, ', 'dam-spam' );
+				return $check . esc_html__( 'BotScout Error, ', 'dam-spam' );
 			}
 			if ( strpos( $check, '|' ) ) {
 				$result = explode( '|', $check );

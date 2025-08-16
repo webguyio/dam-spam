@@ -68,30 +68,6 @@ function sfs_ajax_return_spam(response) {
 }
 
 jQuery(function($) {
-	$('.ds-hide-notice').on('click', function() {
-		if ($(this).data('target') == 'user') {
-			$(this).parent().parent().hide();
-			var data = {
-				action: 'ds_update_notice_preference',
-				notice_id: $(this).data('notice-id')
-			};
-			$.post(ajaxurl, data);
-		}
-	});
-	$('#ds-disable-admin-emails').on('click', function() {
-		if (this.checked) {
-			$('.ds-disable-admin-emails-wraps').show()
-		} else {
-			$('.ds-disable-admin-emails-wraps').hide()
-		}
-	});
-	$('#ds-hide-admin-notices').on('click', function() {
-		if (this.checked) {
-			$('.ds-reset-hidden-notice-wrap').hide()
-		} else {
-			$('.ds-reset-hidden-notice-wrap').show()
-		}
-	});
 	$('.ds-action').on('click', function() {
 		var data = {
 			action: 'ds_allow_block_ip',

@@ -19,7 +19,7 @@ class chkform extends be_module {
 			return false;
 		}
 		// sfs_debug_msg( "Allowed $uri $ip" );
-		return __( 'Post request not in wp-comments-post.php or wp-login.php — ' . $uri . '', 'dam-spam' );
+		sprintf( esc_html__( 'Post request not in wp-comments-post.php or wp-login.php — %s', 'dam-spam' ), $uri );
 	}
 }
 

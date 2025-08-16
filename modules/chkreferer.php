@@ -29,10 +29,10 @@ class chkreferer extends be_module {
 		// check to see if our domain is found in the referer
 		$host = $_SERVER['HTTP_HOST'];
 		if ( empty( $ref ) ) {
-			return __( 'Missing HTTP_REFERER', 'dam-spam' );
+			return esc_html__( 'Missing HTTP_REFERER', 'dam-spam' );
 		}
 		if ( empty( $host ) ) {
-			return __( 'Missing HTTP_HOST', 'dam-spam' );
+			return esc_html__( 'Missing HTTP_HOST', 'dam-spam' );
 		}
 		// some servers have an empty host for some reason
 		// some servers and links from https to http and back don't send a referer
@@ -41,7 +41,7 @@ class chkreferer extends be_module {
 		} // had to do this because sometimes legit ones are null?
 		if ( strpos( strtolower( $ref ), strtolower( $host ) ) === false ) {
 			// bad referer - must be from this site
-			return __( 'Invalid HTTP_REFERER', 'dam-spam' );
+			return esc_html__( 'Invalid HTTP_REFERER', 'dam-spam' );
 		}
 		return false;
 	}

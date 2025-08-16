@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
-	die( __( 'Access Blocked', 'dam-spam' ) );
+	die( esc_html__( 'Access Blocked', 'dam-spam' ) );
 }
 
 ds_fix_post_vars();
@@ -72,20 +72,20 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
 		ds_set_options( $options );
 		extract( $options ); // extract again to get the new options
 	}
-	$msg = '<div class="notice notice-success is-dismissible"><p>' . __( 'Options Updated', 'dam-spam' ) . '</p></div>';
+	$msg = '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
 }
 $nonce = wp_create_nonce( 'ds_update' );
 
 ?>
 
 <div id="ds-plugin" class="wrap">
-	<h1 id="ds-head">Dam Spam — <?php _e( 'Web Services', 'dam-spam' ); ?></h1>
+	<h1 id="ds-head"><?php esc_html_e( 'APIs — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php if ( !empty( $msg ) ) {
 		echo $msg;
 	} ?>
 	<br>
 	<div class="ds-info-box">
-		<p><?php _e( 'Below are several services that can be enabled to check for spam or protect your website against spammers. To learn more about each service and find links to create keys, please <a href="https://calmestghost.com/documentation/web-services/" target="_blank">review our documentation</a>.', 'dam-spam' ); ?></p>
+		<p><?php esc_html_e( 'Below are several services that can be enabled to check for spam or protect your website against spammers.', 'dam-spam' ); ?></p>
 	</div>
 	<br>
 	<form method="post" action="">
@@ -94,77 +94,77 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chkdnsbl">
 				<input class="ds_toggle" type="checkbox" id="chkdnsbl" name="chkdnsbl" value="Y" <?php if ( $chkdnsbl == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important;"><?php _e( 'Check Against DNSBL Lists Such as Spamhaus.org', 'dam-spam' ); ?></span></small>
+		  		<small><span style="font-size:16px!important;"><?php esc_html_e( 'Check Against DNSBL Lists Such as Spamhaus.org', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>	  
 		<br>		
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chksfs">
 				<input class="ds_toggle" type="checkbox" id="chksfs" name="chksfs" value="Y" <?php if ( $chksfs == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important;"><?php _e( 'Enable Stop Forum Spam Lookups', 'dam-spam' ); ?></span></small>
+		  		<small><span style="font-size:16px!important;"><?php esc_html_e( 'Enable Stop Forum Spam Lookups', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
 		<label class="keyhead">
-			<?php _e( 'StopForumSpam.com API Key', 'dam-spam' ); ?>
+			<?php esc_html_e( 'StopForumSpam.com API Key', 'dam-spam' ); ?>
 			<br>
 			<input size="32" name="apikey" type="text" value="<?php echo esc_attr( $apikey ); ?>">
 		</label>
 		<br>
 		<table cellspacing="1" style="background-color:#ccc;font-size:0.9em">
 			<tr bgcolor="white">
-				<td valign="top"><?php _e( 'Block spammers found on Stop Forum Spam with more than
-					<input size="3" name="sfsfreq" type="text" class="small-text" value="' . esc_attr( $sfsfreq ) . '">
+				<td valign="top"><?php printf( __( 'Block spammers found on Stop Forum Spam with more than
+					<input size="3" name="sfsfreq" type="text" class="small-text" value="%1$s">
 					incidents, and occurring less than
-					<input size="4" name="sfsage" type="text" class="small-text" value="' . esc_attr( $sfsage ) . '">
-					days ago.', 'dam-spam' ); ?>
+					<input size="4" name="sfsage" type="text" class="small-text" value="%2$s">
+					days ago.', 'dam-spam' ), esc_attr( $sfsfreq ), esc_attr( $sfsage ) ); ?>
 				</td>
 			</tr>
 		</table>
 		<br>
 		<br>
 		<label class="keyhead">
-			<?php _e( 'Project Honeypot API Key', 'dam-spam' ); ?>
+			<?php esc_html_e( 'Project Honeypot API Key', 'dam-spam' ); ?>
 			<br>
 			<input size="32" name="honeyapi" type="text" value="<?php echo esc_attr( $honeyapi ); ?>">
 		</label>
 		<br>
 		<table cellspacing="1" style="background-color:#ccc;font-size:0.9em">
 			<tr bgcolor="white">
-				<td valign="top"><?php _e( 'Block spammers found on Project HoneyPot with incidents less than
-					<input size="3" name="hnyage" type="text" class="small-text" value="' . esc_attr( $hnyage ) . '">
+				<td valign="top"><?php printf( __( 'Block spammers found on Project HoneyPot with incidents less than
+					<input size="3" name="hnyage" type="text" class="small-text" value="%1$s">
 					days ago, and with more than
-					<input size="4" name="hnylevel" type="text" class="small-text" value="' . esc_attr( $hnylevel ) . '">
+					<input size="4" name="hnylevel" type="text" class="small-text" value="%2$s">
 					threat level. (25 threat level is average, threat level
-					5 is fairly low.)', 'dam-spam' ); ?>
+					5 is fairly low.)', 'dam-spam' ), esc_attr( $hnyage ), esc_attr( $hnylevel ) ); ?>
 				</td>
 			</tr>
 		</table>
 		<br>
 		<br>
 		<label class="keyhead">
-			<?php _e( 'BotScout API Key', 'dam-spam' ); ?>
+			<?php esc_html_e( 'BotScout API Key', 'dam-spam' ); ?>
 			<br>
 			<input size="32" name="botscoutapi" type="text" value="<?php echo esc_attr( $botscoutapi ); ?>">
 		</label>
 		<br>
 		<table cellspacing="1" style="background-color:#ccc;font-size:0.9em">
 			<tr bgcolor="white">
-				<td valign="top"><?php _e( 'Block spammers found on BotScout with more than
-					<input size="3" name="botfreq" type="text" class="small-text" value="' . esc_attr( $botfreq ) . '">
-					incidents.', 'dam-spam' ); ?>
+				<td valign="top"><?php printf( __( 'Block spammers found on BotScout with more than
+					<input size="3" name="botfreq" type="text" class="small-text" value="%s">
+					incidents.', 'dam-spam' ), esc_attr( $botfreq ) ); ?>
 				</td>
 			</tr>
 		</table>
 		<br>
 		<br>
 		<label class="keyhead">
-			<?php _e( 'Google Safe Browsing API Key', 'dam-spam' ); ?>
+			<?php esc_html_e( 'Google Safe Browsing API Key', 'dam-spam' ); ?>
 			<br>
 			<input size="32" name="googleapi" type="text" value="<?php echo esc_attr( $googleapi ); ?>">
 		</label>
 		<br>
 		<br>
-		<p class="submit"><input class="button-primary" value="<?php _e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
+		<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
 	</form>
 </div>

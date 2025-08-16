@@ -71,11 +71,11 @@ class ds_addtoallowlist {
 		}
 		$ke 	 = sanitize_text_field( $to );
 		$blog    = get_bloginfo( 'name' );
-		$subject = sprintf( __( '%1$s: Your Request Has Been Approved', 'dam-spam' ), $blog );
+		$subject = sprintf( esc_html__( '%s: Your Request Has Been Approved', 'dam-spam' ), $blog );
 		$subject = str_replace( '&', 'and', $subject );
-		$message = sprintf( __( 'Apologies for the inconvenience. You\'ve now been cleared for %1$s.', 'dam-spam' ), $blog );
+		$message = sprintf( esc_html__( 'Apologies for the inconvenience. You\'ve now been cleared for %s.', 'dam-spam' ), $blog );
 		$message = str_replace( '&', 'and', $message );
-		$headers = __( 'From: ', 'dam-spam' ) . get_option( 'admin_email' ) . "\r\n";
+		$headers = esc_html__( 'From: ', 'dam-spam' ) . get_option( 'admin_email' ) . "\r\n";
 		wp_mail( $to, $subject, $message, $headers );
 		return true;
 	}

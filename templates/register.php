@@ -1,26 +1,26 @@
 <form name="registerform" id="registerform" action="<?php echo home_url( '/register/' ); ?>" method="post" novalidate="novalidate">
 	<?php ds_show_error(); ?>
 	<p class="ds-input-wrapper">
-		<label for="user_login"><?php _e( 'Username', 'dam-spam' ); ?></label>
+		<label for="user_login"><?php esc_html_e( 'Username', 'dam-spam' ); ?></label>
 		<input type="text" name="user_login" id="user_login" class="input" size="20" autocapitalize="off" value="<?php echo ( isset( $_POST['user_login'] ) ? esc_attr( $_POST['user_login'] ) : '' ); ?>">
 	</p>
 	<p class="ds-input-wrapper">
-		<label for="user_email"><?php _e( 'Email', 'dam-spam' ); ?></label>
+		<label for="user_email"><?php esc_html_e( 'Email', 'dam-spam' ); ?></label>
 		<input type="email" name="user_email" id="user_email" class="input" value="<?php echo ( isset($_POST['user_email'] ) ? esc_attr( $_POST['user_email'] ) : '' ); ?>" size="25">
 	</p>
 	<p class="ds-input-wrapper url">
-		<label for="user_url"><?php _e( 'Website', 'dam-spam' ); ?></label>
+		<label for="user_url"><?php esc_html_e( 'Website', 'dam-spam' ); ?></label>
 		<input type="url" name="user_url" id="user_url" class="input" value="https://example.com/" size="25">
 	</p>
 	<?php do_action( 'register_form' ); ?>
-	<p id="reg_passmail"><?php _e( 'Registration confirmation will be emailed to you.' ); ?></p>
+	<p id="reg_passmail"><?php esc_html_e( 'Registration confirmation will be emailed to you.' ); ?></p>
 	<br class="clear">
 	<input type="hidden" name="redirect_to" value="">
 	<p class="submit">
-		<input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php _e( 'Register', 'dam-spam' ); ?>">
+		<input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_html_e( 'Register', 'dam-spam' ); ?>">
 	</p>
 	<p class="ds-link-wrapper">
-		<a href="<?php echo home_url( '/login/' ); ?>"><?php _e( 'Login', 'dam-spam' ); ?></a> | <a href="<?php echo home_url( '/forgot-password/' ); ?>"><?php _e( 'Forgot Password?', 'dam-spam' ); ?></a>
+		<a href="<?php echo home_url( '/login/' ); ?>"><?php esc_html_e( 'Login', 'dam-spam' ); ?></a> | <a href="<?php echo home_url( '/forgot-password/' ); ?>"><?php esc_html_e( 'Forgot Password?', 'dam-spam' ); ?></a>
 	</p>
 </form>
 

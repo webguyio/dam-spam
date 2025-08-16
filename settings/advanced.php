@@ -9,7 +9,7 @@ if ( !defined( 'ABSPATH' ) ) {
 function ds_admin_notice_success() {
 	?>
 	<div class="notice notice-success is-dismissible">
-		<p><?php _e( 'Options Updated', 'dam-spam' ); ?></p>
+		<p><?php esc_html_e( 'Options Updated', 'dam-spam' ); ?></p>
 	</div>
 	<?php
 }
@@ -22,42 +22,6 @@ function ds_advanced_menu() {
 	$ds_firewall_setting = '';
 	if ( get_option( 'ds_enable_firewall', '' ) === 'yes' ) {
 		$ds_firewall_setting = "checked='checked'";
-	}
-	$ds_hide_admin_notices = '';
-	if ( get_option( 'ds_hide_admin_notices', '' ) === 'yes' ) {
-		$ds_hide_admin_notices = "checked='checked'";
-	}
-	$ds_disable_admin_emails = '';
-	if ( get_option( 'ds_disable_admin_emails', '' ) === 'yes' ) {
-		$ds_disable_admin_emails = "checked='checked'";
-	}
-	$ds_disable_admin_emails_update = '';
-	if ( get_option( 'ds_disable_admin_emails_update', '' ) === 'yes' ) {
-		$ds_disable_admin_emails_update = "checked='checked'";
-	}
-	$ds_disable_admin_emails_comment = '';
-	if ( get_option( 'ds_disable_admin_emails_comment', '' ) === 'yes' ) {
-		$ds_disable_admin_emails_comment = "checked='checked'";
-	}
-	$ds_disable_admin_emails_password_reset = '';
-	if ( get_option( 'ds_disable_admin_emails_password_reset', '' ) === 'yes' ) {
-		$ds_disable_admin_emails_password_reset = "checked='checked'";
-	}
-	$ds_disable_admin_emails_new_user = '';
-	if ( get_option( 'ds_disable_admin_emails_new_user', '' ) === 'yes' ) {
-		$ds_disable_admin_emails_new_user = "checked='checked'";
-	}
-	$ds_disable_core_nudge = '';
-	if ( get_option( 'ds_disable_core_nudge', '' ) === 'yes' ) {
-		$ds_disable_core_nudge = "checked='checked'";
-	}
-	$ds_disable_theme_nudge = '';
-	if ( get_option( 'ds_disable_theme_nudge', '' ) === 'yes' ) {
-		$ds_disable_theme_nudge = "checked='checked'";
-	}
-	$ds_disable_plugin_nudge = '';
-	if ( get_option( 'ds_disable_plugin_nudge', '' ) === 'yes' ) {
-		$ds_disable_plugin_nudge = "checked='checked'";
 	}
 	$ds_login_setting = '';
 	if ( get_option( 'ds_enable_custom_login', '' ) === 'yes' ) {
@@ -100,119 +64,35 @@ function ds_advanced_menu() {
 	}
 	?>
 	<div id="ds-plugin" class="wrap">
-		<h1 id="ds-head"><?php _e( 'Dam Spam — Advanced', 'dam-spam' ); ?></h1>
+		<h1 id="ds-head"><?php esc_html_e( 'Advanced — Dam Spam', 'dam-spam' ); ?></h1>
 		<div class="metabox-holder">
 			<div class="postbox">
 				<form method="post">
 					<div class="inside">
-						<h3 style="font-size:16px!important"><span><?php _e( 'Firewall Settings', 'dam-spam' ); ?></span></h3>
+						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Firewall Settings', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_firewall_setting">
 								<?php if ( defined( 'DS_ENABLE_FIREWALL' ) ) { ?>
-								<p><a href="edit.php?post_type=ds-firewall" class="button-primary"><?php _e( 'Monitor Real-time Firewall', 'dam-spam' ); ?></a></p>
+								<p><a href="edit.php?post_type=ds-firewall" class="button-primary"><?php esc_html_e( 'Monitor Real-time Firewall', 'dam-spam' ); ?></a></p>
 								<?php } else { ?>
-								<p><em><small><?php _e( 'For advanced users only: If you\'d like to enable the real-time firewall beta feature, add <strong>define( \'DS_ENABLE_FIREWALL\', true );</strong> to your wp-config.php file. This feature is resource-intensive, requiring a lot of memory and database space.', 'dam-spam' ); ?></small></em></p>
+								<p><em><small><?php esc_html_e( 'For advanced users only: If you\'d like to enable the real-time firewall beta feature, add <strong>define( \'DS_ENABLE_FIREWALL\', true );</strong> to your wp-config.php file. This feature is resource-intensive, requiring a lot of memory and database space.', 'dam-spam' ); ?></small></em></p>
 								<?php } ?>
 								<input type="checkbox" name="ds_firewall_setting" id="ds_firewall_setting" value="yes" <?php echo $ds_firewall_setting; ?>>
 								<span><small></small></span>
-								<?php _e( 'Enable Server-side Security Rules', 'dam-spam' ); ?>
-								<p><em><small><?php _e( 'For advanced users only: This option will modify your .htaccess file with extra security rules and in some small cases, conflict with your server settings. If you do not understand how to edit your .htaccess file to remove these rules in the event of an error, do not enable.', 'dam-spam' ); ?></small></em></p>
+								<?php esc_html_e( 'Enable Server-side Security Rules', 'dam-spam' ); ?>
+								<p><em><small><?php esc_html_e( 'For advanced users only: This option will modify your .htaccess file with extra security rules and in some small cases, conflict with your server settings. If you do not understand how to edit your .htaccess file to remove these rules in the event of an error, do not enable.', 'dam-spam' ); ?></small></em></p>
 							</label>
 						</div>
 						<p><input type="hidden" name="ds_firewall_setting_placeholder" value="ds_firewall_setting"></p>
 					</div>
 					<hr>
 					<div class="inside">
-						<h3 style="font-size:16px!important"><span><?php _e( 'Notification Control', 'dam-spam' ); ?></span></h3>
-						<div class="checkbox switcher">
-							<label for="ds_hide_admin_notices">
-								<input type="checkbox" name="ds_hide_admin_notices" id="ds-hide-admin-notices" value="yes" <?php echo $ds_hide_admin_notices; ?>>
-								<span><small></small></span>
-								<?php _e( 'Hide All Admin Notices', 'dam-spam' ); ?>
-							</label>
-						</div>
-						<br>
-						<div class="checkbox switcher">
-							<label for="ds_disable_admin_emails">
-								<input type="checkbox" name="ds_disable_admin_emails" id="ds-disable-admin-emails" value="yes" <?php echo $ds_disable_admin_emails; ?>>
-								<span><small></small></span>
-								<?php _e( 'Disable Admin Emails', 'dam-spam' ); ?>
-							</label>
-						</div>
-						<br>
-						<div class="ds-disable-admin-emails-wraps"<?php echo ( get_option( 'ds_disable_admin_emails', 'no' ) == 'yes' ? '': ' style="display:none"' ); ?>>
-							<div class="checkbox switcher">
-								<label for="ds_disable_admin_emails_update">
-									<input type="checkbox" name="ds_disable_admin_emails_update" id="ds_disable_admin_emails_update" value="yes" <?php echo $ds_disable_admin_emails_update; ?>>
-									<span><small></small></span>
-									<?php _e( 'Disable Update Emails', 'dam-spam' ); ?>
-								</label>
-							</div>
-							<br>
-							<div class="checkbox switcher">
-								<label for="ds_disable_admin_emails_comment">
-									<input type="checkbox" name="ds_disable_admin_emails_comment" id="ds_disable_admin_emails_comment" value="yes" <?php echo $ds_disable_admin_emails_comment; ?>>
-									<span><small></small></span>
-									<?php _e( 'Disable Comment Emails', 'dam-spam' ); ?>
-								</label>
-							</div>
-							<br>
-							<div class="checkbox switcher">
-								<label for="ds_disable_admin_emails_password_reset">
-									<input type="checkbox" name="ds_disable_admin_emails_password_reset" id="ds_disable_admin_emails_password_reset" value="yes" <?php echo $ds_disable_admin_emails_password_reset; ?>>
-									<span><small></small></span>
-									<?php _e( 'Disable Password Reset Emails', 'dam-spam' ); ?>
-								</label>
-							</div>
-							<br>
-							<div class="checkbox switcher">
-								<label for="ds_disable_admin_emails_new_user">
-									<input type="checkbox" name="ds_disable_admin_emails_new_user" id="ds_disable_admin_emails_new_user" value="yes" <?php echo $ds_disable_admin_emails_new_user; ?>>
-									<span><small></small></span>
-									<?php _e( 'Disable New User Emails', 'dam-spam' ); ?>
-								</label>
-							</div>
-							<br>
-						</div>
-						<div class="checkbox switcher">
-							<label for="ds_disable_core_nudge">
-								<input type="checkbox" name="ds_disable_core_nudge" id="ds_disable_core_nudge" value="yes" <?php echo $ds_disable_core_nudge; ?>>
-								<span><small></small></span>
-								<?php _e( 'Disable Core Updates Nudge', 'dam-spam' ); ?>
-							</label>
-						</div>
-						<br>
-						<div class="checkbox switcher">
-							<label for="ds_disable_theme_nudge">
-								<input type="checkbox" name="ds_disable_theme_nudge" id="ds_disable_theme_nudge" value="yes" <?php echo $ds_disable_theme_nudge; ?>>
-								<span><small></small></span>
-								<?php _e( 'Disable Theme Updates Nudge', 'dam-spam' ); ?>
-							</label>
-						</div>
-						<br>
-						<div class="checkbox switcher">
-							<label for="ds_disable_plugin_nudge">
-								<input type="checkbox" name="ds_disable_plugin_nudge" id="ds_disable_plugin_nudge" value="yes" <?php echo $ds_disable_plugin_nudge; ?>>
-								<span><small></small></span>
-								<?php _e( 'Disable Plugin Updates Nudge', 'dam-spam' ); ?>
-							</label>
-						</div>
-						<p><input type="hidden" name="ds_notification_control_setting" value="ds_notification_control_update"></p>
-					</div>
-					<div class="inside ds_reset_hidden_notice_wrap"<?php echo ( get_option( 'ds_hide_admin_notices', 'no' ) != 'yes' ? '': ' style="display:none"' ); ?>>
-						<h3 style="font-size:16px!important"><span><?php _e( 'Reset hidden notices for ', 'dam-spam' ); ?></span></h3>	
-						<p><input type="radio" name="ds_reset_hidden_notice" value="current" checked="checked"> Current User</p>
-						<p><input type="radio" name="ds_reset_hidden_notice" value="all"> All Users</p>
-						<?php submit_button( __( 'Reset', 'dam-spam' ), 'secondary', 'submit', false ); ?>
-					</div>
-					<hr>
-					<div class="inside">
-						<h3 style="font-size:16px!important"><span><?php _e( 'Login Settings', 'dam-spam' ); ?></span></h3>
+						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Login Settings', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_login_setting">
 								<input type="checkbox" name="ds_login_setting" id="ds_login_setting" value="yes" <?php echo $ds_login_setting; ?>>
 								<span><small></small></span>
-								<?php _e( 'Enable themed registration and login pages (disables the default wp-login.php).', 'dam-spam' ); ?>
+								<?php esc_html_e( 'Enable themed registration and login pages (disables the default wp-login.php).', 'dam-spam' ); ?>
 							</label>
 						</div>
 						<br>
@@ -220,22 +100,22 @@ function ds_advanced_menu() {
 							<label for="ds_login_attempts">
 								<input type="checkbox" name="ds_login_attempts" id="ds_login_attempts" value="yes" <?php echo $ds_login_attempts; ?>>
 								<span><small></small></span>
-								<strong><?php _e( 'Login Attempts:', 'dam-spam' ); ?></strong>
-								<?php _e( 'After', 'dam-spam' ); ?>
+								<strong><?php esc_html_e( 'Login Attempts:', 'dam-spam' ); ?></strong>
+								<?php esc_html_e( 'After', 'dam-spam' ); ?>
 								<input type="text" name="ds_login_attempts_threshold" id="ds_login_attempts_duration" class="ds-small-box" value="<?php echo get_option( 'ds_login_attempts_threshold', 5 ); ?>">
-								<?php _e( 'failed login attempts within', 'dam-spam' ); ?>
+								<?php esc_html_e( 'failed login attempts within', 'dam-spam' ); ?>
 								<input type="text" name="ds_login_attempts_duration" id="ds_login_attempts_duration" class="ds-small-box" value="<?php echo get_option( 'ds_login_attempts_duration', 1 ); ?>">
 								<select name="ds_login_attempts_unit" id="ds_login_attempts_unit" class="ds-small-dropbox">
-									<option value="minute" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'minute' ) { echo 'selected="selected"'; } ?>><?php _e( 'minute(s)', 'dam-spam' ); ?></option>
-									<option value="hour" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'hour' ) { echo 'selected="selected"'; } ?>><?php _e( 'hour(s)', 'dam-spam' ); ?></option>
-									<option value="day" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'day' ) { echo 'selected="selected"'; } ?>><?php _e( 'day(s)', 'dam-spam' ); ?></option>
+									<option value="minute" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'minute' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
+									<option value="hour" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'hour' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
+									<option value="day" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'day' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'day(s)', 'dam-spam' ); ?></option>
 								</select>,
-								<?php _e( 'lockout the account for', 'dam-spam' ); ?>
+								<?php esc_html_e( 'lockout the account for', 'dam-spam' ); ?>
 								<input type="text" name="ds_login_lockout_duration" id="ds_login_lockout_duration" class="ds-small-box" value="<?php echo get_option( 'ds_login_lockout_duration', 24 ); ?>"> 
 								<select name="ds_login_lockout_unit" id="ds_login_lockout_unit" class="ds-small-dropbox">
-									<option value="minute" <?php if ( get_option( 'ds_login_lockout_unit', 'hour' ) == 'minute' ) { echo 'selected="selected"'; } ?>><?php _e( 'minute(s)', 'dam-spam' ); ?></option>
-									<option value="hour" <?php if ( get_option( 'ds_login_lockout_unit', 'hour' ) == 'hour' ) { echo 'selected="selected"'; } ?>><?php _e( 'hour(s)', 'dam-spam' ); ?></option>
-									<option value="day" <?php if ( get_option( 'ds_login_lockout_unit', 'hour' ) == 'day' ) { echo 'selected="selected"'; } ?>><?php _e( 'day(s)', 'dam-spam' ); ?></option>
+									<option value="minute" <?php if ( get_option( 'ds_login_lockout_unit', 'hour' ) == 'minute' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
+									<option value="hour" <?php if ( get_option( 'ds_login_lockout_unit', 'hour' ) == 'hour' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
+									<option value="day" <?php if ( get_option( 'ds_login_lockout_unit', 'hour' ) == 'day' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'day(s)', 'dam-spam' ); ?></option>
 								</select>.
 							</label>
 						</div>
@@ -243,13 +123,13 @@ function ds_advanced_menu() {
 					</div>
 					<hr>
 					<div class="inside">
-						<h3 style="font-size:16px!important"><span><?php _e( 'Allow users to log in using their username and/or email address', 'dam-spam' ); ?></span></h3>
+						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Allow users to log in using their username and/or email address', 'dam-spam' ); ?></span></h3>
 						<p><input type="hidden" name="ds_login_type_field" value="ds_login_type"></p>
 						<div class="checkbox switcher">
 							<label for="ds-login-type-default">
 								<input name="ds_login_type" type="radio" id="ds-login-type-default" value="default" <?php echo $ds_login_type_default; ?>>
 								<span><small></small></span>
-								<?php _e( 'Username or Email', 'dam-spam' ); ?>
+								<?php esc_html_e( 'Username or Email', 'dam-spam' ); ?>
 							</label>
 						</div>
 						<br>
@@ -257,7 +137,7 @@ function ds_advanced_menu() {
 							<label for="ds-login-type-username">
 								<input name="ds_login_type" type="radio" id="ds-login-type-username" value="username" <?php echo $ds_login_type_username; ?>>
 								<span><small></small></span>
-								<?php _e( 'Username Only', 'dam-spam' ); ?>
+								<?php esc_html_e( 'Username Only', 'dam-spam' ); ?>
 							</label>
 						</div>
 						<br>
@@ -265,18 +145,18 @@ function ds_advanced_menu() {
 							<label for="ds-login-type-email">
 								<input name="ds_login_type" type="radio" id="ds-login-type-email" value="email" <?php echo $ds_login_type_email; ?>>
 								<span><small></small></span>
-								<?php _e( 'Email Only', 'dam-spam' ); ?>
+								<?php esc_html_e( 'Email Only', 'dam-spam' ); ?>
 							</label>
 						</div>
 					</div>
 					<hr>
 					<div class="inside">
-						<h3 style="font-size:16px!important"><span><?php _e( 'Honeypot', 'dam-spam' ); ?></span></h3>
+						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Honeypot', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_honeypot_cf7">
 								<input type="checkbox" name="ds_honeypot_cf7" id="ds_honeypot_cf7" value="yes" <?php echo ( is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo $ds_honeypot_cf7; ?>>
 								<span><small></small></span>
-								<?php _e( 'Contact Form 7', 'dam-spam' ); ?>
+								<?php esc_html_e( 'Contact Form 7', 'dam-spam' ); ?>
 							</label>
 						</div>
 						<br>
@@ -284,7 +164,7 @@ function ds_advanced_menu() {
 							<label for="ds_honeypot_bbpress">
 								<input type="checkbox" name="ds_honeypot_bbpress" id="ds_honeypot_bbpress" value="yes" <?php echo ( is_plugin_active( 'bbpress/bbpress.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo $ds_honeypot_bbpress; ?>>
 								<span><small></small></span>
-								<?php _e( 'bbPress', 'dam-spam' ); ?>
+								<?php esc_html_e( 'bbPress', 'dam-spam' ); ?>
 							</label>
 						</div>
 						<br>
@@ -292,7 +172,7 @@ function ds_advanced_menu() {
 							<label for="ds_honeypot_elementor">
 								<input type="checkbox" name="ds_honeypot_elementor" id="ds_honeypot_elementor" value="yes" <?php echo ( is_plugin_active( 'elementor/elementor.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo $ds_honeypot_elementor; ?>>
 								<span><small></small></span>
-								<?php _e( 'Elementor Form', 'dam-spam' ); ?>
+								<?php esc_html_e( 'Elementor Form', 'dam-spam' ); ?>
 							</label>
 						</div>
 						<br>
@@ -300,13 +180,13 @@ function ds_advanced_menu() {
 							<label for="ds_honeypot_divi">
 								<input type="checkbox" name="ds_honeypot_divi" id="ds_honeypot_divi" value="yes" <?php echo ( ( $theme->name == 'Divi' || $theme->parent_theme == 'Divi' ) ? '' : 'disabled="disabled"' ); ?> <?php echo $ds_honeypot_divi; ?>>
 								<span><small></small></span>
-								<?php _e( 'Divi Forms', 'dam-spam' ); ?>
+								<?php esc_html_e( 'Divi Forms', 'dam-spam' ); ?>
 							</label>
 						</div>
 					</div>
 					<hr>
 					<div class="inside">
-						<h3 style="font-size:16px!important"><span><?php _e( 'Block users from registering, commenting, and purchasing while on a VPN', 'dam-spam' ); ?></span></h3>
+						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Block users from registering, commenting, and purchasing while on a VPN', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_allow_vpn">
 								<input type="checkbox" name="ds_allow_vpn" id="ds_allow_vpn" value="yes" <?php echo $ds_allow_vpn_setting;?>>
@@ -318,70 +198,57 @@ function ds_advanced_menu() {
 					<div class="inside">			
 						<p>
 							<?php wp_nonce_field( 'ds_login_type_nonce', 'ds_login_type_nonce' ); ?>
-							<?php submit_button( __( 'Save Changes', 'dam-spam' ), 'primary', 'submit', false ); ?>
+							<?php submit_button( esc_html__( 'Save Changes', 'dam-spam' ), 'primary', 'submit', false ); ?>
 						</p>
 					</div>
 				</form>
 			</div>
 			<div class="postbox">
-				<h3 style="font-size:18px"><span><?php _e( 'Shortcodes', 'dam-spam' ); ?></span></h3>
+				<h3 style="font-size:18px"><span><?php esc_html_e( 'Shortcodes', 'dam-spam' ); ?></span></h3>
 				<div class="inside">
-					<p><?php _e( 'Contact Form: <strong>[ds-contact-form]</strong>', 'dam-spam' ); ?></p>
-					<p><?php _e( 'Login Form: <strong>[ds-login]</strong>', 'dam-spam' ); ?></p>
-					<p><?php _e( 'Logged-in User Display Name: <strong>[show-displayname-as]</strong>', 'dam-spam' ); ?></p>
-					<p><?php _e( 'Logged-in User First/Last Name: <strong>[show-fullname-as]</strong>', 'dam-spam' ); ?></p>
-					<p><?php _e( 'Logged-in User Email Address: <strong>[show-email-as]</strong>', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Contact Form: [ds-contact-form]', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Login Form: [ds-login]', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Logged-in User Display Name: [show-displayname-as]', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Logged-in User First/Last Name: [show-fullname-as]', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Logged-in User Email Address: [show-email-as]', 'dam-spam' ); ?></p>
 				</div>
 			</div>
 			<div class="postbox">
-				<h3 style="font-size:16px!important"><span><?php _e( 'Export Log Settings (not working)', 'dam-spam' ); ?></span></h3>
+				<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Export Settings', 'dam-spam' ); ?></span></h3>
 				<div class="inside">
-					<p><?php _e( 'Export the Log records to an Excel file.', 'dam-spam' ); ?></p>
-					<form method="post">
-						<p><input type="hidden" name="export_log" value="export_log_data"></p>
-						<p>
-							<?php wp_nonce_field( 'ds_export_action', 'ds_export_action' ); ?>
-							<?php submit_button( __( 'Export', 'dam-spam' ), 'secondary', 'submit', false ); ?>
-						</p>
-					</form>
-				</div>
-			</div>
-			<div class="postbox">
-				<h3 style="font-size:16px!important"><span><?php _e( 'Export Settings', 'dam-spam' ); ?></span></h3>
-				<div class="inside">
-					<p><?php _e( 'Export the plugin settings for this site as a .json file. This allows you to easily import the configuration into another site.', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Export the plugin settings for this site as a .json file. This allows you to easily import the configuration into another site.', 'dam-spam' ); ?></p>
 					<form method="post">
 						<p><input type="hidden" name="ds_action" value="export_settings"></p>
 						<p>
 							<?php wp_nonce_field( 'ds_export_nonce', 'ds_export_nonce' ); ?>
-							<?php submit_button( __( 'Export', 'dam-spam' ), 'secondary', 'submit', false ); ?>
+							<?php submit_button( esc_html__( 'Export', 'dam-spam' ), 'secondary', 'submit', false ); ?>
 						</p>
 					</form>
 				</div><!-- .inside -->
 			</div><!-- .postbox -->
 			<div class="postbox">
-				<h3 style="font-size:16px!important"><span><?php _e( 'Import Settings', 'dam-spam' ); ?></span></h3>
+				<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Import Settings', 'dam-spam' ); ?></span></h3>
 				<div class="inside">
-					<p><?php _e( 'Import the plugin settings from a .json file. This file can be obtained by exporting the settings on another site using the form above.', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Import the plugin settings from a .json file. This file can be obtained by exporting the settings on another site using the form above.', 'dam-spam' ); ?></p>
 					<form method="post" enctype="multipart/form-data">
 						<p><input type="file" name="import_file"></p>
 						<p>
 							<input type="hidden" name="ds_action" value="import_settings">
 							<?php wp_nonce_field( 'ds_import_nonce', 'ds_import_nonce' ); ?>
-							<?php submit_button( __( 'Import', 'dam-spam' ), 'secondary', 'submit', false ); ?>
+							<?php submit_button( esc_html__( 'Import', 'dam-spam' ), 'secondary', 'submit', false ); ?>
 						</p>
 					</form>
 				</div><!-- .inside -->
 			</div><!-- .postbox -->
 			<div class="postbox">
-				<h3 style="font-size:16px!important"><span><?php _e( 'Reset Settings', 'dam-spam' ); ?></span></h3>
+				<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Reset Settings', 'dam-spam' ); ?></span></h3>
 				<div class="inside">
-					<p><?php _e( 'Reset the plugin settings for this site. This allows you to easily reset the configuration.', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Reset the plugin settings for this site. This allows you to easily reset the configuration.', 'dam-spam' ); ?></p>
 					<form method="post">
 						<p><input type="hidden" name="ds_action" value="reset_settings"></p>
 						<p>
 							<?php wp_nonce_field( 'ds_reset_nonce', 'ds_reset_nonce' ); ?>
-							<?php submit_button( __( 'Reset', 'dam-spam' ), 'secondary', 'submit', false ); ?>
+							<?php submit_button( esc_html__( 'Reset', 'dam-spam' ), 'secondary', 'submit', false ); ?>
 						</p>
 					</form>
 				</div><!-- .inside -->
@@ -460,11 +327,6 @@ function ds_contact_form_shortcode( $atts ) {
 		$email   = sanitize_email( $_POST['email'] );
 		$phone   = sanitize_text_field( $_POST['phone'] );
 		$message = sanitize_textarea_field( $_POST['message'] );
-		$validated = true;
-		if ( !$validated ) {
-			print '<p id="send" class="fail">' . esc_html__( 'Message Failed', 'dam-spam' ) . '</p>';
-			exit;
-		}
 		$body  = '';
 		$body .= esc_html__( 'Name: ', 'dam-spam' );
 		$body .= wp_unslash( $name );
@@ -484,6 +346,7 @@ function ds_contact_form_shortcode( $atts ) {
 			print '<p id="send" class="success">' . esc_html__( 'Message Sent Successfully', 'dam-spam' ) . '</p>';
 		} else {
 			print '<p id="send" class="fail">' . esc_html__( 'Message Failed', 'dam-spam' ) . '</p>';
+			exit;
 		}
 	}
 	$output = ob_get_clean();
@@ -497,7 +360,7 @@ if ( get_option( 'ds_honeypot_cf7', 'yes' ) == 'yes' ) {
 	function ds_cf7_add_honeypot( $form ) {
 		$html  = '';
 		$html .= '<p class="ds-user">';
-		$html .= '<label>' . __( 'Your Website (required)', 'dam-spam' ) . '<br>';
+		$html .= '<label>' . esc_html__( 'Your Website (required)', 'dam-spam' ) . '<br>';
 		$html .= '<span class="wpcf7-form-control-wrap your-website">';
 		$html .= '<input type="text" name="your-website" value="https://example.com/" autocomplete="off" tabindex="-1" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" required>';
 		$html .= '</span>';
@@ -524,7 +387,7 @@ if ( get_option( 'ds_honeypot_bbpress', 'yes' ) == 'yes' ) {
 	function ds_bbp_add_honeypot() {
 		$html  = '';
 		$html .= '<p class="ds-user">';
-		$html .= '<label for="bbp_your-website">' . __( 'Your Website:', 'dam-spam' ) . '</label><br>';
+		$html .= '<label for="bbp_your-website">' . esc_html__( 'Your Website:', 'dam-spam' ) . '</label><br>';
 		$html .= '<input type="text" value="https://example.com/" autocomplete="off" tabindex="-1" size="40" name="bbp_your-website" id="bbp_your-website" required>';
 		$html .= '</p>';
 		$html .= '<style>.ds-user{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
@@ -558,7 +421,7 @@ if ( get_option( 'ds_honeypot_elementor', 'yes' ) == 'yes' ) {
 	add_action( 'elementor/widget/render_content', 'ds_elementor_add_honeypot', 10, 2 );
 	function ds_elementor_verify_honeypot( $record, $ajax_handler ) {
 		if ( $_POST['form_fields']['your-website'] != 'https://example.com/' ) {
-			$ajax_handler->add_error( 'your-website', __( 'Something went wrong!', 'dam-spam' ) );
+			$ajax_handler->add_error( 'your-website', esc_html__( 'Something went wrong!', 'dam-spam' ) );
 		}
 	}
 	add_action( 'elementor_pro/forms/validation', 'ds_elementor_verify_honeypot', 10, 2 );
@@ -577,8 +440,8 @@ if ( get_option( 'ds_honeypot_divi', 'yes' ) == 'yes' ) {
 		$html = '';
 		if ( $render_slug == 'et_pb_contact_form' ) {
 			$html  .= '<p class="et_pb_contact_field et_pb_contact_your_website">';
-			$html  .= '<label for="et_pb_contact_your_website" class="et_pb_contact_form_label">' . __( 'Your Website', 'dam-spam' ) . '</label>';
-			$html  .= '<input type="text" name="et_pb_contact_your_website" id="et_pb_contact_your_website" placeholder="' . __( 'Your Website', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" required>';
+			$html  .= '<label for="et_pb_contact_your_website" class="et_pb_contact_form_label">' . esc_html__( 'Your Website', 'dam-spam' ) . '</label>';
+			$html  .= '<input type="text" name="et_pb_contact_your_website" id="et_pb_contact_your_website" placeholder="' . esc_html__( 'Your Website', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" required>';
 			$html  .= '</p>';
 			$html  .= '<style>.et_pb_contact_your_website{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
 			$html  .= '<input type="hidden" value="et_contact_proccess" name="et_pb_contactform_submit';
@@ -586,8 +449,8 @@ if ( get_option( 'ds_honeypot_divi', 'yes' ) == 'yes' ) {
 		} else if ( $render_slug == 'et_pb_signup' ) {
 			$html   = '';
 			$html  .= '<p class="et_pb_signup_custom_field et_pb_signup_your_website et_pb_newsletter_field et_pb_contact_field_last et_pb_contact_field_last_tablet et_pb_contact_field_last_phone">';
-			$html  .= '<label for="et_pb_signup_your_website" class="et_pb_contact_form_label">' . __( 'Your Website', 'dam-spam' ) . '</label>';
-			$html  .= '<input type="text" class="input" id="et_pb_signup_your_website" placeholder="' . __( 'Your Website', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" data-original_id="your-website" required>';
+			$html  .= '<label for="et_pb_signup_your_website" class="et_pb_contact_form_label">' . esc_html__( 'Your Website', 'dam-spam' ) . '</label>';
+			$html  .= '<input type="text" class="input" id="et_pb_signup_your_website" placeholder="' . esc_html__( 'Your Website', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" data-original_id="your-website" required>';
 			$html  .= '</p>';
 			$html  .= '<style>.et_pb_signup_your_website{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
 			$html  .= '<p class="et_pb_newsletter_button_wrap">';
@@ -741,116 +604,6 @@ function ds_enable_firewall() {
 }
 add_action( 'admin_init', 'ds_enable_firewall' );
 
-// Notification Control settings update
-function ds_update_notification_control() {
-	if ( empty( $_POST['ds_notification_control_setting'] ) || 'ds_notification_control_update' != $_POST['ds_notification_control_setting'] )
-		return;
-	if ( !wp_verify_nonce( $_POST['ds_login_type_nonce'], 'ds_login_type_nonce' ) )
-		return;
-	if ( !current_user_can( 'manage_options' ) )
-		return;
-	if ( $_POST['submit'] == "Reset" ) {
-		if ( $_POST['ds_reset_hidden_notice'] == 'all') {
-			global $wpdb;
-			delete_user_meta( get_current_user_id(), 'ds_notice_preference' );
-			$wpdb->query( "DELETE FROM $wpdb->usermeta WHERE meta_key = 'ds_notice_preference'" );
-		} else {
-			delete_user_meta( get_current_user_id(), 'ds_notice_preference' );
-		}
-		return;
-	}
-	if ( isset( $_POST['ds_hide_admin_notices'] ) and $_POST['ds_hide_admin_notices'] == 'yes' )
-		update_option( 'ds_hide_admin_notices', 'yes' );
-	else
-		update_option( 'ds_hide_admin_notices', 'no' );
-	if ( !isset( $_POST['ds_disable_admin_emails'] ) ) {
-		update_option( 'ds_disable_admin_emails', 'no' );
-		update_option( 'ds_disable_admin_emails_update', 'no' );
-		update_option( 'ds_disable_admin_emails_comment', 'no' );
-		update_option( 'ds_disable_admin_emails_password_reset', 'no' );
-		update_option( 'ds_disable_admin_emails_new_user', 'no' );
-	} else {
-		if ( isset( $_POST['ds_disable_admin_emails_update'] ) and $_POST['ds_disable_admin_emails_update'] == 'yes' )
-			update_option( 'ds_disable_admin_emails_update', 'yes' );
-		else
-			update_option( 'ds_disable_admin_emails_update', 'no' );
-		if ( isset( $_POST['ds_disable_admin_emails_comment'] ) and $_POST['ds_disable_admin_emails_comment'] == 'yes' )
-			update_option( 'ds_disable_admin_emails_comment', 'yes' );
-		else
-			update_option( 'ds_disable_admin_emails_comment', 'no' );
-		if ( isset( $_POST['ds_disable_admin_emails_password_reset'] ) and $_POST['ds_disable_admin_emails_password_reset'] == 'yes' )
-			update_option( 'ds_disable_admin_emails_password_reset', 'yes' );
-		else
-			update_option( 'ds_disable_admin_emails_password_reset', 'no' );
-		if ( isset( $_POST['ds_disable_admin_emails_new_user'] ) and $_POST['ds_disable_admin_emails_new_user'] == 'yes' )
-			update_option( 'ds_disable_admin_emails_new_user', 'yes' );
-		else
-			update_option( 'ds_disable_admin_emails_new_user', 'no' );
-		if ( ( isset( $_POST['ds_disable_admin_emails_update'] ) and $_POST['ds_disable_admin_emails_update'] == 'yes' )
-			|| ( isset( $_POST['ds_disable_admin_emails_comment'] ) and $_POST['ds_disable_admin_emails_comment'] == 'yes' )
-			|| ( isset( $_POST['ds_disable_admin_emails_password_reset'] ) and $_POST['ds_disable_admin_emails_password_reset'] == 'yes' )
-			|| ( isset( $_POST['ds_disable_admin_emails_new_user'] ) and $_POST['ds_disable_admin_emails_new_user'] == 'yes' )
-		)
-			update_option( 'ds_disable_admin_emails', 'yes' );
-		else
-			update_option( 'ds_disable_admin_emails', 'no' );
-	}
-	if ( isset( $_POST['ds_disable_core_nudge'] ) and $_POST['ds_disable_core_nudge'] == 'yes' )
-		update_option( 'ds_disable_core_nudge', 'yes' );
-	else
-		update_option( 'ds_disable_core_nudge', 'no' );
-	if ( isset( $_POST['ds_disable_theme_nudge'] ) and $_POST['ds_disable_theme_nudge'] == 'yes' )
-		update_option( 'ds_disable_theme_nudge', 'yes' );
-	else
-		update_option( 'ds_disable_theme_nudge', 'no' );
-	if ( isset( $_POST['ds_disable_plugin_nudge'] ) and $_POST['ds_disable_plugin_nudge'] == 'yes' )
-		update_option( 'ds_disable_plugin_nudge', 'yes' );
-	else
-		update_option( 'ds_disable_plugin_nudge', 'no' );
-}
-add_action( 'admin_init', 'ds_update_notification_control' );
-
-// Notification Control: for core/plugin/theme updates
-if ( get_option( 'ds_disable_admin_emails_update', 'no' ) === 'yes' ) {
-	add_filter( 'auto_core_update_send_email', '__return_false' );
-	add_filter( 'auto_theme_update_send_email', '__return_false' );
-	add_filter( 'auto_plugin_update_send_email', '__return_false' );
-}
-
-// Notification Control: for comments
-if ( get_option( 'ds_disable_admin_emails_comment', 'no' ) === 'yes' ) {
-	function wp_notify_postauthor( $comment_id, $deprecated = null ) {}
-	function wp_notify_moderator( $comment_id ) {}
-}
-
-// Notification Control: for reset password
-if ( get_option( 'ds_disable_admin_emails_password_reset', 'no' ) === 'yes' ) {
-	function wp_password_change_notification( $user ) {}
-}
-
-// Notification Control: for new user registration
-if ( get_option( 'ds_disable_admin_emails_new_user', 'no' ) === 'yes' ) {
-	remove_action( 'register_new_user', 'wp_send_new_user_notifications' );
-	add_action( 'register_new_user', function( $user_id, $notify = 'user' ) {
-		wp_send_new_user_notifications( $user_id, $notify );
-	} );
-}
-
-// Notification Control: for native nudges
-function ds_remove_core_updates() {
-	global $wp_version;
-	return( object ) array( 'last_checked' => time(), 'version_checked' => $wp_version );
-}
-if ( get_option( 'ds_disable_core_nudge', 'no' ) === 'yes' ) {
-	add_filter( 'pre_site_transient_update_core', 'ds_remove_core_updates' );
-}
-if ( get_option( 'ds_disable_theme_nudge', 'no' ) === 'yes' ) {
-	add_filter( 'pre_site_transient_update_themes', 'ds_remove_core_updates' );
-}
-if ( get_option( 'ds_disable_plugin_nudge', 'no' ) === 'yes' ) {
-	add_filter( 'pre_site_transient_update_plugins', 'ds_remove_core_updates' );
-}
-
 // enable custom login
 function ds_enable_custom_login() {
 	if ( empty( $_POST['ds_login_setting_placeholder'] ) || 'ds_login_setting' != $_POST['ds_login_setting_placeholder'] )
@@ -873,10 +626,6 @@ add_action( 'admin_init', 'ds_enable_custom_login' );
 
 // manage honeypot settings
 function ds_update_honeypot() {
-	if ( empty( $_POST['ds_notification_control_setting'] ) || 'ds_notification_control_update' != $_POST['ds_notification_control_setting'] )
-		return;
-	if ( !wp_verify_nonce( $_POST['ds_login_type_nonce'], 'ds_login_type_nonce' ) )
-		return;
 	if ( !current_user_can( 'manage_options' ) )
 		return;
 	if ( isset( $_POST['ds_honeypot_cf7'] ) and $_POST['ds_honeypot_cf7'] == 'yes' )
@@ -920,10 +669,10 @@ add_action( 'admin_init', 'ds_login_type_func' );
 // install default pages for custom login
 function ds_install_custom_login() {
 	$pages =  array(
-		'login'           => __( 'Log In', 'dam-spam' ),
-		'logout'          => __( 'Log Out', 'dam-spam' ),
-		'register'        => __( 'Register', 'dam-spam' ),
-		'forgot-password' => __( 'Forgot Password', 'dam-spam' ),
+		'login'           => esc_html__( 'Log In', 'dam-spam' ),
+		'logout'          => esc_html__( 'Log Out', 'dam-spam' ),
+		'register'        => esc_html__( 'Register', 'dam-spam' ),
+		'forgot-password' => esc_html__( 'Forgot Password', 'dam-spam' ),
 	);
 	foreach( $pages as $slug => $title ) {
 		$page_id = ds_get_page_id( $slug );
@@ -955,10 +704,10 @@ function ds_install_custom_login() {
 // uninstall default pages for custom login
 function ds_uninstall_custom_login() {
 	$pages = array(
-		'login'           => __( 'Log In', 'dam-spam' ),
-		'logout'          => __( 'Log Out', 'dam-spam' ),
-		'register'        => __( 'Register', 'dam-spam' ),
-		'forgot-password' => __( 'Forgot Password', 'dam-spam' ),
+		'login'           => esc_html__( 'Log In', 'dam-spam' ),
+		'logout'          => esc_html__( 'Log Out', 'dam-spam' ),
+		'register'        => esc_html__( 'Register', 'dam-spam' ),
+		'forgot-password' => esc_html__( 'Forgot Password', 'dam-spam' ),
 	);
 	foreach( $pages as $slug => $title ) {
 		$page_id = ds_get_page_id( $slug );
@@ -1007,11 +756,11 @@ function ds_forgot_password() {
 		return;
 	$errors = new WP_Error();
 	if ( empty( $_POST['user_login'] ) ) {
-		$errors->add( 'empty_username', __( '<strong>ERROR</strong>: Enter a username or email address.', 'dam-spam' ) );
+		$errors->add( 'empty_username', esc_html__( 'ERROR: Enter a username or email address.', 'dam-spam' ) );
 	} else if ( strpos( $_POST['user_login'], '@' ) ) {
 		$user_data = get_user_by( 'email', trim( wp_unslash( $_POST['user_login'] ) ) );
 		if ( empty( $user_data ) )
-			$errors->add( 'invalid_email', __( '<strong>ERROR</strong>: There is no user registered with that email address.', 'dam-spam' ) );
+			$errors->add( 'invalid_email', esc_html__( 'ERROR: There is no user registered with that email address.', 'dam-spam' ) );
 	} else {
 		$login = trim( $_POST['user_login'] );
 		$user_data = get_user_by( 'login', $login );
@@ -1022,7 +771,7 @@ function ds_forgot_password() {
 		return;
 	}
 	if ( !$user_data ) {
-		$errors->add( 'invalidcombo', __( '<strong>ERROR</strong>: Invalid username or email.', 'dam-spam' ) );
+		$errors->add( 'invalidcombo', esc_html__( 'ERROR: Invalid username or email.', 'dam-spam' ) );
 		$GLOBALS['ds_error'] = $errors;
 		return;
 	}
@@ -1032,18 +781,18 @@ function ds_forgot_password() {
 	if ( is_wp_error( $key ) ) {
 		$GLOBALS['ds_error'] = $key;
 	}
-	$message  = __( 'Someone requested that the password be reset for the following account:', 'dam-spam' ) . "\r\n\r\n";
+	$message  = esc_html__( 'Someone requested that the password be reset for the following account:', 'dam-spam' ) . "\r\n\r\n";
 	$message .= network_home_url( '/' ) . "\r\n\r\n";
-	$message .= sprintf( __( 'Username: %s', 'dam-spam' ), $user_login ) . "\r\n\r\n";
-	$message .= __( 'If this was a mistake, just ignore this email and nothing will happen.', 'dam-spam' ) . "\r\n\r\n";
-	$message .= __( 'To reset your password, visit the following address:', 'dam-spam' ) . "\r\n\r\n";
+	$message .= sprintf( esc_html__( 'Username: %s', 'dam-spam' ), $user_login ) . "\r\n\r\n";
+	$message .= esc_html__( 'If this was a mistake, just ignore this email and nothing will happen.', 'dam-spam' ) . "\r\n\r\n";
+	$message .= esc_html__( 'To reset your password, visit the following address:', 'dam-spam' ) . "\r\n\r\n";
 	$message .= '<' . network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' ) . ">\r\n";
 	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-	$title    = sprintf( __( '[%s] Password Reset', 'dam-spam' ), $blogname );
+	$title    = sprintf( esc_html__( '[%s] Password Reset', 'dam-spam' ), $blogname );
 	$title    = apply_filters( 'retrieve_password_title', $title, $user_login, $user_data );
 	$message  = apply_filters( 'retrieve_password_message', $message, $key, $user_login, $user_data );
 	if ( $message && !wp_mail( $user_email, $title, $message ) ) {
-		wp_die( __( 'The email could not be sent.', 'dam-spam' ) . "<br>\n" . __( 'Possible reason: your host may have disabled the mail() function...', 'dam-spam' ) );
+		wp_die( esc_html__( 'The email could not be sent.', 'dam-spam' ) . "<br>\n" . esc_html__( 'Possible reason: your host may have disabled the mail() function...', 'dam-spam' ) );
 		wp_redirect( home_url( '/login/?rp=link(target, link)-sent' ) );
 		exit;
 	}
@@ -1070,15 +819,15 @@ function ds_login_cb() {
 }
 
 function ds_login_page() {
-	include __DIR__ . '/templates/login.php';
+	include( DS_PLUGIN_FILE . '/templates/login.php' );
 }
 
 function ds_register_page() {
-	include __DIR__ . '/templates/register.php';
+	include( DS_PLUGIN_FILE . '/templates/register.php' );
 }
 
 function ds_forgot_password_page() {
-	include __DIR__ . '/templates/forgot-password.php';
+	include( DS_PLUGIN_FILE . '/templates/forgot-password.php' );
 }
 
 function ds_show_error() {
@@ -1199,10 +948,10 @@ add_action( 'admin_head-nav-menus.php', 'ds_add_nav_menu_metabox' );
 function ds_nav_menu_metabox( $object ) {
 	global $nav_menu_selected_id;
 	$elems = array(
-		'#ds-nav-login'    => __( 'Log In', 'dam-spam' ),
-		'#ds-nav-logout'   => __( 'Log Out', 'dam-spam' ),
-		'#ds-nav-register' => __( 'Register', 'dam-spam' ),
-		'#ds-nav-loginout' => __( 'Log In', 'dam-spam' ) . '/' . __( 'Log Out', 'dam-spam' )
+		'#ds-nav-login'    => esc_html__( 'Log In', 'dam-spam' ),
+		'#ds-nav-logout'   => esc_html__( 'Log Out', 'dam-spam' ),
+		'#ds-nav-register' => esc_html__( 'Register', 'dam-spam' ),
+		'#ds-nav-loginout' => esc_html__( 'Log In', 'dam-spam' ) . '/' . esc_html__( 'Log Out', 'dam-spam' )
 	);
 	$temp = ( object ) array(
 				'ID'			   => 1,
@@ -1252,7 +1001,7 @@ function ds_nav_menu_metabox( $object ) {
 			</ul>
 			<p class="button-controls">
 				<span class="add-to-menu">
-					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu', 'dam-spam' ); ?>" name="ds-menu-item" id="submit-ds-div">
+					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attresc_html_e( 'Add to Menu', 'dam-spam' ); ?>" name="ds-menu-item" id="submit-ds-div">
 					<span class="spinner"></span>
 				</span>
 			</p>
@@ -1273,9 +1022,9 @@ add_filter( 'wp_setup_nav_menu_item', 'ds_nav_menu_type_label' );
 function ds_loginout_title( $title ) {
 	$titles = explode( '/', $title );
 	if ( !is_user_logged_in() ) {
-		return esc_html( isset( $titles[0] ) ? $titles[0]: __( 'Log In', 'dam-spam' ) );
+		return esc_html( isset( $titles[0] ) ? $titles[0]: esc_html__( 'Log In', 'dam-spam' ) );
 	} else {
-		return esc_html( isset($titles[1] ) ? $titles[1] : __( 'Log Out', 'dam-spam' ) );
+		return esc_html( isset($titles[1] ) ? $titles[1] : esc_html__( 'Log Out', 'dam-spam' ) );
 	}
 }
 
@@ -1337,9 +1086,9 @@ function ds_authenticate( $user, $username, $password ) {
 		return $user;
 	if ( ds_is_user_locked( $userdata->ID ) && get_option( 'ds_login_attempts', 'no' ) === 'yes'  ) {
 		if ( $expiration = ds_get_user_lock_expiration( $userdata->ID ) ) {
-			return new WP_Error( 'locked_account', sprintf( __( '<strong>ERROR</strong>: This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) );
+			return new WP_Error( 'locked_account', sprintf( esc_html__( '<strong>ERROR</strong>: This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) );
 		} else {
-			return new WP_Error( 'locked_account', __( '<strong>ERROR</strong>: This account has been locked.', 'dam-spam' ) );
+			return new WP_Error( 'locked_account', esc_html__( '<strong>ERROR</strong>: This account has been locked.', 'dam-spam' ) );
 		}
 	} elseif ( is_wp_error( $user ) && 'incorrect_password' == $user->get_error_code() && get_option( 'ds_login_attempts', 'no') === 'yes' ) {
 		ds_add_failed_login_attempt( $userdata->ID );
@@ -1348,7 +1097,7 @@ function ds_authenticate( $user, $username, $password ) {
 			$lockout_expiry = '+' . get_option( 'ds_login_lockout_duration', 24 ) . ' ' . get_option( 'ds_login_lockout_unit', 'hour' );
 			$expiration = strtotime( $lockout_expiry );
 			ds_lock_user( $userdata->ID, $expiration );
-			return new WP_Error( 'locked_account', sprintf( __( '<strong>ERROR</strong>: This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) );
+			return new WP_Error( 'locked_account', sprintf( esc_html__( '<strong>ERROR</strong>: This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) );
 		}
 	}
 	return $user;
@@ -1420,45 +1169,6 @@ function ds_proceds_settings_export() {
 }
 add_action( 'admin_init', 'ds_proceds_settings_export' );
 
-function ds_export_excel() {
-	if ( empty( $_POST['export_log'] ) || 'export_log_data' != $_POST['export_log'] )
-		return;
-	if ( !wp_verify_nonce( $_POST['ds_export_action'], 'ds_export_action' ) )
-		return;
-	if ( !current_user_can( 'manage_options' ) )
-		return;
-		$spreadsheet = new Spreadsheet();
-		$sheet = $spreadsheet->getActiveSheet();
-		$sheet->setCellValue( 'A1', 'Date/Time' );
-		$sheet->setCellValue( 'B1', 'Email' );
-		$sheet->setCellValue( 'C1', 'IP' );
-		$sheet->setCellValue( 'D1', 'Author, User/Pwd' );
-		$sheet->setCellValue( 'E1', 'Script' );
-		$sheet->setCellValue( 'F1', 'Reason' );
-		$stats = ds_get_stats();
-		extract( $stats );
-		$index = 2;
-		foreach ( $stats['hist'] as $key => $value ) {
-		$sheet->setCellValue( 'A'.$index, $key );
-		$sheet->setCellValue( 'B'.$index, $value[1] );
-		$sheet->setCellValue( 'C'.$index, $value[0] );
-		$sheet->setCellValue( 'D'.$index, $value[2] );
-		$sheet->setCellValue( 'E'.$index, $value[3] );
-		$sheet->setCellValue( 'F'.$index, $value[4] );
-		$index++;
-		}
-		// redirect output to a client's web browser (xlsx)
-		header( 'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' );
-		header( 'Content-Disposition: attachment;filename="ds_log_' . time() . '.xlsx"' );
-		header( 'Cache-Control: max-age=0' );
-		// if you're serving to IE 9, then the following may be needed
-		header( 'Cache-Control: max-age=1' );
-		$writer = IOFactory::createWriter( $spreadsheet, 'Xlsx' );
-		$writer->save( 'php://output' );
-		exit;
-}
-add_action( 'admin_init', 'ds_export_excel' );
-
 // settings import from a json file
 function ds_proceds_settings_import() {
 	if ( empty( $_POST['ds_action'] ) || 'import_settings' != $_POST['ds_action'] )
@@ -1471,11 +1181,11 @@ function ds_proceds_settings_import() {
 	$extension = $_FILES['import_file']['type'] ;
 	// if ( $extension != 'json' ) {
 	if ( $extension != 'application/json' ) {
-		wp_die( __( 'Please upload a valid .json file', 'dam-spam' ) );
+		wp_die( esc_html__( 'Please upload a valid .json file', 'dam-spam' ) );
 	}
 	$import_file = $_FILES['import_file']['tmp_name'];
 	if ( empty( $import_file ) ) {
-		wp_die( __( 'Please upload a file to import', 'dam-spam' ) );
+		wp_die( esc_html__( 'Please upload a file to import', 'dam-spam' ) );
 	}
 	// retrieve the settings from the file and convert the json object to an array
 	$options = ( array ) json_decode( file_get_contents( $import_file ) );	
@@ -1495,7 +1205,7 @@ function ds_proceds_settings_reset() {
 		return;
 	if ( !current_user_can( 'manage_options' ) )
 		return;
-	$url	 = plugin_dir_path( __FILE__ ) . '/modules/default.json'; 
+	$url	 = DS_PLUGIN_FILE . '/modules/default.json'; 
 	$options = ( array ) json_decode( file_get_contents( $url ) );
 	ds_set_options( $options );
 	add_action( 'admin_notices', 'ds_admin_notice_success' );

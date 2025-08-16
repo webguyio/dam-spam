@@ -253,7 +253,7 @@ class be_module {
 					$ipe = be_module::ip2numstr( $ipe );
 					if ( $ipt >= $ips && $ipt <= $ipe ) {
 						if ( is_array( $ip ) ) {
-							_e( 'Array in IP: ', 'dam-spam' ) . print_r( $ip, true )
+							esc_html_e( 'Array in IP: ', 'dam-spam' ) . print_r( $ip, true )
 								 . "<br>";
 							$ip = $ip[0];
 						}

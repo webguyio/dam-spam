@@ -78,12 +78,12 @@ class ds_challenge extends be_module {
 					$allowset = $this->ds_add_allow( $ip, $options, $stats, $post, $post );
 				}
 				// now the CAPTCHA settings
-				$msg = __( 'Thank you,<br>', 'dam-spam' );
+				$msg = esc_html__( 'Thank you,', 'dam-spam' ) . '<br>';
 				if ( $emailsent ) {
-					$msg .= __( 'The webmaster has been notified by email.<br>', 'dam-spam' );
+					$msg .= esc_html__( 'The webmaster has been notified by email.', 'dam-spam' ) . '<br>';
 				}
 				if ( $allowset ) {
-					$msg .= __( 'Your request has been recorded.<br>', 'dam-spam' );
+					$msg .= esc_html__( 'Your request has been recorded.', 'dam-spam' ) . '<br>';
 				}
 				if ( empty( $chkcaptcha ) || $chkcaptcha == 'N' ) {
 					// send out the thank you message
@@ -98,7 +98,7 @@ class ds_challenge extends be_module {
 							$recaptchaapisecret = $options['recaptchaapisecret'];
 							$recaptchaapisite   = $options['recaptchaapisite'];
 							if ( empty( $recaptchaapisecret ) || empty( $recaptchaapisite ) ) {
-								$msg = __( 'reCAPTCHA keys are not set.', 'dam-spam' );
+								$msg = esc_html__( 'reCAPTCHA keys are not set.', 'dam-spam' );
 							} else {
 								$g = sanitize_textarea_field( $_REQUEST['g-recaptcha-response'] );
 								// $url = "https://www.google.com/recaptcha/api/siteverify";
@@ -110,11 +110,11 @@ class ds_challenge extends be_module {
 									$_POST = unserialize( base64_decode( $kp ), ['allowed_classes' => false] );
 									// sfs_debug_msg( "trying to return the post to the comments program" . print_r( $_POST, true ) );
 									// success add to cache
-									ds_log_good( $ip, __( 'Passed reCAPTCHA', 'dam-spam' ), 'pass' );
+									ds_log_good( $ip, esc_html__( 'Passed reCAPTCHA', 'dam-spam' ), 'pass' );
 									do_action( 'ds_ok', $ip, $post ); // so plugins can undo spam report
 									return false;
 								} else {
-									$msg = __( 'Google reCAPTCHA entry does not match. Try again.', 'dam-spam' );
+									$msg = esc_html__( 'Google reCAPTCHA entry does not match. Try again.', 'dam-spam' );
 								}
 							}
 						}
@@ -129,7 +129,7 @@ class ds_challenge extends be_module {
 							print_r( $hcaptchaapisite );
 							exit;*/
 							if ( empty( $hcaptchaapisecret ) || empty( $hcaptchaapisite ) ) {
-								$msg = __( 'hCaptcha keys are not set.', 'dam-spam' );
+								$msg = esc_html__( 'hCaptcha keys are not set.', 'dam-spam' );
 							} else {
 								$h = sanitize_textarea_field( $_REQUEST['h-captcha-response'] );
 								// $url = "https://hcaptcha.com/siteverify";
@@ -142,11 +142,11 @@ class ds_challenge extends be_module {
 									$_POST = unserialize( base64_decode( $kp ), ['allowed_classes' => false] );
 									// sfs_debug_msg( "trying to return the post to the comments program" . print_r( $_POST, true ) );
 									// success add to cache
-									ds_log_good( $ip, __( 'Passed hCaptcha', 'dam-spam' ), 'pass' );
+									ds_log_good( $ip, esc_html__( 'Passed hCaptcha', 'dam-spam' ), 'pass' );
 									do_action( 'ds_ok', $ip, $post ); // so plugins can undo spam report
 									return false;
 								} else {
-									$msg = __( 'hCaptcha entry does not match. Try again.', 'dam-spam' );
+									$msg = esc_html__( 'hCaptcha entry does not match. Try again.', 'dam-spam' );
 								}
 							}
 						}
@@ -205,11 +205,11 @@ class ds_challenge extends be_module {
 								$_POST = unserialize( base64_decode( $kp ), ['allowed_classes' => false] );
 								// sfs_debug_msg( "trying to return the post to the comments program" . print_r( $_POST, true ) );
 								// success add to cache
-								ds_log_good( $ip, __( 'Passed Solve Media CAPTCHA', 'dam-spam' ), 'pass' );
+								ds_log_good( $ip, esc_html__( 'Passed Solve Media CAPTCHA', 'dam-spam' ), 'pass' );
 								do_action( 'ds_ok', $ip, $post ); // so plugins can undo spam report
 								return false;
 							} else {
-								$msg = __( 'CAPTCHA entry does not match. Try again.', 'dam-spam' );
+								$msg = esc_html__( 'CAPTCHA entry does not match. Try again.', 'dam-spam' );
 							}
 						}
 						break;
@@ -229,11 +229,11 @@ class ds_challenge extends be_module {
 								$_POST = unserialize( base64_decode( $kp ), ['allowed_classes' => false] );
 								// sfs_debug_msg( "trying to return the post to the comments program" . print_r( $_POST, true ) );
 								// success add to cache
-								ds_log_good( $ip, __( 'Passed Simple Arithmetic CAPTCHA', 'dam-spam' ), 'pass' );
+								ds_log_good( $ip, esc_html__( 'Passed Simple Arithmetic CAPTCHA', 'dam-spam' ), 'pass' );
 								do_action( 'ds_ok', $ip, $post ); // so plugins can undo spam report
 								return false;
 							} else {
-								$msg = __( 'Incorrect. Try again.', 'dam-spam' );
+								$msg = esc_html__( 'Incorrect. Try again.', 'dam-spam' );
 							}
 						}
 						break;
@@ -270,22 +270,20 @@ class ds_challenge extends be_module {
 				<input type="hidden" name="kr" value="' . esc_attr( $kr ) . '">
 				<input type="hidden" name="ka" value="' . esc_attr( $ka ) . '">
 		';
-		$formbot = __( '
-				<p><input style="background:#007cba;padding:10px 15px;border:none;border-radius:3px;color:white;cursor:pointer" type="submit" value="Submit Request"></p>
-			</form>
-		', 'dam-spam' );
+		$formbot = '<p><input style="background:#007cba;padding:10px 15px;border:none;border-radius:3px;color:white;cursor:pointer" type="submit" value="' . esc_attr__( 'Submit Request', 'dam-spam' ) . '"></p>
+			</form>';
 		$not	 = '';
 		if ( $wlreq == 'Y' ) {
 			// halfhearted attempt to hide which field is the email field
-			$not = __( '
-				<h1>Allow Request</h1>
-				<p>You have been blocked from entering information on this site. In order to prevent this from happening in the future, complete the request below to have the admin add your IP to a list that allows you full access.</p>
-				<p>Please enter your <strong>e</strong><strong>ma</strong><strong>il</strong> <strong>add</strong><strong>re</strong><strong>ss</strong> and a short note requesting access here.</p>
-				Email Address (required)<!-- not the message -->: <input type="text" value="" name="ke" style="padding:5px" class="regular-text"><br>
-				Message<!-- not email -->:<br><textarea name="km" placeholder="Explain what you were trying to do or if you were submitting a contact form, re-enter your message." rows="5" style="box-sizing:border-box;width:100%;padding:15px" class="large-text"></textarea>
-			', 'dam-spam' );
+			$not = '
+				<h1>' . esc_html__( 'Allow Request', 'dam-spam' ) . '</h1>
+				<p>' . esc_html__( 'You have been blocked from entering information on this site. In order to prevent this from happening in the future, complete the request below to have the admin add your IP to a list that allows you full access.', 'dam-spam' ) . '</p>
+				<p>' . esc_html__( 'Please enter your <strong>e</strong><strong>ma</strong><strong>il</strong> <strong>add</strong><strong>re</strong><strong>ss</strong> and a short note requesting access here.', 'dam-spam' ) . '</p>
+				' . esc_html__( 'Email Address (required)', 'dam-spam' ) . '<!-- not the message -->: <input type="text" value="" name="ke" style="padding:5px" class="regular-text"><br>
+				' . esc_html__( 'Message', 'dam-spam' ) . '<!-- not email -->:<br><textarea name="km" placeholder="' . esc_html__( 'Explain what you were trying to do or if you were submitting a contact form, re-enter your message.', 'dam-spam' ) . '" rows="5" style="box-sizing:border-box;width:100%;padding:15px" class="large-text"></textarea>
+			';
 		}
-		$captop = __( '<h1>Are you human?</h1>', 'dam-spam' );
+		$captop = '<h1>' . esc_html__( 'Are you human?', 'dam-spam' ) . '</h1>';
 		$capbot = '';
 		// now the CAPTCHAs
 		$cap = '';
@@ -332,11 +330,12 @@ class ds_challenge extends be_module {
 					$seed = strtotime( $spdate );
 				}
 				$stupid = $n1 + $n2 - $seed;
-				$cap	= __( '
-					<p>Enter the SUM of these two numbers: <span style="size:4em;font-weight:bold">' . $n1 . ' + ' . $n2 . '</span><br>
+				$cap	= printf( esc_html__( '
+					<p>Enter the SUM of these two numbers: <span style="size:4em;font-weight:bold">%1$s + %2$s</span><br>
 					<input name="sum" value="" type="text">
-					<input type="hidden" name="nums" value="' . $stupid . '"><br>
-				', 'dam-spam' );
+					<input type="hidden" name="nums" value="%3$s"><br>
+				', 'dam-spam' ),
+				$n1, $n2, $stupid );
 				break;
 			case 'F':
 			// future
@@ -391,34 +390,35 @@ class ds_challenge extends be_module {
 			if ( !empty( $wlreqmail ) ) {
 				$to = $wlreqmail;
 			}
-			$subject = __( 'Allow List Request from ', 'dam-spam' ) . get_bloginfo( 'name' );
+			$subject = esc_html__( 'Allow List Request from ', 'dam-spam' ) . get_bloginfo( 'name' );
 			$ip	     = ds_get_ip();
-			$web 	 = __( 'Approve or Block Request: ', 'dam-spam' ) . admin_url( 'admin.php?page=ds-allow-list' );
-			$message = __( "
+			$web 	 = esc_html__( 'Approve or Block Request: ', 'dam-spam' ) . admin_url( 'admin.php?page=ds-allowed' );
+			$message = printf( esc_html__( '
 				A request has been received from someone who has been marked as a spammer by the Dam Spam plugin.
 
 				You are being notified because you have toggled on the option indicating that you wanted this email.
 
 				The information from the request is:
 
-				Time: $now
-				User IP: $ip
-				User Email: $ke
-				Spam Reason: $kr
-				User Message: $km
+				Time: %1$s
+				User IP: %2$s
+				User Email: %3$s
+				Spam Reason: %4$s
+				User Message: %5$s
 
-				$web
+				%6$s
 
 				Please be aware that the user has been recognized as a potential spammer.
 
 				Some spam bots fill out the request form with a fake explanation.
 
 				— Dam Spam
-			", 'dam-spam' );
+			', 'dam-spam' ),
+			$now, $ip, $ke, $kr, $km, $web );
 			$message = str_replace( "\t", '', $message );
-			$headers = __( 'From: ', 'dam-spam' ) . get_option( 'admin_email' ) . "\r\n";
+			$headers = esc_html__( 'From: ', 'dam-spam' ) . get_option( 'admin_email' ) . "\r\n";
 			wp_mail( $to, $subject, $message, $headers );
-			$rejectmessage = __( '<h2>Email sent. Thank you.</h2>', 'dam-spam' );
+			$rejectmessage = '<h2>' . esc_html__( 'Email sent. Thank you.', 'dam-spam' ) . '</h2>';
 			return true;
 		}
 	}

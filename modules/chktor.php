@@ -1758,7 +1758,7 @@ class chktor extends be_module {
 			'2a12:a800:0002:0001:0045:0138:0016:0203'
 		);
 		if ( in_array( $ip, $torlist ) ) {
-			return __( 'Tor Exit Node: ', 'dam-spam' );
+			return esc_html__( 'Tor Exit Node: ', 'dam-spam' );
 		}
 		return false;
 		// return false if OK, return a reason if not

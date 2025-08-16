@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
-	die( __( 'Access Blocked', 'dam-spam' ) );
+	die( esc_html__( 'Access Blocked', 'dam-spam' ) );
 }
 
 ds_fix_post_vars();
@@ -125,7 +125,7 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
 	}
 	ds_set_options( $options );
 	extract( $options );
-	$msg = '<div class="notice notice-success is-dismissible"><p>' . __( 'Options Updated', 'dam-spam' ) . '</p></div>';
+	$msg = '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
 }
 
 $nonce = wp_create_nonce( 'ds_update' );
@@ -133,7 +133,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 ?>
 
 <div id="ds-plugin" class="wrap">
-	<h1 id="ds-head">Dam Spam — <?php _e( 'Block Lists', 'dam-spam' ); ?></h1>
+	<h1 id="ds-head"><?php esc_html_e( 'Blocked — Dam Spam', 'dam-spam' ); ?></h1>
 	<br>
 	<br>
 	<?php if ( !empty( $msg ) ) {
@@ -142,12 +142,12 @@ $nonce = wp_create_nonce( 'ds_update' );
 	<form method="post" action="">
 		<input type="hidden" name="action" value="update">
 		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
-		<div class="mainsection"><?php _e( 'Personalized Block List', 'dam-spam' ); ?></div>
-		<p><?php _e( 'Add IP addresses or emails here that you want blocked.', 'dam-spam' ); ?></p>
+		<div class="mainsection"><?php esc_html_e( 'Personalized Block List', 'dam-spam' ); ?></div>
+		<p><?php esc_html_e( 'Add IP addresses or emails here that you want blocked.', 'dam-spam' ); ?></p>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkbluserid">
 				<input class="ds_toggle" type="checkbox" id="chkbluserid" name="chkbluserid" value="Y" <?php if ( $chkbluserid == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php _e( 'Enable Block by Username', 'dam-spam' ); ?></span></small>
+		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Enable Block by Username', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
@@ -158,11 +158,11 @@ $nonce = wp_create_nonce( 'ds_update' );
 		?></textarea>
 		<br>
 		<br>
-		<div class="mainsection"><?php _e( 'Spam Words List', 'dam-spam' ); ?></div>				
+		<div class="mainsection"><?php esc_html_e( 'Spam Words List', 'dam-spam' ); ?></div>				
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkspamwords">
 				<input class="ds_toggle" type="checkbox" id="chkspamwords" name="chkspamwords" value="Y" <?php if ( $chkspamwords == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check Spam Words', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check Spam Words', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
@@ -172,12 +172,12 @@ $nonce = wp_create_nonce( 'ds_update' );
 			}
 		?></textarea>
 		<br>
-		<div class="mainsection"><?php _e( 'URL Shortening Services List', 'dam-spam' ); ?></div>			
+		<div class="mainsection"><?php esc_html_e( 'URL Shortening Services List', 'dam-spam' ); ?></div>			
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkurlshort">
 				<input class="ds_toggle" type="checkbox" id="chkurlshort" name="chkurlshort" value="Y" <?php if ( $chkurlshort == 'Y' ) { echo 'checked="checked"'; } ?>>
 				<span><small></small></span>
-				<small><span style="font-size:16px!important"><?php _e( 'Check URL Shorteners', 'dam-spam' ); ?></span></small>
+				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check URL Shorteners', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
@@ -186,19 +186,19 @@ $nonce = wp_create_nonce( 'ds_update' );
 				echo $p . "\r\n";
 			}
 		?></textarea>
-		<div class="mainsection"><?php _e( 'Check for URLs', 'dam-spam' ); ?></div>	
+		<div class="mainsection"><?php esc_html_e( 'Check for URLs', 'dam-spam' ); ?></div>	
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkurls">
 				<input class="ds_toggle" type="checkbox" id="chkurls" name="chkurls" value="Y" <?php if ( $chkurls == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php _e( 'Check for any URL', 'dam-spam' ); ?></span></small>
+		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for any URL', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
-		<div class="mainsection"><?php _e( 'Bad User Agents List', 'dam-spam' ); ?></div>	
+		<div class="mainsection"><?php esc_html_e( 'Bad User Agents List', 'dam-spam' ); ?></div>	
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkagent">
 				<input class="ds_toggle" type="checkbox" id="chkagent" name="chkagent" value="Y" <?php if ( $chkagent == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php _e( 'Check Agents', 'dam-spam' ); ?></span></small>
+		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Check Agents', 'dam-spam' ); ?></span></small>
 			</label>
 		</div>
 		<br>
@@ -209,8 +209,8 @@ $nonce = wp_create_nonce( 'ds_update' );
 		?></textarea>
 		<br>
 		<br>
-		<div class="mainsection"><?php _e( 'Blocked TLDs', 'dam-spam' ); ?></div>					
-		<?php _e( '<p>Enter the TLD name including the period (for example .xxx). A TLD is the last part of a domain like .com or .net.</p>', 'dam-spam' ); ?>
+		<div class="mainsection"><?php esc_html_e( 'Blocked TLDs', 'dam-spam' ); ?></div>					
+		<p><?php esc_html_e( 'Enter the TLD name including the period (for example .xxx). A TLD is the last part of a domain like .com or .net.', 'dam-spam' ); ?></p>
 		<textarea name="badTLDs" cols="40" rows="8"><?php
 			foreach ( $badTLDs as $p ) {
 				echo $p . "\r\n";
@@ -218,6 +218,6 @@ $nonce = wp_create_nonce( 'ds_update' );
 		?></textarea>
 		<br>
 		<br>
-		<p class="submit"><input class="button-primary" value="<?php _e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
+		<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
 	</form>
 </div>

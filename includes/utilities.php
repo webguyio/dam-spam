@@ -54,7 +54,7 @@ function ds_read_filex( $filename ) {
 	if ( file_exists( $file ) ) {
 		return file_get_contents( $file );
 	}
-	return __( 'File Not Found', 'dam-spam' );
+	return esc_html__( 'File Not Found', 'dam-spam' );
 }
 
 function ds_file_exists( $filename ) {
@@ -109,35 +109,36 @@ function sfs_ErrorHandler( $errno, $errmsg, $filename, $linenum ) {
 	}
 	switch ( $errno ) {
 		case E_ERROR:
-			$serrno = __( 'Fatal run-time errors. These indicate errors that can not be recovered from, such as a memory allocation problem. Execution of the script is halted. ', 'dam-spam' );
+			$serrno = esc_html__( 'Fatal run-time errors. These indicate errors that can not be recovered from, such as a memory allocation problem. Execution of the script is halted. ', 'dam-spam' );
 			break;
 		case E_WARNING:
-			$serrno = __( 'Run-time warnings (non-fatal errors). Execution of the script is not halted. ', 'dam-spam' );
+			$serrno = esc_html__( 'Run-time warnings (non-fatal errors). Execution of the script is not halted. ', 'dam-spam' );
 			break;
 		case E_NOTICE:
-			$serrno = __( 'Run-time notices. Indicate that the script encountered something that could indicate an error, but could also happen in the normal course of running a script. ', 'dam-spam' );
+			$serrno = esc_html__( 'Run-time notices. Indicate that the script encountered something that could indicate an error, but could also happen in the normal course of running a script. ', 'dam-spam' );
 			break;
 		default;
-			$serrno = __( 'Unknown Error Type ' . $errno . '', 'dam-spam' );
+			$serrno = sprintf( esc_html__( 'Unknown Error Type %s', 'dam-spam' ), $errno );
 	}
-	if ( strpos( $errmsg, __( 'modify header information', 'dam-spam' ) ) ) {
+	if ( strpos( $errmsg, esc_html__( 'modify header information', 'dam-spam' ) ) ) {
 		return false;
 	}
 	$now = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 	$m1  = memory_get_usage( true );
 	$m2  = memory_get_peak_usage( true );
 	$ip  = ds_get_ip();
-	$msg = __( '
-		Time: ' . $now . '
-		Error Number: ' . $errno . '
-		Error Type: ' . $serrno . '
-		Error Msg: ' . $errmsg . '
-		IP Address: ' . $ip . '
-		File Name: ' . $filename . '
-		Line Number: ' . $linenum . '
-		Memory Used: ' . $m1 . ' Peak: ' . $m2 . '
+	$msg = sprintf( esc_html__( '
+		Time: %1$s
+		Error Number: %2$s
+		Error Type: %3$s
+		Error Msg: %4$s
+		IP Address: %5$s
+		File Name: %6$s
+		Line Number: %7$s
+		Memory Used: %8$s Peak: %9$s
 		---------------------
-	', 'dam-spam' );
+	', 'dam-spam' ),
+	$now, $errno, $serrno, $errmsg, $ip, $filename, $linenum, $m1, $m2 );
 	$msg = str_replace( "\t", '', $msg );
 	// write out the error
 	@file_put_contents( DS_PLUGIN_DATA . '.sfs_debug_output.txt', $msg, FILE_APPEND );

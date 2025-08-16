@@ -24,11 +24,11 @@ class ds_get_gcache {
 			$show   .= "<a href=\"https://www.stopforumspam.com/search?q=$key\" target=\"_blank\">$key: $value</a> ";
 			// try AJAX on the delete from bad cache
 			$onclick = "onclick=\"sfs_ajax_process('$key','$container','$cachedel','$ajaxurl');return false;\"";
-			$show   .= " <a href=\"\" $onclick title=\"" . esc_attr__( 'Delete $key from Cache', 'dam-spam' ) . "\" alt=\"" . esc_attr__( 'Delete $key from Cache', 'dam-spam' ) . "\" ><img src=\"$trash\" class=\"icon-action\"></a> ";
+			$show   .= " <a href=\"\" $onclick title=\"" . sprintf( esc_attr__( 'Delete %s from Cache', 'dam-spam' ), $key ) . "\" alt=\"" . sprintf( esc_attr__( 'Delete %s from Cache', 'dam-spam' ), $key ) . "\" ><img src=\"$trash\" class=\"icon-action\"></a> ";
 			$onclick = "onclick=\"sfs_ajax_process('$key','$container','add_black','$ajaxurl');return false;\"";
-			$show   .= " <a href=\"\" $onclick title=\"" . esc_attr__( 'Add to $key Block List', 'dam-spam' ) . "\" alt=\"" . esc_attr__( 'Add to Block List', 'dam-spam' ) . "\" ><img src=\"$down\" class=\"icon-action\"></a> ";
+			$show   .= " <a href=\"\" $onclick title=\"" . sprintf( esc_attr__( 'Add to %s Block List', 'dam-spam' ), $key ) . "\" alt=\"" . esc_attr__( 'Add to Block List', 'dam-spam' ) . "\" ><img src=\"$down\" class=\"icon-action\"></a> ";
 			$onclick = "onclick=\"sfs_ajax_process('$key','$container','add_white','$ajaxurl');return false;\"";
-			$show   .= " <a href=\"\" $onclick title=\"" . esc_attr__( 'Add to $key Allow List', 'dam-spam' ) . "\" alt=\"" . esc_attr__( 'Add to Allow List', 'dam-spam' ) . "\" ><img src=\"$up\" class=\"icon-action\"></a>";
+			$show   .= " <a href=\"\" $onclick title=\"" . sprintf( esc_attr__( 'Add to %s Allow List', 'dam-spam' ), $key ) . "\" alt=\"" . esc_attr__( 'Add to Allow List', 'dam-spam' ) . "\" ><img src=\"$up\" class=\"icon-action\"></a>";
 			$show   .= $who;
 			$show   .= "<br>";
 		}

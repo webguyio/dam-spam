@@ -19,88 +19,88 @@ function ds_admin_menu_l() {
 	}
 	add_submenu_page(
 		'dam-spam', // plugins parent
-		__( 'Summary — Dam Spam', 'dam-spam' ), // $page_title,
-		__( 'Summary', 'dam-spam' ), // $menu_title,
+		esc_html__( 'Summary — Dam Spam', 'dam-spam' ), // $page_title,
+		esc_html__( 'Summary', 'dam-spam' ), // $menu_title,
 		'manage_options', // $capability,
 		'dam-spam', // $menu_slug,
 		'ds_summary_menu' // $function
 	);
 	add_submenu_page(
 		'dam-spam', // plugins parent
-		__( 'Protection Options — Dam Spam', 'dam-spam' ), // $page_title,
-		__( 'Protection Options', 'dam-spam' ), // $menu_title,
+		esc_html__( 'Protections — Dam Spam', 'dam-spam' ), // $page_title,
+		esc_html__( 'Protections', 'dam-spam' ), // $menu_title,
 		'manage_options', // $capability,
-		'ds-options', // $menu_slug,
-		'ds_options_menu' // function
+		'ds-protections', // $menu_slug,
+		'ds_protections_menu' // function
 	);
 	add_submenu_page(
 		'dam-spam', // plugins parent
-		__( 'Allow Lists — Dam Spam', 'dam-spam' ), // $page_title,
-		__( 'Allow Lists', 'dam-spam' ), // $menu_title,
+		esc_html__( 'Allowed — Dam Spam', 'dam-spam' ), // $page_title,
+		esc_html__( 'Allowed', 'dam-spam' ), // $menu_title,
 		'manage_options', // $capability,
-		'ds-allow-list', // $menu_slug,
-		'ds_allow_menu' // function
+		'ds-allowed', // $menu_slug,
+		'ds_allowed_menu' // function
 	);
 	add_submenu_page(
 		'dam-spam', // plugins parent
-		__( 'Block Lists — Dam Spam', 'dam-spam' ), // $page_title,
-		__( 'Block Lists', 'dam-spam' ), // $menu_title,
+		esc_html__( 'Blocked — Dam Spam', 'dam-spam' ), // $page_title,
+		esc_html__( 'Blocked', 'dam-spam' ), // $menu_title,
 		'manage_options', // $capability,
-		'ds-block-list', // $menu_slug,
-		'ds_block_menu' // function
+		'ds-blocked', // $menu_slug,
+		'ds_blocked_menu' // function
 	);
 	add_submenu_page(
 		'dam-spam', // plugins parent
-		__( 'Challenge & Block — Dam Spam', 'dam-spam' ), // $page_title,
-		__( 'Challenge & Block', 'dam-spam' ), // $menu_title,
+		esc_html__( 'Challenges — Dam Spam', 'dam-spam' ), // $page_title,
+		esc_html__( 'Challenges', 'dam-spam' ), // $menu_title,
 		'manage_options', // $capability,
-		'ds-challenge', // $menu_slug,
+		'ds-challenges', // $menu_slug,
 		'ds_challenges_menu' // function
 	);
 	add_submenu_page(
 		'dam-spam', // plugins parent
-		__( 'Web Services — Dam Spam', 'dam-spam' ), // $page_title,
-		__( 'Web Services', 'dam-spam' ), // $menu_title,
+		esc_html__( 'APIs — Dam Spam', 'dam-spam' ), // $page_title,
+		esc_html__( 'APIs', 'dam-spam' ), // $menu_title,
 		'manage_options', // $capability,
-		'ds-webservices', // $menu_slug,
-		'ds_webservices_menu'
+		'ds-apis', // $menu_slug,
+		'ds_apis_menu'
 	);
 	add_submenu_page(
 		'dam-spam', // plugins parent
-		__( 'Cache — Dam Spam', 'dam-spam' ), // $page_title,
-		__( 'Cache', 'dam-spam' ), // $menu_title,
+		esc_html__( 'Cache — Dam Spam', 'dam-spam' ), // $page_title,
+		esc_html__( 'Cache', 'dam-spam' ), // $menu_title,
 		'manage_options', // $capability,
 		'ds-cache', // $menu_slug,
 		'ds_cache_menu' // function
 	);
 	add_submenu_page(
 		'dam-spam', // plugins parent
-		__( 'Log Report — Dam Spam', 'dam-spam' ), // $page_title,
-		__( 'Log Report', 'dam-spam' ), // $menu_title,
+		esc_html__( 'Logs — Dam Spam', 'dam-spam' ), // $page_title,
+		esc_html__( 'Logs', 'dam-spam' ), // $menu_title,
 		'manage_options', // $capability,
-		'ds-reports', // $menu_slug,
-		'ds_reports_menu' // function
+		'ds-logs', // $menu_slug,
+		'ds_logs_menu' // function
 	);
 	add_submenu_page(
 		'dam-spam', // plugins parent
-		__( 'Diagnostics — Dam Spam', 'dam-spam' ), // $page_title,
-		__( 'Diagnostics', 'dam-spam' ), // $menu_title,
+		esc_html__( 'Diagnostics — Dam Spam', 'dam-spam' ), // $page_title,
+		esc_html__( 'Diagnostics', 'dam-spam' ), // $menu_title,
 		'manage_options', // $capability,
 		'ds-diagnostics', // $menu_slug,
 		'ds_diagnostics_menu' // function
 	);
 	add_submenu_page(
 		'dam-spam', // plugins parent
-		__( 'Cleanup — Dam Spam', 'dam-spam' ), // $page_title,
-		__( 'Cleanup', 'dam-spam' ), // $menu_title,
+		esc_html__( 'Cleanup — Dam Spam', 'dam-spam' ), // $page_title,
+		esc_html__( 'Cleanup', 'dam-spam' ), // $menu_title,
 		'manage_options', // $capability,
-		'ds-maintenance', // $menu_slug,
-		'ds_maintenance_menu' // function
+		'ds-cleanup', // $menu_slug,
+		'ds_cleanup_menu' // function
 	);
 	add_submenu_page(
 		'dam-spam', // plugins parent
-		__( 'Advanced — Dam Spam', 'dam-spam' ), // $page_title,
-		__( 'Advanced', 'dam-spam' ), // $menu_title,
+		esc_html__( 'Advanced — Dam Spam', 'dam-spam' ), // $page_title,
+		esc_html__( 'Advanced', 'dam-spam' ), // $menu_title,
 		'manage_options', // $capability,
 		'ds-advanced', // $menu_slug,
 		'ds_advanced_menu' // function
@@ -108,11 +108,11 @@ function ds_admin_menu_l() {
 	if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 		add_submenu_page(
 			'dam-spam', // plugins parent
-			__( 'Multisite — Dam Spam', 'dam-spam' ), // $page_title,
-			__( 'Network', 'dam-spam' ), // $menu_title,
+			esc_html__( 'Multisite — Dam Spam', 'dam-spam' ), // $page_title,
+			esc_html__( 'Multisite', 'dam-spam' ), // $menu_title,
 			'manage_options', // $capability,
-			'ds-network', // $menu_slug,
-			'ds_network_menu' // function
+			'ds-multisite', // $menu_slug,
+			'ds_multisite_menu' // function
 		);
 	}
 }
@@ -121,44 +121,44 @@ function ds_summary_menu() {
 	include_setting( "summary.php" );
 }
 
-function ds_options_menu() {
-	include_setting( "options.php" );
+function ds_protections_menu() {
+	include_setting( "protections.php" );
 }
 
-function ds_allow_menu() {
-	include_setting( "allow.php" );
+function ds_allowed_menu() {
+	include_setting( "allowed.php" );
 }
 
-function ds_block_menu() {
-	include_setting( "block.php" );
+function ds_blocked_menu() {
+	include_setting( "blocked.php" );
 }
 
 function ds_challenges_menu() {
-	include_setting( "challenge.php" );
+	include_setting( "challenges.php" );
 }
 
-function ds_webservices_menu() {
-	include_setting( "webservices.php" );
+function ds_apis_menu() {
+	include_setting( "apis.php" );
 }
 
 function ds_cache_menu() {
 	include_setting( "cache.php" );
 }
 
-function ds_reports_menu() {
-	include_setting( "reports.php" );
+function ds_logs_menu() {
+	include_setting( "logs.php" );
 }
 
-function ds_maintenance_menu() {
-	include_setting( "maintenance.php" );
+function ds_cleanup_menu() {
+	include_setting( "cleanup.php" );
 }
 
 function ds_diagnostics_menu() {
 	include_setting( "diagnostics.php" );
 }
 
-function ds_network_menu() {
-	include_setting( "network.php" );
+function ds_multisite_menu() {
+	include_setting( "multisite.php" );
 }
 
 function include_setting( $file ) {
@@ -167,7 +167,7 @@ function include_setting( $file ) {
 	if ( file_exists( $ppath . $file ) ) {
 		require_once( $ppath . $file );
 	} else {
-		_e( '<br>Missing File: ' . $ppath, $file . ' <br>', 'dam-spam' );
+		printf( __( '<br>Missing File: %1$s %2$s <br>', 'dam-spam' ), $ppath, $file );
 	}
 	sfs_errorsonoff( 'off' );
 }

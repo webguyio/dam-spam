@@ -15,7 +15,7 @@ class chkspamwords {
 			if ( !empty( $data ) ) {
 				foreach ( $spamwords as $sw ) {
 					if ( stripos( $data, $sw ) !== false ) {
-						return __( 'Spam Word: ' . $sw . ' in ' . $key . '', 'dam-spam' );
+						sprintf( esc_html__( 'Spam Word: %1$s in %2$s', 'dam-spam' ), $sw, $key );
 					}
 				}
 			}

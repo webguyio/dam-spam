@@ -37,7 +37,7 @@ class chktld { // change name
 				$tt = implode( '.', array_slice( $t, count( $t ) - $dlvl, $dlvl ) );
 				$tt = '.' . trim( strtolower( $tt ) );
 				if ( $ft == $tt ) {
-					return __( 'TLD Blocked: ' . $key . ': ' . $value . ': ' . $ft . '', 'dam-spam' );
+					sprintf( esc_html__( 'TLD Blocked: %1$s: %2$s: %3$s', 'dam-spam' ), $key, $value, $ft );
 				}
 			}
 		}

@@ -11,7 +11,7 @@ class chkurls {
 		$comment = explode( " ", $post['comment'] );
 		for ( $i = 0 ; $i < count( $comment ) ; $i++ ) {
 			if ( preg_match( '/^[a-z0-9_]+([\\-\\.]{1}[a-z_0-9]+)*\\.[_a-z]{2,5}+'.'((:[0-9]{1,5})?\\/.*)?$/i', $comment[$i] ) OR strpos( $comment[$i], 'http://' ) !== false OR strpos( $comment[$i], 'https://' ) !== false ) {
-				return __( 'URL Detected', 'dam-spam' );
+				return esc_html__( 'URL Detected', 'dam-spam' );
 			}
 		}
 		return false;

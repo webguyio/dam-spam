@@ -12,7 +12,7 @@ class chkshort { // change name
 			$email = $post['email'];
 			if ( !empty( $email ) ) {
 				if ( strlen( $email ) < 5 ) {
-					return __( 'Email Too Short: ' . $email . '', 'dam-spam' );
+					sprintf( esc_html__( 'Email Too Short: %s', 'dam-spam' ), $email );
 				}
 			}
 		}
@@ -21,7 +21,7 @@ class chkshort { // change name
 				$author = $post['author'];
 				// short author is OK?
 				if ( strlen( $post['author'] ) < 3 ) {
-					return __( 'Username Too Short: ' . $author . '', 'dam-spam' );
+					sprintf( esc_html__( 'Username Too Short: %s', 'dam-spam' ), $author );
 				}
 			}
 		}
