@@ -1,4 +1,4 @@
-<form name="loginform" action="<?php echo home_url( '/login/' ); ?>" method="post">
+<form name="loginform" action="<?php echo esc_url( home_url( '/login/' ) ); ?>" method="post">
 	<?php ds_show_error(); ?>
 	<p class="ds-input-wrapper">
 		<?php if ( get_option( 'ds_login_type', '' ) == 'email' ): ?>
@@ -19,15 +19,15 @@
 		<label><input name="rememberme" type="checkbox" id="rememberme" value="forever"> <?php esc_html_e( 'Remember Me', 'dam-spam' ); ?></label>
 	</p>
 	<p class="ds-submit-wrapper">
-		<input type="submit" name="wp-submit" id="wp-submit" class="button button-primary" value="<?php esc_attresc_html_e( 'Log In' ); ?>">
+		<input type="submit" name="wp-submit" id="wp-submit" class="button button-primary" value="<?php esc_attr_e( 'Log In', 'dam-spam' ); ?>">
 		<?php if ( isset( $_GET['redirect_to'] ) ): ?>
-			<input type="hidden" name="redirect_to" value="<?php echo $_GET['redirect_to']; ?>">
+			<input type="hidden" name="redirect_to" value="<?php echo esc_url( $_GET['redirect_to'] ); ?>">
 		<?php else: ?>
-			<input type="hidden" name="redirect_to" value="<?php echo admin_url();?>">
+			<input type="hidden" name="redirect_to" value="<?php echo esc_url( admin_url() );?>">
 		<?php endif; ?>
 	</p>
 	<p class="ds-link-wrapper">
-		<a href="<?php echo home_url( '/register/' ); ?>"><?php esc_html_e( 'Register', 'dam-spam' ); ?></a> | <a href="<?php echo home_url( '/forgot-password/' ); ?>">Forgot password?</a>
+		<a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><?php esc_html_e( 'Register', 'dam-spam' ); ?></a> | <a href="<?php echo esc_url( home_url( '/forgot-password/' ) ); ?>"><?php esc_html_e( 'Forgot password?', 'dam-spam' ); ?></a>
 	</p>
 </form>
 	

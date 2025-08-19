@@ -69,12 +69,12 @@ function ds_rightnow() {
 	$options = ds_get_options();
 	if ( $spmcount > 0 ) {
 		// get the path to the plugin
-		printf( esc_html__( '<p>Dam Spam has prevented %1$s%2$s%3$s spammers from registering or leaving comments.</p>', 'dam-spam' ), '<strong>', $spmcount, '</strong>' );
+		printf( '<p>' . esc_html__( 'Dam Spam has prevented %1$s%2$s%3$s spammers from registering or leaving comments.', 'dam-spam' ), '<strong>', esc_html( $spmcount ), '</strong>' . '</p>' );
 	}
 	if ( count( $wlrequests ) == 1 ) {
-		echo '<p><strong>' . count( $wlrequests ) . '</strong> ' . printf( esc_html__( 'user has been blocked and %1$srequested%2$s that you add them to the Allow List.</p>', 'dam-spam' ), '<a href="admin.php?page=ds-allowed">', '</a>' );
+		echo '<p><strong>' . esc_html( count( $wlrequests ) ) . '</strong> ' . sprintf( esc_html__( 'user has been blocked and %1$srequested%2$s that you add them to the Allow List.</p>', 'dam-spam' ), '<a href="admin.php?page=ds-allowed">', '</a>' );
 	} else if ( count( $wlrequests ) > 0 ) {
-		echo '<p><strong>' . count( $wlrequests ) . '</strong> ' . printf( esc_html__( 'users have been blocked and %1$srequested%2$s that you add them to the Allow List.</p>', 'dam-spam' ), '<a href="admin.php?page=ds-allowed">', '</a>' );
+		echo '<p><strong>' . esc_html( count( $wlrequests ) ) . '</strong> ' . sprintf( esc_html__( 'users have been blocked and %1$srequested%2$s that you add them to the Allow List.</p>', 'dam-spam' ), '<a href="admin.php?page=ds-allowed">', '</a>' );
 	}
 }
 
@@ -207,7 +207,7 @@ function sfs_handle_ajax_sub( $data ) {
 		);
 	} else {
 		if ( empty( $comment ) ) {
-			printf( esc_html__( ' No Comment Found for %s', 'dam-spam' ), $comment_id );
+			printf( esc_html__( ' No Comment Found for %s', 'dam-spam' ), esc_html( $comment_id ) );
 			exit();
 		}
 	}
@@ -257,7 +257,7 @@ function sfs_handle_ajax_sub( $data ) {
 	// echo $hget;
 	$ret  = ds_read_file( $hget );
 	if ( stripos( $ret, esc_html__( 'data submitted successfully', 'dam-spam' ) ) !== false ) {
-		echo $ret;
+		echo esc_html( $ret );
 	} else if ( stripos( $ret, esc_html__( 'recent duplicate entry', 'dam-spam' ) ) !== false ) {
 		esc_html_e( ' Recent Duplicate Entry ', 'dam-spam' );
 	} else {
@@ -308,13 +308,13 @@ function sfs_handle_ajax_check( $data ) {
 		$check = trim( $check, '0' );
 		if ( substr( $check, 0, 4 ) == "ERR:" ) {
 			esc_html_e( ' Access to the Stop Forum Spam Database Shows Errors\r\n', 'dam-spam' );
-			printf( esc_html__( ' Response Was: %s\r\n', 'dam-spam' ), $check );
+			printf( esc_html__( ' Response Was: %s\r\n', 'dam-spam' ), esc_html( $check ) );
 		}
 		// access to the Stop Forum Spam database is working
 		$n = strpos( $check, '<response success="true">' );
 		if ( $n === false ) {
 			esc_html_e( ' Access to the Stop Forum Spam Database is Not Working\r\n', 'dam-spam' );
-			printf( esc_html__( ' Response was\r\n %s\r\n', 'dam-spam' ), $check );
+			printf( esc_html__( ' Response was\r\n %s\r\n', 'dam-spam' ), esc_html( $check ) );
 		} else {
 			esc_html_e( ' Access to the Stop Forum Spam Database is Working', 'dam-spam' );
 		}
@@ -364,14 +364,14 @@ function sfs_handle_ajax_sfs_proceds_watch( $data ) {
 			// deletes a Good Cache item
 			$ansa = be_load( 'ds_remove_gcache', $ip, $stats, $options );
 			$show = be_load( 'ds_get_gcache', 'x', $stats, $options );
-			echo $show;
+			echo esc_html( $show );
 			exit();
 			break;
 		case 'delete_bcache':
 			// deletes a Bad Cache item
 			$ansa = be_load( 'ds_remove_bcache', $ip, $stats, $options );
 			$show = be_load( 'ds_get_bcache', 'x', $stats, $options );
-			echo $show;
+			echo esc_html( $show );
 			exit();
 			break;
 		case 'add_black':
@@ -399,21 +399,21 @@ function sfs_handle_ajax_sfs_proceds_watch( $data ) {
 			break;
 		case 'delete_wl_row': // this is from the Allow Requests list
 			$ansa = be_load( 'ds_get_alreq', $ip, $stats, $options );
-			echo $ansa;
+			echo esc_html( $ansa );
 			exit();
 			break;
 		case 'delete_wlip': // this is from the Allow Requests list
 			$ansa = be_load( 'ds_get_alreq', $ip, $stats, $options );
-			echo $ansa;
+			echo esc_html( $ansa );
 			exit();
 			break;
 		case 'delete_wlem': // this is from the Allow Requests list
 			$ansa = be_load( 'ds_get_alreq', $ip, $stats, $options );
-			echo $ansa;
+			echo esc_html( $ansa );
 			exit();
 			break;
 		default:
-			printf( esc_html__( '\r\n\r\nUnrecognized function "%s"', 'dam-spam' ), $func );
+			printf( esc_html__( '\r\n\r\nUnrecognized function "%s"', 'dam-spam' ), esc_html( $func ) );
 			exit();
 	}
 	$ajaxurl  = admin_url( 'admin-ajax.php' );
@@ -421,21 +421,21 @@ function sfs_handle_ajax_sfs_proceds_watch( $data ) {
 	switch ( $container ) {
 		case 'badips':
 			$show = be_load( 'ds_get_bcache', 'x', $stats, $options );
-			echo $show;
+			echo esc_html( $show );
 			exit();
 			break;
 		case 'goodips':
 			$show = be_load( 'ds_get_gcache', 'x', $stats, $options );
-			echo $show;
+			echo esc_html( $show );
 			exit();
 			break;
 		case 'wlreq':
 			$ansa = be_load( 'ds_get_alreq', $ip, $stats, $options );
-			echo $ansa;
+			echo esc_html( $ansa );
 			exit();
 		default:
 			// coming from logs report we need to display an appropriate message, I think
-			printf( esc_html__( 'Something is missing %s ', 'dam-spam' ), $container );
+			printf( esc_html__( 'Something is missing %s ', 'dam-spam' ), esc_html( $container ) );
 			exit();
 	}
 }

@@ -123,17 +123,17 @@ $nonce = wp_create_nonce( 'ds_update' );
 <div id="ds-plugin" class="wrap">
 	<h1 id="ds-head"><?php esc_html_e( 'Challenges — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php if ( !empty( $update ) ) {
-		echo "$update";
+		echo wp_kses_post( $update );
 	} ?>
 	<?php if ( !empty( $msg ) ) {
-		echo '<span style="color:red;font-size:1.2em">' . $msg . '</span>';
+		echo '<span style="color:red;font-size:1.2em">' . esc_html( $msg ) . '</span>';
 	} ?>
 	<form method="post" action="">
-		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<input type="hidden" name="action" value="update challenge">
 		<br>
 		<div class="mainsection"><?php esc_html_e( 'Access Blocked Message', 'dam-spam' ); ?></div>
-		<textarea id="rejectmessage" name="rejectmessage" cols="40" rows="5"><?php echo $rejectmessage; ?></textarea>
+		<textarea id="rejectmessage" name="rejectmessage" cols="40" rows="5"><?php echo wp_kses_post( $rejectmessage ); ?></textarea>
 		<br>
 		<div class="mainsection"><?php esc_html_e( 'Routing and Notifications', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
@@ -144,7 +144,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		</div>
 		<br>
 		<span id="ds_show_option" style="margin-bottom:15px;display:none"><?php esc_html_e( 'Redirect URL:', 'dam-spam' ); ?>
-		<input size="77" name="redirurl" type="text" placeholder="e.g. https://example.com/privacy-policy/" value="<?php echo $redirurl; ?>"></span>
+		<input size="77" name="redirurl" type="text" placeholder="e.g. https://example.com/privacy-policy/" value="<?php echo esc_url( $redirurl ); ?>"></span>
 		<script>
 		function ds_show_option() {
 			var checkBox = document.getElementById("redir");
@@ -172,7 +172,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		</div>
 		<br>
 		<span id="ds_show_notify" style="margin-bottom:15px;display:none"><?php esc_html_e( '(Optional) Specify where email requests are sent:', 'dam-spam' ); ?>
-		<input id="dsinput" size="48" name="wlreqmail" type="text" value="<?php echo $wlreqmail; ?>"></span>
+		<input id="dsinput" size="48" name="wlreqmail" type="text" value="<?php echo esc_html( $wlreqmail ); ?>"></span>
 		<script>
 		function ds_show_notify() {
 			var checkBox = document.getElementById("notify");
@@ -197,7 +197,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div>
 			<?php
 			if ( !empty( $msg ) ) {
-				echo '<span style="color:red;font-size:1.2em">' . $msg . '</span>';
+				echo '<span style="color:red;font-size:1.2em">' . esc_html( $msg ) . '</span>';
 			}
 			?>
 		</div>

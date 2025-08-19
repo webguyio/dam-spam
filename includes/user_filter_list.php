@@ -94,7 +94,7 @@
 				<input id="ds_domain_yes" type="radio" name="ds_domain" value="yes" <?php if ( isset( $_POST[ 'ds_domain'] ) and $_POST[ 'ds_domain'] === 'yes' ) { echo 'checked'; } ?>>
 			</label>
 			<textarea cols="100" rows="2" name="ds_domain_text">
-				<?php echo isset( $_POST[ 'ds_domain_text'] ) ? htmlspecialchars( $_POST['ds_domain_text'] ) : '' ?>
+				<?php echo isset( $_POST[ 'ds_domain_text'] ) ? esc_html( htmlspecialchars( $_POST['ds_domain_text'] ) ) : '' ?>
 			</textarea>
 		</td>
 	</tr>
@@ -110,7 +110,7 @@
 			<label for="usernameFilter">
 				<?php esc_html_e( 'Username', 'dam-spam' ) ?>
 			</label>
-			<input type="text" size="15" name="ds_username" value="<?php echo isset( $_POST['ds_username'] ) ? htmlspecialchars( $_POST['ds_username'] ) : '' ?>" id="usernameFilter">
+			<input type="text" size="15" name="ds_username" value="<?php echo isset( $_POST['ds_username'] ) ? esc_html( htmlspecialchars( $_POST['ds_username'] ) ) : '' ?>" id="usernameFilter">
 			<br>
 			<small>
 				<?php esc_html_e( 'Refine list by a username (e.g. test, example, etc.).', 'dam-spam' ) ?>
@@ -148,7 +148,7 @@
 					<option value="0">
 						<?php esc_html_e( 'No Filter', 'dam-spam' ) ?>
 					</option>
-					<?php $columns = array( 15, 30, 60, 90, 180, 360, 720 ); foreach ( $columns as $v ) { print '<option value="' . $v . '" ' . ( $_POST[ 'f_lastlogin'] == $v ? 'selected' : '' ) . '>' . $v . '</option>'; } ?>
+					<?php $columns = array( 15, 30, 60, 90, 180, 360, 720 ); foreach ( $columns as $v ) { print '<option value="' . esc_attr( $v ) . '" ' . ( $_POST[ 'f_lastlogin'] == $v ? 'selected' : '' ) . '>' . esc_html( $v ) . '</option>'; } ?>
 				</select>
 				<?php esc_html_e( 'days ago.', 'dam-spam' ) ?>
 			</label>
@@ -164,7 +164,7 @@
 				<?php esc_html_e( 'User role ', 'dam-spam' ) ?>
 			</label>
 			<select name="user_role">
-				<?php global $wp_roles; $roles = array( '' => 'Any Role' ) + $wp_roles->get_names(); foreach ( $roles as $roleId => $roleName ) { print '<option value="' . $roleId . '" ' . ($_POST['user_role'] == $roleId ? 'selected ' : ' ' ) . '>' . $roleName . '</option>'; } ?>
+				<?php global $wp_roles; $roles = array( '' => 'Any Role' ) + $wp_roles->get_names(); foreach ( $roles as $roleId => $roleName ) { print '<option value="' . esc_attr( $roleId ) . '" ' . ($_POST['user_role'] == $roleId ? 'selected ' : ' ' ) . '>' . esc_html( $roleName ) . '</option>'; } ?>
 			</select>
 			<br>
 			<small>
@@ -186,20 +186,20 @@
 			</label>
 			<select id="max_size_output" name="max_size_output">
 			<?php $columns = array( '150', '300', '500', '1000', '3000', 'All' ); foreach ( $columns as $v ) {
-				print '<option value="' . $v . '" ' . ( $_POST['max_size_output'] == $v ? 'selected' : '' ) . '>' . $v . '</option>';
+				print '<option value="' . esc_attr( $v ) . '" ' . ( $_POST['max_size_output'] == $v ? 'selected' : '' ) . '>' . esc_html( $v ) . '</option>';
 			} ?>
 			</select>
 			<?php esc_html_e( 'records', 'dam-spam' ) ?>
 			<br>
 			<small>
-				<?php esc_html_e( 'Max sent allowed is', 'dam-spam' ) . ' ' . ini_get( 'max_input_vars' ) . ' ' . esc_html__( 'input vars.' ) ?>
+				<?php echo esc_html__( 'Max sent allowed is', 'dam-spam' ) . ' ' . ini_get( 'max_input_vars' ) . ' ' . esc_html__( 'input vars.', 'dam-spam' ) ?>
 			</small>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="2">
-			<input class="button-primary" type="submit" value="<?php esc_html_e( 'Search' ) ?>" name="ds_search">
-			<button class="button-primary" onclick="window.open('<?php echo admin_url( "admin-ajax.php" ) ?>' + '?action=iud_getCsvUserList&' + jQuery('#inactive-user-deleter-form').serialize()); return false;">
+			<input class="button-primary" type="submit" value="<?php esc_html_e( 'Search', 'dam-spam' ) ?>" name="ds_search">
+			<button class="button-primary" onclick="window.open('<?php echo esc_url( admin_url( "admin-ajax.php" ) ) ?>' + '?action=iud_getCsvUserList&' + jQuery('#inactive-user-deleter-form').serialize()); return false;">
 				<?php esc_html_e( 'Export to CSV', 'dam-spam' ) ?>
 			</button>
 		</td>
@@ -217,7 +217,7 @@ if ( isset( $_POST['ds_search'] ) ) {
 		$user_list = $userListObject->rows;
 		$total = $userListObject->total;
 		if ( empty( $userListObject->rows ) ) {
-			echo esc_html__( '<p><strong>No users are found.</strong></p>', 'dam-spam' );
+			echo '<p><strong>' . esc_html__( 'No users are found.', 'dam-spam' ) . '</strong></p>';
 		} else {
 			include_once 'user_list.php';
 		}
@@ -430,18 +430,18 @@ if ( isset( $_POST['op'] ) ) {
 			if ( $result === false ) {
 				$tm = get_user_meta( $user_id_to_disable, '_IUD_userBlockedTime', true );
 				if ( !$tm ) {
-					update_usermeta( $user_id_to_disable, '_IUD_userBlockedTime', time() );
+					update_user_meta( $user_id_to_disable, '_IUD_userBlockedTime', time() );
 					$cnt_disabled++;
 				}
 			} else {
-				echo $result . '<br>';
+				echo esc_html( $result ) . '<br>';
 			}
 		}
 		// output actions status
 		if ( $cnt_disabled == 1 ) {
-			echo $cnt_disabled . ' ' . esc_html__( 'user was disabled.', 'dam-spam' );
+			echo esc_html( $cnt_disabled ) . ' ' . esc_html__( 'user was disabled.', 'dam-spam' );
 		} else {
-			echo $cnt_disabled . ' ' . esc_html__( 'users were disabled.', 'dam-spam' );
+			echo esc_html( $cnt_disabled ) . ' ' . esc_html__( 'users were disabled.', 'dam-spam' );
 		}
 		break;
 		case 'activate':
@@ -457,9 +457,9 @@ if ( isset( $_POST['op'] ) ) {
 		}
 		// output actions status
 		if ( $cnt_enabled == 1 ) {
-			echo $cnt_enabled . ' ' . esc_html__( 'user was enabled.', 'dam-spam' );
+			echo esc_html( $cnt_enabled ) . ' ' . esc_html__( 'user was enabled.', 'dam-spam' );
 		} else {
-			echo $cnt_enabled . ' ' . esc_html__( 'users were enabled.', 'dam-spam' );
+			echo esc_html( $cnt_enabled ) . ' ' . esc_html__( 'users were enabled.', 'dam-spam' );
 		}
 		break;
 	}

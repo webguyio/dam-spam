@@ -65,11 +65,11 @@ $nonce = wp_create_nonce( 'ds_update' );
 	<form method="post" action="">
 		<div class="ds-info-box">
 			<input type="hidden" name="action" value="update">
-			<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+			<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<div class="mainsection"><?php esc_html_e( 'Option Testing', 'dam-spam' ); ?></div>
 			<p><?php esc_html_e( 'Run the settings against an IP address to see the results. IP Address:', 'dam-spam' ); ?></p>
 			<input id="dsinput" name="ip" type="text" value="<?php echo esc_attr( $ip ); ?>">
-			<?php esc_html_e( '(Your server address is', 'dam-spam' ); ?> <?php echo $hip; ?>)<br><br>
+			<?php esc_html_e( '(Your server address is', 'dam-spam' ); ?> <?php echo esc_html( $hip ); ?>)<br><br>
 			<?php esc_html_e( 'Email:', 'dam-spam' ); ?><br>
 			<input id="dsinput" name="email" type="text" value="<?php echo esc_attr( $email ); ?>"><br><br>
 			<?php esc_html_e( 'Author/User:', 'dam-spam' ); ?><br>
@@ -77,7 +77,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<?php esc_html_e( 'Subject:', 'dam-spam' ); ?><br>
 			<input id="dsinput" name="subject" type="text" value="<?php echo esc_attr( $subject ); ?>"><br><br>
 			<?php esc_html_e( 'Comment:', 'dam-spam' ); ?><br>
-			<textarea name="body"><?php return $body; ?></textarea><br>
+			<textarea name="body"><?php esc_html_e( $body ); ?></textarea><br>
 			<div style="width:50%;float:left">
 				<p class="submit"><input name="testopt" class="button-primary" value="<?php esc_html_e( 'Test Options', 'dam-spam' ); ?>" type="submit"></p>
 			</div>
@@ -116,16 +116,17 @@ $nonce = wp_create_nonce( 'ds_update' );
 					);
 					$m1 = memory_get_usage( true );
 					$m2 = memory_get_peak_usage( true );
-					printf( __( '<br>Memory Used: %1$s Peak: %2$s<br>', 'dam-spam' ), $m1, $m2 );
-					_e( '<ul>Allow Checks<br>', 'dam-spam' );
+					printf( '<br>' . esc_html__( 'Memory Used: %1$s Peak: %2$s', 'dam-spam' ), esc_html( $m1, $m2 ) ) . '<br>';
+					esc_html_e( 'Allow Checks', 'dam-spam' );
+					echo '<ul>';
 					foreach ( $optionlist as $chk ) {
 						$ansa = be_load( $chk, $ip, $stats, $options, $post );
 						if ( empty( $ansa ) ) {
 							$ansa = 'OK';
 						}
-						echo "$chk: $ansa<br>";
+						echo esc_html( $chk ) . ': ' . esc_html( $ansa ) . '<br>';
 					}
-					echo "</ul>";
+					echo '</ul>';
 					$optionlist = array(
 						'chk404',
 						'chkaccept',
@@ -161,36 +162,38 @@ $nonce = wp_create_nonce( 'ds_update' );
 					);
 					$m1 = memory_get_usage( true );
 					$m2 = memory_get_peak_usage( true );
-					printf( __( '<br>Memory Used: %1$s Peak: %2$s<br>', 'dam-spam' ), $m1, $m2 );
-					_e( '<ul>Block Checks<br>', 'dam-spam' );
+					printf( '<br>' . esc_html__( 'Memory Used: %1$s Peak: %2$s', 'dam-spam' ), esc_html( $m1, $m2 ) ) . '<br>';
+					esc_html_e( 'Block Checks', 'dam-spam' );
+					echo '<ul>';
 					foreach ( $optionlist as $chk ) {
 						$ansa = be_load( $chk, $ip, $stats, $options, $post );
 						if ( empty( $ansa ) ) {
 							$ansa = 'OK';
 						}
-						echo "$chk: $ansa<br>";
+						echo esc_html( $chk ) . ': ' . esc_html( $ansa ) . '<br>';
 					}
-					echo "</ul>";
+					echo '</ul>';
 					$optionlist = array();
 					$a1		    = apply_filters( 'ds_addons_allow', $optionlist );
 					$a3		    = apply_filters( 'ds_addons_block', $optionlist );
 					$a5		    = apply_filters( 'ds_addons_get', $optionlist );
 					$optionlist = array_merge( $a1, $a3, $a5 );
 					if ( !empty( $optionlist ) ) {
-						echo "<ul>Add-on Checks<br>";
+						echo "Add-on Checks";
+						echo '<ul>';
 						foreach ( $optionlist as $chk ) {
 							$ansa = be_load( $chk, $ip, $stats, $options, $post );
 							if ( empty( $ansa ) ) {
 								$ansa = 'OK';
 							}
 							$nm = $chk[1];
-							echo "$nm: $ansa<br>";
+							echo esc_html( $nm ) . ': ' . esc_html( $ansa ) . '<br>';
 						}
-						echo "</ul>";
+						echo '</ul>';
 					}
 					$m1 = memory_get_usage( true );
 					$m2 = memory_get_peak_usage( true );
-					printf( __( '<br>Memory Used: %1$s Peak: %2$s<br>', 'dam-spam' ), $m1, $m2 );
+					printf( '<br>' . esc_html__( 'Memory Used: %1$s Peak: %2$s', 'dam-spam' ), esc_html( $m1, $m2 ) ) . '<br>';
 				}
 				if ( array_key_exists( 'testcountry', $_POST ) ) {
 					$optionlist = array(
@@ -340,17 +343,17 @@ $nonce = wp_create_nonce( 'ds_update' );
 					// SC - Seychelles
 					$m1 = memory_get_usage( true );
 					$m2 = memory_get_peak_usage( true );
-					printf( __( '<br>Memory Used: %1$s Peak: %2$s<br>', 'dam-spam' ), $m1, $m2 );
+					printf( '<br>' . esc_html__( 'Memory Used: %1$s Peak: %2$s', 'dam-spam' ), esc_html( $m1, $m2 ) ) . '<br>';
 					foreach ( $optionlist as $chk ) {
 						$ansa = be_load( $chk, $ip, $stats, $options, $post );
 						if ( empty( $ansa ) ) {
 							$ansa = 'OK';
 						}
-						echo "$chk: $ansa<br>";
+						echo esc_html( $chk ) . ': ' . esc_html( $ansa ) . '<br>';
 					}
 					$m1 = memory_get_usage( true );
 					$m2 = memory_get_peak_usage( true );
-					printf( __( '<br>Memory Used: %1$s Peak: %2$s<br>', 'dam-spam' ), $m1, $m2 );
+					printf( '<br>' . esc_html__( 'Memory Used: %1$s Peak: %2$s', 'dam-spam' ), esc_html( $m1, $m2 ) ) . '<br>';
 				}
 			}
 			?>
@@ -360,12 +363,12 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<div style="width:50%;float:left">
 				<h2><?php esc_html_e( 'Display All Options', 'dam-spam' ); ?></h2>
 				<p><?php esc_html_e( 'You can dump all options here (useful for debugging):', 'dam-spam' ); ?></p>
-				<p class="submit"><input name="dumpoptions" class="button-primary" value="<?php esc_html_e( 'Dump Options', 'dam-spam' ); ?>" type="submit"></p>
+				<p class="submit"><input name="dumpoptions" class="button-primary" value="<?php esc_attr_e( 'Dump Options', 'dam-spam' ); ?>" type="submit"></p>
 			</div>
 			<div style="width:50%;float:right">
 				<h2><?php esc_html_e( 'Display All Stats', 'dam-spam' ); ?></h2>
 				<p><?php esc_html_e( 'You can dump all stats here: ', 'dam-spam' ); ?></p>
-				<p class="submit"><input name="dumpstats" class="button-primary" value="<?php esc_html_e( 'Dump Stats', 'dam-spam' ); ?>" type="submit"></p>
+				<p class="submit"><input name="dumpstats" class="button-primary" value="<?php esc_attr_e( 'Dump Stats', 'dam-spam' ); ?>" type="submit"></p>
 			</div>
 			<br style="clear:both">
 			<?php
@@ -382,7 +385,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 						if ( is_array( $val ) ) {
 							$val = print_r( $val, true );
 						}
-						echo "<strong>&bull; $key</strong> = $val\r\n";
+						echo '<strong>&bull; ' . wp_kses_post( $key ) . '</strong> = ' . wp_kses_post( $val ) . "\r\n";
 					}
 					echo "\r\n";
 					echo '</pre>';
@@ -404,7 +407,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 						if ( is_array( $val ) ) {
 							$val = print_r( $val, true );
 						}
-						echo "<strong>&bull; $key</strong> = $val\r\n";
+						echo '<strong>&bull; ' . wp_kses_post( $key ) . '</strong> = ' . wp_kses_post( $val ) . "\r\n";
 					}
 					echo "\r\n";
 					echo '</pre>';
@@ -443,7 +446,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		}
 		if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
 			if ( array_key_exists( 'showdebug', $_POST ) ) {
-				_e( '<p><strong>Debug Output:</strong></p><pre>$f</pre><p><strong>end of file (if empty, there are no errors to display)</p></strong>', 'dam-spam' );
+				echo '<p><strong>' . esc_html__( 'Debug Output', 'dam-spam' ) . ':</strong></p><pre>' . wp_kses_post( $f ) . '</pre><p><strong>' . esc_html__( 'end of file (if empty, there are no errors to display)', 'dam-spam' ) . '</p></strong>';
 			}
 		}
 		$nonce = wp_create_nonce( 'ds_update' );
@@ -451,14 +454,14 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div style="width:50%;float:left">
 			<form method="post" action="">
 				<input type="hidden" name="update_options" value="update">
-				<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+				<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 				<p class="submit"><input class="button-primary" name="showdebug" value="<?php esc_html_e( 'Show Debug File', 'dam-spam' ); ?>" type="submit"></p>
 			</form>
 		</div>
 		<div style="width:50%;float:right">
 			<form method="post" action="">
 				<input type="hidden" name="update_options" value="update">
-				<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+				<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 				<p class="submit"><input class="button-primary" name="killdebug" value="<?php esc_html_e( 'Delete Debug File', 'dam-spam' ); ?>" type="submit"></p>
 			</form>
 		</div>
@@ -482,10 +485,10 @@ $nonce = wp_create_nonce( 'ds_update' );
 		preg_match( '%<style type="text/css">(.*?)</style>.*?(<body>.*</body>)%s', ob_get_clean(), $matches );
 		# $matches [1]; # Style information
 		# $matches [2]; # Body information
-		echo "<div class='phpinfodisplay' id=\"shpinf\" style=\"display:none;\"><style type='text/css'>\n",
+		echo "<div class='phpinfodisplay' id=\"shpinf\" style=\"display:none\"><style>\n",
 		join( "\n",
 			array_map(
-				function($i) {
+				function( $i ) {
 					return ".phpinfodisplay " . preg_replace( "/,/", ",.phpinfodisplay ", $i );
 				},
 				preg_split( '/\n/', $matches[1] )
@@ -518,7 +521,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<p><?php esc_html_e( 'A very simple scan that looks for things out of place in the content directory as well as the database.', 'dam-spam' ); ?></p>
 		<form method="post" action="#scan">
 			<input type="hidden" name="update_options" value="update">
-			<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+			<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Run Scan', 'dam-spam' ); ?>" type="submit"></p>
 		</form>
 	</div>
@@ -529,7 +532,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		$disp = false;
 		flush();
 		// lets try the posts - looking for script tags in data
-		_e( '<br><br>Testing Posts<br>', 'dam-spam' );
+		echo '<br><br>' . esc_html__( 'Testing Posts', 'dam-spam' ) . '<br>';
 		$ptab = $pre . 'posts';
 		$sql  = "select ID,post_author,post_title,post_name,guid,post_content,post_mime_type
 			from $ptab where 
@@ -613,16 +616,16 @@ $nonce = wp_create_nonce( 'ds_update' );
 				if ( strpos( strtolower( $myrow->post_mime_type ), 'script' ) !== false ) {
 					$reason .= "post_mime_type:script ";
 				}
-				printf( esc_html__( 'found possible problems in post (%s) ID: ', 'dam-spam' ), $reason ) . $myrow->ID . '<br>';
+				printf( esc_html__( 'found possible problems in post (%s) ID: ', 'dam-spam' ), esc_html( $reason ) ) . $myrow->ID . '<br>';
 			}
 		} else {
-			_e( '<br>Nothing found in posts.<br>', 'dam-spam' );
+			echo '<br>' . esc_html__( 'Nothing found in posts.', 'dam-spam' ) . '<br>';
 			$disp = false;
 		}
 		echo '<hr>';
 		// comments: comment_ID: author_url, comment_agent, comment_author, comment_email
 		$ptab = $pre . 'comments';
-		_e( '<br><br>Testing Comments<br>', 'dam-spam' );
+		echo '<br><br>' . esc_html__( 'Testing Comments<br>', 'dam-spam' ) . '<br>';
 		flush();
 		$sql = "select comment_ID,comment_author_url,comment_agent,comment_author,comment_author_email,comment_content
 			from $ptab where 
@@ -709,16 +712,16 @@ $nonce = wp_create_nonce( 'ds_update' );
 				if ( strpos( strtolower( $myrow->comment_content ), 'javascript:' ) !== false ) {
 					$reason .= "comment_content:javascript: ";
 				}
-				printf( esc_html__( 'found possible problems in comment (%s) ID: ', 'dam-spam' ), $reason ) . $myrow->comment_ID . '<br>';
+				printf( esc_html__( 'found possible problems in comment (%s) ID: ', 'dam-spam' ), esc_html( $reason ) ) . $myrow->comment_ID . '<br>';
 			}
 		} else {
-			_e( '<br>Nothing found in comments.<br>', 'dam-spam' );
+			echo '<br>' . esc_html__( 'Nothing found in comments.', 'dam-spam' ) . '<br>';
 		}
 		flush();
 		echo '<hr>';
 		// links: links_id: link_url, link_image, link_description, link_notes, link_rss,link_rss
 		$ptab   = $pre . 'links';
-		_e( '<br><br>Testing Links<br>', 'dam-spam' );
+		echo '<br><br>' . esc_html__( 'Testing Links', 'dam-spam' ) . '<br>';
 		flush();
 		$sql = "select link_ID,link_url,link_image,link_description,link_notes
 			from $ptab where 
@@ -792,15 +795,15 @@ $nonce = wp_create_nonce( 'ds_update' );
 				if ( strpos( strtolower( $myrow->link_url ), 'javascript:' ) !== false ) {
 					$reason .= "link_url:javascript: ";
 				}
-				printf( esc_html__( 'found possible problems in links (%s) ID: ', 'dam-spam' ), $reason ) . $myrow->link_ID . '<br>';
+				printf( esc_html__( 'found possible problems in links (%s) ID: ', 'dam-spam' ), esc_html( $reason ) ) . esc_html( $myrow->link_ID ) . '<br>';
 			}
 		} else {
-			_e( '<br>Nothing found in links.<br>', 'dam-spam' );
+			echo '<br>' . esc_html__( 'Nothing found in links.', 'dam-spam' ) . '<br>';
 		}
 		echo '<hr>';
 		// users: ID: user_login, user_nicename, user_email, user_url, display_name
 		$ptab = $pre . 'users';
-		_e( '<br><br>Testing Users<br>', 'dam-spam' );
+		echo '<br><br>' . esc_html__( 'Testing Users', 'dam-spam' ) . '<br>';
 		flush();
 		$sql = "select ID,user_login,user_nicename,user_email,user_url,display_name 
 			from $ptab where 
@@ -879,16 +882,16 @@ $nonce = wp_create_nonce( 'ds_update' );
 				if ( strpos( strtolower( $myrow->user_url ), 'javascript:' ) !== false ) {
 					$reason .= "user_url:javascript: ";
 				}
-				printf( esc_html__( 'found possible problems in users (%s) ID: ', 'dam-spam' ), $reason ) . $myrow->ID . '<br>';
+				printf( esc_html__( 'found possible problems in users (%s) ID: ', 'dam-spam' ), esc_html( $reason ) ) . $myrow->ID . '<br>';
 			}
 		} else {
-			esc_html_e( '<br>Nothing found in users.<br>', 'dam-spam' );
+			echo '<br>' . esc_html__( '<br>Nothing found in users.', 'dam-spam' ) . '<br>';
 		}
 		echo '<hr>';
 		// options: option_id option_value, option_name
 		// I may have to update this as new websites show up
 		$ptab = $pre . 'options';
-		_e( '<br><br>Testing Options Table for HTML<br>', 'dam-spam' );
+		echo '<br><br>' . esc_html__( 'Testing Options Table for HTML', 'dam-spam' ) . '<br>';
 		flush();
 		$badguys = array(
 			'eval('							     => esc_html__( 'eval function found', 'dam-spam' ),
@@ -930,14 +933,14 @@ $nonce = wp_create_nonce( 'ds_update' );
 						}
 					}
 				}
-				printf( esc_html__( '<strong>Found possible problems in option %1$s (%2$s)</strong> ID: %3$s, Value: %4$s', 'dam-spam' ),
-				$name, $reason, $myrow->option_id, $line ) . '<br><br>';
+				printf( esc_html__( 'Found possible problems in option %1$s (%2$s) ID: %3$s, Value: %4$s', 'dam-spam' ),
+				esc_html( $name, $reason, $myrow->option_id, $line ) ) . '<br><br>';
 			}
 		} else {
-			_e( '<br>Nothing found in options.<br>', 'dam-spam' );
+			echo '<br>' . esc_html__( 'Nothing found in options.', 'dam-spam' ) . '<br>';
 		}
 		echo '<hr>';
-		_e( '<h2>Scanning Themes and Plugins for eval...</h2>', 'dam-spam' );
+		echo '<h2>' . esc_html__( 'Scanning Themes and Plugins for eval...', 'dam-spam' ) . '</h2>';
 		flush();
 		if ( ds_scan_for_eval() ) {
 			$disp = true;
@@ -991,9 +994,9 @@ $nonce = wp_create_nonce( 'ds_update' );
 				if ( count( $ansa ) > 0 ) {
 					$disp = true;
 					// echo "Think we got something<br>";
-					echo '<li>' . $phparray[$j] . ' <br> ';
+					echo '<li>' . wp_kses_post( $phparray[$j] ) . ' <br> ';
 					for ( $k = 0; $k < count( $ansa ); $k ++ ) {
-						echo $ansa[$k] . ' <br>';
+						echo wp_kses_post( $ansa[$k] ) . ' <br>';
 					}
 					echo '</li>';
 				}

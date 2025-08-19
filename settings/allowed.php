@@ -87,7 +87,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 <div id="ds-plugin" class="wrap">
 	<h1 id="ds-head"><?php esc_html_e( 'Allowed — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php if ( !empty( $msg ) ) {
-		echo $msg;
+		echo wp_kses_post( $msg );
 	} ?>
 	<br>
 	<br>
@@ -97,7 +97,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		esc_html_e( 'There are currently no pending requests.', 'dam-spam' );
 	} else { ?>
 	<form method="post" action="">
-		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<input type="hidden" name="ds_clear_wlreq" value="true">
 		<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Clear the Requests', 'dam-spam' ); ?>" type="submit"></p>
 	</form>
@@ -122,14 +122,14 @@ $nonce = wp_create_nonce( 'ds_update' );
 			$options = ds_get_options();
 			$stats   = ds_get_stats();
 			$show	 = be_load( 'ds_get_alreq', 'x', $stats, $options );
-			echo $show;
+			echo esc_html( $show );
 			?>
 		</tbody>
 	</table>
 	<?php } ?>
 	<form method="post" action="">
 		<input type="hidden" name="action" value="update">
-		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<div class="mainsection"><?php esc_html_e( 'Personalized Allow List', 'dam-spam' ); ?></div>
 		<p><?php esc_html_e( '
 			Put IP addresses or emails here that you don\'t want blocked.
@@ -145,7 +145,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<textarea name="wlist" cols="40" rows="8" class="ipbox"><?php
 			for ( $k = 0; $k < count( $wlist ); $k ++ ) {
-				echo $wlist[$k] . "\r\n";
+				echo esc_html( $wlist[$k] ) . "\r\n";
 			}
 		?></textarea>
 		<br>

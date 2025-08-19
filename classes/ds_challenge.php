@@ -87,7 +87,7 @@ class ds_challenge extends be_module {
 				}
 				if ( empty( $chkcaptcha ) || $chkcaptcha == 'N' ) {
 					// send out the thank you message
-					wp_die( $msg, "Dam Spam", array( 'response' => 200 ) );
+					wp_die( esc_html( $msg ), "Dam Spam", array( 'response' => 200 ) );
 					exit();
 				}
 				// they submitted a CAPTCHA
@@ -277,10 +277,11 @@ class ds_challenge extends be_module {
 			// halfhearted attempt to hide which field is the email field
 			$not = '
 				<h1>' . esc_html__( 'Allow Request', 'dam-spam' ) . '</h1>
-				<p>' . esc_html__( 'You have been blocked from entering information on this site. In order to prevent this from happening in the future, complete the request below to have the admin add your IP to a list that allows you full access.', 'dam-spam' ) . '</p>
-				<p>' . esc_html__( 'Please enter your <strong>e</strong><strong>ma</strong><strong>il</strong> <strong>add</strong><strong>re</strong><strong>ss</strong> and a short note requesting access here.', 'dam-spam' ) . '</p>
-				' . esc_html__( 'Email Address (required)', 'dam-spam' ) . '<!-- not the message -->: <input type="text" value="" name="ke" style="padding:5px" class="regular-text"><br>
-				' . esc_html__( 'Message', 'dam-spam' ) . '<!-- not email -->:<br><textarea name="km" placeholder="' . esc_html__( 'Explain what you were trying to do or if you were submitting a contact form, re-enter your message.', 'dam-spam' ) . '" rows="5" style="box-sizing:border-box;width:100%;padding:15px" class="large-text"></textarea>
+				<p>' . esc_html__( 'You have been blocked from entering information on this site. In order to prevent this from happening in the future, request being whitelisted.', 'dam-spam' ) . '</p>
+				<p>' . esc_html__( 'Email Address (required):', 'dam-spam' ) . '</p>
+				<p><input type="text" value="" name="ke" style="padding:5px" class="regular-text"></p>
+				<p>' . esc_html__( 'Message:', 'dam-spam' ) . '</p>
+				<textarea name="km" placeholder="' . esc_html__( 'Explain what you were trying to do or re-enter your message.', 'dam-spam' ) . '" rows="5" style="box-sizing:border-box;width:100%;padding:15px" class="large-text"></textarea>
 			';
 		}
 		$captop = '<h1>' . esc_html__( 'Are you human?', 'dam-spam' ) . '</h1>';
@@ -320,8 +321,8 @@ class ds_challenge extends be_module {
 			case 'A':
 			case 'Y':
 				// arithmetic
-				$n1 = rand( 1, 9 );
-				$n2 = rand( 1, 9 );
+				$n1 = wp_rand( 1, 9 );
+				$n2 = wp_rand( 1, 9 );
 				// try a much more interesting way that can't be generalized
 				// use the "since" date from stats
 				$seed   = 5;
@@ -330,12 +331,10 @@ class ds_challenge extends be_module {
 					$seed = strtotime( $spdate );
 				}
 				$stupid = $n1 + $n2 - $seed;
-				$cap	= printf( esc_html__( '
-					<p>Enter the SUM of these two numbers: <span style="size:4em;font-weight:bold">%1$s + %2$s</span><br>
+				$cap	= esc_html__( 'Enter the SUM of these two numbers:', 'dam-spam' ) .
+					'<span style="size:4em;font-weight:bold">' . esc_html( $n1 ) . ' + ' . esc_html( $n2 ) . '</span><br>
 					<input name="sum" value="" type="text">
-					<input type="hidden" name="nums" value="%3$s"><br>
-				', 'dam-spam' ),
-				$n1, $n2, $stupid );
+					<input type="hidden" name="nums" value="' . esc_attr( $stupid ) . '"><br>';
 				break;
 			case 'F':
 			// future
@@ -348,9 +347,9 @@ class ds_challenge extends be_module {
 		// have a display
 		// need to send it to the display
 		if ( empty( $msg ) ) {
-			$msg = html_entity_decode($rejectmessage);
-			$msg = str_replace('[ip]', $ip, $msg);
-			$msg = str_replace('[reason]', $post['reason'], $msg);
+			$msg = html_entity_decode( $rejectmessage );
+			$msg = str_replace( '[ip]', $ip, $msg );
+			$msg = str_replace( '[reason]', $post['reason'], $msg );
 		}
 		$ansa = "
 			$msg
@@ -414,7 +413,7 @@ class ds_challenge extends be_module {
 
 				— Dam Spam
 			', 'dam-spam' ),
-			$now, $ip, $ke, $kr, $km, $web );
+			esc_html( $now, $ip, $ke, $kr, $km, $web ) );
 			$message = str_replace( "\t", '', $message );
 			$headers = esc_html__( 'From: ', 'dam-spam' ) . get_option( 'admin_email' ) . "\r\n";
 			wp_mail( $to, $subject, $message, $headers );

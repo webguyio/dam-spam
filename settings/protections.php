@@ -245,12 +245,12 @@ $nonce = wp_create_nonce( 'ds_update' );
 	<h1 id="ds-head"><?php esc_html_e( 'Protections — Dam Spam', 'dam-spam' ); ?></h1>
 	<br>
 	<?php if ( !empty( $msg ) ) {
-		echo $msg;
+		echo wp_kses_post( $msg );
 	} ?>
 	<br>
 	<form method="post" action="" name="ss">
 		<input type="hidden" name="action" value="update">
-		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<div id="formchecking" class="mainsection"><?php esc_html_e( 'Form Checking', 'dam-spam' ); ?></div>
 		<?php if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			echo '<p><span style="color:purple">' . esc_html__( 'WooCommerce detected. If you experience any issues using WooCommerce and Dam Spam together, you may need to adjust these settings.', 'dam-spam' ) . '</span></p>';

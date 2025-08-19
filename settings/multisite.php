@@ -47,7 +47,7 @@ ds_fix_post_vars();
 	$nonce = wp_create_nonce( 'ds_update' );
 	?>
 	<form method="post" action="">
-		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<input type="hidden" name="action" value="update mu settings">
 		<span style="font-weight:bold;font-size:1.2em"><?php esc_html_e( 'Network Blog Option', 'dam-spam' ); ?></span>
 		<p><?php esc_html_e( 'Networked ON:', 'dam-spam' ); ?> <input name="muswitch" type="radio" value='Y' <?php if ( $muswitch == 'Y' ) { echo 'checked="true"'; } ?>>

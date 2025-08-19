@@ -89,15 +89,15 @@ function ds_new_filters() {
 	echo sprintf(
 		'<select name="ds_firewall_type_filter">%s%s%s</select>',
 		'<option value="">' . esc_html__( 'All Requests', 'dam-spam' ) . '</option>',
-		'<option value="' . DS_INCOMING . '" ' . selected( $filter_request, DS_INCOMING, false ) . '>' . esc_html__( 'Incoming', 'dam-spam' ). '</option>',
-		'<option value="' . DS_OUTGOING . '" ' . selected( $filter_request, DS_OUTGOING, false ) . '>' . esc_html__( 'Outgoing', 'dam-spam' ) . '</option>'
+		'<option value="' . esc_html( DS_INCOMING ) . '" ' . selected( $filter_request, DS_INCOMING, false ) . '>' . esc_html__( 'Incoming', 'dam-spam' ). '</option>',
+		'<option value="' . esc_html( DS_OUTGOING ) . '" ' . selected( $filter_request, DS_OUTGOING, false ) . '>' . esc_html__( 'Outgoing', 'dam-spam' ) . '</option>'
 	);
 
 	echo sprintf(
 		'<select name="ds_firewall_state_filter">%s%s%s</select>',
 		'<option value="">' . esc_html__( 'All States', 'dam-spam' ) . '</option>',
-		'<option value="' . DS_AUTHORIZED . '" ' . selected( $filter, DS_AUTHORIZED, false ) . '>' . esc_html__( 'Authorized', 'dam-spam' ). '</option>',
-		'<option value="' . DS_BLOCKED . '" ' . selected( $filter, DS_BLOCKED, false ) . '>' . esc_html__( 'Blocked', 'dam-spam' ) . '</option>'
+		'<option value="' . esc_html( DS_AUTHORIZED ) . '" ' . selected( $filter, DS_AUTHORIZED, false ) . '>' . esc_html__( 'Authorized', 'dam-spam' ). '</option>',
+		'<option value="' . esc_html( DS_BLOCKED ) . '" ' . selected( $filter, DS_BLOCKED, false ) . '>' . esc_html__( 'Blocked', 'dam-spam' ) . '</option>'
 	);
 	// empty protocol button
 	if ( empty( $filter ) and empty( $filter_request ) ) {
@@ -327,14 +327,14 @@ function ds_html_url( $post_id ) {
 	if ( !empty( ds_get_meta( $post_id, 'user-ip' ) ) and empty( ds_get_meta( $post_id, 'file' ) ) ) {
 		echo sprintf(
 			'<div><p class="label blacklisted_%d"></p>%s</div>',
-			$blacklisted,
-			str_replace( $host, '<code>' . $host . '</code>', esc_url( $url ) )
+			esc_html( $blacklisted ),
+			str_replace( $host, '<code>' . esc_html( $host ) . '</code>', esc_url( $url ) )
 		);
 	} else {
 		echo sprintf(
 			'<div><p class="label blacklisted_%d"></p>%s<div class="row-actions">%s</div></div>',
-			$blacklisted,
-			str_replace( $host, '<code>' . $host . '</code>', esc_url( $url ) ),
+			esc_html( $blacklisted ),
+			str_replace( $host, '<code>' . esc_html( $host ) . '</code>', esc_url( $url ) ),
 			ds_action_link( $post_id, 'host', $blacklisted )
 		);
 	}
@@ -362,21 +362,21 @@ function ds_html_file( $post_id ) {
 		// print output
 		echo sprintf(
 			'<div><p class="label blacklisted_%d"></p>%s: %s<br><code>%s</code><div class="row-actions">%s</div></div>',
-			$blacklisted_ip,
+			esc_html( $blacklisted_ip ),
 			'User',
 			"IP",
-			$ip,
+			esc_html( $ip ),
 			ds_action_link( $post_id, 'user-ip', $blacklisted_ip )
 		);
 	} else {
 		// print output
 		echo sprintf(
 			'<div><p class="label blacklisted_%d"></p>%s: %s<br><code>/%s:%d</code><div class="row-actions">%s</div></div>',
-			$blacklisted,
-			$meta['type'],
-			$meta['name'],
-			$file,
-			$line,
+			esc_html( $blacklisted ),
+			esc_html( $meta['type'] ),
+			esc_html( $meta['name'] ),
+			esc_html( $file ),
+			esc_html( $line ),
 			ds_action_link(
 				$post_id,
 				'file',
@@ -395,25 +395,25 @@ function ds_html_state( $post_id ) {
 		DS_AUTHORIZED => 'Authorized'
 	);
 	// print the state
-
+	print '<span class="' . esc_html( strtolower( $states[$state] ) ) . '">' . esc_html( $states[$state] ) . '</span>';
 	// colorize blocked item
 	if ( $state == DS_BLOCKED ) {
-		printf( '<style>#post-%1$d{background:rgba(248, 234, 232, 0.8)}#post-%1$d.alternate{background:#f8eae8}</style>', $post_id );
+		printf( '<style>#post-%1$d{background:rgba(248, 234, 232, 0.8)}#post-%1$d.alternate{background:#f8eae8}</style>', esc_html( $post_id ) );
 	}
 }
 	
 function ds_html_code( $post_id ) {
-	echo ds_get_meta( $post_id, 'code' );
+	echo ds_get_meta( esc_html( $post_id ), 'code' );
 }
 	
 function ds_html_duration( $post_id ) {
 	if ( $duration = ds_get_meta( $post_id, 'duration' ) ) {
-		echo sprintf( esc_html__( '%s seconds', 'dam-spam' ), $duration );
+		echo sprintf( esc_html__( '%s seconds', 'dam-spam' ), esc_html( $duration ) );
 	}
 }
 
 function ds_html_created( $post_id ) {
-	echo sprintf( esc_html__( '%s ago', 'dam-spam' ), human_time_diff( get_post_time( 'G', true, $post_id ) ) );
+	echo sprintf( esc_html__( '%s ago', 'dam-spam' ), human_time_diff( get_post_time( 'G', true, esc_html( $post_id ) ) ) );
 }
 
 function ds_html_postdata( $post_id ) {
@@ -432,13 +432,13 @@ function ds_html_postdata( $post_id ) {
 		return;
 	}
 	// thickbox content start
-	echo sprintf( '<div id="ds-firewall-thickbox-%d" class="ds-firewall-hidden"><pre>', $post_id );
+	echo sprintf( '<div id="ds-firewall-thickbox-%d" class="ds-firewall-hidden"><pre>', esc_html( $post_id ) );
 	// post data
 	print_r( $postdata );
 	// thickbox content end
 	echo '</pre></div>';
 	// thickbox button
-	echo sprintf( '<a href="#TB_inline?width=400&height=300&inlineId=ds-firewall-thickbox-%d" class="button thickbox">%s</a>', $post_id, esc_html__( 'Show', 'dam-spam') );
+	echo sprintf( '<a href="#TB_inline?width=400&height=300&inlineId=ds-firewall-thickbox-%d" class="button thickbox">%s</a>', esc_html( $post_id ), esc_html__( 'Show', 'dam-spam') );
 }
 
 function ds_get_meta( $post_id, $key ) {

@@ -36,7 +36,7 @@ function ds_admin_notice() {
 	$admin_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http' ) . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 	$param = ( count( $_GET ) ) ? '&' : '?';
 	if ( !get_user_meta( $user_id, 'ds_notice_dismissed_1' ) && current_user_can( 'manage_options' ) ) {
-		echo '<div class="notice notice-info"><p><a href="' . $admin_url, $param . 'dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a><big><strong>Dam Spam</strong> — ' . esc_html__( 'Thank you for helping us dam spam!', 'dam-spam' ) . ' 💜</big><p><a href="https://webguy.io/donate" class="button-primary" style="border-color:green;background:green" target="_blank">' . esc_html__( 'Donate', 'dam-spam' ) . '</a></p></div>';
+		echo '<div class="notice notice-info"><p><a href="' . esc_url( $admin_url ), esc_url_raw( $param ) . 'dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a><big><strong>Dam Spam</strong> — ' . esc_html__( 'Thank you for helping us dam spam!', 'dam-spam' ) . ' 💜</big><p><a href="https://webguy.io/donate" class="button-primary" style="border-color:green;background:green" target="_blank">' . esc_html__( 'Donate', 'dam-spam' ) . '</a></p></div>';
 	}
 }
 add_action( 'admin_notices', 'ds_admin_notice' );
@@ -57,7 +57,7 @@ function ds_wc_admin_notice() {
 		$admin_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http' ) . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 		$param = ( count( $_GET ) ) ? '&' : '?';
 		if ( !get_user_meta( $user_id, 'ds_wc_notice_dismissed' ) && current_user_can( 'manage_options' ) ) {
-			echo '<div class="notice notice-info"><p style="color:purple"><a href="' . $admin_url, $param . 'dswc-dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a>' . esc_html__( '<big><strong>WooCommerce Detected</strong></big> | We recommend <a href="admin.php?page=ds-protections">adjusting these options</a> if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ) . '</p></div>';
+			echo '<div class="notice notice-info"><p style="color:purple"><a href="' . esc_url( $admin_url ), esc_url_raw( $param ) . 'dswc-dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a>' . esc_html__( '<big><strong>WooCommerce Detected</strong></big> | We recommend <a href="admin.php?page=ds-protections">adjusting these options</a> if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ) . '</p></div>';
 		}
 	}
 }
@@ -471,7 +471,7 @@ function be_load( $file, $ip, &$stats = array(), &$options = array(), &$post = a
 		$fd	= str_replace( "/", DIRECTORY_SEPARATOR, $fd ); // Windows fix
 	}
 	if ( !file_exists( $fd ) ) {
-		printf( esc_html__( '<br><br>Missing %1$s %2$s<br><br>', 'dam-spam' ), $file, $fd );
+		printf( '<br><br>' . esc_html__( 'Missing %1$s %2$s', 'dam-spam' ), esc_html( $file, $fd ) ) . '<br><br>';
 		return false;
 	}
 	require_once( $fd );
@@ -853,7 +853,7 @@ function ds_add_captcha() {
 			$html  .= '</noscript>';
 		break;
 	}
-	echo $html;
+	echo wp_kses_post( $html );
 }
 
 function ds_captcha_verify() {

@@ -244,12 +244,12 @@ $nonce = wp_create_nonce( 'ds_update' );
 
 <div id="ds-plugin" class="wrap">
 	<h1 id="ds-head"><?php esc_html_e( 'Summary — Dam Spam', 'dam-spam' ); ?></h1><br>
-	<?php esc_html_e( 'Version', 'dam-spam' ); ?> <strong><?php echo DS_VERSION; ?></strong>
+	<?php esc_html_e( 'Version', 'dam-spam' ); ?> <strong><?php echo esc_html( DS_VERSION ); ?></strong>
 	<?php if ( !empty( $summary ) ) { ?>
 	<?php }
 	$ip = ds_get_ip();
 	?>
-	| <?php esc_html_e( 'Your current IP address is', 'dam-spam' ); ?>: <strong><?php echo $ip; ?></strong>
+	| <?php esc_html_e( 'Your current IP address is', 'dam-spam' ); ?>: <strong><?php echo esc_html( $ip ); ?></strong>
 	<?php
 	// check the IP to see if we are local
 	$ansa = be_load( 'chkvalidip', ds_get_ip() );
@@ -276,7 +276,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 			you use Cloudflare to protect and speed up your site then you MUST
 			install the Cloudflare plugin. This plugin
 			will be crippled until you install it.', 'dam-spam' ),
-			$ansa
+			esc_html( $ansa )
 		); ?>
 		</p>
 	<?php }
@@ -293,7 +293,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		$sname = substr( $sname, 0, strpos( $sname, '?' ) );
 	}
 	if ( !empty( $msg ) ) {
-		echo $msg;
+		echo wp_kses_post( $msg );
 	}
 	$current_user_name = wp_get_current_user()->user_login;
 	if ( $current_user_name == 'admin' ) {
@@ -307,17 +307,17 @@ $nonce = wp_create_nonce( 'ds_update' );
 	<h2><?php esc_html_e( 'Summary of Spam', 'dam-spam' ); ?></h2>
 	<div class="main-stats">
 	<?php if ( $spcount > 0 ) { ?>
-		<p><?php printf( esc_html__( 'Dam Spam has stopped %1$s spammers since %2$s.', 'dam-spam' ), $spcount, $spdate ); ?></p>
+		<p><?php printf( esc_html__( 'Dam Spam has stopped %1$s spammers since %2$s.', 'dam-spam' ), esc_html( $spcount, $spdate ) ); ?></p>
 	<?php }
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->spam );
 	if ( $num_comm->spam > 0 && DS_MU != 'Y' ) { ?>
-		<p><?php printf( __( 'There are <a href="edit-comments.php?comment_status=spam">%s</a> spam comments waiting for you to report.', 'dam-spam' ), $num ); ?></p>
+		<p><?php printf( esc_html__( 'There are %1$s%2$s%3$s spam comments waiting for you to report.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=spam">', esc_html( $num ), '</a>' ); ?></p>
 	<?php }
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->moderated );
 	if ( $num_comm->moderated > 0 && DS_MU != 'Y' ) { ?>
-		<p><?php printf( __( 'There are <a href="edit-comments.php?comment_status=moderated">%s</a> comments waiting to be moderated.', 'dam-spam' ), $num ); ?></p></div>
+		<p><?php printf( esc_html__( 'There are %1$s%2$s%3$s comments waiting to be moderated.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=moderated">', esc_html( $num ), '</a>' ); ?></p></div>
 	<?php }
 	$summary = '';
 	foreach ( $counters as $v1 => $v2 ) {
@@ -333,10 +333,10 @@ $nonce = wp_create_nonce( 'ds_update' );
 		$summary .= "<div class='stat-box'>$key: " . $data[0] . "</div>";
 	} ?>
 	<?php
-		echo $summary;
+		echo wp_kses_post( $summary );
 	?>
 	<form method="post" action="">
-		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<input type="hidden" name="clear" value="clear summary">
 		<p class="submit" style="clear:both"><input class="button-primary" value="<?php esc_html_e( 'Clear Summary', 'dam-spam' ); ?>" type="submit"></p>
 	</form>

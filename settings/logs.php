@@ -59,17 +59,17 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 		}
 	}
 	if ( !empty( $msg ) ) {
-		echo $msg;
+		echo wp_kses_post( $msg );
 	}
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->spam );
 	if ( $num_comm->spam > 0 && DS_MU != 'Y' ) { ?>
-		<p><?php printf( __( 'There are <a href="edit-comments.php?comment_status=spam">%s</a> spam comments waiting for you to report them.', 'dam-spam' ), $num ); ?></p>
+		<p><?php printf( esc_html__( 'There are %1$s%2$s%3$s spam comments waiting for you to report them.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=spam">', esc_html( $num ), '</a>' ); ?></p>
 	<?php }
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->moderated );
 	if ( $num_comm->moderated > 0 && DS_MU != 'Y' ) { ?>
-		<p><?php printf( __( 'There are <a href="edit-comments.php?comment_status=moderated">%s</a> comments waiting to be moderated.', 'dam-spam' ), $num ); ?></p>
+		<p><?php printf( esc_html__( 'There are %1$s%2$s%3$s comments waiting to be moderated.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=moderated">', esc_html( $num ), '</a>' ); ?></p>
 	<?php }
 	$nonce = wp_create_nonce( 'ds_update' );
 	?>
@@ -79,7 +79,7 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 	}, 10000);
 	</script> -->
 	<form method="post" action="">
-		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<input type="hidden" name="ds_update_log_size" value="true">
 		<h2><?php esc_html_e( 'History Size', 'dam-spam' ); ?></h2>
 		<?php esc_html_e( 'Select the number of events to save in the history.', 'dam-spam' ); ?><br>
@@ -96,7 +96,7 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 			<em><small><?php esc_html_e( 'Warning: Changing the log size will wipe current logs.', 'dam-spam' ); ?></small></em>
 		</p>
 		<form method="post" action="">
-			<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+			<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<input type="hidden" name="ds_clear_hist" value="true">
 			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Clear Recent Activity', 'dam-spam' ); ?>" type="submit"></p>
 		</form>
@@ -125,11 +125,11 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 			krsort( $hist );
 			foreach ( $hist as $key => $data ) {
 				// $hist[$now] = array( $ip, $email, $author ,$sname, 'begin' );
-				$em = strip_tags( trim( $data[1] ) );
-				$dt = strip_tags( $key );
+				$em = wp_strip_all_tags( trim( $data[1] ) );
+				$dt = wp_strip_all_tags( $key );
 				$ip = $data[0];
-				$au = strip_tags( $data[2] );
-				$id = strip_tags( $data[3] );
+				$au = wp_strip_all_tags( $data[2] );
+				$id = wp_strip_all_tags( $data[3] );
 				if ( empty( $au ) ) {
 					$au = ' -- ';
 				}
@@ -153,32 +153,32 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 				$who		 = '<br><a title="' . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . '" target="_blank" href="https://whois.domaintools.com/' . $ip . '"><img src="' . $whois . '" class="icon-action"></a>';
 				echo '
 					<tr style="background-color:white">
-					<td>' . $dt . '</td>
-					<td>' . $em . '</td>
-					<td>' . $ip, $who, $stopper, $honeysearch, $botsearch . '';
+					<td>' . wp_kses_post( $dt ) . '</td>
+					<td>' . wp_kses_post( $em ) . '</td>
+					<td>' . wp_kses_post( $ip, $who, $stopper, $honeysearch, $botsearch );
 				if ( stripos( $reason, 'passed' ) !== false && ( $id == '/' || strpos( $id, 'login' ) ) !== false || strpos( $id, 'register' ) !== false && !in_array( $ip, $blist ) && !in_array( $ip, $wlist ) ) {
 					$ajaxurl = admin_url( 'admin-ajax.php' );
-					echo '<a href="" onclick="sfs_ajax_process(\'' . $ip . '\',\'log\',\'add_black\',\'' . $ajaxurl . '\');return false;" title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" alt="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '"><img src="' . $down . '" class="icon-action"></a>';
+					echo '<a href="" onclick="sfs_ajax_process(\'' . esc_html( $ip ) . '\',\'log\',\'add_black\',\'' . esc_html( $ajaxurl ) . '\');return false;" title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" alt="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '"><img src="' . esc_url( $down ) . '" class="icon-action"></a>';
 					$options = get_option( 'ds_options' );
 					$apikey  = $options['apikey'];
 					if ( !empty( $apikey ) && !empty( $em ) ) {
 						$href = 'href="#"';
-						$onclick = 'onclick="sfs_ajax_report_spam(this,\'registration\',\'' . $blog . '\',\'' . $ajaxurl . '\',\'' . $em . '\',\'' . $ip . '\',\'' . $au . '\');return false;"';
+						$onclick = 'onclick="sfs_ajax_report_spam(this,\'registration\',\'' . esc_html( $blog ) . '\',\'' . esc_html( $ajaxurl ) . '\',\'' . esc_html( $em ) . '\',\'' . esc_html( $ip ) . '\',\'' . esc_html( $au ) . '\');return false;"';
 						echo '| ';
-						echo '<a title="' . esc_attr__( 'Report to Stop Forum Spam (SFS)', 'dam-spam' ) . '" ' . $href, $onclick . ' class="delete:the-comment-list:comment-$id::delete=1 delete vim-d vim-destructive">' . esc_html__( 'Report to SFS', 'dam-spam' ) . '</a>';
+						echo '<a title="' . esc_attr__( 'Report to Stop Forum Spam (SFS)', 'dam-spam' ) . '" ' . esc_html( $href, $onclick ) . ' class="delete:the-comment-list:comment-$id::delete=1 delete vim-d vim-destructive">' . esc_html__( 'Report to SFS', 'dam-spam' ) . '</a>';
 					}
 				}
 				echo '
-					</td><td>' . $au . '</td>
-					<td>' . $id . '</td>
-					<td>' . $reason . '</td>';
+					</td><td>' . wp_kses_post( $au ) . '</td>
+					<td>' . wp_kses_post( $id ) . '</td>
+					<td>' . wp_kses_post( $reason ) . '</td>';
 				if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 					// switch to blog and back
 					$blogname  = get_blog_option( $blog, 'blogname' );
 					$blogadmin = esc_url( get_admin_url( $blog ) );
 					$blogadmin = trim( $blogadmin, '/' );
 					echo '<td style="font-size:.9em;padding:2px" align="center">';
-					echo '<a href="' . $blogadmin . '/edit-comments.php">' . $blogname . '</a>';
+					echo '<a href="' . esc_url( $blogadmin ) . '/edit-comments.php">' . esc_html( $blogname ) . '</a>';
 					echo '</td>';
 				}
 				echo '</tr>';

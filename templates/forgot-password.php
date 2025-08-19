@@ -1,4 +1,4 @@
-<form name="lostpasswordform" id="lostpasswordform" action="<?php echo home_url( '/forgot-password/' ); ?>" method="post">
+<form name="lostpasswordform" id="lostpasswordform" action="<?php echo esc_url( home_url( '/forgot-password/' ) ); ?>" method="post">
 	<?php ds_show_error(); ?>
 	<p><?php esc_html_e( 'Please enter your username or email address. You will receive a link to create a new password via email.', 'dam-spam' ); ?></p>
 	<p>

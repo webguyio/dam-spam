@@ -44,7 +44,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 				}
 				$v = print_r( $v, true );
 				$v = htmlentities( $v );
-				printf( __( '<h2>contents of %1$s</h2><pre>%2$s</pre>', 'dam-spam' ), $op, $v );
+				printf( '<h2>' . esc_html__( 'contents of ', 'dam-spam' ) . esc_html( $op ) . '</h2><pre>' . esc_html( $v ) . '</pre>' );
 			}
 			if ( array_key_exists( 'autol', $_POST ) ) {
 				foreach ( $_POST['autol'] as $name ) {
@@ -55,7 +55,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 						$au = 'no';
 					}
 					$name = substr( $name, strpos( $name, '_' ) + 1 );
-					printf( esc_html__( 'changing %1$s autoload to %2$s', 'dam-spam' ), $name, $au . '<br>' );
+					printf( esc_html__( 'changing %1$s autoload to %2$s', 'dam-spam' ), esc_html( $name, $au ) . '<br>' );
 					$sql  = "update $ptab set autoload='$au' where option_name='$name'";
 					$wpdb->query( $sql );
 				}
@@ -63,7 +63,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 			if ( array_key_exists( 'delo', $_POST ) ) {
 				foreach ( $_POST['delo'] as $name ) {
 					$name = sanitize_key( $name );
-					printf( esc_html__( 'deleting %s ', 'dam-spam' ), $name . '<br>' );
+					printf( esc_html__( 'deleting %s ', 'dam-spam' ), esc_html( $name ) . '<br>' );
 					$sql = "delete from $ptab where option_name='$name'";
 					$wpdb->query( $sql );
 				}
@@ -266,7 +266,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 		$nonce = wp_create_nonce( 'ds_update' );
 		?>
 		<form method="post" name="DOIT2" action="">
-			<!-- <input type="hidden" name="ds_opt_control" value="<?php echo $nonce; ?>"> -->
+			<!-- <input type="hidden" name="ds_opt_control" value="<?php echo esc_attr( $nonce ); ?>"> -->
 			<?php if ( !isset( $_GET['tab'] ) or $_GET['tab'] == 'disable-users' ) : ?>
 				<?php include_once DS_PLUGIN_FILE . '/includes/user_filter_list.php' ?>
 			<?php endif; ?>
@@ -282,10 +282,10 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 							_n(
 								'You have %s pending comment in your site. Do you want to delete it?',
 								'You have %s pending comments in your site. Do you want to delete all of them?',
-								$pending_comments_count,
+								esc_html( $pending_comments_count ),
 								'dam-spam'
 							),
-							number_format_i18n( $pending_comments_count )
+							esc_html( number_format_i18n( $pending_comments_count ) )
 						);
 						?>
 					</p>
@@ -294,7 +294,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 					</p>
 					<blockquote>
 						<em>
-							<?php echo $magic_string ?>
+							<?php echo esc_html( $magic_string ) ?>
 						</em>
 					</blockquote>
 					<textarea name="ds_delete_pending_comment_confirmation_text"></textarea>
@@ -331,12 +331,12 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 					// if ( $autoload=='no' ) $au='No';
 					?>
 					<tr class="ds-cleanup-tr" bgcolor="#fff">
-						<td align="center"><?php echo $option_name; ?></td>
-						<td align="center"><?php echo $autoload; ?></td>
-						<td align="center"><?php echo $sz; ?></td>
-						<td align="center"><input type="checkbox" value="<?php echo $autoload . '_' . $option_name; ?>" name="autol[]">&nbsp;<?php echo $autoload; ?></td>
-						<td align="center"><input type="checkbox" value="<?php echo $option_name; ?>" name="delo[]"></td>
-						<td align="center"><button type="submit" name="view" value="<?php echo $option_name; ?>"><?php esc_html_e( 'view', 'dam-spam' ); ?></button></td>
+						<td align="center"><?php echo esc_html( $option_name ); ?></td>
+						<td align="center"><?php echo esc_html( $autoload ); ?></td>
+						<td align="center"><?php echo esc_html( $sz ); ?></td>
+						<td align="center"><input type="checkbox" value="<?php echo esc_html( $autoload ) . '_' . esc_html( $option_name ); ?>" name="autol[]">&nbsp;<?php echo esc_html( $autoload ); ?></td>
+						<td align="center"><input type="checkbox" value="<?php echo esc_html( $option_name ); ?>" name="delo[]"></td>
+						<td align="center"><button type="submit" name="view" value="<?php echo esc_html( $option_name ); ?>"><?php esc_html_e( 'view', 'dam-spam' ); ?></button></td>
 					</tr>
 					<?php
 				}
@@ -350,14 +350,14 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 		$m3 = memory_get_peak_usage();
 		$m1 = number_format( $m1 );
 		$m3 = number_format( $m3 );
-		printf( '<p>' . esc_html__( 'Memory Usage Currently: %1$s Peak: %2$s', 'dam-spam' ), $m1, $m3 . '</p>' );
+		printf( '<p>' . esc_html__( 'Memory Usage Currently: %1$s Peak: %2$s', 'dam-spam' ), esc_html( $m1 ), esc_html( $m3 ) . '</p>' );
 		$nonce		    = wp_create_nonce( 'ds_update2' );
 		$showtransients = false; // change to true to clean up transients
 		if ( $showtransients && countTransients() > 0 ) { // personal use - probably too dangerous for casual users ?>
 			<hr>
 			<p><?php esc_html_e( 'WordPress creates temporary objects in the database called transients. WordPress is not good about cleaning them up afterwards. You can clean these up safely and it might speed things up.', 'dam-spam' ); ?></p>
 			<form method="post" name="DOIT2" action="">
-				<input type="hidden" name="ds_opt_tdel" value="<?php echo $nonce; ?>">
+				<input type="hidden" name="ds_opt_tdel" value="<?php echo esc_attr( $nonce ); ?>">
 				<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Delete Transients', 'dam-spam' ); ?>" type="submit"></p>
 			</form>
 			<?php
@@ -372,7 +372,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 			?>
 			<p><?php
 			$countT = countTransients();
-			printf( esc_html__( 'Currently there are %s found.', 'dam-spam' ), $countT );
+			printf( esc_html__( 'Currently there are %s found.', 'dam-spam' ), esc_html( $countT ) );
 			?></p>
 		<?php
 		}

@@ -167,7 +167,7 @@ function include_setting( $file ) {
 	if ( file_exists( $ppath . $file ) ) {
 		require_once( $ppath . $file );
 	} else {
-		printf( __( '<br>Missing File: %1$s %2$s <br>', 'dam-spam' ), $ppath, $file );
+		printf( '<br>' . esc_html__( 'Missing File: %1$s %2$s', 'dam-spam' ), esc_html( $ppath, $file ) ) . '<br>';
 	}
 	sfs_errorsonoff( 'off' );
 }

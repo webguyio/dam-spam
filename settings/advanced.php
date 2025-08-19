@@ -77,7 +77,7 @@ function ds_advanced_menu() {
 								<?php } else { ?>
 								<p><em><small><?php esc_html_e( 'For advanced users only: If you\'d like to enable the real-time firewall beta feature, add <strong>define( \'DS_ENABLE_FIREWALL\', true );</strong> to your wp-config.php file. This feature is resource-intensive, requiring a lot of memory and database space.', 'dam-spam' ); ?></small></em></p>
 								<?php } ?>
-								<input type="checkbox" name="ds_firewall_setting" id="ds_firewall_setting" value="yes" <?php echo $ds_firewall_setting; ?>>
+								<input type="checkbox" name="ds_firewall_setting" id="ds_firewall_setting" value="yes" <?php echo esc_html( $ds_firewall_setting ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Enable Server-side Security Rules', 'dam-spam' ); ?>
 								<p><em><small><?php esc_html_e( 'For advanced users only: This option will modify your .htaccess file with extra security rules and in some small cases, conflict with your server settings. If you do not understand how to edit your .htaccess file to remove these rules in the event of an error, do not enable.', 'dam-spam' ); ?></small></em></p>
@@ -90,7 +90,7 @@ function ds_advanced_menu() {
 						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Login Settings', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_login_setting">
-								<input type="checkbox" name="ds_login_setting" id="ds_login_setting" value="yes" <?php echo $ds_login_setting; ?>>
+								<input type="checkbox" name="ds_login_setting" id="ds_login_setting" value="yes" <?php echo esc_html( $ds_login_setting ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Enable themed registration and login pages (disables the default wp-login.php).', 'dam-spam' ); ?>
 							</label>
@@ -98,20 +98,20 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds_login_attempts">
-								<input type="checkbox" name="ds_login_attempts" id="ds_login_attempts" value="yes" <?php echo $ds_login_attempts; ?>>
+								<input type="checkbox" name="ds_login_attempts" id="ds_login_attempts" value="yes" <?php echo esc_html( $ds_login_attempts ); ?>>
 								<span><small></small></span>
 								<strong><?php esc_html_e( 'Login Attempts:', 'dam-spam' ); ?></strong>
 								<?php esc_html_e( 'After', 'dam-spam' ); ?>
-								<input type="text" name="ds_login_attempts_threshold" id="ds_login_attempts_duration" class="ds-small-box" value="<?php echo get_option( 'ds_login_attempts_threshold', 5 ); ?>">
+								<input type="text" name="ds_login_attempts_threshold" id="ds_login_attempts_duration" class="ds-small-box" value="<?php echo esc_html( get_option( 'ds_login_attempts_threshold', 5 ) ); ?>">
 								<?php esc_html_e( 'failed login attempts within', 'dam-spam' ); ?>
-								<input type="text" name="ds_login_attempts_duration" id="ds_login_attempts_duration" class="ds-small-box" value="<?php echo get_option( 'ds_login_attempts_duration', 1 ); ?>">
+								<input type="text" name="ds_login_attempts_duration" id="ds_login_attempts_duration" class="ds-small-box" value="<?php echo esc_html( get_option( 'ds_login_attempts_duration', 1 ) ); ?>">
 								<select name="ds_login_attempts_unit" id="ds_login_attempts_unit" class="ds-small-dropbox">
 									<option value="minute" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'minute' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
 									<option value="hour" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'hour' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
 									<option value="day" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'day' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'day(s)', 'dam-spam' ); ?></option>
 								</select>,
 								<?php esc_html_e( 'lockout the account for', 'dam-spam' ); ?>
-								<input type="text" name="ds_login_lockout_duration" id="ds_login_lockout_duration" class="ds-small-box" value="<?php echo get_option( 'ds_login_lockout_duration', 24 ); ?>"> 
+								<input type="text" name="ds_login_lockout_duration" id="ds_login_lockout_duration" class="ds-small-box" value="<?php echo esc_html( get_option( 'ds_login_lockout_duration', 24 ) ); ?>"> 
 								<select name="ds_login_lockout_unit" id="ds_login_lockout_unit" class="ds-small-dropbox">
 									<option value="minute" <?php if ( get_option( 'ds_login_lockout_unit', 'hour' ) == 'minute' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
 									<option value="hour" <?php if ( get_option( 'ds_login_lockout_unit', 'hour' ) == 'hour' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
@@ -127,7 +127,7 @@ function ds_advanced_menu() {
 						<p><input type="hidden" name="ds_login_type_field" value="ds_login_type"></p>
 						<div class="checkbox switcher">
 							<label for="ds-login-type-default">
-								<input name="ds_login_type" type="radio" id="ds-login-type-default" value="default" <?php echo $ds_login_type_default; ?>>
+								<input name="ds_login_type" type="radio" id="ds-login-type-default" value="default" <?php echo esc_html( $ds_login_type_default ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Username or Email', 'dam-spam' ); ?>
 							</label>
@@ -135,7 +135,7 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds-login-type-username">
-								<input name="ds_login_type" type="radio" id="ds-login-type-username" value="username" <?php echo $ds_login_type_username; ?>>
+								<input name="ds_login_type" type="radio" id="ds-login-type-username" value="username" <?php echo esc_html( $ds_login_type_username ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Username Only', 'dam-spam' ); ?>
 							</label>
@@ -143,7 +143,7 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds-login-type-email">
-								<input name="ds_login_type" type="radio" id="ds-login-type-email" value="email" <?php echo $ds_login_type_email; ?>>
+								<input name="ds_login_type" type="radio" id="ds-login-type-email" value="email" <?php echo esc_html( $ds_login_type_email ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Email Only', 'dam-spam' ); ?>
 							</label>
@@ -154,7 +154,7 @@ function ds_advanced_menu() {
 						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Honeypot', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_honeypot_cf7">
-								<input type="checkbox" name="ds_honeypot_cf7" id="ds_honeypot_cf7" value="yes" <?php echo ( is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo $ds_honeypot_cf7; ?>>
+								<input type="checkbox" name="ds_honeypot_cf7" id="ds_honeypot_cf7" value="yes" <?php echo ( is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_html( $ds_honeypot_cf7 ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Contact Form 7', 'dam-spam' ); ?>
 							</label>
@@ -162,7 +162,7 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds_honeypot_bbpress">
-								<input type="checkbox" name="ds_honeypot_bbpress" id="ds_honeypot_bbpress" value="yes" <?php echo ( is_plugin_active( 'bbpress/bbpress.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo $ds_honeypot_bbpress; ?>>
+								<input type="checkbox" name="ds_honeypot_bbpress" id="ds_honeypot_bbpress" value="yes" <?php echo ( is_plugin_active( 'bbpress/bbpress.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_html( $ds_honeypot_bbpress ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'bbPress', 'dam-spam' ); ?>
 							</label>
@@ -170,7 +170,7 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds_honeypot_elementor">
-								<input type="checkbox" name="ds_honeypot_elementor" id="ds_honeypot_elementor" value="yes" <?php echo ( is_plugin_active( 'elementor/elementor.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo $ds_honeypot_elementor; ?>>
+								<input type="checkbox" name="ds_honeypot_elementor" id="ds_honeypot_elementor" value="yes" <?php echo ( is_plugin_active( 'elementor/elementor.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_html( $ds_honeypot_elementor ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Elementor Form', 'dam-spam' ); ?>
 							</label>
@@ -178,7 +178,7 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds_honeypot_divi">
-								<input type="checkbox" name="ds_honeypot_divi" id="ds_honeypot_divi" value="yes" <?php echo ( ( $theme->name == 'Divi' || $theme->parent_theme == 'Divi' ) ? '' : 'disabled="disabled"' ); ?> <?php echo $ds_honeypot_divi; ?>>
+								<input type="checkbox" name="ds_honeypot_divi" id="ds_honeypot_divi" value="yes" <?php echo ( ( $theme->name == 'Divi' || $theme->parent_theme == 'Divi' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_html( $ds_honeypot_divi ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Divi Forms', 'dam-spam' ); ?>
 							</label>
@@ -189,7 +189,7 @@ function ds_advanced_menu() {
 						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Block users from registering, commenting, and purchasing while on a VPN', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_allow_vpn">
-								<input type="checkbox" name="ds_allow_vpn" id="ds_allow_vpn" value="yes" <?php echo $ds_allow_vpn_setting;?>>
+								<input type="checkbox" name="ds_allow_vpn" id="ds_allow_vpn" value="yes" <?php echo esc_html( $ds_allow_vpn_setting ); ?>>
 								<span><small></small></span>
 							</label>
 						</div>
@@ -391,7 +391,7 @@ if ( get_option( 'ds_honeypot_bbpress', 'yes' ) == 'yes' ) {
 		$html .= '<input type="text" value="https://example.com/" autocomplete="off" tabindex="-1" size="40" name="bbp_your-website" id="bbp_your-website" required>';
 		$html .= '</p>';
 		$html .= '<style>.ds-user{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
-		echo $html;
+		echo wp_kses_post( $html );
 	}
 	add_action( 'bbp_theme_before_reply_form_submit_wrapper', 'ds_bbp_add_honeypot' );
 	add_action( 'bbp_theme_before_topic_form_submit_wrapper', 'ds_bbp_add_honeypot' );
@@ -835,7 +835,7 @@ function ds_show_error() {
 	if ( isset( $ds_error->errors ) ) {
 		foreach( $ds_error->errors as $errors ) {
 			foreach( $errors as $e ) {
-				echo "<div style='color:#721c24;background-color:#f8d7da;padding:.75rem 1.25rem;margin-bottom:1rem;border:1px solid #f5c6cb'>$e</div>";
+				echo '<div style="color:#721c24;background-color:#f8d7da;padding:.75rem 1.25rem;margin-bottom:1rem;border:1px solid #f5c6cb">' . esc_html( $e ) . '</div>';
 			}
 		}
 	}
@@ -1001,7 +1001,7 @@ function ds_nav_menu_metabox( $object ) {
 			</ul>
 			<p class="button-controls">
 				<span class="add-to-menu">
-					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attresc_html_e( 'Add to Menu', 'dam-spam' ); ?>" name="ds-menu-item" id="submit-ds-div">
+					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu', 'dam-spam' ); ?>" name="ds-menu-item" id="submit-ds-div">
 					<span class="spinner"></span>
 				</span>
 			</p>

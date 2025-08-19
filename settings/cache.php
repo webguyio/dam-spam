@@ -64,7 +64,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 	<h1 id="ds-head"><?php esc_html_e( 'Cache — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php
 	if ( !empty( $msg ) ) {
-		echo $msg;
+		echo wp_kses_post( $msg );
 	} ?>
 	<br>
 	<div class="ds-info-box">
@@ -76,7 +76,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 	', 'dam-spam' ); ?></p>
 	<form method="post" action="">
 		<input type="hidden" name="update_options" value="update">
-		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<label class="keyhead">
 			<?php esc_html_e( 'Bad IP Cache Size', 'dam-spam' ); ?>
 			<br>
@@ -122,7 +122,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		?>
 		<h2><?php esc_html_e( 'Cached Values', 'dam-spam' ); ?></h2>
 		<form method="post" action="">
-			<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+			<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<input type="hidden" name="ds_clear_cache" value="true">
 			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Clear the Cache', 'dam-spam' ); ?>" type="submit"></p>
 		</form>
@@ -152,7 +152,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 						// use the be_load to get badips
 						$show = be_load( 'ds_get_bcache', 'x', $stats,
 							$options );
-						echo $show;
+						echo esc_html( $show );
 						?></td>
 					<?php
 				}
@@ -165,7 +165,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 						// use the be_load to get badips
 						$show = be_load( 'ds_get_gcache', 'x', $stats,
 							$options );
-						echo $show;
+						echo esc_html( $show );
 						?></td>
 					<?php
 				}

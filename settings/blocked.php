@@ -137,11 +137,11 @@ $nonce = wp_create_nonce( 'ds_update' );
 	<br>
 	<br>
 	<?php if ( !empty( $msg ) ) {
-		echo $msg;
+		echo wp_kses_post( $msg );
 	} ?>
 	<form method="post" action="">
 		<input type="hidden" name="action" value="update">
-		<input type="hidden" name="ds_control" value="<?php echo $nonce; ?>">
+		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<div class="mainsection"><?php esc_html_e( 'Personalized Block List', 'dam-spam' ); ?></div>
 		<p><?php esc_html_e( 'Add IP addresses or emails here that you want blocked.', 'dam-spam' ); ?></p>
 		<div class="checkbox switcher">
@@ -153,7 +153,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<textarea name="blist" cols="40" rows="8"><?php
 			foreach ( $blist as $p ) {
-				echo $p . "\r\n";
+				echo esc_html( $p ) . "\r\n";
 			}
 		?></textarea>
 		<br>
@@ -168,7 +168,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<textarea name="spamwords" cols="40" rows="8"><?php
 			foreach ( $spamwords as $p ) {
-				echo $p . "\r\n";
+				echo esc_html( $p ) . "\r\n";
 			}
 		?></textarea>
 		<br>
@@ -183,7 +183,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<textarea name="blockurlshortners" cols="40" rows="8"><?php
 			foreach ( $blockurlshortners as $p ) {
-				echo $p . "\r\n";
+				echo esc_html( $p ) . "\r\n";
 			}
 		?></textarea>
 		<div class="mainsection"><?php esc_html_e( 'Check for URLs', 'dam-spam' ); ?></div>	
@@ -204,7 +204,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<textarea name="badagents" cols="40" rows="8"><?php
 			foreach ( $badagents as $p ) {
-				echo $p . "\r\n";
+				echo esc_html( $p ) . "\r\n";
 			}
 		?></textarea>
 		<br>
@@ -213,7 +213,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<p><?php esc_html_e( 'Enter the TLD name including the period (for example .xxx). A TLD is the last part of a domain like .com or .net.', 'dam-spam' ); ?></p>
 		<textarea name="badTLDs" cols="40" rows="8"><?php
 			foreach ( $badTLDs as $p ) {
-				echo $p . "\r\n";
+				echo esc_html( $p ) . "\r\n";
 			}
 		?></textarea>
 		<br>
