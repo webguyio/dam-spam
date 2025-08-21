@@ -77,7 +77,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<?php esc_html_e( 'Subject:', 'dam-spam' ); ?><br>
 			<input id="dsinput" name="subject" type="text" value="<?php echo esc_attr( $subject ); ?>"><br><br>
 			<?php esc_html_e( 'Comment:', 'dam-spam' ); ?><br>
-			<textarea name="body"><?php esc_html_e( $body ); ?></textarea><br>
+			<textarea name="body"><?php esc_html( $body ); ?></textarea><br>
 			<div style="width:50%;float:left">
 				<p class="submit"><input name="testopt" class="button-primary" value="<?php esc_html_e( 'Test Options', 'dam-spam' ); ?>" type="submit"></p>
 			</div>
