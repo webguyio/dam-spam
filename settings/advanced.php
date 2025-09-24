@@ -69,7 +69,7 @@ function ds_advanced_menu() {
 			<div class="postbox">
 				<form method="post">
 					<div class="inside">
-						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Firewall Settings', 'dam-spam' ); ?></span></h3>
+						<h3><span><?php esc_html_e( 'Firewall Settings', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_firewall_setting">
 								<?php if ( defined( 'DS_ENABLE_FIREWALL' ) ) { ?>
@@ -87,7 +87,7 @@ function ds_advanced_menu() {
 					</div>
 					<hr>
 					<div class="inside">
-						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Login Settings', 'dam-spam' ); ?></span></h3>
+						<h3><span><?php esc_html_e( 'Login Settings', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_login_setting">
 								<input type="checkbox" name="ds_login_setting" id="ds_login_setting" value="yes" <?php echo esc_html( $ds_login_setting ); ?>>
@@ -123,7 +123,7 @@ function ds_advanced_menu() {
 					</div>
 					<hr>
 					<div class="inside">
-						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Allow users to log in using their username and/or email address', 'dam-spam' ); ?></span></h3>
+						<h3><span><?php esc_html_e( 'Allow users to log in using their username or email address', 'dam-spam' ); ?></span></h3>
 						<p><input type="hidden" name="ds_login_type_field" value="ds_login_type"></p>
 						<div class="checkbox switcher">
 							<label for="ds-login-type-default">
@@ -151,7 +151,7 @@ function ds_advanced_menu() {
 					</div>
 					<hr>
 					<div class="inside">
-						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Honeypot', 'dam-spam' ); ?></span></h3>
+						<h3><span><?php esc_html_e( 'Honeypot', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_honeypot_cf7">
 								<input type="checkbox" name="ds_honeypot_cf7" id="ds_honeypot_cf7" value="yes" <?php echo ( is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_html( $ds_honeypot_cf7 ); ?>>
@@ -186,7 +186,7 @@ function ds_advanced_menu() {
 					</div>
 					<hr>
 					<div class="inside">
-						<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Block users from registering, commenting, and purchasing while on a VPN', 'dam-spam' ); ?></span></h3>
+						<h3><span><?php esc_html_e( 'Block VPNs', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_allow_vpn">
 								<input type="checkbox" name="ds_allow_vpn" id="ds_allow_vpn" value="yes" <?php echo esc_html( $ds_allow_vpn_setting ); ?>>
@@ -204,7 +204,7 @@ function ds_advanced_menu() {
 				</form>
 			</div>
 			<div class="postbox">
-				<h3 style="font-size:18px"><span><?php esc_html_e( 'Shortcodes', 'dam-spam' ); ?></span></h3>
+				<h3><span><?php esc_html_e( 'Shortcodes', 'dam-spam' ); ?></span></h3>
 				<div class="inside">
 					<p><?php esc_html_e( 'Contact Form: [ds-contact-form]', 'dam-spam' ); ?></p>
 					<p><?php esc_html_e( 'Login Form: [ds-login]', 'dam-spam' ); ?></p>
@@ -214,9 +214,9 @@ function ds_advanced_menu() {
 				</div>
 			</div>
 			<div class="postbox">
-				<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Export Settings', 'dam-spam' ); ?></span></h3>
+				<h3><span><?php esc_html_e( 'Export Settings', 'dam-spam' ); ?></span></h3>
 				<div class="inside">
-					<p><?php esc_html_e( 'Export the plugin settings for this site as a .json file. This allows you to easily import the configuration into another site.', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Export plugin settings as a .json file.', 'dam-spam' ); ?></p>
 					<form method="post">
 						<p><input type="hidden" name="ds_action" value="export_settings"></p>
 						<p>
@@ -227,9 +227,9 @@ function ds_advanced_menu() {
 				</div><!-- .inside -->
 			</div><!-- .postbox -->
 			<div class="postbox">
-				<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Import Settings', 'dam-spam' ); ?></span></h3>
+				<h3><span><?php esc_html_e( 'Import Settings', 'dam-spam' ); ?></span></h3>
 				<div class="inside">
-					<p><?php esc_html_e( 'Import the plugin settings from a .json file. This file can be obtained by exporting the settings on another site using the form above.', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Import plugin settings from a .json file.', 'dam-spam' ); ?></p>
 					<form method="post" enctype="multipart/form-data">
 						<p><input type="file" name="import_file"></p>
 						<p>
@@ -241,9 +241,9 @@ function ds_advanced_menu() {
 				</div><!-- .inside -->
 			</div><!-- .postbox -->
 			<div class="postbox">
-				<h3 style="font-size:16px!important"><span><?php esc_html_e( 'Reset Settings', 'dam-spam' ); ?></span></h3>
+				<h3><span><?php esc_html_e( 'Reset Settings', 'dam-spam' ); ?></span></h3>
 				<div class="inside">
-					<p><?php esc_html_e( 'Reset the plugin settings for this site. This allows you to easily reset the configuration.', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Reset all plugin settings.', 'dam-spam' ); ?></p>
 					<form method="post">
 						<p><input type="hidden" name="ds_action" value="reset_settings"></p>
 						<p>

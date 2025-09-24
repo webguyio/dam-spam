@@ -80,28 +80,26 @@ $nonce = wp_create_nonce( 'ds_update' );
 
 <div id="ds-plugin" class="wrap">
 	<h1 id="ds-head"><?php esc_html_e( 'APIs — Dam Spam', 'dam-spam' ); ?></h1>
+	<br>
 	<?php if ( !empty( $msg ) ) {
 		echo wp_kses_post( $msg );
 	} ?>
 	<br>
-	<div class="ds-info-box">
-		<p><?php esc_html_e( 'Below are several services that can be enabled to check for spam or protect your website against spammers.', 'dam-spam' ); ?></p>
-	</div>
-	<br>
 	<form method="post" action="">
 		<input type="hidden" name="action" value="update">
 		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
+		<div id="formchecking" class="mainsection"><?php esc_html_e( 'Blacklist Checking', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chkdnsbl">
 				<input class="ds_toggle" type="checkbox" id="chkdnsbl" name="chkdnsbl" value="Y" <?php if ( $chkdnsbl == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important;"><?php esc_html_e( 'Check Against DNSBL Lists Such as Spamhaus.org', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Check DNSBLs (like Spamhaus.org)', 'dam-spam' ); ?></small>
 			</label>
 		</div>	  
 		<br>		
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chksfs">
 				<input class="ds_toggle" type="checkbox" id="chksfs" name="chksfs" value="Y" <?php if ( $chksfs == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important;"><?php esc_html_e( 'Enable Stop Forum Spam Lookups', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Check Stop Forum Spam', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
@@ -110,19 +108,13 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<br>
 			<input size="32" name="apikey" type="text" value="<?php echo esc_attr( $apikey ); ?>">
 		</label>
-		<br>
-		<table cellspacing="1" style="background-color:#ccc;font-size:0.9em">
-			<tr bgcolor="white">
-				<td valign="top">
-				<?php printf(
-					esc_html__( 'Block spammers found on Stop Forum Spam with more than', 'dam-spam' ) .
-					'<input size="3" name="sfsfreq" type="text" class="small-text" value="' . esc_attr( $sfsfreq ) . '">'
-					. esc_html__( 'incidents, and occurring less than', 'dam-spam' ) .
-					'<input size="4" name="sfsage" type="text" class="small-text" value="' . esc_attr( $sfsage ) . '">'
-				); ?>
-				</td>
-			</tr>
-		</table>
+		<?php printf(
+			esc_html__( 'Block spammers found with more than ', 'dam-spam' ) .
+			'<input size="3" name="sfsfreq" type="text" class="small-text" value="' . esc_attr( $sfsfreq ) . '">'
+			. esc_html__( ' incidents, and occurring less than ', 'dam-spam' ) .
+			'<input size="4" name="sfsage" type="text" class="small-text" value="' . esc_attr( $sfsage ) . '">'
+			. esc_html__( ' days ago.', 'dam-spam' )
+		); ?>
 		<br>
 		<br>
 		<label class="keyhead">
@@ -130,20 +122,13 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<br>
 			<input size="32" name="honeyapi" type="text" value="<?php echo esc_attr( $honeyapi ); ?>">
 		</label>
-		<br>
-		<table cellspacing="1" style="background-color:#ccc;font-size:0.9em">
-			<tr bgcolor="white">
-				<td valign="top">
-				<?php printf(
-					esc_html__( 'Block spammers found on Project HoneyPot with incidents less than', 'dam-spam' ) .
-					'<input size="3" name="hnyage" type="text" class="small-text" value="' . esc_attr( $hnyage ) . '">'
-					. esc_html__( 'days ago, and with more than', 'dam-spam' ) .
-					'<input size="4" name="hnylevel" type="text" class="small-text" value="' . esc_attr( $hnylevel ) . '">'
-					. esc_html__( 'threat level. (25 threat level is average, threat level 5 is fairly low.)', 'dam-spam' )
-				); ?>
-				</td>
-			</tr>
-		</table>
+		<?php printf(
+			esc_html__( 'Block spammers found with more than ', 'dam-spam' ) .
+			'<input size="4" name="hnylevel" type="text" class="small-text" value="' . esc_attr( $hnylevel ) . '">'
+			. esc_html__( ' threat level (25 is average, 5 is low), and occurring less than ', 'dam-spam' ) .
+			'<input size="3" name="hnyage" type="text" class="small-text" value="' . esc_attr( $hnyage ) . '">'
+			. esc_html__( ' days ago.', 'dam-spam' )
+		); ?>
 		<br>
 		<br>
 		<label class="keyhead">
@@ -151,18 +136,11 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<br>
 			<input size="32" name="botscoutapi" type="text" value="<?php echo esc_attr( $botscoutapi ); ?>">
 		</label>
-		<br>
-		<table cellspacing="1" style="background-color:#ccc;font-size:0.9em">
-			<tr bgcolor="white">
-				<td valign="top">
-				<?php printf(
-					esc_html__( 'Block spammers found on BotScout with more than', 'dam-spam' ) .
-					'<input size="3" name="botfreq" type="text" class="small-text" value="' . esc_attr( $botfreq ) . '">'
-					. esc_html__( 'incidents.', 'dam-spam' )
-				); ?>
-				</td>
-			</tr>
-		</table>
+		<?php printf(
+			esc_html__( 'Block spammers found with more than ', 'dam-spam' ) .
+			'<input size="3" name="botfreq" type="text" class="small-text" value="' . esc_attr( $botfreq ) . '">'
+			. esc_html__( ' incidents.', 'dam-spam' )
+		); ?>
 		<br>
 		<br>
 		<label class="keyhead">

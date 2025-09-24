@@ -10,10 +10,10 @@ if ( $total > count( $user_list ) ) {
 
 <hr>
 
-<input type="button" value="<?php echo esc_html__( 'Select all', 'dam-spam' ) ?>" onclick="ds_markALL(this.form['f_users[]']);">
-<input type="button" value="<?php echo esc_html__( 'Deselect all', 'dam-spam' ) ?>" onclick="ds_unmarkALL(this.form['f_users[]']);">
-<input type="button" class="button-secondary-red" value="<?php echo esc_html__( 'Disable users', 'dam-spam' ) ?>" onclick="if(confirm('Yes, disable all marked users.')){this.form.op.value='disable';this.form.submit();}">
-<input type="button" class="button-primary" value="<?php echo esc_html__( 'Enable users', 'dam-spam' ) ?>" onclick="if(confirm('Yes, activate all marked users.')){this.form.op.value='activate';this.form.submit();}">
+<input type="button" value="<?php echo esc_html__( 'Select All', 'dam-spam' ) ?>" onclick="ds_markALL(this.form['f_users[]']);">
+<input type="button" value="<?php echo esc_html__( 'Deselect All', 'dam-spam' ) ?>" onclick="ds_unmarkALL(this.form['f_users[]']);">
+<input type="button" class="button-secondary-red" value="<?php echo esc_html__( 'Disable Users', 'dam-spam' ) ?>" onclick="if(confirm('Yes, disable all marked users.')){this.form.op.value='disable';this.form.submit();}">
+<input type="button" class="button-primary" value="<?php echo esc_html__( 'Enable Users', 'dam-spam' ) ?>" onclick="if(confirm('Yes, activate all marked users.')){this.form.op.value='activate';this.form.submit();}">
 
 <table cellpadding="3"><tr>
 	<th>No.</th>

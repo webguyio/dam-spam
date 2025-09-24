@@ -80,7 +80,7 @@ class ds_challenge extends be_module {
 				// now the CAPTCHA settings
 				$msg = esc_html__( 'Thank you,', 'dam-spam' ) . '<br>';
 				if ( $emailsent ) {
-					$msg .= esc_html__( 'The webmaster has been notified by email.', 'dam-spam' ) . '<br>';
+					$msg .= esc_html__( 'The webmaster has been notified.', 'dam-spam' ) . '<br>';
 				}
 				if ( $allowset ) {
 					$msg .= esc_html__( 'Your request has been recorded.', 'dam-spam' ) . '<br>';
@@ -270,18 +270,18 @@ class ds_challenge extends be_module {
 				<input type="hidden" name="kr" value="' . esc_attr( $kr ) . '">
 				<input type="hidden" name="ka" value="' . esc_attr( $ka ) . '">
 		';
-		$formbot = '<p><input style="background:#007cba;padding:10px 15px;border:none;border-radius:3px;color:white;cursor:pointer" type="submit" value="' . esc_attr__( 'Submit Request', 'dam-spam' ) . '"></p>
+		$formbot = '<p><input class="button-primary" type="submit" value="' . esc_attr__( 'Submit Request', 'dam-spam' ) . '"></p>
 			</form>';
 		$not	 = '';
 		if ( $wlreq == 'Y' ) {
 			// halfhearted attempt to hide which field is the email field
 			$not = '
 				<h1>' . esc_html__( 'Allow Request', 'dam-spam' ) . '</h1>
-				<p>' . esc_html__( 'You have been blocked from entering information on this site. In order to prevent this from happening in the future, request being whitelisted.', 'dam-spam' ) . '</p>
+				<p>' . esc_html__( 'You have been blocked from entering information on this site.', 'dam-spam' ) . '</p>
 				<p>' . esc_html__( 'Email Address (required):', 'dam-spam' ) . '</p>
-				<p><input type="text" value="" name="ke" style="padding:5px" class="regular-text"></p>
+				<p><input type="text" value="" name="ke" class="regular-text"></p>
 				<p>' . esc_html__( 'Message:', 'dam-spam' ) . '</p>
-				<textarea name="km" placeholder="' . esc_html__( 'Explain what you were trying to do or re-enter your message.', 'dam-spam' ) . '" rows="5" style="box-sizing:border-box;width:100%;padding:15px" class="large-text"></textarea>
+				<textarea name="km" placeholder="' . esc_html__( 'Explain what you were trying to do or re-enter your message.', 'dam-spam' ) . '" rows="5" class="large-text"></textarea>
 			';
 		}
 		$captop = '<h1>' . esc_html__( 'Are you human?', 'dam-spam' ) . '</h1>';
@@ -332,7 +332,7 @@ class ds_challenge extends be_module {
 				}
 				$stupid = $n1 + $n2 - $seed;
 				$cap	= esc_html__( 'Enter the SUM of these two numbers:', 'dam-spam' ) .
-					'<span style="size:4em;font-weight:bold">' . esc_html( $n1 ) . ' + ' . esc_html( $n2 ) . '</span><br>
+					'<strong>' . esc_html( $n1 ) . ' + ' . esc_html( $n2 ) . '</strong><br>
 					<input name="sum" value="" type="text">
 					<input type="hidden" name="nums" value="' . esc_attr( $stupid ) . '"><br>';
 				break;
@@ -393,23 +393,21 @@ class ds_challenge extends be_module {
 			$ip	     = ds_get_ip();
 			$web 	 = esc_html__( 'Approve or Block Request: ', 'dam-spam' ) . admin_url( 'admin.php?page=ds-allowed' );
 			$message = printf( esc_html__( '
-				A request has been received from someone who has been marked as a spammer by the Dam Spam plugin.
+				Someone was blocked from registering or commenting and has requested access.
 
-				You are being notified because you have toggled on the option indicating that you wanted this email.
+				You are being notified because this option is enabled.
 
-				The information from the request is:
+				Information from the request:
 
 				Time: %1$s
-				User IP: %2$s
-				User Email: %3$s
-				Spam Reason: %4$s
-				User Message: %5$s
+				IP: %2$s
+				Email: %3$s
+				Reason: %4$s
+				Message: %5$s
 
 				%6$s
 
-				Please be aware that the user has been recognized as a potential spammer.
-
-				Some spam bots fill out the request form with a fake explanation.
+				Do not grant them access unless you\'re sure it\'s a legitimate user.
 
 				— Dam Spam
 			', 'dam-spam' ),
@@ -417,7 +415,7 @@ class ds_challenge extends be_module {
 			$message = str_replace( "\t", '', $message );
 			$headers = esc_html__( 'From: ', 'dam-spam' ) . get_option( 'admin_email' ) . "\r\n";
 			wp_mail( $to, $subject, $message, $headers );
-			$rejectmessage = '<h2>' . esc_html__( 'Email sent. Thank you.', 'dam-spam' ) . '</h2>';
+			$rejectmessage = '<h2>' . esc_html__( 'Request sent. Thank you.', 'dam-spam' ) . '</h2>';
 			return true;
 		}
 	}

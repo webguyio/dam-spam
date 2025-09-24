@@ -82,7 +82,7 @@
 	</tr>
 	<tr>
 		<td>
-			<?php esc_html_e( 'Specific TLD (e.g. .xxx, .blog)', 'dam-spam' ) ?>
+			<?php esc_html_e( 'Specific TLD (.xxx, .blog)', 'dam-spam' ) ?>
 		</td>
 		<td align="left" width="250">
 			<label for="ds_domain_no">
@@ -113,7 +113,7 @@
 			<input type="text" size="15" name="ds_username" value="<?php echo isset( $_POST['ds_username'] ) ? esc_html( htmlspecialchars( $_POST['ds_username'] ) ) : '' ?>" id="usernameFilter">
 			<br>
 			<small>
-				<?php esc_html_e( 'Refine list by a username (e.g. test, example, etc.).', 'dam-spam' ) ?>
+				<?php esc_html_e( 'Refine list by a username (test, example).', 'dam-spam' ) ?>
 			</small>
 		</td>
 	</tr>
@@ -199,9 +199,6 @@
 	<tr>
 		<td colspan="2">
 			<input class="button-primary" type="submit" value="<?php esc_html_e( 'Search', 'dam-spam' ) ?>" name="ds_search">
-			<button class="button-primary" onclick="window.open('<?php echo esc_url( admin_url( "admin-ajax.php" ) ) ?>' + '?action=iud_getCsvUserList&' + jQuery('#inactive-user-deleter-form').serialize()); return false;">
-				<?php esc_html_e( 'Export to CSV', 'dam-spam' ) ?>
-			</button>
 		</td>
 	</tr>
 </table>

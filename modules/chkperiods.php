@@ -13,10 +13,10 @@ class chkperiods extends be_module {
 				list( $text, $domain ) = explode( '@', $email, 2 );
 				$domain = $this->remove_tld( $domain );
 				if ( substr_count( $domain, "." ) >= 1 ) {
-					sprintf( esc_html__( 'Too many periods in: %s', 'dam-spam' ), $email );
+					sprintf( esc_html__( 'Too Many Periods in: %s', 'dam-spam' ), $email );
 					return true;
 				} else if ( substr_count( $text, "." ) >= 2 ) {
-					sprintf( esc_html__( 'Too many periods in: %s', 'dam-spam' ), $email );
+					sprintf( esc_html__( 'Too Many Periods in: %s', 'dam-spam' ), $email );
 					return true;
 				}
 			}
@@ -27,10 +27,10 @@ class chkperiods extends be_module {
 				list( $text, $domain ) = explode( '@', $email, 2 );
 				$domain = $this->remove_tld( $domain );
 				if ( substr_count( $domain, "." ) >= 2 ) {
-					sprintf( esc_html__( 'Too many periods in: %s', 'dam-spam' ), $email );
+					sprintf( esc_html__( 'Too Many Periods in: %s', 'dam-spam' ), $email );
 					return true;
 				} else if ( substr_count( $text, "." ) >= 2 ) {
-					sprintf( esc_html__( 'Too many periods in: %s', 'dam-spam' ), $email );
+					sprintf( esc_html__( 'Too Many Periods in: %s', 'dam-spam' ), $email );
 					return true;
 				}
 			}

@@ -1,6 +1,6 @@
 === Dam Spam ===
 
-Contributors: bhadaway
+Contributors: webguyio
 Donate link: https://webguy.io/donate
 Tags: spam, security, anti-spam, spam protection, no spam
 Tested up to: 6.8

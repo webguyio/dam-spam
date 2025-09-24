@@ -131,12 +131,14 @@ function sfs_ErrorHandler( $errno, $errmsg, $filename, $linenum ) {
 		Time: %1$s
 		Error Number: %2$s
 		Error Type: %3$s
-		Error Msg: %4$s
+		Error Message: %4$s
 		IP Address: %5$s
 		File Name: %6$s
 		Line Number: %7$s
 		Memory Used: %8$s Peak: %9$s
+
 		---------------------
+
 	', 'dam-spam' ),
 	$now, $errno, $serrno, $errmsg, $ip, $filename, $linenum, $m1, $m2 );
 	$msg = str_replace( "\t", '', $msg );

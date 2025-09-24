@@ -303,7 +303,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 				} else {
 					?>
 					<p>
-						<?php esc_html_e( 'There are no pending or spam comments in your site.', 'dam-spam' ); ?>
+						<?php esc_html_e( 'There are no pending or spam comments.', 'dam-spam' ); ?>
 					</p>
 					<?php
 				}
@@ -313,7 +313,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 			<p><?php esc_html_e( 'Inspect and delete orphan or suspicious options or change plugin options so that they don&acute;t autoload. Be aware that you can break some plugins by deleting their options.', 'dam-spam' ); ?></p>
 			<table id="dstable" name="sstable" cellspacing="2">
 				<thead>
-					<tr bgcolor="#fff">
+					<tr>
 						<th class="ds-cleanup"><?php esc_html_e( 'Option', 'dam-spam' ); ?></th>
 						<th class="ds-cleanup"><?php esc_html_e( 'Autoload', 'dam-spam' ); ?></th>
 						<th class="ds-cleanup"><?php esc_html_e( 'Size', 'dam-spam' ); ?></th>
@@ -330,13 +330,13 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 					$sz = number_format( $sz );
 					// if ( $autoload=='no' ) $au='No';
 					?>
-					<tr class="ds-cleanup-tr" bgcolor="#fff">
+					<tr class="ds-cleanup-tr">
 						<td align="center"><?php echo esc_html( $option_name ); ?></td>
 						<td align="center"><?php echo esc_html( $autoload ); ?></td>
 						<td align="center"><?php echo esc_html( $sz ); ?></td>
 						<td align="center"><input type="checkbox" value="<?php echo esc_html( $autoload ) . '_' . esc_html( $option_name ); ?>" name="autol[]">&nbsp;<?php echo esc_html( $autoload ); ?></td>
 						<td align="center"><input type="checkbox" value="<?php echo esc_html( $option_name ); ?>" name="delo[]"></td>
-						<td align="center"><button type="submit" name="view" value="<?php echo esc_html( $option_name ); ?>"><?php esc_html_e( 'view', 'dam-spam' ); ?></button></td>
+						<td align="center"><button type="submit" name="view" value="<?php echo esc_html( $option_name ); ?>"><?php esc_html_e( 'View', 'dam-spam' ); ?></button></td>
 					</tr>
 					<?php
 				}
@@ -355,7 +355,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 		$showtransients = false; // change to true to clean up transients
 		if ( $showtransients && countTransients() > 0 ) { // personal use - probably too dangerous for casual users ?>
 			<hr>
-			<p><?php esc_html_e( 'WordPress creates temporary objects in the database called transients. WordPress is not good about cleaning them up afterwards. You can clean these up safely and it might speed things up.', 'dam-spam' ); ?></p>
+			<p><?php esc_html_e( 'WordPress creates temporary objects in the database called transients. You can clean these up safely and it might speed things up.', 'dam-spam' ); ?></p>
 			<form method="post" name="DOIT2" action="">
 				<input type="hidden" name="ds_opt_tdel" value="<?php echo esc_attr( $nonce ); ?>">
 				<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Delete Transients', 'dam-spam' ); ?>" type="submit"></p>

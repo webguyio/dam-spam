@@ -27,7 +27,7 @@
 		<?php endif; ?>
 	</p>
 	<p class="ds-link-wrapper">
-		<a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><?php esc_html_e( 'Register', 'dam-spam' ); ?></a> | <a href="<?php echo esc_url( home_url( '/forgot-password/' ) ); ?>"><?php esc_html_e( 'Forgot password?', 'dam-spam' ); ?></a>
+		<a href="<?php echo esc_url( home_url( '/register/' ) ); ?>"><?php esc_html_e( 'Register', 'dam-spam' ); ?></a> | <a href="<?php echo esc_url( home_url( '/forgot-password/' ) ); ?>"><?php esc_html_e( 'Forgot Password?', 'dam-spam' ); ?></a>
 	</p>
 </form>
 	

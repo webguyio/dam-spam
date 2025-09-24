@@ -10,7 +10,7 @@ if ( !current_user_can( 'manage_options' ) ) {
 }
 
 if ( class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'protect' ) ) {
-	esc_html_e( 'Jetpack Protect has been detected. Because of a conflict, Dam Spam has disabled itself. You do not need to disable Jetpack, just the Protect feature.', 'dam-spam' );
+	esc_html_e( 'Because of a conflict with Jetpack Protect, Dam Spam has been deactivated. To reactivate, you do not need to disable Jetpack, just its Protect feature.', 'dam-spam' );
 	return;
 }
 
@@ -243,13 +243,14 @@ $nonce = wp_create_nonce( 'ds_update' );
 ?>
 
 <div id="ds-plugin" class="wrap">
-	<h1 id="ds-head"><?php esc_html_e( 'Summary — Dam Spam', 'dam-spam' ); ?></h1><br>
-	<?php esc_html_e( 'Version', 'dam-spam' ); ?> <strong><?php echo esc_html( DS_VERSION ); ?></strong>
+	<h1 id="ds-head"><?php esc_html_e( 'Summary — Dam Spam', 'dam-spam' ); ?></h1>
+	<br>
+	<?php esc_html_e( 'Version', 'dam-spam' ); ?>: <strong><?php echo esc_html( DS_VERSION ); ?></strong>
 	<?php if ( !empty( $summary ) ) { ?>
 	<?php }
 	$ip = ds_get_ip();
 	?>
-	| <?php esc_html_e( 'Your current IP address is', 'dam-spam' ); ?>: <strong><?php echo esc_html( $ip ); ?></strong>
+	| <?php esc_html_e( 'IP', 'dam-spam' ); ?>: <strong><?php echo esc_html( $ip ); ?></strong>
 	<?php
 	// check the IP to see if we are local
 	$ansa = be_load( 'chkvalidip', ds_get_ip() );
@@ -260,22 +261,8 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<p>
 		<?php printf(
 			esc_html__( 'This address is invalid for testing for the following reason: %s.
-			If you working on a local installation of WordPress, this might be
-			OK. However, if the plugin reports that your
-			IP is invalid it may be because you are using Cloudflare or a proxy
-			server to access this page. This will make
-			it impossible for the plugin to check IP addresses. You may want to
-			go to the Dam Spam Testing page in
-			order to test all possible reasons that your IP is not appearing as
-			the IP of the machine that your using to browse this site.
-			It is possible to use the plugin if this problem appears, but most
-			checking functions will be turned off. The
-			plugin will still perform spam checks which do not require an IP.
-			If the error says that this is a Cloudflare IP address, you can fix
-			this by installing the Cloudflare plugin. If
-			you use Cloudflare to protect and speed up your site then you MUST
-			install the Cloudflare plugin. This plugin
-			will be crippled until you install it.', 'dam-spam' ),
+			If you\'re testing locally, this might be okay.
+			However, if your site\'s DNS is hosted through Cloudflare, you\'ll need to restore IPs.', 'dam-spam' ),
 			esc_html( $ansa )
 		); ?>
 		</p>
@@ -297,22 +284,23 @@ $nonce = wp_create_nonce( 'ds_update' );
 	}
 	$current_user_name = wp_get_current_user()->user_login;
 	if ( $current_user_name == 'admin' ) {
-		echo '<span class="notice notice-warning" style="display:block">' . esc_html__( 'SECURITY RISK: You are using the username "admin." This is an invitation to hackers to try and guess your password. Please change this.', 'dam-spam' ) . '</span>';
+		echo '<span class="notice notice-warning" style="display:block">' . esc_html__( 'SECURITY RISK: You are using the username "admin." Please change it.', 'dam-spam' ) . '</span>';
 	}
 	$showcf = false; // hide this for now
 	if ( $showcf && array_key_exists( 'HTTP_CF_CONNECTING_IP', $_SERVER ) && !function_exists( 'cloudflare_init' ) && !defined( 'W3TC' ) ) {
-		echo '<span class="notice notice-warning" style="display:block">' . esc_html__( 'WARNING: Cloudflare Remote IP address detected. Please make sure to', 'dam-spam' ) . '<a href="https://support.cloudflare.com/hc/sections/200805497-Restoring-Visitor-IPs" target="_blank">' . esc_html__( 'restore visitor IPs', 'dam-spam' ) . '</a>.</span>';
+		echo '<span class="notice notice-warning" style="display:block">' . esc_html__( 'WARNING: Cloudflare Remote IP address detected. Please make sure to ', 'dam-spam' ) . '<a href="https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/" target="_blank">' . esc_html__( 'restore visitor IPs', 'dam-spam' ) . '</a>.</span>';
 	}
 	?>
+	<br>
 	<h2><?php esc_html_e( 'Summary of Spam', 'dam-spam' ); ?></h2>
 	<div class="main-stats">
 	<?php if ( $spcount > 0 ) { ?>
-		<p><?php printf( esc_html__( 'Dam Spam has stopped %1$s spammers since %2$s.', 'dam-spam' ), esc_html( $spcount, $spdate ) ); ?></p>
+		<p><?php printf( esc_html__( 'Dam Spam has stopped %1$s spammers since %2$s.', 'dam-spam' ), esc_html( $spcount ), esc_html( $spdate ) ); ?></p>
 	<?php }
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->spam );
 	if ( $num_comm->spam > 0 && DS_MU != 'Y' ) { ?>
-		<p><?php printf( esc_html__( 'There are %1$s%2$s%3$s spam comments waiting for you to report.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=spam">', esc_html( $num ), '</a>' ); ?></p>
+		<p><?php printf( esc_html__( 'There are %1$s%2$s%3$s spam comments waiting to be reported.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=spam">', esc_html( $num ), '</a>' ); ?></p>
 	<?php }
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->moderated );

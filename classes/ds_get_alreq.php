@@ -37,8 +37,8 @@ class ds_get_alreq {
 			$container = 'wlreq';
 			if ( $sw ) {
 				$nwlrequests[$key] = $value;
-				$show			    .= "<tr style=\"background-color:white\">";
-				$trsh				 = "<a href=\"\" onclick=\"sfs_ajax_process('$key','wlreq','delete_wl_row','$ajaxurl');return false;\" title=\"" . esc_attr__( 'Delete row', 'dam-spam' ) . "\" alt=\"" . esc_attr__( 'Delete row', 'dam-spam' ) . "\" ><img src=\"$trash\" class=\"icon-action\"></a>";
+				$show			    .= "<tr>";
+				$trsh				 = "<a href=\"\" onclick=\"sfs_ajax_process('$key','wlreq','delete_wl_row','$ajaxurl');return false;\" title=\"" . esc_attr__( 'Delete Row', 'dam-spam' ) . "\" alt=\"" . esc_attr__( 'Delete Row', 'dam-spam' ) . "\" ><img src=\"$trash\" class=\"icon-action\"></a>";
 				$addtoblock		     = "<a href=\"\"onclick=\"sfs_ajax_process('$value[0]','$container','add_black','$ajaxurl');return false;\" title=\"" . sprintf( esc_attr__( 'Add %s to Block List', 'dam-spam' ), $value[0] ) . "\" alt=\"" . sprintf( esc_attr__( 'Add %s to Block List', 'dam-spam' ), $value[0] ) . "\"><img src=\"$down\" class=\"icon-action\"></a>";
 				$addtoallow		     = "<a href=\"\"onclick=\"sfs_ajax_process('$value[0]','$container','add_white','$ajaxurl', '$value[1]');return false;\" title=\"" . sprintf( esc_attr__( 'Add %s to Allow List', 'dam-spam' ), $value[0] ) . "\" alt=\"" . sprintf( esc_attr__( 'Add %s to Allow List', 'dam-spam' ), $value[0] ) . "\"><img src=\"$up\" class=\"icon-action\"></a>";
 				$show			    .= "<td>$key $trsh $addtoblock $addtoallow</td>";

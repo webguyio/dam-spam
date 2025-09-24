@@ -91,7 +91,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 	} ?>
 	<br>
 	<br>
-	<div class="mainsection"><?php esc_html_e( 'Allow List Requests', 'dam-spam' ); ?></div>
+	<div class="mainsection"><?php esc_html_e( 'Requests', 'dam-spam' ); ?></div>
 	<?php
 	if ( count( $wlrequests ) == 0 ) {
 		esc_html_e( 'There are currently no pending requests.', 'dam-spam' );
@@ -103,7 +103,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 	</form>
 	<table id="dstable" name="sstable" cellspacing="2">
 		<thead>
-			<tr style="background-color:#675682;color:white;text-align:center;text-transform:uppercase;font-weight:600">
+			<tr>
 				<th><?php esc_html_e( 'Time', 'dam-spam' ); ?></th>
 				<th><?php esc_html_e( 'IP', 'dam-spam' ); ?></th>
 				<th><?php esc_html_e( 'Email', 'dam-spam' ); ?></th>
@@ -130,16 +130,12 @@ $nonce = wp_create_nonce( 'ds_update' );
 	<form method="post" action="">
 		<input type="hidden" name="action" value="update">
 		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
-		<div class="mainsection"><?php esc_html_e( 'Personalized Allow List', 'dam-spam' ); ?></div>
-		<p><?php esc_html_e( '
-			Put IP addresses or emails here that you don\'t want blocked.
-			One email or IP to a line. You can use wild cards here for
-			emails. These are checked first so they override any blocking.
-		', 'dam-spam' ); ?></p>
+		<div class="mainsection"><?php esc_html_e( 'Allow List', 'dam-spam' ); ?></div>
+		<p><?php esc_html_e( 'One email or IP per line. You can use wild cards here for emails.', 'dam-spam' ); ?></p>
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chkwluserid">
 				<input class="ds_toggle" type="checkbox" id="chkwluserid" name="chkwluserid" value="Y" <?php if ( $chkwluserid == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Enable Allow by Username', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Allow Usernames', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
@@ -154,77 +150,77 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkgoogle">
 				<input class="ds_toggle" type="checkbox" id="chkgoogle" name="chkgoogle" value="Y" <?php if ( $chkgoogle == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Google (keep enabled under most circumstances)', 'dam-spam' ); ?></span></small>
+				<small><?php esc_html_e( 'Google (keep enabled under most circumstances)', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chkgenallowlist">
 				<input class="ds_toggle" type="checkbox" id="chkgenallowlist" name="chkgenallowlist" value="Y" <?php if ( $chkgenallowlist == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Generated Allow List', 'dam-spam' ); ?></span></small>
+				<small><?php esc_html_e( 'Generated Allow List', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chkmiscallowlist">
 				<input class="ds_toggle" type="checkbox" id="chkmiscallowlist" name="chkmiscallowlist" value="Y" <?php if ( $chkmiscallowlist == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Other Allow Lists', 'dam-spam' ); ?></span></small>
+				<small><?php esc_html_e( 'Other Allow Lists', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chkpaypal">
 				<input class="ds_toggle" type="checkbox" id="chkpaypal" name="chkpaypal" value="Y" <?php if ( $chkpaypal == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Allow', 'dam-spam' ); ?> PayPal</span></small>
+		  		<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> PayPal</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chkstripe">
 				<input class="ds_toggle" type="checkbox" id="chkstripe" name="chkstripe" value="Y" <?php if ( $chkstripe == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Stripe</span></small>
+				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Stripe</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chkauthorizenet">
 				<input class="ds_toggle" type="checkbox" id="chkauthorizenet" name="chkauthorizenet" value="Y" <?php if ( $chkauthorizenet == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Authorize.Net</span></small>
+				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Authorize.Net</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chkbraintree">
 				<input class="ds_toggle" type="checkbox" id="chkbraintree" name="chkbraintree" value="Y" <?php if ( $chkbraintree == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Braintree</span></small>
+				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Braintree</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chkrecurly">
 				<input class="ds_toggle" type="checkbox" id="chkrecurly" name="chkrecurly" value="Y" <?php if ( $chkrecurly == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Recurly</span></small>
+				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Recurly</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chksquare">
 				<input class="ds_toggle" type="checkbox" id="chksquare" name="chksquare" value="Y" <?php if ( $chksquare == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Square</span></small>
+		  		<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Square</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 	  		<label class="ds-subhead" for="chkyahoomerchant">
 				<input class="ds_toggle" type="checkbox" id="chkyahoomerchant" name="chkyahoomerchant" value="Y" <?php if ( $chkyahoomerchant == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Yahoo Merchant Services</span></small>
+				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Yahoo Merchant Services</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkaws">
 				<input class="ds_toggle" type="checkbox" id="chkaws" name="chkaws" value="Y" <?php if ( $chkaws == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Amazon Cloud</span></small>
+				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Amazon Cloud</small>
 			</label>
 		</div>
 		<br>

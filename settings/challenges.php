@@ -139,12 +139,12 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="redir">
 				<input class="ds_toggle" type="checkbox" id="redir" name="redir" value="Y" onclick="ds_show_option()" <?php if ( $redir == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Send Visitor to Another Web Page', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Send Blocked Users to URL', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
-		<span id="ds_show_option" style="margin-bottom:15px;display:none"><?php esc_html_e( 'Redirect URL:', 'dam-spam' ); ?>
-		<input size="77" name="redirurl" type="text" placeholder="e.g. https://example.com/privacy-policy/" value="<?php echo esc_url( $redirurl ); ?>"></span>
+		<span id="ds_show_option" style="display:none"><?php esc_html_e( 'URL:', 'dam-spam' ); ?>
+		<input size="77" name="redirurl" type="text" placeholder="https://example.com/" value="<?php echo esc_url( $redirurl ); ?>"></span>
 		<script>
 		function ds_show_option() {
 			var checkBox = document.getElementById("redir");
@@ -160,18 +160,18 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="wlreq">
 				<input class="ds_toggle" type="checkbox" id="wlreq" name="wlreq" value="Y" <?php if ( $wlreq == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Blocked users see the Allow Request form', 'dam-spam' ); ?></span></small>
+				<small><?php esc_html_e( 'Send Blocked Users to Allow Request Form', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="notify">
 				<input class="ds_toggle" type="checkbox" id="notify" name="notify" value="Y" onclick="ds_show_notify()" <?php if ( $notify == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important;"><?php esc_html_e( 'Notify Admin when a user requests to be added to the Allow List', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Email Admin for New Requests', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
-		<span id="ds_show_notify" style="margin-bottom:15px;display:none"><?php esc_html_e( '(Optional) Specify where email requests are sent:', 'dam-spam' ); ?>
+		<span id="ds_show_notify" style="display:none"><?php esc_html_e( 'Email:', 'dam-spam' ); ?>
 		<input id="dsinput" size="48" name="wlreqmail" type="text" value="<?php echo esc_html( $wlreqmail ); ?>"></span>
 		<script>
 		function ds_show_notify() {
@@ -188,12 +188,13 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="emailrequest">
 				<input class="ds_toggle" type="checkbox" id="emailrequest" name="emailrequest" value="Y" <?php if ( $emailrequest == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Notify Requester when an Admin has approved their request to be added to the Allow List', 'dam-spam' ); ?></span></small>
+				<small><?php esc_html_e( 'Email Blocked Users when They\'re Allowed', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="mainsection"><?php esc_html_e( 'CAPTCHA', 'dam-spam' ); ?></div>
-		<p><?php esc_html_e( 'Second Chance CAPTCHA Challenge', 'dam-spam' ); ?></p>
+		<p><?php esc_html_e( 'Second Chance Challenge for Blocked Users', 'dam-spam' ); ?></p>
+		<p><?php esc_html_e( 'Google reCAPTCHA, hCaptcha, and Solve Media CAPTCHA Require an API Key (entered below).', 'dam-spam' ); ?></p>
 		<div>
 			<?php
 			if ( !empty( $msg ) ) {
@@ -204,65 +205,62 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkcaptcha1">
 				<input class="ds_toggle" type="radio" id="chkcaptcha1" name="chkcaptcha" value="N" <?php if ( $chkcaptcha == 'N' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'No CAPTCHA (default)', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'No CAPTCHA (default)', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkcaptcha2">
 				<input class="ds_toggle" type="radio" id="chkcaptcha2" name="chkcaptcha" value="G" <?php if ( $chkcaptcha == 'G' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Google reCAPTCHA', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Google reCAPTCHA', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkcaptcha3">
 				<input class="ds_toggle" type="radio" id="chkcaptcha3" name="chkcaptcha" value="H" <?php if ( $chkcaptcha == 'H' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'hCaptcha', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'hCaptcha', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkcaptcha4">
 				<input class="ds_toggle" type="radio" id="chkcaptcha4" name="chkcaptcha" value="S" <?php if ( $chkcaptcha == 'S' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Solve Media CAPTCHA', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Solve Media CAPTCHA', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkcaptcha5">
 				<input class="ds_toggle" type="radio" id="chkcaptcha5" name="chkcaptcha" value="A" <?php if ( $chkcaptcha == 'A' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Arithmetic Question', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Math Question', 'dam-spam' ); ?></small>
 			</label>
 		</div>
-		<div>
-			<p><?php esc_html_e( 'To use either the Solve Media, Google reCAPTCHA, or hCaptcha, you will need an API key.', 'dam-spam' ); ?></p>
-		</div>
-		<p><?php esc_html_e( 'CAPTCHA for Forms (works with reCAPTCHA, hCaptcha, and Solve Media CAPTCHA)', 'dam-spam' ); ?></p>
+		<p><?php esc_html_e( 'Enable CAPTCHAs on common WordPress forms.', 'dam-spam' ); ?></p>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="form_captcha_login">
 				<input class="ds_toggle" type="checkbox" id="form_captcha_login" name="form_captcha_login" value="Y" <?php if ( isset( $form_captcha_login ) and $form_captcha_login == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Login', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Login', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="form_captcha_registration">
 				<input class="ds_toggle" type="checkbox" id="form_captcha_registration" name="form_captcha_registration" value="Y" <?php if ( isset( $form_captcha_registration ) and $form_captcha_registration == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Registration', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Registration', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="form_captcha_comment">
 				<input class="ds_toggle" type="checkbox" id="form_captcha_comment" name="form_captcha_comment" value="Y" <?php if ( isset( $form_captcha_comment ) and $form_captcha_comment == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Comment', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Comment', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<br>
 		<div>
-			<small><span style="font-size:16px!important;"><?php esc_html_e( 'Google reCAPTCHA v2 API Key', 'dam-spam' ); ?></span></small><br>
+			<?php esc_html_e( 'Google reCAPTCHA', 'dam-spam' ); ?><br>
 			<input size="64" name="recaptchaapisite" type="text" placeholder="<?php esc_html_e( 'Site Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $recaptchaapisite ); ?>">
 			<br>
 			<input size="64" name="recaptchaapisecret" type="text" placeholder="<?php esc_html_e( 'Secret Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $recaptchaapisecret ); ?>">
@@ -272,7 +270,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 				<div class="g-recaptcha" data-sitekey="<?php echo esc_attr( $recaptchaapisite ); ?>"></div>
 			<?php } ?>
 			<br>
-			<small><span style="font-size:16px!important;"><?php esc_html_e( 'hCaptcha API Key', 'dam-spam' ); ?></span></small><br>
+			<?php esc_html_e( 'hCaptcha', 'dam-spam' ); ?><br>
 			<input size="64" name="hcaptchaapisite" type="text" placeholder="<?php esc_html_e( 'Site Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $hcaptchaapisite ); ?>">
 			<br>
 			<input size="64" name="hcaptchaapisecret" type="text" placeholder="<?php esc_html_e( 'Secret Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $hcaptchaapisecret ); ?>">
@@ -282,7 +280,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 				<div class="h-captcha" data-sitekey="<?php echo esc_attr( $hcaptchaapisite ); ?>"></div>
 			<?php } ?>
 			<br>
-			<small><span style="font-size:16px!important"><?php esc_html_e( 'Solve Media CAPTCHA API Key', 'dam-spam' ); ?></span></small><br>
+			<?php esc_html_e( 'Solve Media CAPTCHA', 'dam-spam' ); ?><br>
 			<input size="64" name="solvmediaapivchallenge" type="text" placeholder="<?php esc_html_e( 'Challenge Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $solvmediaapivchallenge ); ?>">
 			<br>
 			<input size="64" name="solvmediaapiverify" type="text" placeholder="<?php esc_html_e( 'Verification Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $solvmediaapiverify ); ?>">

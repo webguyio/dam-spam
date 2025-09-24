@@ -142,12 +142,12 @@ $nonce = wp_create_nonce( 'ds_update' );
 	<form method="post" action="">
 		<input type="hidden" name="action" value="update">
 		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
-		<div class="mainsection"><?php esc_html_e( 'Personalized Block List', 'dam-spam' ); ?></div>
-		<p><?php esc_html_e( 'Add IP addresses or emails here that you want blocked.', 'dam-spam' ); ?></p>
+		<div class="mainsection"><?php esc_html_e( 'Block List', 'dam-spam' ); ?></div>
+		<p><?php esc_html_e( 'One email or IP per line. You can use wild cards here for emails.', 'dam-spam' ); ?></p>
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkbluserid">
 				<input class="ds_toggle" type="checkbox" id="chkbluserid" name="chkbluserid" value="Y" <?php if ( $chkbluserid == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Enable Block by Username', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Allow Usernames', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
@@ -162,7 +162,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkspamwords">
 				<input class="ds_toggle" type="checkbox" id="chkspamwords" name="chkspamwords" value="Y" <?php if ( $chkspamwords == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check Spam Words', 'dam-spam' ); ?></span></small>
+				<small><?php esc_html_e( 'Check Spam Words', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
@@ -177,7 +177,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<label class="ds-subhead" for="chkurlshort">
 				<input class="ds_toggle" type="checkbox" id="chkurlshort" name="chkurlshort" value="Y" <?php if ( $chkurlshort == 'Y' ) { echo 'checked="checked"'; } ?>>
 				<span><small></small></span>
-				<small><span style="font-size:16px!important"><?php esc_html_e( 'Check URL Shorteners', 'dam-spam' ); ?></span></small>
+				<small><?php esc_html_e( 'Check URL Shorteners', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
@@ -190,7 +190,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkurls">
 				<input class="ds_toggle" type="checkbox" id="chkurls" name="chkurls" value="Y" <?php if ( $chkurls == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Check for any URL', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Check for any URL', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
@@ -198,7 +198,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="checkbox switcher">
 			<label class="ds-subhead" for="chkagent">
 				<input class="ds_toggle" type="checkbox" id="chkagent" name="chkagent" value="Y" <?php if ( $chkagent == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><span style="font-size:16px!important"><?php esc_html_e( 'Check Agents', 'dam-spam' ); ?></span></small>
+		  		<small><?php esc_html_e( 'Check Agents', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
@@ -210,7 +210,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<br>
 		<div class="mainsection"><?php esc_html_e( 'Blocked TLDs', 'dam-spam' ); ?></div>					
-		<p><?php esc_html_e( 'Enter the TLD name including the period (for example .xxx). A TLD is the last part of a domain like .com or .net.', 'dam-spam' ); ?></p>
+		<p><?php esc_html_e( 'One TLD per line. Example: .com', 'dam-spam' ); ?></p>
 		<textarea name="badTLDs" cols="40" rows="8"><?php
 			foreach ( $badTLDs as $p ) {
 				echo esc_html( $p ) . "\r\n";

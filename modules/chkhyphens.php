@@ -12,7 +12,7 @@ class chkhyphens extends be_module {
 			if ( !empty( $email ) ) {
 				$email = substr( $email, 0, strpos( $email, '@' ) );
 				if ( substr_count( $email, "-" ) > 1 ) {
-					sprintf( esc_html__( 'Too many hyphens in: %s', 'dam-spam' ), $email );
+					sprintf( esc_html__( 'Too Many Hyphens in: %s', 'dam-spam' ), $email );
 				}
 			}
 		}
@@ -21,7 +21,7 @@ class chkhyphens extends be_module {
 			if ( !empty( $email ) ) {
 				$email = substr( $email, 0, strpos( $email, '@' ) );
 				if ( substr_count( $email, "-" ) > 1 ) {
-					sprintf( esc_html__( 'Too many hyphens in: %s', 'dam-spam' ), $email );
+					sprintf( esc_html__( 'Too Many Hyphens in: %s', 'dam-spam' ), $email );
 				}
 			}
 		}

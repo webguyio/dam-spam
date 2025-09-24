@@ -69,7 +69,10 @@ function ds_rightnow() {
 	$options = ds_get_options();
 	if ( $spmcount > 0 ) {
 		// get the path to the plugin
-		printf( '<p>' . esc_html__( 'Dam Spam has prevented %1$s%2$s%3$s spammers from registering or leaving comments.', 'dam-spam' ), '<strong>', esc_html( $spmcount ), '</strong>' . '</p>' );
+		echo sprintf(
+			'<p>' . esc_html__( 'Dam Spam has prevented %1$s spammers from registering or leaving comments.', 'dam-spam' ) . '</p>',
+			'<strong>' . esc_html( $spmcount ) . '</strong>'
+		);
 	}
 	if ( count( $wlrequests ) == 1 ) {
 		echo '<p><strong>' . esc_html( count( $wlrequests ) ) . '</strong> ' . sprintf( esc_html__( 'user has been blocked and %1$srequested%2$s that you add them to the Allow List.</p>', 'dam-spam' ), '<a href="admin.php?page=ds-allowed">', '</a>' );
@@ -90,7 +93,7 @@ function ds_row( $actions, $comment ) {
 	$whois	  = DS_PLUGIN_URL . 'images/whois.png';
 	$who	  = "<a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://whois.domaintools.com/$ip\"><img src=\"$whois\" class=\"icon-action\"></a>";
 	$stophand = DS_PLUGIN_URL . 'images/stop.png';
-	$stop	  = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam (SFS)', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/search.php?q=$ip\"><img src=\"$stophand\" class=\"icon-action\"> </a>";
+	$stop	  = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/search.php?q=$ip\"><img src=\"$stophand\" class=\"icon-action\"> </a>";
 	$action  .= " $who $stop";
 	// now add the report function
 	$email = urlencode( $comment->comment_author_email );
@@ -142,12 +145,11 @@ function ds_row( $actions, $comment ) {
 		$href	 = "href=\"#\"";
 		$onclick = "onclick=\"sfs_ajax_report_spam(this,'$ID','$blog','$ajaxurl');return false;\"";
 	}
+	$action .= '<span title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" onclick="sfs_ajax_process(\'' . $comment->comment_author_ip . '\',\'log\',\'add_black\',\'' . $ajaxurl . '\');return false;"><img src="' . DS_PLUGIN_URL . 'images/down.png" class="icon-action"></span> ';
+	$action .= '<span title="' . esc_attr__( 'Add to Allow List', 'dam-spam' ) . '" onclick="sfs_ajax_process(\'' . $comment->comment_author_ip . '\',\'log\',\'add_white\',\'' . $ajaxurl . '\');return false;"><img src="' . DS_PLUGIN_URL . 'images/up.png" class="icon-action"> | </span>';
 	if ( !empty( $email ) ) {
-		$action .= "|";
-		$action .= "<a $exst title=\"" . esc_attr__( 'Report to Stop Forum Spam (SFS)', 'dam-spam' ) . "\" $target $href $onclick class='delete:the-comment-list:comment-$ID::delete=1 delete vim-d vim-destructive'>" . esc_html__( ' Report to SFS', 'dam-spam' ) . "</a>";
+		$action .= "<a $exst title=\"" . esc_attr__( 'Report to Stop Forum Spam', 'dam-spam' ) . "\" $target $href $onclick class='delete:the-comment-list:comment-$ID::delete=1 delete vim-d vim-destructive'>" . esc_html__( ' Report to SFS', 'dam-spam' ) . "</a>";
 	}
-	$action .= '<span class="ds-action" title="' . esc_attr__( 'Add to block list', 'dam-spam' ) . '" onclick="sfs_ajax_process(\'' . $comment->comment_author_ip . '\',\'log\',\'add_black\',\'' . $ajaxurl . '\');return false;"><img src="' . DS_PLUGIN_URL . 'images/tdown.png">|</span>';
-	$action .= '<span class="ds-action" title="' . esc_attr__( 'Add to allow list', 'dam-spam' ) . '" onclick="sfs_ajax_process(\'' . $comment->comment_author_ip . '\',\'log\',\'add_white\',\'' . $ajaxurl . '\');return false;"><img src="' . DS_PLUGIN_URL . 'images/tup.png">|</span>';
 	$actions['check_spam'] = $action;
 	return $actions;
 }
@@ -459,7 +461,7 @@ function ds_sfs_ip_column( $value, $column_name, $user_id ) {
 			$useremail   = urlencode( $user_info->user_email ); // for reporting
 			$userurl	 = urlencode( $user_info->user_url );
 			$username	 = $user_info->display_name;
-			$stopper	 = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam (SFS)', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/search.php?q=$signup_ip\"><img src=\"$stophand\" class=\"icon-action\"></a>";
+			$stopper	 = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/search.php?q=$signup_ip\"><img src=\"$stophand\" class=\"icon-action\"></a>";
 			$honeysearch = "<a title=\"" . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.projecthoneypot.org/ip_$signup_ip\"><img src=\"$search\" class=\"icon-action\"></a>";
 			$botsearch   = "<a title=\"" . esc_attr__( 'Check BotScout', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://botscout.com/search.htm?stype=q&sterm=$signup_ip\"><img src=\"$search\" class=\"icon-action\"></a>";
 			$who		 = "<br><a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://whois.domaintools.com/$signup_ip\"><img src=\"$whois\" class=\"icon-action\"></a>";

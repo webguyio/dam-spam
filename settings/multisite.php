@@ -49,12 +49,12 @@ ds_fix_post_vars();
 	<form method="post" action="">
 		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<input type="hidden" name="action" value="update mu settings">
-		<span style="font-weight:bold;font-size:1.2em"><?php esc_html_e( 'Network Blog Option', 'dam-spam' ); ?></span>
+		<?php esc_html_e( 'Network Blog Option', 'dam-spam' ); ?>
 		<p><?php esc_html_e( 'Networked ON:', 'dam-spam' ); ?> <input name="muswitch" type="radio" value='Y' <?php if ( $muswitch == 'Y' ) { echo 'checked="true"'; } ?>>
 		<br>
 		<?php esc_html_e( 'Networked OFF:', 'dam-spam' ); ?> <input name="muswitch" type="radio" value='N' <?php if ( $muswitch != 'Y' ) { echo 'checked="true"'; } ?>>
 		<br>
-		<?php esc_html_e( 'If you are running WPMU and want to control options and history through the main login admin panel, select ON. If you select OFF, each blog will have to configure the plugin separately, and each blog will have a separte history.', 'dam-spam' ); ?></p>
+		<?php esc_html_e( 'If want to control settings for all sites from the main admin, select ON. If you want to control settings separately for each respective site, select OFF.', 'dam-spam' ); ?></p>
 		<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
 	</form>
 </div>

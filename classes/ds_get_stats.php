@@ -76,10 +76,8 @@ class ds_get_stats {
 			'cntcap'   => 0, // CAPTCHA success
 			'cntncap'  => 0, // CAPTCHA not success
 			'cntpass'  => 0, // passed
-			'spmdate'  => date( 'Y/m/d',
-				time() + ( get_option( 'gmt_offset' ) * 3600 ) ),
-			'spdate'   => date( 'Y/m/d',
-				time() + ( get_option( 'gmt_offset' ) * 3600 ) )
+			'spmdate'  => date( 'Y/m/d', time() + ( get_option( 'gmt_offset' ) * 3600 ) ),
+			'spdate'   => date( 'Y/m/d', time() + ( get_option( 'gmt_offset' ) * 3600 ) )
 		);
 		$defaultsCountries = array(
 			'cntchkAD' => 0,

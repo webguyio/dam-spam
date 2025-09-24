@@ -67,18 +67,12 @@ $nonce = wp_create_nonce( 'ds_update' );
 		echo wp_kses_post( $msg );
 	} ?>
 	<br>
-	<div class="ds-info-box">
-	<p><?php esc_html_e( '
-		Whenever a user tries to leave a comment, register, or log in, they are
-		recorded in the Good Cache if they pass or the Bad Cache if they fail.
-		If a user is blocked from access, they are added to the Bad Cache. You
-		can see the caches here.
-	', 'dam-spam' ); ?></p>
+	<p><?php esc_html_e( 'If allowed, their IP is added to the Good Cache, and if blocked, it\'s added to the Bad Cache.', 'dam-spam' ); ?></p>
 	<form method="post" action="">
 		<input type="hidden" name="update_options" value="update">
 		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<label class="keyhead">
-			<?php esc_html_e( 'Bad IP Cache Size', 'dam-spam' ); ?>
+			<?php esc_html_e( 'Bad Cache Size', 'dam-spam' ); ?>
 			<br>
 			<select name="ds_cache">
 				<option value="0" <?php if ( $ds_cache == '0' ) { echo 'selected="true"'; } ?>>0</option>
@@ -95,7 +89,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<br>
 		<label class="keyhead">
-			<?php esc_html_e( 'Good IP Cache Size', 'dam-spam' ); ?>
+			<?php esc_html_e( 'Good Cache Size', 'dam-spam' ); ?>
 			<br>
 			<select name="ds_good">
 				<option value="1" <?php if ( $ds_good == '1' ) { echo 'selected="true"'; } ?>>1</option>
@@ -115,63 +109,41 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
 	</form>
-	<?php
-	if ( count( $badips ) == 0 && count( $goodips ) == 0 ) {
+	<?php if ( count( $badips ) == 0 && count( $goodips ) == 0 ) {
 		esc_html_e( 'Nothing in the cache.', 'dam-spam' );
-	} else {
-		?>
-		<h2><?php esc_html_e( 'Cached Values', 'dam-spam' ); ?></h2>
+	} else { ?>
+		<h2><?php esc_html_e( 'Cached IPs', 'dam-spam' ); ?></h2>
 		<form method="post" action="">
 			<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<input type="hidden" name="ds_clear_cache" value="true">
-			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Clear the Cache', 'dam-spam' ); ?>" type="submit"></p>
+			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Clear Cache', 'dam-spam' ); ?>" type="submit"></p>
 		</form>
 		<table>
 			<tr>
-				<?php
-				if ( count( $badips ) > 0 ) {
-					arsort( $badips );
-					?>
+				<?php if ( count( $badips ) > 0 ) { arsort( $badips ); ?>
 					<td width="30%"><?php esc_html_e( 'Bad IPs', 'dam-spam' ); ?></td>
-					<?php
-				}
-				?>
-				<?php
-				if ( count( $goodips ) > 0 ) {
-					?>
+				<?php } ?>
+				<?php if ( count( $goodips ) > 0 ) { ?>
 					<td width="30%"><?php esc_html_e( 'Good IPs', 'dam-spam' ); ?></td>
-					<?php
-				}
-				?>
+				<?php } ?>
 			</tr>
 			<tr>
-				<?php
-				if ( count( $badips ) > 0 ) {
-					?>
+				<?php if ( count( $badips ) > 0 ) { ?>
 					<td valign="top" id="badips"><?php
 						// use the be_load to get badips
-						$show = be_load( 'ds_get_bcache', 'x', $stats,
-							$options );
-						echo esc_html( $show );
-						?></td>
-					<?php
-				}
-				?>
-				<?php
-				if ( count( $goodips ) > 0 ) {
-					arsort( $goodips );
-					?>
+						$show = be_load( 'ds_get_bcache', 'x', $stats, $options );
+						echo wp_kses_post( $show );
+					?></td>
+				<?php } ?>
+				<?php if ( count( $goodips ) > 0 ) { arsort( $goodips ); ?>
 					<td valign="top" id="goodips"><?php
 						// use the be_load to get badips
-						$show = be_load( 'ds_get_gcache', 'x', $stats,
-							$options );
-						echo esc_html( $show );
-						?></td>
-					<?php
-				}
-				?>
+						$show = be_load( 'ds_get_gcache', 'x', $stats, $options );
+						echo wp_kses_post( $show );
+						?>
+					</td>
+				<?php } ?>
 			</tr>
 		</table>
-		<?php
-	}
-?>
+	<?php } ?>
+</div>

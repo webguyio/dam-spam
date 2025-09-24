@@ -45,7 +45,7 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 			$stats['spdate']  = $spdate;
 			ds_set_stats( $stats );
 			extract( $stats ); // extract again to get the new options
-			$msg			  = '<div class="notice notice-success"><p>' . esc_html__( 'Activity Log Cleared', 'dam-spam' ) . '</p></div>';
+			$msg			  = '<div class="notice notice-success"><p>' . esc_html__( 'Log Cleared', 'dam-spam' ) . '</p></div>';
 		}
 		if ( array_key_exists( 'ds_update_log_size', $_POST ) ) {
 			// update log size
@@ -64,7 +64,7 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->spam );
 	if ( $num_comm->spam > 0 && DS_MU != 'Y' ) { ?>
-		<p><?php printf( esc_html__( 'There are %1$s%2$s%3$s spam comments waiting for you to report them.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=spam">', esc_html( $num ), '</a>' ); ?></p>
+		<p><?php printf( esc_html__( 'There are %1$s%2$s%3$s spam comments waiting to be reported.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=spam">', esc_html( $num ), '</a>' ); ?></p>
 	<?php }
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->moderated );
@@ -81,8 +81,8 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 	<form method="post" action="">
 		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<input type="hidden" name="ds_update_log_size" value="true">
-		<h2><?php esc_html_e( 'History Size', 'dam-spam' ); ?></h2>
-		<?php esc_html_e( 'Select the number of events to save in the history.', 'dam-spam' ); ?><br>
+		<h2><?php esc_html_e( 'Log Size', 'dam-spam' ); ?></h2>
+		<?php esc_html_e( 'Select the number of events to save in the log.', 'dam-spam' ); ?><br>
 		<p class="submit">
 			<select name="ds_hist">
 				<option value="10" <?php if ( $ds_hist == '10' ) { echo 'selected="true"'; } ?>>10</option>
@@ -98,7 +98,7 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 		<form method="post" action="">
 			<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<input type="hidden" name="ds_clear_hist" value="true">
-			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Clear Recent Activity', 'dam-spam' ); ?>" type="submit"></p>
+			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Clear Logs', 'dam-spam' ); ?>" type="submit"></p>
 		</form>
 		<?php
 		if ( empty( $hist ) ) {
@@ -108,11 +108,11 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 		<input type="text" id="dsinput" onkeyup="ds_search()" placeholder="<?php esc_html_e( 'Date Search', 'dam-spam' ); ?>" title="<?php esc_html_e( 'Filter by a Value', 'dam-spam' ); ?>">
 		<table id="dstable" name="sstable" cellspacing="2">
 			<thead>
-				<tr style="background-color:#675682;color:white;text-align:center;text-transform:uppercase;font-weight:600">
+				<tr>
 					<th onclick="sortTable(0)" class="filterhead ds-cleanup"><?php esc_html_e( 'Date/Time', 'dam-spam' ); ?></th>
 					<th class="ds-cleanup"><?php esc_html_e( 'Email', 'dam-spam' ); ?></th>
 					<th class="ds-cleanup"><?php esc_html_e( 'IP', 'dam-spam' ); ?></th>
-					<th class="ds-cleanup"><?php esc_html_e( 'Author, User/Pwd', 'dam-spam' ); ?></th>
+					<th class="ds-cleanup"><?php esc_html_e( 'User', 'dam-spam' ); ?></th>
 					<th class="ds-cleanup"><?php esc_html_e( 'Script', 'dam-spam' ); ?></th>
 					<th class="ds-cleanup"><?php esc_html_e( 'Reason', 'dam-spam' ); ?></th>
 			<?php if ( function_exists( 'is_multisite' ) && is_multisite() ) { ?>
@@ -147,12 +147,12 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 				if ( empty( $reason ) ) {
 					$reason = "passed";
 				}
-				$stopper	 = '<a title="' . esc_attr__( 'Check Stop Forum Spam (SFS)', 'dam-spam' ) . '" target="_blank" href="https://www.stopforumspam.com/search.php?q=' . $ip . '"><img src="' . $stophand . '" class="icon-action"></a>';
+				$stopper	 = '<a title="' . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . '" target="_blank" href="https://www.stopforumspam.com/search.php?q=' . $ip . '"><img src="' . $stophand . '" class="icon-action"></a>';
 				$honeysearch = '<a title="' . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . '" target="_blank" href="https://www.projecthoneypot.org/ip_' . $ip . '"><img src="' . $search . '" class="icon-action"></a>';
 				$botsearch   = '<a title="' . esc_attr__( 'Check BotScout', 'dam-spam' ) . '" target="_blank" href="https://botscout.com/search.htm?stype=q&sterm=' . $ip . '"><img src="' . $search . '" class="icon-action"></a>';
 				$who		 = '<br><a title="' . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . '" target="_blank" href="https://whois.domaintools.com/' . $ip . '"><img src="' . $whois . '" class="icon-action"></a>';
 				echo '
-					<tr style="background-color:white">
+					<tr>
 					<td>' . wp_kses_post( $dt ) . '</td>
 					<td>' . wp_kses_post( $em ) . '</td>
 					<td>' . wp_kses_post( $ip, $who, $stopper, $honeysearch, $botsearch );
@@ -165,7 +165,7 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 						$href = 'href="#"';
 						$onclick = 'onclick="sfs_ajax_report_spam(this,\'registration\',\'' . esc_html( $blog ) . '\',\'' . esc_html( $ajaxurl ) . '\',\'' . esc_html( $em ) . '\',\'' . esc_html( $ip ) . '\',\'' . esc_html( $au ) . '\');return false;"';
 						echo '| ';
-						echo '<a title="' . esc_attr__( 'Report to Stop Forum Spam (SFS)', 'dam-spam' ) . '" ' . esc_html( $href, $onclick ) . ' class="delete:the-comment-list:comment-$id::delete=1 delete vim-d vim-destructive">' . esc_html__( 'Report to SFS', 'dam-spam' ) . '</a>';
+						echo '<a title="' . esc_attr__( 'Report to Stop Forum Spam', 'dam-spam' ) . '" ' . esc_html( $href, $onclick ) . ' class="delete:the-comment-list:comment-$id::delete=1 delete vim-d vim-destructive">' . esc_html__( 'Report to SFS', 'dam-spam' ) . '</a>';
 					}
 				}
 				echo '
@@ -177,7 +177,7 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 					$blogname  = get_blog_option( $blog, 'blogname' );
 					$blogadmin = esc_url( get_admin_url( $blog ) );
 					$blogadmin = trim( $blogadmin, '/' );
-					echo '<td style="font-size:.9em;padding:2px" align="center">';
+					echo '<td>';
 					echo '<a href="' . esc_url( $blogadmin ) . '/edit-comments.php">' . esc_html( $blogname ) . '</a>';
 					echo '</td>';
 				}

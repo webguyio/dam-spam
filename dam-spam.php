@@ -24,6 +24,16 @@ if ( !defined( 'ABSPATH' ) ) {
 	die();
 }
 
+// add dam-spam class to body of settings pages
+add_filter( 'admin_body_class', 'ds_body_class' );
+function ds_body_class( $classes ) {
+	$screen = get_current_screen();
+	if ( strpos( $screen->id, 'dam-spam' ) !== false || strpos( $screen->id, 'ds-' ) === 0 ) {
+		$classes .= ' dam-spam';
+	}
+	return $classes;
+}
+
 // load admin styles
 function ds_styles() {
 	wp_enqueue_style( 'ds-admin', plugin_dir_url( __FILE__ ) . 'css/admin.css' );
@@ -36,7 +46,7 @@ function ds_admin_notice() {
 	$admin_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http' ) . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 	$param = ( count( $_GET ) ) ? '&' : '?';
 	if ( !get_user_meta( $user_id, 'ds_notice_dismissed_1' ) && current_user_can( 'manage_options' ) ) {
-		echo '<div class="notice notice-info"><p><a href="' . esc_url( $admin_url ), esc_url_raw( $param ) . 'dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a><big><strong>Dam Spam</strong> — ' . esc_html__( 'Thank you for helping us dam spam!', 'dam-spam' ) . ' 💜</big><p><a href="https://webguy.io/donate" class="button-primary" style="border-color:green;background:green" target="_blank">' . esc_html__( 'Donate', 'dam-spam' ) . '</a></p></div>';
+		echo '<div class="notice notice-info"><p><a href="' . esc_url( $admin_url ), esc_url_raw( $param ) . 'dismiss" class="alignright"><big>' . esc_html__( 'Ⓧ', 'dam-spam' ) . '</big></a><big><strong>Dam Spam</strong> — ' . esc_html__( 'Thank you for helping us dam spam!', 'dam-spam' ) . ' 💜</big><p><a href="https://webguy.io/donate" class="button-primary" style="border-color:green;background:green" target="_blank">' . esc_html__( 'Donate', 'dam-spam' ) . '</a></p></div>';
 	}
 }
 add_action( 'admin_notices', 'ds_admin_notice' );
@@ -873,7 +883,7 @@ function ds_captcha_verify() {
 					$url  = "https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaapisecret&response=$g&remoteip=$ip";
 					$resp = ds_read_file( $url );
 					if ( strpos( $resp, '"success": true' ) === false ) {
-						$msg = esc_html__( 'Error: Google reCAPTCHA entry does not match. Try again.', 'dam-spam' );
+						$msg = esc_html__( 'Error: reCAPTCHA entry does not match. Try again.', 'dam-spam' );
 					}
 				}
 			}

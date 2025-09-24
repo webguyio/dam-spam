@@ -67,21 +67,22 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<input type="hidden" name="action" value="update">
 			<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<div class="mainsection"><?php esc_html_e( 'Option Testing', 'dam-spam' ); ?></div>
-			<p><?php esc_html_e( 'Run the settings against an IP address to see the results. IP Address:', 'dam-spam' ); ?></p>
+			<p><?php esc_html_e( 'Run the settings against an IP address to test.', 'dam-spam' ); ?></p>
+			<?php esc_html_e( 'IP Address:', 'dam-spam' ); ?><br>
 			<input id="dsinput" name="ip" type="text" value="<?php echo esc_attr( $ip ); ?>">
-			<?php esc_html_e( '(Your server address is', 'dam-spam' ); ?> <?php echo esc_html( $hip ); ?>)<br><br>
+			(<?php esc_html_e( 'Server IP:', 'dam-spam' ); ?> <?php echo esc_html( $hip ); ?>)<br><br>
 			<?php esc_html_e( 'Email:', 'dam-spam' ); ?><br>
 			<input id="dsinput" name="email" type="text" value="<?php echo esc_attr( $email ); ?>"><br><br>
-			<?php esc_html_e( 'Author/User:', 'dam-spam' ); ?><br>
+			<?php esc_html_e( 'Username:', 'dam-spam' ); ?><br>
 			<input id="dsinput" name="author" type="text" value="<?php echo esc_attr( $author ); ?>"><br><br>
 			<?php esc_html_e( 'Subject:', 'dam-spam' ); ?><br>
 			<input id="dsinput" name="subject" type="text" value="<?php echo esc_attr( $subject ); ?>"><br><br>
 			<?php esc_html_e( 'Comment:', 'dam-spam' ); ?><br>
 			<textarea name="body"><?php esc_html( $body ); ?></textarea><br>
-			<div style="width:50%;float:left">
+			<div class="half">
 				<p class="submit"><input name="testopt" class="button-primary" value="<?php esc_html_e( 'Test Options', 'dam-spam' ); ?>" type="submit"></p>
 			</div>
-			<div style="width:50%;float:right">
+			<div class="half">
 				<p class="submit"><input name="testcountry" class="button-primary" value="<?php esc_html_e( 'Test Countries', 'dam-spam' ); ?>" type="submit"></p>
 			</div>
 			<br style="clear:both">
@@ -359,15 +360,14 @@ $nonce = wp_create_nonce( 'ds_update' );
 			?>
 		</div>
 		<div class="ds-info-box">
-			<div class="mainsection"><?php esc_html_e( 'Information Display', 'dam-spam' ); ?></div>
-			<div style="width:50%;float:left">
+			<div class="half">
 				<h2><?php esc_html_e( 'Display All Options', 'dam-spam' ); ?></h2>
-				<p><?php esc_html_e( 'You can dump all options here (useful for debugging):', 'dam-spam' ); ?></p>
+				<p><?php esc_html_e( 'You can dump all options here (useful for debugging).', 'dam-spam' ); ?></p>
 				<p class="submit"><input name="dumpoptions" class="button-primary" value="<?php esc_attr_e( 'Dump Options', 'dam-spam' ); ?>" type="submit"></p>
 			</div>
-			<div style="width:50%;float:right">
+			<div class="half">
 				<h2><?php esc_html_e( 'Display All Stats', 'dam-spam' ); ?></h2>
-				<p><?php esc_html_e( 'You can dump all stats here: ', 'dam-spam' ); ?></p>
+				<p><?php esc_html_e( 'You can dump all stats here.', 'dam-spam' ); ?></p>
 				<p class="submit"><input name="dumpstats" class="button-primary" value="<?php esc_attr_e( 'Dump Stats', 'dam-spam' ); ?>" type="submit"></p>
 			</div>
 			<br style="clear:both">
@@ -418,55 +418,6 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<p>&nbsp;</p>
 		</div>
 	</form>
-	<div class="ds-info-box">
-		<div class="mainsection"><?php esc_html_e( 'Debugging', 'dam-spam' ); ?></div>
-		<?php
-		// if there is a log file we can display it here
-		$dfile = DS_PLUGIN_DATA . '.sfs_debug_output.txt';
-		if ( file_exists( $dfile ) ) {
-			if ( array_key_exists( 'ds_control', $_POST ) ) {
-				$nonce = $_POST['ds_control'];
-			}
-			if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
-				if ( array_key_exists( 'killdebug', $_POST ) ) {
-					$f = unlink( $dfile );
-					esc_html_e( 'File Deleted', 'dam-spam' );
-				}
-			}
-		}
-		if ( file_exists( $dfile ) ) {
-			// we have a file - we can view it or delete it
-			$nonce = '';
-			$to	   = get_option( 'admin_email' );
-			$f	   = file_get_contents( $dfile );
-			$ff	   = wordwrap( $f, 70, "\r\n" );
-		}
-		if ( array_key_exists( 'ds_control', $_POST ) ) {
-			$nonce = $_POST['ds_control'];
-		}
-		if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
-			if ( array_key_exists( 'showdebug', $_POST ) ) {
-				echo '<p><strong>' . esc_html__( 'Debug Output', 'dam-spam' ) . ':</strong></p><pre>' . wp_kses_post( $f ) . '</pre><p><strong>' . esc_html__( 'end of file (if empty, there are no errors to display)', 'dam-spam' ) . '</p></strong>';
-			}
-		}
-		$nonce = wp_create_nonce( 'ds_update' );
-		?>
-		<div style="width:50%;float:left">
-			<form method="post" action="">
-				<input type="hidden" name="update_options" value="update">
-				<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
-				<p class="submit"><input class="button-primary" name="showdebug" value="<?php esc_html_e( 'Show Debug File', 'dam-spam' ); ?>" type="submit"></p>
-			</form>
-		</div>
-		<div style="width:50%;float:right">
-			<form method="post" action="">
-				<input type="hidden" name="update_options" value="update">
-				<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
-				<p class="submit"><input class="button-primary" name="killdebug" value="<?php esc_html_e( 'Delete Debug File', 'dam-spam' ); ?>" type="submit"></p>
-			</form>
-		</div>
-	<br style="clear:both">
-	</div>
 	<?php
 	$ini  = '';
 	$pinf = true;
@@ -518,7 +469,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 	?>
 	<div class="ds-info-box">
 		<div id="scan" class="mainsection"><?php esc_html_e( 'Threat Scan', 'dam-spam' ); ?></div>
-		<p><?php esc_html_e( 'A very simple scan that looks for things out of place in the content directory as well as the database.', 'dam-spam' ); ?></p>
+		<p><?php esc_html_e( 'Simple scan that looks for odd thing in /wp-content and the database.', 'dam-spam' ); ?></p>
 		<form method="post" action="#scan">
 			<input type="hidden" name="update_options" value="update">
 			<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
@@ -526,7 +477,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		</form>
 	</div>
 	<?php if ( $runscan ) { ?>
-		<h2><?php esc_html_e( 'A clean scan does not mean you are safe. Please keep regular backups and ensure your installation is up-to-date!', 'dam-spam' ); ?></h2>
+		<h2><?php esc_html_e( 'A clean scan does not mean you\'re safe.', 'dam-spam' ); ?></h2>
 		<hr>
 		<?php
 		$disp = false;
@@ -885,7 +836,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 				printf( esc_html__( 'found possible problems in users (%s) ID: ', 'dam-spam' ), esc_html( $reason ) ) . $myrow->ID . '<br>';
 			}
 		} else {
-			echo '<br>' . esc_html__( '<br>Nothing found in users.', 'dam-spam' ) . '<br>';
+			echo '<br><br>' . esc_html__( 'Nothing found in users.', 'dam-spam' ) . '<br>';
 		}
 		echo '<hr>';
 		// options: option_id option_value, option_name
@@ -947,32 +898,12 @@ $nonce = wp_create_nonce( 'ds_update' );
 		}
 		if ( $disp ) { ?>
 			<h2><?php esc_html_e( 'Possible Problems Found!', 'dam-spam' ); ?></h2>
-			<p><?php esc_html_e( 'These are warnings only. Some content and plugins might not be
-				malicious, but still contain one or more
-				of these indicators. Please investigate all indications of
-				problems. The plugin may err on the side of
-				caution.', 'dam-spam' ); ?></p>
-			<p><?php esc_html_e( 'Although there are legitimate reasons for using the eval
-				function, and JavaScript uses it frequently,
-				finding eval in PHP code is in the very least bad practice, and
-				the worst is used to hide malicious
-				code. If eval() comes up in a scan, try to get rid of it.', 'dam-spam' ); ?></p>
-			<p><?php esc_html_e( 'Your code could contain "eval", or "document.write(unescape(" or
-				"try{window.onload" or
-				setAttribute("src". These are markers for problems such as SQL
-				injection or crods-browser JavaScript.
-				&lt;script&gt; tags should occur in your posts, if you added
-				them, but should not be found anywhere
-				else, except options. Options often have scripts for displaying
-				Facebook, Twitter, etc. Be careful,
-				though, if one appears in an option. Most of the time it is OK,
-				but make sure.', 'dam-spam' ); ?></p>
+			<p><?php esc_html_e( 'These are warnings only, which may contain false positives.', 'dam-spam' ); ?></p>
+			<p><?php esc_html_e( 'While there can be legitimate uses for eval(), its appearance in themes and plugins can be suspicious.', 'dam-spam' ); ?></p>
+			<p><?php esc_html_e( '"eval", "document.write(unescape(", "try{window.onload", or setAttribute("src" could be indication of a possible SQL injection attack.', 'dam-spam' ); ?></p>
 		<?php } else { ?>
 			<h2><?php esc_html_e( 'No Problems Found', 'dam-spam' ); ?></h2>
-			<p><?php esc_html_e( 'It appears that there are no eval or suspicious JavaScript
-				functions in the code in your wp-content
-				directory. That does not mean that you are safe, only that a
-				threat may be well-hidden.', 'dam-spam' ); ?></p>
+			<p><?php esc_html_e( 'No eval or suspicious JavaScript found in /wp-content.', 'dam-spam' ); ?></p>
 		<?php }
 		flush();
 	} // end if runscan
@@ -1131,7 +1062,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		// turns error red
 		$j = strpos( $haystack, $needle );
 		$s = substr_replace( $haystack, '</span>', $j + strlen( $needle ), 0 );
-		$s = substr_replace( $s, '<span style="color:red;">', $j, 0 );
+		$s = substr_replace( $s, '<span style="color:red">', $j, 0 );
 		return $s;
 	}
 	function ds_ok_list( $file, $line ) {
