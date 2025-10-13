@@ -1,8 +1,8 @@
 <?php
 
 if ( !defined( 'ABSPATH' ) ) {
-	http_response_code( 404 );
-	die();
+	status_header( 404 );
+	exit;
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
@@ -10,59 +10,58 @@ if ( !current_user_can( 'manage_options' ) ) {
 }
 
 ds_fix_post_vars();
-$now	 = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
+$now	 = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 $options = ds_get_options();
 extract( $options );
 $nonce   = '';
 
 if ( array_key_exists( 'ds_control', $_POST ) ) {
-	$nonce = $_POST['ds_control'];
+	$nonce = isset( $_POST['ds_control'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_control'] ) ) : '';
 }
 
 if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
 	if ( array_key_exists( 'action', $_POST ) ) {
-		// other API keys
 		if ( array_key_exists( 'apikey', $_POST ) ) {
-			$apikey			   = stripslashes( sanitize_text_field( $_POST['apikey'] ) );
+			$apikey = isset( $_POST['apikey'] ) ? sanitize_text_field( wp_unslash( $_POST['apikey'] ) ) : '';
 			$options['apikey'] = $apikey;
 		}
 		if ( array_key_exists( 'googleapi', $_POST ) ) {
-			$googleapi			  = stripslashes( sanitize_text_field( $_POST['googleapi'] ) );
+			$googleapi = isset( $_POST['googleapi'] ) ? sanitize_text_field( wp_unslash( $_POST['googleapi'] ) ) : '';
 			$options['googleapi'] = $googleapi;
 		}
 		if ( array_key_exists( 'honeyapi', $_POST ) ) {
-			$honeyapi			 = stripslashes( sanitize_text_field( $_POST['honeyapi'] ) );
+			$honeyapi = isset( $_POST['honeyapi'] ) ? sanitize_text_field( wp_unslash( $_POST['honeyapi'] ) ) : '';
 			$options['honeyapi'] = $honeyapi;
 		}
 		if ( array_key_exists( 'botscoutapi', $_POST ) ) {
-			$botscoutapi			= stripslashes( sanitize_text_field( $_POST['botscoutapi'] ) );
+			$botscoutapi = isset( $_POST['botscoutapi'] ) ? sanitize_text_field( wp_unslash( $_POST['botscoutapi'] ) ) : '';
 			$options['botscoutapi'] = $botscoutapi;
 		}
 		if ( array_key_exists( 'sfsfreq', $_POST ) ) {
-			$sfsfreq			= stripslashes( sanitize_text_field( $_POST['sfsfreq'] ) );
+			$sfsfreq = isset( $_POST['sfsfreq'] ) ? sanitize_text_field( wp_unslash( $_POST['sfsfreq'] ) ) : '';
 			$options['sfsfreq'] = $sfsfreq;
 		}
 		if ( array_key_exists( 'sfsage', $_POST ) ) {
-			$sfsage			   = stripslashes( sanitize_text_field( $_POST['sfsage'] ) );
+			$sfsage = isset( $_POST['sfsage'] ) ? sanitize_text_field( wp_unslash( $_POST['sfsage'] ) ) : '';
 			$options['sfsage'] = $sfsage;
 		}
 		if ( array_key_exists( 'hnyage', $_POST ) ) {
-			$hnyage			   = stripslashes( sanitize_text_field( $_POST['hnyage'] ) );
+			$hnyage = isset( $_POST['hnyage'] ) ? sanitize_text_field( wp_unslash( $_POST['hnyage'] ) ) : '';
 			$options['hnyage'] = $hnyage;
 		}
 		if ( array_key_exists( 'hnylevel', $_POST ) ) {
-			$hnylevel			 = stripslashes( sanitize_text_field( $_POST['hnylevel'] ) );
+			$hnylevel = isset( $_POST['hnylevel'] ) ? sanitize_text_field( wp_unslash( $_POST['hnylevel'] ) ) : '';
 			$options['hnylevel'] = $hnylevel;
 		}
 		if ( array_key_exists( 'botfreq', $_POST ) ) {
-			$botfreq			= stripslashes( sanitize_text_field( $_POST['botfreq'] ) );
+			$botfreq = isset( $_POST['botfreq'] ) ? sanitize_text_field( wp_unslash( $_POST['botfreq'] ) ) : '';
 			$options['botfreq'] = $botfreq;
 		}
-		$optionlist = array( 'chksfs', 'chkdnsbl' );
+		$optionlist = array( 'check_sfs', 'check_dnsbl' );
 		foreach ( $optionlist as $check ) {
 			$v = 'N';
 			if ( array_key_exists( $check, $_POST ) ) {
-				$v = $_POST[$check];
+				$v = isset( $_POST[$check] ) ? sanitize_text_field( wp_unslash( $_POST[$check] ) ) : 'N';
 				if ( $v != 'Y' ) {
 					$v = 'N';
 				}
@@ -70,10 +69,11 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
 			$options[$check] = $v;
 		}
 		ds_set_options( $options );
-		extract( $options ); // extract again to get the new options
+		extract( $options );
 	}
 	$msg = '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
 }
+
 $nonce = wp_create_nonce( 'ds_update' );
 
 ?>
@@ -90,15 +90,15 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<div id="formchecking" class="mainsection"><?php esc_html_e( 'Blacklist Checking', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
-	  		<label class="ds-subhead" for="chkdnsbl">
-				<input class="ds_toggle" type="checkbox" id="chkdnsbl" name="chkdnsbl" value="Y" <?php if ( $chkdnsbl == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+	  		<label class="ds-subhead" for="check_dnsbl">
+				<input class="ds_toggle" type="checkbox" id="check_dnsbl" name="check_dnsbl" value="Y" <?php if ( $check_dnsbl == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Check DNSBLs (like Spamhaus.org)', 'dam-spam' ); ?></small>
 			</label>
 		</div>	  
 		<br>		
 		<div class="checkbox switcher">
-	  		<label class="ds-subhead" for="chksfs">
-				<input class="ds_toggle" type="checkbox" id="chksfs" name="chksfs" value="Y" <?php if ( $chksfs == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+	  		<label class="ds-subhead" for="check_sfs">
+				<input class="ds_toggle" type="checkbox" id="check_sfs" name="check_sfs" value="Y" <?php if ( $check_sfs == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Check Stop Forum Spam', 'dam-spam' ); ?></small>
 			</label>
 		</div>

@@ -1,11 +1,10 @@
 <?php
 
 if ( !defined( 'ABSPATH' ) ) {
-	http_response_code( 404 );
-	die();
+	status_header( 404 );
+	exit;
 }
 
-// settings successfully updated message
 function ds_admin_notice_success() {
 	?>
 	<div class="notice notice-success is-dismissible">
@@ -34,31 +33,32 @@ function ds_advanced_menu() {
 	$ds_login_type_default = '';
 	$ds_login_type_username = '';
 	$ds_login_type_email = '';
-	if ( get_option( 'ds_login_type', '' ) == 'username' ) {
+	$login_type = get_option( 'ds_login_type', '' );
+	if ( $login_type === 'username' ) {
 		$ds_login_type_username = "checked='checked'";
-	} else if ( get_option( 'ds_login_type', '' ) == 'email'  ) {
+	} elseif ( $login_type === 'email' ) {
 		$ds_login_type_email = "checked='checked'";
 	} else {
 		$ds_login_type_default = "checked='checked'";
 	}
 	$ds_honeypot_cf7 = '';
-	if ( get_option( 'ds_honeypot_cf7', 'yes' ) == 'yes' and is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ) {
+	if ( get_option( 'ds_honeypot_cf7', 'yes' ) === 'yes' && is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ) {
 		$ds_honeypot_cf7 = "checked='checked'";
 	}
 	$ds_honeypot_bbpress = '';
-	if ( get_option( 'ds_honeypot_bbpress', 'yes' ) == 'yes' and is_plugin_active( 'bbpress/bbpress.php' ) ) {
+	if ( get_option( 'ds_honeypot_bbpress', 'yes' ) === 'yes' && is_plugin_active( 'bbpress/bbpress.php' ) ) {
 		$ds_honeypot_bbpress = "checked='checked'";
 	}
 	$ds_honeypot_elementor = '';
-	if ( get_option( 'ds_honeypot_elementor', 'yes' ) == 'yes' and is_plugin_active( 'elementor/elementor.php' ) ) {
+	if ( get_option( 'ds_honeypot_elementor', 'yes' ) === 'yes' && is_plugin_active( 'elementor/elementor.php' ) ) {
 		$ds_honeypot_elementor = "checked='checked'";
 	}
 	$theme = wp_get_theme();
 	$ds_honeypot_divi = '';
-	if ( get_option( 'ds_honeypot_divi', 'yes' ) == 'yes' and ( $theme->name == 'Divi' || $theme->parent_theme == 'Divi' ) ) {
+	if ( get_option( 'ds_honeypot_divi', 'yes' ) === 'yes' && ( $theme->name === 'Divi' || $theme->parent_theme === 'Divi' ) ) {
 		$ds_honeypot_divi = "checked='checked'";
 	}
-    $ds_allow_vpn_setting = '';
+	$ds_allow_vpn_setting = '';
 	if ( get_option( 'ds_allow_vpn', '' ) === 'yes' ) {
 		$ds_allow_vpn_setting = "checked='checked'";
 	}
@@ -75,12 +75,12 @@ function ds_advanced_menu() {
 								<?php if ( defined( 'DS_ENABLE_FIREWALL' ) ) { ?>
 								<p><a href="edit.php?post_type=ds-firewall" class="button-primary"><?php esc_html_e( 'Monitor Real-time Firewall', 'dam-spam' ); ?></a></p>
 								<?php } else { ?>
-								<p><em><small><?php esc_html_e( 'For advanced users only: If you\'d like to enable the real-time firewall beta feature, add <strong>define( \'DS_ENABLE_FIREWALL\', true );</strong> to your wp-config.php file. This feature is resource-intensive, requiring a lot of memory and database space.', 'dam-spam' ); ?></small></em></p>
+								<p><em><?php esc_html_e( 'For advanced users only: If you\'d like to enable the real-time firewall beta feature, add define( \'DS_ENABLE_FIREWALL\', true ); to your wp-config.php file. This feature is resource-intensive, requiring a lot of memory and database space.', 'dam-spam' ); ?></em></p>
 								<?php } ?>
-								<input type="checkbox" name="ds_firewall_setting" id="ds_firewall_setting" value="yes" <?php echo esc_html( $ds_firewall_setting ); ?>>
+								<input type="checkbox" name="ds_firewall_setting" id="ds_firewall_setting" value="yes" <?php echo esc_attr( $ds_firewall_setting ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Enable Server-side Security Rules', 'dam-spam' ); ?>
-								<p><em><small><?php esc_html_e( 'For advanced users only: This option will modify your .htaccess file with extra security rules and in some small cases, conflict with your server settings. If you do not understand how to edit your .htaccess file to remove these rules in the event of an error, do not enable.', 'dam-spam' ); ?></small></em></p>
+								<p><em><?php esc_html_e( 'For advanced users only: This option will modify your .htaccess file with extra security rules and in some small cases, conflict with your server settings. If you do not understand how to edit your .htaccess file to remove these rules in the event of an error, do not enable.', 'dam-spam' ); ?></em></p>
 							</label>
 						</div>
 						<p><input type="hidden" name="ds_firewall_setting_placeholder" value="ds_firewall_setting"></p>
@@ -90,7 +90,7 @@ function ds_advanced_menu() {
 						<h3><span><?php esc_html_e( 'Login Settings', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_login_setting">
-								<input type="checkbox" name="ds_login_setting" id="ds_login_setting" value="yes" <?php echo esc_html( $ds_login_setting ); ?>>
+								<input type="checkbox" name="ds_login_setting" id="ds_login_setting" value="yes" <?php echo esc_attr( $ds_login_setting ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Enable themed registration and login pages (disables the default wp-login.php).', 'dam-spam' ); ?>
 							</label>
@@ -98,24 +98,33 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds_login_attempts">
-								<input type="checkbox" name="ds_login_attempts" id="ds_login_attempts" value="yes" <?php echo esc_html( $ds_login_attempts ); ?>>
+								<input type="checkbox" name="ds_login_attempts" id="ds_login_attempts" value="yes" <?php echo esc_attr( $ds_login_attempts ); ?>>
 								<span><small></small></span>
 								<strong><?php esc_html_e( 'Login Attempts:', 'dam-spam' ); ?></strong>
-								<?php esc_html_e( 'After', 'dam-spam' ); ?>
-								<input type="text" name="ds_login_attempts_threshold" id="ds_login_attempts_duration" class="ds-small-box" value="<?php echo esc_html( get_option( 'ds_login_attempts_threshold', 5 ) ); ?>">
-								<?php esc_html_e( 'failed login attempts within', 'dam-spam' ); ?>
-								<input type="text" name="ds_login_attempts_duration" id="ds_login_attempts_duration" class="ds-small-box" value="<?php echo esc_html( get_option( 'ds_login_attempts_duration', 1 ) ); ?>">
+								<?php
+								// translators: Label before the threshold number input field
+								esc_html_e( 'After', 'dam-spam' );
+								?>
+								<input type="text" name="ds_login_attempts_threshold" id="ds_login_attempts_duration" class="ds-small-box" value="<?php echo esc_attr( get_option( 'ds_login_attempts_threshold', 5 ) ); ?>">
+								<?php
+								// translators: Label between threshold and duration fields
+								esc_html_e( 'failed login attempts within', 'dam-spam' );
+								?>
+								<input type="text" name="ds_login_attempts_duration" id="ds_login_attempts_duration" class="ds-small-box" value="<?php echo esc_attr( get_option( 'ds_login_attempts_duration', 1 ) ); ?>">
 								<select name="ds_login_attempts_unit" id="ds_login_attempts_unit" class="ds-small-dropbox">
-									<option value="minute" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'minute' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
-									<option value="hour" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'hour' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
-									<option value="day" <?php if ( get_option( 'ds_login_attempts_unit', 'hour' ) == 'day' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'day(s)', 'dam-spam' ); ?></option>
+									<option value="minute" <?php selected( get_option( 'ds_login_attempts_unit', 'hour' ), 'minute' ); ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
+									<option value="hour" <?php selected( get_option( 'ds_login_attempts_unit', 'hour' ), 'hour' ); ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
+									<option value="day" <?php selected( get_option( 'ds_login_attempts_unit', 'hour' ), 'day' ); ?>><?php esc_html_e( 'day(s)', 'dam-spam' ); ?></option>
 								</select>,
-								<?php esc_html_e( 'lockout the account for', 'dam-spam' ); ?>
-								<input type="text" name="ds_login_lockout_duration" id="ds_login_lockout_duration" class="ds-small-box" value="<?php echo esc_html( get_option( 'ds_login_lockout_duration', 24 ) ); ?>"> 
+								<?php
+								// translators: Label before the lockout duration field
+								esc_html_e( 'lockout the account for', 'dam-spam' );
+								?>
+								<input type="text" name="ds_login_lockout_duration" id="ds_login_lockout_duration" class="ds-small-box" value="<?php echo esc_attr( get_option( 'ds_login_lockout_duration', 24 ) ); ?>"> 
 								<select name="ds_login_lockout_unit" id="ds_login_lockout_unit" class="ds-small-dropbox">
-									<option value="minute" <?php if ( get_option( 'ds_login_lockout_unit', 'hour' ) == 'minute' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
-									<option value="hour" <?php if ( get_option( 'ds_login_lockout_unit', 'hour' ) == 'hour' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
-									<option value="day" <?php if ( get_option( 'ds_login_lockout_unit', 'hour' ) == 'day' ) { echo 'selected="selected"'; } ?>><?php esc_html_e( 'day(s)', 'dam-spam' ); ?></option>
+									<option value="minute" <?php selected( get_option( 'ds_login_lockout_unit', 'hour' ), 'minute' ); ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
+									<option value="hour" <?php selected( get_option( 'ds_login_lockout_unit', 'hour' ), 'hour' ); ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
+									<option value="day" <?php selected( get_option( 'ds_login_lockout_unit', 'hour' ), 'day' ); ?>><?php esc_html_e( 'day(s)', 'dam-spam' ); ?></option>
 								</select>.
 							</label>
 						</div>
@@ -127,7 +136,7 @@ function ds_advanced_menu() {
 						<p><input type="hidden" name="ds_login_type_field" value="ds_login_type"></p>
 						<div class="checkbox switcher">
 							<label for="ds-login-type-default">
-								<input name="ds_login_type" type="radio" id="ds-login-type-default" value="default" <?php echo esc_html( $ds_login_type_default ); ?>>
+								<input name="ds_login_type" type="radio" id="ds-login-type-default" value="default" <?php echo esc_attr( $ds_login_type_default ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Username or Email', 'dam-spam' ); ?>
 							</label>
@@ -135,7 +144,7 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds-login-type-username">
-								<input name="ds_login_type" type="radio" id="ds-login-type-username" value="username" <?php echo esc_html( $ds_login_type_username ); ?>>
+								<input name="ds_login_type" type="radio" id="ds-login-type-username" value="username" <?php echo esc_attr( $ds_login_type_username ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Username Only', 'dam-spam' ); ?>
 							</label>
@@ -143,7 +152,7 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds-login-type-email">
-								<input name="ds_login_type" type="radio" id="ds-login-type-email" value="email" <?php echo esc_html( $ds_login_type_email ); ?>>
+								<input name="ds_login_type" type="radio" id="ds-login-type-email" value="email" <?php echo esc_attr( $ds_login_type_email ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Email Only', 'dam-spam' ); ?>
 							</label>
@@ -154,7 +163,7 @@ function ds_advanced_menu() {
 						<h3><span><?php esc_html_e( 'Honeypot', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_honeypot_cf7">
-								<input type="checkbox" name="ds_honeypot_cf7" id="ds_honeypot_cf7" value="yes" <?php echo ( is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_html( $ds_honeypot_cf7 ); ?>>
+								<input type="checkbox" name="ds_honeypot_cf7" id="ds_honeypot_cf7" value="yes" <?php echo ( is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_attr( $ds_honeypot_cf7 ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Contact Form 7', 'dam-spam' ); ?>
 							</label>
@@ -162,7 +171,7 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds_honeypot_bbpress">
-								<input type="checkbox" name="ds_honeypot_bbpress" id="ds_honeypot_bbpress" value="yes" <?php echo ( is_plugin_active( 'bbpress/bbpress.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_html( $ds_honeypot_bbpress ); ?>>
+								<input type="checkbox" name="ds_honeypot_bbpress" id="ds_honeypot_bbpress" value="yes" <?php echo ( is_plugin_active( 'bbpress/bbpress.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_attr( $ds_honeypot_bbpress ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'bbPress', 'dam-spam' ); ?>
 							</label>
@@ -170,7 +179,7 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds_honeypot_elementor">
-								<input type="checkbox" name="ds_honeypot_elementor" id="ds_honeypot_elementor" value="yes" <?php echo ( is_plugin_active( 'elementor/elementor.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_html( $ds_honeypot_elementor ); ?>>
+								<input type="checkbox" name="ds_honeypot_elementor" id="ds_honeypot_elementor" value="yes" <?php echo ( is_plugin_active( 'elementor/elementor.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_attr( $ds_honeypot_elementor ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Elementor Form', 'dam-spam' ); ?>
 							</label>
@@ -178,7 +187,7 @@ function ds_advanced_menu() {
 						<br>
 						<div class="checkbox switcher">
 							<label for="ds_honeypot_divi">
-								<input type="checkbox" name="ds_honeypot_divi" id="ds_honeypot_divi" value="yes" <?php echo ( ( $theme->name == 'Divi' || $theme->parent_theme == 'Divi' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_html( $ds_honeypot_divi ); ?>>
+								<input type="checkbox" name="ds_honeypot_divi" id="ds_honeypot_divi" value="yes" <?php echo ( ( $theme->name === 'Divi' || $theme->parent_theme === 'Divi' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_attr( $ds_honeypot_divi ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Divi Forms', 'dam-spam' ); ?>
 							</label>
@@ -189,7 +198,7 @@ function ds_advanced_menu() {
 						<h3><span><?php esc_html_e( 'Block VPNs', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="ds_allow_vpn">
-								<input type="checkbox" name="ds_allow_vpn" id="ds_allow_vpn" value="yes" <?php echo esc_html( $ds_allow_vpn_setting ); ?>>
+								<input type="checkbox" name="ds_allow_vpn" id="ds_allow_vpn" value="yes" <?php echo esc_attr( $ds_allow_vpn_setting ); ?>>
 								<span><small></small></span>
 							</label>
 						</div>
@@ -224,8 +233,8 @@ function ds_advanced_menu() {
 							<?php submit_button( esc_html__( 'Export', 'dam-spam' ), 'secondary', 'submit', false ); ?>
 						</p>
 					</form>
-				</div><!-- .inside -->
-			</div><!-- .postbox -->
+				</div>
+			</div>
 			<div class="postbox">
 				<h3><span><?php esc_html_e( 'Import Settings', 'dam-spam' ); ?></span></h3>
 				<div class="inside">
@@ -238,8 +247,8 @@ function ds_advanced_menu() {
 							<?php submit_button( esc_html__( 'Import', 'dam-spam' ), 'secondary', 'submit', false ); ?>
 						</p>
 					</form>
-				</div><!-- .inside -->
-			</div><!-- .postbox -->
+				</div>
+			</div>
 			<div class="postbox">
 				<h3><span><?php esc_html_e( 'Reset Settings', 'dam-spam' ); ?></span></h3>
 				<div class="inside">
@@ -251,14 +260,13 @@ function ds_advanced_menu() {
 							<?php submit_button( esc_html__( 'Reset', 'dam-spam' ), 'secondary', 'submit', false ); ?>
 						</p>
 					</form>
-				</div><!-- .inside -->
-			</div><!-- .postbox -->			
-		</div><!-- .metabox-holder -->
+				</div>
+			</div>			
+		</div>
 	</div>
 	<?php
 }
 
-// add contact form shortcode
 function ds_contact_form_shortcode( $atts ) {
 	$atts = shortcode_atts( array(
 		'email'    => '',
@@ -282,15 +290,15 @@ function ds_contact_form_shortcode( $atts ) {
 	}
 	</script>
 	<form id="ds-contact-form" name="ds-contact-form" method="post" action="#send">
-		<p id="name"><input type="text" name="sign" placeholder="' . esc_html__( 'Name', 'dam-spam' ) . '" autocomplete="off" size="35" required></p>
-		<p id="email"><input type="email" name="email" placeholder="' . esc_html__( 'Email', 'dam-spam' ) . '" autocomplete="off" size="35" required></p>
-		<p id="phone"><input type="tel" name="phone" placeholder="' . esc_html__( 'Phone (optional)', 'dam-spam' ) . '" autocomplete="off" size="35"></p>
-		<p id="url"><input type="url" name="url" placeholder="' . esc_html__( 'URL', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" size="35" required></p>
-		<p id="message"><textarea id="comment" name="message" placeholder="' . esc_html__( 'Message', 'dam-spam' ) . '" rows="5" cols="100" onkeyup="nospam()"></textarea></p>
-		<p id="submit"><input type="submit" value="' . esc_html__( 'Submit', 'dam-spam' ) . '"></p>
+		<p id="name"><input type="text" name="sign" placeholder="' . esc_attr__( 'Name', 'dam-spam' ) . '" autocomplete="off" size="35" required></p>
+		<p id="email"><input type="email" name="email" placeholder="' . esc_attr__( 'Email', 'dam-spam' ) . '" autocomplete="off" size="35" required></p>
+		<p id="phone"><input type="tel" name="phone" placeholder="' . esc_attr__( 'Phone (optional)', 'dam-spam' ) . '" autocomplete="off" size="35"></p>
+		<p id="url"><input type="url" name="url" placeholder="' . esc_attr__( 'URL', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" size="35" required></p>
+		<p id="message"><textarea id="comment" name="message" placeholder="' . esc_attr__( 'Message', 'dam-spam' ) . '" rows="5" cols="100" onkeyup="nospam()"></textarea></p>
+		<p id="submit"><input type="submit" value="' . esc_attr__( 'Submit', 'dam-spam' ) . '"></p>
 	</form>
 	';
-	if ( 'yes' == $atts['unstyled'] ) {
+	if ( $atts['unstyled'] === 'yes' ) {
 		echo '
 		<style>
 		#ds-contact-form #url{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}
@@ -300,12 +308,13 @@ function ds_contact_form_shortcode( $atts ) {
 		</style>
 		';
 	} else {
+		$accent_color = !empty( $atts['accent'] ) ? esc_attr( $atts['accent'] ) : '#007acc';
 		echo '
 		<style>
 		#ds-contact-form, #ds-contact-form *{box-sizing:border-box;transition:all 0.5s ease}
 		#ds-contact-form input, #ds-contact-form textarea{width:100%;font-family:arial,sans-serif;font-size:14px;color:#767676;padding:15px;border:1px solid transparent;background:#f6f6f6}
-		#ds-contact-form input:focus, #ds-contact-form textarea:focus{color:#000;border:1px solid ' . ( esc_attr( $atts['accent'] ) ? esc_attr( $atts['accent'] ) : '#007acc' ) . '}
-		#ds-contact-form #submit input{display:inline-block;font-size:18px;color:#fff;text-align:center;text-decoration:none;padding:15px 25px;background:' . ( esc_attr( $atts['accent'] ) ? esc_attr( $atts['accent'] ) : '#007acc' ) . ';cursor:pointer}
+		#ds-contact-form input:focus, #ds-contact-form textarea:focus{color:#000;border:1px solid ' . esc_attr( $accent_color ) . '}
+		#ds-contact-form #submit input{display:inline-block;font-size:18px;color:#fff;text-align:center;text-decoration:none;padding:15px 25px;background:' . esc_attr( $accent_color ) . ';cursor:pointer}
 		#ds-contact-form #submit input:hover, #submit input:focus{opacity:0.8}
 		#ds-contact-form #url{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}
 		#send{text-align:center;padding:5%}
@@ -314,34 +323,36 @@ function ds_contact_form_shortcode( $atts ) {
 		</style>
 		';
 	}
-	$url = isset( $_POST['url'] ) ? $_POST['url'] : '';
-	$message = isset( $_POST['message'] ) ? $_POST['message'] : '';
-	if ( ( esc_url( $url ) == 'https://example.com/' ) && ( stripos( $message, 'http' ) === false ) ) {
-		if ( $atts['email'] ) {
+	$url = isset( $_POST['url'] ) ? sanitize_url( wp_unslash( $_POST['url'] ) ) : '';
+	$message = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
+	if ( ( $url === 'https://example.com/' ) && ( stripos( $message, 'http' ) === false ) ) {
+		if ( !empty( $atts['email'] ) ) {
 			$to = sanitize_email( $atts['email'] );
 		} else {
 			$to = sanitize_email( get_option( 'admin_email' ) );
 		}
-		$subject = esc_html__( 'New Message from ', 'dam-spam' ) . esc_html( get_option( 'blogname' ) );
-		$name    = sanitize_text_field( $_POST['sign'] );
-		$email   = sanitize_email( $_POST['email'] );
-		$phone   = sanitize_text_field( $_POST['phone'] );
-		$message = sanitize_textarea_field( $_POST['message'] );
+		// translators: %s is the website name
+		$subject = sprintf( esc_html__( 'New Message from %s', 'dam-spam' ), esc_html( get_option( 'blogname' ) ) );
+		$name = isset( $_POST['sign'] ) ? sanitize_text_field( wp_unslash( $_POST['sign'] ) ) : '';
+		$email = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+		$phone = isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '';
 		$body  = '';
 		$body .= esc_html__( 'Name: ', 'dam-spam' );
-		$body .= wp_unslash( $name );
+		$body .= $name;
 		$body .= "\n";
 		$body .= esc_html__( 'Email: ', 'dam-spam' );
 		$body .= $email;
-		if ( $_POST['phone'] ) {
+		if ( !empty( $phone ) ) {
 			$body .= "\n";
 			$body .= esc_html__( 'Phone: ', 'dam-spam' );
 			$body .= $phone;
 		}
 		$body .= "\n\n";
-		$body .= wp_unslash( $message );
+		$body .= $message;
 		$body .= "\n";
-		$success = wp_mail( $to, $subject, $body, esc_html__( 'From: ', 'dam-spam' ) . "$name <$email>" );
+		// translators: %1$s is the sender's name, %2$s is the sender's email
+		$headers = sprintf( esc_html__( 'From: %1$s <%2$s>', 'dam-spam' ), $name, $email );
+		$success = wp_mail( $to, $subject, $body, $headers );
 		if ( $success ) {
 			print '<p id="send" class="success">' . esc_html__( 'Message Sent Successfully', 'dam-spam' ) . '</p>';
 		} else {
@@ -355,8 +366,7 @@ function ds_contact_form_shortcode( $atts ) {
 add_shortcode( 'ds-contact-form', 'ds_contact_form_shortcode' );
 add_filter( 'widget_text', 'do_shortcode' );
 
-if ( get_option( 'ds_honeypot_cf7', 'yes' ) == 'yes' ) {
-	// add honeypot to Contact Form 7
+if ( get_option( 'ds_honeypot_cf7', 'yes' ) === 'yes' ) {
 	function ds_cf7_add_honeypot( $form ) {
 		$html  = '';
 		$html .= '<p class="ds-user">';
@@ -367,14 +377,15 @@ if ( get_option( 'ds_honeypot_cf7', 'yes' ) == 'yes' ) {
 		$html .= '<label>';
 		$html .= '</p>';
 		$html .= '<style>.ds-user{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
-		return $html.$form;
+		return $html . $form;
 	}
 	add_filter( 'wpcf7_form_elements', 'ds_cf7_add_honeypot', 10, 1 );
 	function ds_cf7_verify_honeypot( $spam ) {
 		if ( $spam ) {
 			return $spam;
 		}
-		if ( $_POST['your-website'] != 'https://example.com/' ) {
+		$your_website = isset( $_POST['your-website'] ) ? sanitize_url( wp_unslash( $_POST['your-website'] ) ) : '';
+		if ( $your_website !== 'https://example.com/' ) {
 			return true;
 		}
 		return $spam;
@@ -382,8 +393,7 @@ if ( get_option( 'ds_honeypot_cf7', 'yes' ) == 'yes' ) {
 	add_filter( 'wpcf7_spam', 'ds_cf7_verify_honeypot', 10, 1 );
 }
 
-if ( get_option( 'ds_honeypot_bbpress', 'yes' ) == 'yes' ) {
-	// add honeypot to bbPress
+if ( get_option( 'ds_honeypot_bbpress', 'yes' ) === 'yes' ) {
 	function ds_bbp_add_honeypot() {
 		$html  = '';
 		$html .= '<p class="ds-user">';
@@ -396,16 +406,16 @@ if ( get_option( 'ds_honeypot_bbpress', 'yes' ) == 'yes' ) {
 	add_action( 'bbp_theme_before_reply_form_submit_wrapper', 'ds_bbp_add_honeypot' );
 	add_action( 'bbp_theme_before_topic_form_submit_wrapper', 'ds_bbp_add_honeypot' );
 	function ds_bbp_verify_honeypot() {
-		if ( $_POST['bbp_your-website'] != 'https://example.com/' ) {
-			bbp_add_error( 'bbp_throw_error', __( "<strong>ERROR</strong>: Something went wrong!", 'dam-spam' ) );
+		$your_website = isset( $_POST['bbp_your-website'] ) ? sanitize_url( wp_unslash( $_POST['bbp_your-website'] ) ) : '';
+		if ( $your_website !== 'https://example.com/' ) {
+			bbp_add_error( 'bbp_throw_error', __( '<strong>ERROR</strong>: Something went wrong!', 'dam-spam' ) );
 		}
 	}
 	add_action( 'bbp_new_reply_pre_extras', 'ds_bbp_verify_honeypot' );
 	add_action( 'bbp_new_topic_pre_extras', 'ds_bbp_verify_honeypot' );
 }
 
-if ( get_option( 'ds_honeypot_elementor', 'yes' ) == 'yes' ) {
-	// add honeypot to Elementor form
+if ( get_option( 'ds_honeypot_elementor', 'yes' ) === 'yes' ) {
 	function ds_elementor_add_honeypot( $content, $widget ) {
 		if ( 'form' === $widget->get_name() ) {
 			$html    = '';
@@ -420,37 +430,42 @@ if ( get_option( 'ds_honeypot_elementor', 'yes' ) == 'yes' ) {
 	}
 	add_action( 'elementor/widget/render_content', 'ds_elementor_add_honeypot', 10, 2 );
 	function ds_elementor_verify_honeypot( $record, $ajax_handler ) {
-		if ( $_POST['form_fields']['your-website'] != 'https://example.com/' ) {
+		$form_fields = isset( $_POST['form_fields'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['form_fields'] ) ) : array();
+		$your_website = isset( $form_fields['your-website'] ) ? sanitize_url( $form_fields['your-website'] ) : '';
+		if ( $your_website !== 'https://example.com/' ) {
 			$ajax_handler->add_error( 'your-website', esc_html__( 'Something went wrong!', 'dam-spam' ) );
 		}
 	}
 	add_action( 'elementor_pro/forms/validation', 'ds_elementor_verify_honeypot', 10, 2 );
 }
 
-if ( get_option( 'ds_honeypot_divi', 'yes' ) == 'yes' ) {
-	// add honeypot to Divi contact form and opt-in
+if ( get_option( 'ds_honeypot_divi', 'yes' ) === 'yes' ) {
 	function ds_et_add_honeypot( $output, $render_slug, $module ) {
-		if ( isset( $_POST['et_pb_contact_your_website'] ) and $_POST['et_pb_contact_your_website'] == 'https://example.com/' ) {
+		if ( isset( $_POST['et_pb_contact_your_website'] ) && sanitize_url( wp_unslash( $_POST['et_pb_contact_your_website'] ) ) === 'https://example.com/' ) {
 			unset( $_POST['et_pb_contact_your_website'] );
 			$post_last_key = array_key_last( $_POST );
-			$form_json	   = json_decode( stripslashes( $_POST[$post_last_key] ) );
-			array_pop( $form_json );
-			$_POST[$post_last_key] = json_encode( $form_json );
+			if ( isset( $_POST[ $post_last_key ] ) ) {
+				$form_json = isset( $_POST[$post_last_key] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST[$post_last_key] ) ) ) : null;
+				if ( is_array( $form_json ) ) {
+					array_pop( $form_json );
+					$_POST[ $post_last_key ] = wp_json_encode( $form_json );
+				}
+			}
 		}
 		$html = '';
-		if ( $render_slug == 'et_pb_contact_form' ) {
+		if ( $render_slug === 'et_pb_contact_form' ) {
 			$html  .= '<p class="et_pb_contact_field et_pb_contact_your_website">';
 			$html  .= '<label for="et_pb_contact_your_website" class="et_pb_contact_form_label">' . esc_html__( 'Your Website', 'dam-spam' ) . '</label>';
-			$html  .= '<input type="text" name="et_pb_contact_your_website" id="et_pb_contact_your_website" placeholder="' . esc_html__( 'Your Website', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" required>';
+			$html  .= '<input type="text" name="et_pb_contact_your_website" id="et_pb_contact_your_website" placeholder="' . esc_attr__( 'Your Website', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" required>';
 			$html  .= '</p>';
 			$html  .= '<style>.et_pb_contact_your_website{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
 			$html  .= '<input type="hidden" value="et_contact_proccess" name="et_pb_contactform_submit';
 			$output = str_replace( '<input type="hidden" value="et_contact_proccess" name="et_pb_contactform_submit', $html, $output );
-		} else if ( $render_slug == 'et_pb_signup' ) {
+		} elseif ( $render_slug === 'et_pb_signup' ) {
 			$html   = '';
 			$html  .= '<p class="et_pb_signup_custom_field et_pb_signup_your_website et_pb_newsletter_field et_pb_contact_field_last et_pb_contact_field_last_tablet et_pb_contact_field_last_phone">';
 			$html  .= '<label for="et_pb_signup_your_website" class="et_pb_contact_form_label">' . esc_html__( 'Your Website', 'dam-spam' ) . '</label>';
-			$html  .= '<input type="text" class="input" id="et_pb_signup_your_website" placeholder="' . esc_html__( 'Your Website', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" data-original_id="your-website" required>';
+			$html  .= '<input type="text" class="input" id="et_pb_signup_your_website" placeholder="' . esc_attr__( 'Your Website', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" data-original_id="your-website" required>';
 			$html  .= '</p>';
 			$html  .= '<style>.et_pb_signup_your_website{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
 			$html  .= '<p class="et_pb_newsletter_button_wrap">';
@@ -460,25 +475,30 @@ if ( get_option( 'ds_honeypot_divi', 'yes' ) == 'yes' ) {
 	}
 	add_filter( 'et_module_shortcode_output', 'ds_et_add_honeypot', 20, 3 );
 	function ds_divi_email_optin_verify_honeypot() {
-		if ( isset( $_POST['et_custom_fields']['your-website'] ) and $_POST['et_custom_fields']['your-website'] != 'https://example.com/' ) { 
-			echo '{"error":"Subscription Error: An error occurred, please try later."}';
-			exit;
-		} else if ( isset( $_POST['et_custom_fields']['your-website'] ) and $_POST['et_custom_fields']['your-website'] == 'https://example.com/' ) { 
-			unset( $_POST['et_custom_fields']['your-website'] );
+		if ( isset( $_POST['et_custom_fields']['your-website'] ) ) {
+			$your_website = sanitize_url( wp_unslash( $_POST['et_custom_fields']['your-website'] ) );
+			if ( $your_website !== 'https://example.com/' ) {
+				echo '{"error":"Subscription Error: An error occurred, please try later."}';
+				exit;
+			} else {
+				unset( $_POST['et_custom_fields']['your-website'] );
+			}
 		}
 	}
 	add_action( 'admin_init', 'ds_divi_email_optin_verify_honeypot' );
 }
 
-// enable security rules firewall
 function ds_enable_firewall() {
-	if ( empty( $_POST['ds_firewall_setting_placeholder'] ) || 'ds_firewall_setting' != $_POST['ds_firewall_setting_placeholder'] )
+	if ( empty( $_POST['ds_firewall_setting_placeholder'] ) || 'ds_firewall_setting' !== $_POST['ds_firewall_setting_placeholder'] ) {
 		return;
-	if ( !wp_verify_nonce( $_POST['ds_login_type_nonce'], 'ds_login_type_nonce' ) )
+	}
+	if ( !isset( $_POST['ds_login_type_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_login_type_nonce'] ) ), 'ds_login_type_nonce' ) ) {
 		return;
-	if ( !current_user_can( 'manage_options' ) )
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
 		return;
-	if ( isset( $_POST['ds_firewall_setting'] ) and $_POST['ds_firewall_setting'] == 'yes' ) {
+	}
+	if ( isset( $_POST['ds_firewall_setting'] ) && sanitize_text_field( wp_unslash( $_POST['ds_firewall_setting'] ) ) === 'yes' ) {
 		update_option( 'ds_enable_firewall', 'yes' );
 		add_action( 'admin_notices', 'ds_admin_notice_success' );
 		$insertion = array(
@@ -591,11 +611,10 @@ function ds_enable_firewall() {
 			'</IfModule>',
 		);
 		$htaccess = ABSPATH . '.htaccess';
-		if ( function_exists( 'insert_with_markers') ) {
-			return insert_with_markers( $htaccess, 'Dam Spam', ( array ) $insertion );
+		if ( function_exists( 'insert_with_markers' ) ) {
+			return insert_with_markers( $htaccess, 'Dam Spam', (array) $insertion );
 		}
-	}
-	else {
+	} else {
 		update_option( 'ds_enable_firewall', 'no' );
 		add_action( 'admin_notices', 'ds_admin_notice_success' );
 		$htaccess = ABSPATH . '.htaccess';
@@ -604,15 +623,17 @@ function ds_enable_firewall() {
 }
 add_action( 'admin_init', 'ds_enable_firewall' );
 
-// enable custom login
 function ds_enable_custom_login() {
-	if ( empty( $_POST['ds_login_setting_placeholder'] ) || 'ds_login_setting' != $_POST['ds_login_setting_placeholder'] )
+	if ( empty( $_POST['ds_login_setting_placeholder'] ) || 'ds_login_setting' !== $_POST['ds_login_setting_placeholder'] ) {
 		return;
-	if ( !wp_verify_nonce( $_POST['ds_login_type_nonce'], 'ds_login_type_nonce' ) )
+	}
+	if ( !isset( $_POST['ds_login_type_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_login_type_nonce'] ) ), 'ds_login_type_nonce' ) ) {
 		return;
-	if ( !current_user_can( 'manage_options' ) )
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
 		return;
-	if ( isset( $_POST['ds_login_setting'] ) and $_POST['ds_login_setting'] == 'yes' ) {
+	}
+	if ( isset( $_POST['ds_login_setting'] ) && sanitize_text_field( wp_unslash( $_POST['ds_login_setting'] ) ) === 'yes' ) {
 		update_option( 'ds_enable_custom_login', 'yes' );
 		add_action( 'admin_notices', 'ds_admin_notice_success' );
 		ds_install_custom_login();
@@ -624,68 +645,75 @@ function ds_enable_custom_login() {
 }
 add_action( 'admin_init', 'ds_enable_custom_login' );
 
-// manage honeypot settings
 function ds_update_honeypot() {
-	if ( !current_user_can( 'manage_options' ) )
+	if ( !current_user_can( 'manage_options' ) ) {
 		return;
-	if ( isset( $_POST['ds_honeypot_cf7'] ) and $_POST['ds_honeypot_cf7'] == 'yes' )
+	}
+	if ( isset( $_POST['ds_honeypot_cf7'] ) && sanitize_text_field( wp_unslash( $_POST['ds_honeypot_cf7'] ) ) === 'yes' ) {
 		update_option( 'ds_honeypot_cf7', 'yes' );
-	else
+	} else {
 		update_option( 'ds_honeypot_cf7', 'no' );
-	if ( isset( $_POST['ds_honeypot_bbpress'] ) and $_POST['ds_honeypot_bbpress'] == 'yes' )
+	}
+	if ( isset( $_POST['ds_honeypot_bbpress'] ) && sanitize_text_field( wp_unslash( $_POST['ds_honeypot_bbpress'] ) ) === 'yes' ) {
 		update_option( 'ds_honeypot_bbpress', 'yes' );
-	else
+	} else {
 		update_option( 'ds_honeypot_bbpress', 'no' );
-	if ( isset( $_POST['ds_honeypot_elementor'] ) and $_POST['ds_honeypot_elementor'] == 'yes' )
+	}
+	if ( isset( $_POST['ds_honeypot_elementor'] ) && sanitize_text_field( wp_unslash( $_POST['ds_honeypot_elementor'] ) ) === 'yes' ) {
 		update_option( 'ds_honeypot_elementor', 'yes' );
-	else
+	} else {
 		update_option( 'ds_honeypot_elementor', 'no' );
-	if ( isset( $_POST['ds_honeypot_divi'] ) and $_POST['ds_honeypot_divi'] == 'yes' )
+	}
+	if ( isset( $_POST['ds_honeypot_divi'] ) && sanitize_text_field( wp_unslash( $_POST['ds_honeypot_divi'] ) ) === 'yes' ) {
 		update_option( 'ds_honeypot_divi', 'yes' );
-	else
+	} else {
 		update_option( 'ds_honeypot_divi', 'no' );
-	if ( isset( $_POST['ds_allow_vpn'] ) and $_POST['ds_allow_vpn'] == 'yes' )
+	}
+	if ( isset( $_POST['ds_allow_vpn'] ) && sanitize_text_field( wp_unslash( $_POST['ds_allow_vpn'] ) ) === 'yes' ) {
 		update_option( 'ds_allow_vpn', 'yes' );
-	else
+	} else {
 		update_option( 'ds_allow_vpn', 'no' );
+	}
 }
 add_action( 'admin_init', 'ds_update_honeypot' );
 
-// process to setup login type
 function ds_login_type_func() {
-	if ( empty( $_POST['ds_login_type_field'] ) || 'ds_login_type' != $_POST['ds_login_type_field'] )
+	if ( empty( $_POST['ds_login_type_field'] ) || 'ds_login_type' !== $_POST['ds_login_type_field'] ) {
 		return;
-	if ( !wp_verify_nonce( $_POST['ds_login_type_nonce'], 'ds_login_type_nonce' ) )
+	}
+	if ( !isset( $_POST['ds_login_type_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_login_type_nonce'] ) ), 'ds_login_type_nonce' ) ) {
 		return;
-	if ( !current_user_can( 'manage_options' ) )
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
 		return;
+	}
 	if ( isset( $_POST['ds_login_type'] ) ) {
-		update_option( 'ds_login_type', $_POST['ds_login_type'] );
+		$login_type = sanitize_text_field( wp_unslash( $_POST['ds_login_type'] ) );
+		update_option( 'ds_login_type', $login_type );
 		add_action( 'admin_notices', 'ds_admin_notice_success' );
 	}
 }
-add_action( 'admin_init', 'ds_login_type_func' ); 
+add_action( 'admin_init', 'ds_login_type_func' );
 
-// install default pages for custom login
 function ds_install_custom_login() {
-	$pages =  array(
-		'login'           => esc_html__( 'Log In', 'dam-spam' ),
-		'logout'          => esc_html__( 'Log Out', 'dam-spam' ),
-		'register'        => esc_html__( 'Register', 'dam-spam' ),
-		'forgot-password' => esc_html__( 'Forgot Password', 'dam-spam' ),
+	$pages = array(
+		'login'    => esc_html__( 'Log In', 'dam-spam' ),
+		'logout'   => esc_html__( 'Log Out', 'dam-spam' ),
+		'register' => esc_html__( 'Register', 'dam-spam' ),
+		'forgot'   => esc_html__( 'Forgot Password', 'dam-spam' ),
 	);
-	foreach( $pages as $slug => $title ) {
+	foreach ( $pages as $slug => $title ) {
 		$page_id = ds_get_page_id( $slug );
 		if ( $page_id > 0 ) {
 			wp_update_post( array(
-				'ID'			 => $page_id,
+				'ID'             => $page_id,
 				'post_title'     => $title,
 				'post_name'      => $slug,
 				'post_status'    => 'publish',
 				'post_type'      => 'page',
 				'post_content'   => '[ds-login]',
 				'comment_status' => 'closed',
-				'ping_status'    => 'closed'
+				'ping_status'    => 'closed',
 			) );
 		} else {
 			wp_insert_post( array(
@@ -695,41 +723,45 @@ function ds_install_custom_login() {
 				'post_type'      => 'page',
 				'post_content'   => '[ds-login]',
 				'comment_status' => 'closed',
-				'ping_status'    => 'closed'
+				'ping_status'    => 'closed',
 			) );
 		}
 	}
 }
 
-// uninstall default pages for custom login
 function ds_uninstall_custom_login() {
 	$pages = array(
-		'login'           => esc_html__( 'Log In', 'dam-spam' ),
-		'logout'          => esc_html__( 'Log Out', 'dam-spam' ),
-		'register'        => esc_html__( 'Register', 'dam-spam' ),
-		'forgot-password' => esc_html__( 'Forgot Password', 'dam-spam' ),
+		'login'    => esc_html__( 'Log In', 'dam-spam' ),
+		'logout'   => esc_html__( 'Log Out', 'dam-spam' ),
+		'register' => esc_html__( 'Register', 'dam-spam' ),
+		'forgot'   => esc_html__( 'Forgot Password', 'dam-spam' ),
 	);
-	foreach( $pages as $slug => $title ) {
+	foreach ( $pages as $slug => $title ) {
 		$page_id = ds_get_page_id( $slug );
 		wp_delete_post( $page_id, true );
-	}	
+	}
 }
 
 function ds_get_page_id( $slug ) {
 	$page = get_page_by_path( $slug );
-	if ( !isset( $page->ID ) )
+	if ( !isset( $page->ID ) ) {
 		return null;
-	else 
+	} else {
 		return $page->ID;
+	}
 }
 
 add_action( 'template_redirect', function() {
 	global $post;
+	if ( !is_object( $post ) || !isset( $post->post_name ) ) {
+		return;
+	}
 	if ( is_page( 'logout' ) ) {
 		$user = wp_get_current_user();
 		wp_logout();
 		if ( !empty( $_REQUEST['redirect_to'] ) ) {
-			$redirect_to = $requested_redirect_to = $_REQUEST['redirect_to'];
+			$redirect_to = sanitize_url( wp_unslash( $_REQUEST['redirect_to'] ) );
+			$requested_redirect_to = $redirect_to;
 		} else {
 			$redirect_to = site_url( 'login/?loggedout=true' );
 			$requested_redirect_to = '';
@@ -738,35 +770,38 @@ add_action( 'template_redirect', function() {
 		wp_safe_redirect( $redirect_to );
 		exit;
 	}
-	if ( is_user_logged_in() && ( $post->post_name == 'login' or $post->post_name == 'register' or $post->post_name == 'forgot-password' ) ) {
+	if ( is_user_logged_in() && ( $post->post_name === 'login' || $post->post_name === 'register' || $post->post_name === 'forgot' ) ) {
 		wp_redirect( admin_url() );
 		exit;
 	}
-	if ( $post->post_name == 'login' )
+	if ( $post->post_name === 'login' ) {
 		ds_login();
-	elseif ( $post->post_name == 'register' )
+	} elseif ( $post->post_name === 'register' ) {
 		ds_register();
-	elseif ( $post->post_name == 'forgot-password' )
+	} elseif ( $post->post_name === 'forgot' ) {
 		ds_forgot_password();
+	}
 } );
 
 function ds_forgot_password() {
 	global $wpdb, $wp_hasher;
-	if ( empty( $_POST ) )
+	if ( empty( $_POST ) ) {
 		return;
+	}
 	$errors = new WP_Error();
 	if ( empty( $_POST['user_login'] ) ) {
 		$errors->add( 'empty_username', esc_html__( 'ERROR: Enter a username or email address.', 'dam-spam' ) );
-	} else if ( strpos( $_POST['user_login'], '@' ) ) {
-		$user_data = get_user_by( 'email', trim( wp_unslash( $_POST['user_login'] ) ) );
-		if ( empty( $user_data ) )
+	} elseif ( isset( $_POST['user_login'] ) && strpos( sanitize_text_field( wp_unslash( $_POST['user_login'] ) ), '@' ) ) {
+		$user_data = get_user_by( 'email', trim( sanitize_email( wp_unslash( $_POST['user_login'] ) ) ) );
+		if ( empty( $user_data ) ) {
 			$errors->add( 'invalid_email', esc_html__( 'ERROR: There is no user registered with that email address.', 'dam-spam' ) );
+		}
 	} else {
-		$login = trim( $_POST['user_login'] );
+		$login = trim( sanitize_text_field( wp_unslash( $_POST['user_login'] ) ) );
 		$user_data = get_user_by( 'login', $login );
 	}
 	do_action( 'lostpassword_post', $errors );
-	if ( $errors->get_error_code() ){
+	if ( $errors->get_error_code() ) {
 		$GLOBALS['ds_error'] = $errors;
 		return;
 	}
@@ -783,17 +818,19 @@ function ds_forgot_password() {
 	}
 	$message  = esc_html__( 'Someone requested that the password be reset for the following account:', 'dam-spam' ) . "\r\n\r\n";
 	$message .= network_home_url( '/' ) . "\r\n\r\n";
+	// translators: %s is the username
 	$message .= sprintf( esc_html__( 'Username: %s', 'dam-spam' ), $user_login ) . "\r\n\r\n";
 	$message .= esc_html__( 'If this was a mistake, just ignore this email and nothing will happen.', 'dam-spam' ) . "\r\n\r\n";
 	$message .= esc_html__( 'To reset your password, visit the following address:', 'dam-spam' ) . "\r\n\r\n";
 	$message .= '<' . network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' ) . ">\r\n";
 	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-	$title    = sprintf( esc_html__( '[%s] Password Reset', 'dam-spam' ), $blogname );
-	$title    = apply_filters( 'retrieve_password_title', $title, $user_login, $user_data );
-	$message  = apply_filters( 'retrieve_password_message', $message, $key, $user_login, $user_data );
+	// translators: %s is the website name
+	$title = sprintf( esc_html__( '[%s] Password Reset', 'dam-spam' ), $blogname );
+	$title = apply_filters( 'retrieve_password_title', $title, $user_login, $user_data );
+	$message = apply_filters( 'retrieve_password_message', $message, $key, $user_login, $user_data );
 	if ( $message && !wp_mail( $user_email, $title, $message ) ) {
 		wp_die( esc_html__( 'The email could not be sent.', 'dam-spam' ) . "<br>\n" . esc_html__( 'Possible reason: your host may have disabled the mail() function...', 'dam-spam' ) );
-		wp_redirect( home_url( '/login/?rp=link(target, link)-sent' ) );
+		wp_redirect( home_url( '/login/?rp=link-sent' ) );
 		exit;
 	}
 }
@@ -801,8 +838,9 @@ add_shortcode( 'ds-login', 'ds_login_cb' );
 
 function ds_login_cb() {
 	global $post;
-	if ( !is_page() )
+	if ( !is_page() ) {
 		return;
+	}
 	switch ( $post->post_name ) {
 		case 'login':
 			ds_login_page();
@@ -810,7 +848,7 @@ function ds_login_cb() {
 		case 'register':
 			ds_register_page();
 			break;
-		case 'forgot-password':
+		case 'forgot':
 			ds_forgot_password_page();
 			break;
 		default:
@@ -819,22 +857,22 @@ function ds_login_cb() {
 }
 
 function ds_login_page() {
-	include( DS_PLUGIN_FILE . '/templates/login.php' );
+	include DS_PLUGIN_FILE . '/templates/login.php';
 }
 
 function ds_register_page() {
-	include( DS_PLUGIN_FILE . '/templates/register.php' );
+	include DS_PLUGIN_FILE . '/templates/register.php';
 }
 
 function ds_forgot_password_page() {
-	include( DS_PLUGIN_FILE . '/templates/forgot-password.php' );
+	include DS_PLUGIN_FILE . '/templates/forgot.php';
 }
 
 function ds_show_error() {
 	global $ds_error;
 	if ( isset( $ds_error->errors ) ) {
-		foreach( $ds_error->errors as $errors ) {
-			foreach( $errors as $e ) {
+		foreach ( $ds_error->errors as $errors ) {
+			foreach ( $errors as $e ) {
 				echo '<div style="color:#721c24;background-color:#f8d7da;padding:.75rem 1.25rem;margin-bottom:1rem;border:1px solid #f5c6cb">' . esc_html( $e ) . '</div>';
 			}
 		}
@@ -846,15 +884,15 @@ function ds_register() {
 		$redirect_to = site_url( 'wp-login.php?registration=disabled' );
 		wp_redirect( $redirect_to );
 		exit;
-	}	
+	}
 	$user_login = '';
 	$user_email = '';
-	if ( !empty( $_POST ) && ( $_POST['user_url'] == 'https://example.com/' ) ) {
-		$user_login = isset( $_POST['user_login'] ) ? $_POST['user_login'] : '';
-		$user_email = isset( $_POST['user_email'] ) ? $_POST['user_email'] : '';
+	if ( !empty( $_POST ) && ( isset( $_POST['user_url'] ) && sanitize_url( wp_unslash( $_POST['user_url'] ) ) === 'https://example.com/' ) ) {
+		$user_login = isset( $_POST['user_login'] ) ? sanitize_user( wp_unslash( $_POST['user_login'] ) ) : '';
+		$user_email = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
 		$register_error = register_new_user( $user_login, $user_email );
 		if ( !is_wp_error( $register_error ) ) {
-			$redirect_to = !empty( $_POST['redirect_to'] ) ? $_POST['redirect_to'] : site_url( 'wp-login.php?checkemail=registered' );
+			$redirect_to = !empty( $_POST['redirect_to'] ) ? sanitize_url( wp_unslash( $_POST['redirect_to'] ) ) : site_url( 'wp-login.php?checkemail=registered' );
 			wp_safe_redirect( $redirect_to );
 			exit;
 		}
@@ -866,29 +904,28 @@ function ds_login() {
 	$secure_cookie = '';
 	$interim_login = isset( $_REQUEST['interim-login'] );
 	if ( !empty( $_REQUEST['redirect_to'] ) ) {
-		$redirect_to = $_REQUEST['redirect_to'];
-		// redirect to https if user wants SSL
-		if ( $secure_cookie && false !== strpos( $redirect_to, 'wp-admin' ) )
+		$redirect_to = sanitize_url( wp_unslash( $_REQUEST['redirect_to'] ) );
+		if ( $secure_cookie && false !== strpos( $redirect_to, 'wp-admin' ) ) {
 			$redirect_to = preg_replace( '|^http://|', 'https://', $redirect_to );
+		}
 	} else {
 		$redirect_to = admin_url();
 	}
 	$reauth = empty( $_REQUEST['reauth'] ) ? false : true;
 	if ( isset( $_POST['log'] ) || isset( $_GET['testcookie'] ) ) {
 		$user = wp_signon( array(), $secure_cookie );
-		$redirect_to = apply_filters( 'login_redirect', $redirect_to, isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : '', $user );
-		// $user = wp_get_current_user();
+		$redirect_to = apply_filters( 'login_redirect', $redirect_to, isset( $_REQUEST['redirect_to'] ) ? sanitize_url( wp_unslash( $_REQUEST['redirect_to'] ) ) : '', $user );
 		if ( !is_wp_error( $user ) && !$reauth ) {
-			if ( ( empty( $redirect_to ) || $redirect_to == 'wp-admin/' || $redirect_to == admin_url() ) ) {
-				// If the user doesn't belong to a blog, send them to user admin. If the user can't edit posts, send them to their profile.
-				if ( is_multisite() && !get_active_blog_for_user( $user->ID ) && !is_super_admin( $user->ID ) )
+			if ( ( empty( $redirect_to ) || $redirect_to === 'wp-admin/' || $redirect_to === admin_url() ) ) {
+				if ( is_multisite() && !get_active_blog_for_user( $user->ID ) && !is_super_admin( $user->ID ) ) {
 					$redirect_to = user_admin_url();
-				elseif ( is_multisite() && !$user->has_cap( 'read' ) )
+				} elseif ( is_multisite() && !$user->has_cap( 'read' ) ) {
 					$redirect_to = get_dashboard_url( $user->ID );
-				elseif ( !$user->has_cap( 'edit_posts' ) )
+				} elseif ( !$user->has_cap( 'edit_posts' ) ) {
 					$redirect_to = $user->has_cap( 'read' ) ? admin_url( 'profile.php' ) : home_url();
 					wp_redirect( $redirect_to );
-				exit;
+					exit;
+				}
 			}
 			wp_safe_redirect( $redirect_to );
 			exit;
@@ -898,11 +935,11 @@ function ds_login() {
 }
 
 function ds_login_url( $url ) {
-	if ( get_option( 'ds_enable_custom_login', '' ) == 'yes' and !is_user_logged_in() ) {
+	if ( get_option( 'ds_enable_custom_login', '' ) === 'yes' && !is_user_logged_in() ) {
 		global $wp_query;
 		$wp_query->set_404();
 		status_header( 404 );
-		include( get_query_template( '404' ) );
+		include get_query_template( '404' );
 		exit;
 	}
 	return $url;
@@ -910,36 +947,36 @@ function ds_login_url( $url ) {
 add_filter( 'login_url', 'ds_login_url', 10, 2 );
 
 function ds_logout_url( $url, $redirect ) {
-	if ( get_option( 'ds_enable_custom_login', '' ) == 'yes' )
+	if ( get_option( 'ds_enable_custom_login', '' ) === 'yes' ) {
 		$url = home_url( 'logout' );
+	}
 	return $url;
 }
 add_filter( 'logout_url', 'ds_logout_url', 10, 2 );
 
-// enable custom login module 
 function ds_custom_login_module() {
-	if ( get_option( 'ds_login_type', '' ) == "username" ) {
+	$login_type = get_option( 'ds_login_type', '' );
+	if ( $login_type === 'username' ) {
 		remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
-	} else if ( get_option( 'ds_login_type', '' ) == "email" ) {
+	} elseif ( $login_type === 'email' ) {
 		remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
 	}
 }
 add_action( 'init', 'ds_custom_login_module' );
 
-// add_filter( 'gettext', 'ds_login_text' );
 function ds_login_text( $translating ) {
-	if ( get_option( 'ds_login_type', '' ) == "username" ) {	
+	$login_type = get_option( 'ds_login_type', '' );
+	if ( $login_type === 'username' ) {
 		return str_ireplace( 'Username or Email Address', 'Username', $translating );
-	} else if ( get_option( 'ds_login_type', '' ) == "email" ) {
+	} elseif ( $login_type === 'email' ) {
 		return str_ireplace( 'Username or Email Address', 'Email Address', $translating );
 	} else {
 		return $translating;
 	}
 }
 
-// add menu option for login/logout links
 function ds_add_nav_menu_metabox() {
-	if ( get_option( 'ds_enable_custom_login', '' ) == 'yes' ) {
+	if ( get_option( 'ds_enable_custom_login', '' ) === 'yes' ) {
 		add_meta_box( 'ds_menu_option', 'Dam Spam', 'ds_nav_menu_metabox', 'nav-menus', 'side', 'default' );
 	}
 }
@@ -951,45 +988,28 @@ function ds_nav_menu_metabox( $object ) {
 		'#ds-nav-login'    => esc_html__( 'Log In', 'dam-spam' ),
 		'#ds-nav-logout'   => esc_html__( 'Log Out', 'dam-spam' ),
 		'#ds-nav-register' => esc_html__( 'Register', 'dam-spam' ),
-		'#ds-nav-loginout' => esc_html__( 'Log In', 'dam-spam' ) . '/' . esc_html__( 'Log Out', 'dam-spam' )
+		'#ds-nav-loginout' => esc_html__( 'Log In', 'dam-spam' ) . '/' . esc_html__( 'Log Out', 'dam-spam' ),
 	);
-	$temp = ( object ) array(
-				'ID'			   => 1,
-				'object_id'		   => 1,
-				'type_label'	   => '',
-				'title'			   => '',
-				'url'			   => '',
-				'type'			   => 'custom',
-				'object'		   => 'ds-slug',
-				'db_id'			   => 0,
-				'menu_item_parent' => 0,
-				'post_parent'	   => 0,
-				'target'		   => '',
-				'attr_title'	   => '',
-				'description'	   => '',
-				'classes'		   => array(),
-				'xfn'			   => '',
-			);
-	// create an array of objects that imitate post objects
 	$ds_items = array();
 	$i = 0;
 	foreach ( $elems as $k => $v ) {
-		$ds_items[$i] = ( object ) array();
-		$ds_items[$i]->ID				 = 1;
-		$ds_items[$i]->url 			 = esc_attr( $k );
-		$ds_items[$i]->title 			 = esc_attr( $v );
-		$ds_items[$i]->object_id		 = esc_attr( $k );
-		$ds_items[$i]->type_label 		 = "Dynamic Link";
-		$ds_items[$i]->type 			 = 'custom';
-		$ds_items[$i]->object 			 = 'ds-slug';
-		$ds_items[$i]->db_id 			 = 0;
-		$ds_items[$i]->menu_item_parent = 0;
-		$ds_items[$i]->post_parent 	 = 0;
-		$ds_items[$i]->target 			 = '';
-		$ds_items[$i]->attr_title 		 = '';
-		$ds_items[$i]->description 	 = '';
-		$ds_items[$i]->classes 		 = array();
-		$ds_items[$i]->xfn 			 = '';
+		$ds_items[ $i ] = (object) array(
+			'ID'               => 1,
+			'url'              => esc_attr( $k ),
+			'title'            => esc_attr( $v ),
+			'object_id'        => esc_attr( $k ),
+			'type_label'       => 'Dynamic Link',
+			'type'             => 'custom',
+			'object'           => 'ds-slug',
+			'db_id'            => 0,
+			'menu_item_parent' => 0,
+			'post_parent'      => 0,
+			'target'           => '',
+			'attr_title'       => '',
+			'description'      => '',
+			'classes'          => array(),
+			'xfn'              => '',
+		);
 		$i++;
 	}
 	$walker = new Walker_Nav_Menu_Checklist( array() );
@@ -997,7 +1017,7 @@ function ds_nav_menu_metabox( $object ) {
 	<div id="ds-div">
 		<div id="tabs-panel-ds-all" class="tabs-panel tabs-panel-active">
 			<ul id="ds-checklist-pop" class="categorychecklist form-no-clear" >
-				<?php echo walk_nav_menu_tree( array_map( 'wp_setup_nav_menu_item', $ds_items ), 0, ( object ) array( 'walker' => $walker ) ); ?>
+				<?php echo walk_nav_menu_tree( array_map( 'wp_setup_nav_menu_item', $ds_items ), 0, (object) array( 'walker' => $walker ) ); ?>
 			</ul>
 			<p class="button-controls">
 				<span class="add-to-menu">
@@ -1012,7 +1032,7 @@ function ds_nav_menu_metabox( $object ) {
 
 function ds_nav_menu_type_label( $menu_item ) {
 	$elems = array( '#ds-nav-login', '#ds-nav-logout', '#ds-nav-register', '#ds-nav-loginout' );
-	if ( isset( $menu_item->object, $menu_item->url ) && 'custom' == $menu_item->object && in_array( $menu_item->url, $elems ) ) {
+	if ( isset( $menu_item->object, $menu_item->url ) && 'custom' === $menu_item->object && in_array( $menu_item->url, $elems ) ) {
 		$menu_item->type_label = 'Dynamic Link';
 	}
 	return $menu_item;
@@ -1022,81 +1042,97 @@ add_filter( 'wp_setup_nav_menu_item', 'ds_nav_menu_type_label' );
 function ds_loginout_title( $title ) {
 	$titles = explode( '/', $title );
 	if ( !is_user_logged_in() ) {
-		return esc_html( isset( $titles[0] ) ? $titles[0]: esc_html__( 'Log In', 'dam-spam' ) );
+		return esc_html( isset( $titles[0] ) ? $titles[0] : esc_html__( 'Log In', 'dam-spam' ) );
 	} else {
-		return esc_html( isset($titles[1] ) ? $titles[1] : esc_html__( 'Log Out', 'dam-spam' ) );
+		return esc_html( isset( $titles[1] ) ? $titles[1] : esc_html__( 'Log Out', 'dam-spam' ) );
 	}
 }
 
 function ds_setup_nav_menu_item( $item ) {
 	global $pagenow;
-	if ( $pagenow != 'nav-menus.php' && !defined( 'DOING_AJAX' ) && isset( $item->url ) && strstr( $item->url, '#ds-nav' ) and get_option( 'ds_enable_custom_login', '' ) != 'yes' ) {
-		$item->_invalid = true;	
-	} else if ( $pagenow != 'nav-menus.php' && !defined( 'DOING_AJAX' ) && isset( $item->url ) && strstr( $item->url, '#ds-nav' ) != '' ) {	
-		$login_url 	= get_permalink( get_page_by_path( 'login' ) );
+	if ( $pagenow !== 'nav-menus.php' && !defined( 'DOING_AJAX' ) && isset( $item->url ) && strstr( $item->url, '#ds-nav' ) && get_option( 'ds_enable_custom_login', '' ) !== 'yes' ) {
+		$item->_invalid = true;
+	} elseif ( $pagenow !== 'nav-menus.php' && !defined( 'DOING_AJAX' ) && isset( $item->url ) && strstr( $item->url, '#ds-nav' ) !== '' ) {
+		$login_url = get_permalink( get_page_by_path( 'login' ) );
 		$logout_url = get_permalink( get_page_by_path( 'logout' ) );
-		switch( $item->url ) {
+		switch ( $item->url ) {
 			case '#ds-nav-login':
 				$item->url = get_permalink( get_page_by_path( 'login' ) );
-				$item->_invalid = ( is_user_logged_in() ) ?  true : false;
+				$item->_invalid = ( is_user_logged_in() ) ? true : false;
 				break;
 			case '#ds-nav-logout':
 				$item->url = get_permalink( get_page_by_path( 'logout' ) );
-				$item->_invalid = ( !is_user_logged_in() ) ?  true : false;
+				$item->_invalid = ( !is_user_logged_in() ) ? true : false;
 				break;
 			case '#ds-nav-register':
 				$item->url = get_permalink( get_page_by_path( 'register' ) );
-				$item->_invalid = ( is_user_logged_in() ) ?  true : false;
-			break;
-			default: 
-			$item->url = ( is_user_logged_in() ) ? $logout_url : $login_url;
-			$item->title = ds_loginout_title( $item->title );
+				$item->_invalid = ( is_user_logged_in() ) ? true : false;
+				break;
+			default:
+				$item->url = ( is_user_logged_in() ) ? $logout_url : $login_url;
+				$item->title = ds_loginout_title( $item->title );
 		}
 	}
 	return $item;
 }
 add_filter( 'wp_setup_nav_menu_item', 'ds_setup_nav_menu_item' );
 
-// enable limit login attempts
 function ds_limit_login_attempts() {
-	if ( empty( $_POST['ds_login_setting_placeholder'] ) || 'ds_login_setting' != $_POST['ds_login_setting_placeholder'] )
+	if ( empty( $_POST['ds_login_setting_placeholder'] ) || 'ds_login_setting' !== $_POST['ds_login_setting_placeholder'] ) {
 		return;
-	if ( !wp_verify_nonce( $_POST['ds_login_type_nonce'], 'ds_login_type_nonce' ) )
+	}
+	if ( !isset( $_POST['ds_login_type_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_login_type_nonce'] ) ), 'ds_login_type_nonce' ) ) {
 		return;
-	if ( !current_user_can( 'manage_options' ) )
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
 		return;
-
-	if ( isset( $_POST['ds_login_attempts'] ) and $_POST['ds_login_attempts'] == 'yes' ) {
+	}
+	if ( isset( $_POST['ds_login_attempts'] ) && sanitize_text_field( wp_unslash( $_POST['ds_login_attempts'] ) ) === 'yes' ) {
 		update_option( 'ds_login_attempts', 'yes' );
 	} else {
 		update_option( 'ds_login_attempts', 'no' );
 	}
-	update_option( 'ds_login_attempts_threshold', $_POST['ds_login_attempts_threshold'] );
-	update_option( 'ds_login_attempts_duration', $_POST['ds_login_attempts_duration'] );
-	update_option( 'ds_login_attempts_unit', $_POST['ds_login_attempts_unit'] );
-	update_option( 'ds_login_lockout_duration', $_POST['ds_login_lockout_duration'] );
-	update_option( 'ds_login_lockout_unit', $_POST['ds_login_lockout_unit'] );
+	if ( isset( $_POST['ds_login_attempts_threshold'] ) ) {
+		update_option( 'ds_login_attempts_threshold', absint( $_POST['ds_login_attempts_threshold'] ) );
+	}
+	if ( isset( $_POST['ds_login_attempts_duration'] ) ) {
+		update_option( 'ds_login_attempts_duration', absint( $_POST['ds_login_attempts_duration'] ) );
+	}
+	if ( isset( $_POST['ds_login_attempts_unit'] ) ) {
+		update_option( 'ds_login_attempts_unit', sanitize_text_field( wp_unslash( $_POST['ds_login_attempts_unit'] ) ) );
+	}
+	if ( isset( $_POST['ds_login_lockout_duration'] ) ) {
+		update_option( 'ds_login_lockout_duration', absint( $_POST['ds_login_lockout_duration'] ) );
+	}
+	if ( isset( $_POST['ds_login_lockout_unit'] ) ) {
+		update_option( 'ds_login_lockout_unit', sanitize_text_field( wp_unslash( $_POST['ds_login_lockout_unit'] ) ) );
+	}
 }
 add_action( 'admin_init', 'ds_limit_login_attempts' );
 
 function ds_authenticate( $user, $username, $password ) {
 	$field = is_email( $username ) ? 'email' : 'login';
-	$time  = time();
-	if ( !$userdata = get_user_by( $field, $username ) )
+	$time = time();
+	$userdata = get_user_by( $field, $username );
+	if ( !$userdata ) {
 		return $user;
-	if ( ds_is_user_locked( $userdata->ID ) && get_option( 'ds_login_attempts', 'no' ) === 'yes'  ) {
-		if ( $expiration = ds_get_user_lock_expiration( $userdata->ID ) ) {
+	}
+	if ( ds_is_user_locked( $userdata->ID ) && get_option( 'ds_login_attempts', 'no' ) === 'yes' ) {
+		$expiration = ds_get_user_lock_expiration( $userdata->ID );
+		if ( $expiration ) {
+			// translators: %s is the time remaining until the account is unlocked
 			return new WP_Error( 'locked_account', sprintf( esc_html__( '<strong>ERROR</strong>: This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) );
 		} else {
 			return new WP_Error( 'locked_account', esc_html__( '<strong>ERROR</strong>: This account has been locked.', 'dam-spam' ) );
 		}
-	} elseif ( is_wp_error( $user ) && 'incorrect_password' == $user->get_error_code() && get_option( 'ds_login_attempts', 'no') === 'yes' ) {
+	} elseif ( is_wp_error( $user ) && 'incorrect_password' === $user->get_error_code() && get_option( 'ds_login_attempts', 'no' ) === 'yes' ) {
 		ds_add_failed_login_attempt( $userdata->ID );
-		$attempts = get_user_meta( $userdata->ID, 'ds_failed_login_attempts', true);
+		$attempts = get_user_meta( $userdata->ID, 'ds_failed_login_attempts', true );
 		if ( count( $attempts ) >= ( get_option( 'ds_login_attempts_threshold', 5 ) * 2 ) ) {
 			$lockout_expiry = '+' . get_option( 'ds_login_lockout_duration', 24 ) . ' ' . get_option( 'ds_login_lockout_unit', 'hour' );
 			$expiration = strtotime( $lockout_expiry );
 			ds_lock_user( $userdata->ID, $expiration );
+			// translators: %s is the time remaining until the account is unlocked
 			return new WP_Error( 'locked_account', sprintf( esc_html__( '<strong>ERROR</strong>: This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) );
 		}
 	}
@@ -1106,25 +1142,34 @@ add_action( 'authenticate', 'ds_authenticate', 100, 3 );
 
 function ds_add_failed_login_attempt( $user_id ) {
 	$new_attempts = array();
-	$threshold = '-'. get_option( 'ds_login_attempts_duration', 5 ) . ' ' . get_option( 'ds_login_attempts_unit', 'hour' );
+	$threshold = '-' . get_option( 'ds_login_attempts_duration', 5 ) . ' ' . get_option( 'ds_login_attempts_unit', 'hour' );
 	$threshold_date_time = strtotime( $threshold );
 	$attempts = get_user_meta( $user_id, 'ds_failed_login_attempts', true );
-	if ( !is_array( $attempts ) )
+	if ( !is_array( $attempts ) ) {
 		$attempts = array();
-	$attempts[] = array( 'time' => time(), 'ip' => $_SERVER['REMOTE_ADDR'] );
-	foreach( $attempts as $a ) {
-		if ( $threshold_date_time < $a['time'] )
+	}
+	$remote_addr = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+	$attempts[] = array(
+		'time' => time(),
+		'ip'   => $remote_addr,
+	);
+	foreach ( $attempts as $a ) {
+		if ( $threshold_date_time < $a['time'] ) {
 			$new_attempts[] = $a;
+		}
 	}
 	update_user_meta( $user_id, 'ds_failed_login_attempts', array() );
 	update_user_meta( $user_id, 'ds_failed_login_attempts', $new_attempts );
 }
 
 function ds_is_user_locked( $user_id ) {
-	if ( get_user_meta( $user_id, 'ds_is_locked', true ) == false )
+	if ( get_user_meta( $user_id, 'ds_is_locked', true ) === false ) {
 		return false;
-	if ( !$expires = ds_get_user_lock_expiration( $user_id ) )
+	}
+	$expires = ds_get_user_lock_expiration( $user_id );
+	if ( !$expires ) {
 		return true;
+	}
 	$time = time();
 	if ( $time > $expires ) {
 		ds_unlock_user( $user_id );
@@ -1137,7 +1182,7 @@ function ds_get_user_lock_expiration( $user_id ) {
 	return get_user_meta( $user_id, 'ds_lock_expiration', true );
 }
 
-function ds_lock_user ( $user_id, $expiration ) {	
+function ds_lock_user( $user_id, $expiration ) {
 	update_user_meta( $user_id, 'ds_is_locked', true );
 	update_user_meta( $user_id, 'ds_lock_expiration', $expiration );
 	update_user_meta( $user_id, 'ds_failed_login_attempts', array() );
@@ -1149,76 +1194,96 @@ function ds_unlock_user( $user_id ) {
 	update_user_meta( $user_id, 'ds_failed_login_attempts', array() );
 }
 
-// export that generates a .json file of the shop settings
-function ds_proceds_settings_export() {
-	if ( empty( $_POST['ds_action'] ) || 'export_settings' != $_POST['ds_action'] )
+function ds_process_settings_export() {
+	if ( empty( $_POST['ds_action'] ) || 'export_settings' !== $_POST['ds_action'] ) {
 		return;
-	if ( !wp_verify_nonce( $_POST['ds_export_nonce'], 'ds_export_nonce' ) )
+	}
+	if ( !isset( $_POST['ds_export_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_export_nonce'] ) ), 'ds_export_nonce' ) ) {
 		return;
-	if ( !current_user_can( 'manage_options' ) )
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
 		return;
-	$settings = get_option( 'ds_settings' );
-	$options  = ds_get_options();
+	}
+	$options = ds_get_options();
 	ignore_user_abort( true );
 	nocache_headers();
 	header( 'Content-Type: application/json; charset=utf-8' );
-	header( 'Content-Disposition: attachment; filename=ds-settings-export-' . date( 'm-d-Y H:i:s' ) . '.json' );
-	header( "Expires: 0" );
-	echo json_encode( $options );
+	header( 'Content-Disposition: attachment; filename=ds-settings-export-' . gmdate( 'm-d-Y-H-i-s' ) . '.json' );
+	header( 'Expires: 0' );
+	echo wp_json_encode( $options );
 	exit;
 }
-add_action( 'admin_init', 'ds_proceds_settings_export' );
+add_action( 'admin_init', 'ds_process_settings_export' );
 
-// settings import from a json file
-function ds_proceds_settings_import() {
-	if ( empty( $_POST['ds_action'] ) || 'import_settings' != $_POST['ds_action'] )
+function ds_process_settings_import() {
+	if ( empty( $_POST['ds_action'] ) || 'import_settings' !== $_POST['ds_action'] ) {
 		return;
-	if ( !wp_verify_nonce( $_POST['ds_import_nonce'], 'ds_import_nonce' ) )
+	}
+	if ( !isset( $_POST['ds_import_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_import_nonce'] ) ), 'ds_import_nonce' ) ) {
 		return;
-	if ( !current_user_can( 'manage_options' ) )
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
 		return;
-	// $extension = end( explode( '.', $_FILES['import_file']['name'] ) );
-	$extension = $_FILES['import_file']['type'] ;
-	// if ( $extension != 'json' ) {
-	if ( $extension != 'application/json' ) {
+	}
+	if ( !isset( $_FILES['import_file'] ) || !isset( $_FILES['import_file']['type'] ) ) {
+		wp_die( esc_html__( 'Please upload a file to import', 'dam-spam' ) );
+	}
+	$extension = sanitize_text_field( wp_unslash( $_FILES['import_file']['type'] ) );
+	if ( $extension !== 'application/json' ) {
 		wp_die( esc_html__( 'Please upload a valid .json file', 'dam-spam' ) );
 	}
-	$import_file = $_FILES['import_file']['tmp_name'];
+	$import_file = isset( $_FILES['import_file']['tmp_name'] ) ? sanitize_text_field( wp_unslash( $_FILES['import_file']['tmp_name'] ) ) : '';
 	if ( empty( $import_file ) ) {
 		wp_die( esc_html__( 'Please upload a file to import', 'dam-spam' ) );
 	}
-	// retrieve the settings from the file and convert the json object to an array
-	$options = ( array ) json_decode( file_get_contents( $import_file ) );	
-	ds_set_options( $options );
-	add_action( 'admin_notices', 'ds_admin_notice_success' );
-	// wp_safe_redirect( admin_url( 'admin.php?page=ds-advanced' ) ); 
-	// add_action( 'admin_notices', 'ds_admin_notice_success' );
-	// exit;
-}
-add_action( 'admin_init', 'ds_proceds_settings_import' );
-
-// settings reset from a json file
-function ds_proceds_settings_reset() {
-	if ( empty( $_POST['ds_action'] ) || 'reset_settings' != $_POST['ds_action'] )
-		return;
-	if ( !wp_verify_nonce( $_POST['ds_reset_nonce'], 'ds_reset_nonce' ) )
-		return;
-	if ( !current_user_can( 'manage_options' ) )
-		return;
-	$url	 = DS_PLUGIN_FILE . '/modules/default.json'; 
-	$options = ( array ) json_decode( file_get_contents( $url ) );
+	global $wp_filesystem;
+	if ( empty( $wp_filesystem ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+	}
+	$file_contents = $wp_filesystem->get_contents( $import_file );
+	if ( false === $file_contents ) {
+		wp_die( esc_html__( 'Error reading import file', 'dam-spam' ) );
+	}
+	$options = (array) json_decode( $file_contents );
 	ds_set_options( $options );
 	add_action( 'admin_notices', 'ds_admin_notice_success' );
 }
-add_action( 'admin_init', 'ds_proceds_settings_reset' );
+add_action( 'admin_init', 'ds_process_settings_import' );
 
-// shortcodes to print the username, name, and email
+function ds_process_settings_reset() {
+	if ( empty( $_POST['ds_action'] ) || 'reset_settings' !== $_POST['ds_action'] ) {
+		return;
+	}
+	if ( !isset( $_POST['ds_reset_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_reset_nonce'] ) ), 'ds_reset_nonce' ) ) {
+		return;
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	$url = DS_PLUGIN_FILE . '/modules/config/default.json';
+	global $wp_filesystem;
+	if ( empty( $wp_filesystem ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+	}
+	$file_contents = $wp_filesystem->get_contents( $url );
+	if ( false === $file_contents ) {
+		wp_die( esc_html__( 'Error reading default settings file', 'dam-spam' ) );
+	}
+	$options = (array) json_decode( $file_contents );
+	ds_set_options( $options );
+	add_action( 'admin_notices', 'ds_admin_notice_success' );
+}
+add_action( 'admin_init', 'ds_process_settings_reset' );
+
 function show_loggedin_function( $atts ) {
 	global $current_user, $user_login;
 	wp_get_current_user();
 	add_filter( 'widget_text', 'do_shortcode' );
-	if ( $user_login ) 
+	if ( $user_login ) {
 		return $current_user->display_name;
+	}
 }
 add_shortcode( 'show-displayname-as', 'show_loggedin_function' );
 
@@ -1226,8 +1291,9 @@ function show_fullname_function( $atts ) {
 	global $current_user, $user_login;
 	wp_get_current_user();
 	add_filter( 'widget_text', 'do_shortcode' );
-	if ( $user_login ) 
+	if ( $user_login ) {
 		return $current_user->user_firstname . ' ' . $current_user->user_lastname;
+	}
 }
 add_shortcode( 'show-fullname-as', 'show_fullname_function' );
 
@@ -1235,8 +1301,9 @@ function show_id_function( $atts ) {
 	global $current_user, $user_login;
 	wp_get_current_user();
 	add_filter( 'widget_text', 'do_shortcode' );
-	if ( $user_login ) 
+	if ( $user_login ) {
 		return $current_user->ID;
+	}
 }
 add_shortcode( 'show-id-as', 'show_id_function' );
 
@@ -1244,8 +1311,9 @@ function show_level_function( $atts ) {
 	global $current_user, $user_login;
 	wp_get_current_user();
 	add_filter( 'widget_text', 'do_shortcode' );
-	if ( $user_login ) 
-		return $current_user->user_level;	
+	if ( $user_login ) {
+		return $current_user->user_level;
+	}
 }
 add_shortcode( 'show-level-as', 'show_level_function' );
 
@@ -1253,47 +1321,58 @@ function show_email_function( $atts ) {
 	global $current_user, $user_login;
 	wp_get_current_user();
 	add_filter( 'widget_text', 'do_shortcode' );
-	if ( $user_login ) 
+	if ( $user_login ) {
 		return $current_user->user_email;
+	}
 }
 add_shortcode( 'show-email-as', 'show_email_function' );
 
-function ds_getRemote_ip_address() {
-	if ( !empty($_SERVER['HTTP_CLIENT_IP'] ) ) {
-		return $_SERVER['HTTP_CLIENT_IP'];
-	} else if ( !empty($_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-		return $_SERVER['HTTP_X_FORWARDED_FOR'];
+function ds_get_remote_ip_address() {
+	if ( !empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_CLIENT_IP'] ) );
+	} elseif ( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
 	}
-	return $_SERVER['REMOTE_ADDR'];
+	return isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 }
 
 function ds_check_proxy() {
 	$timeout = 5;
-	$banOnProbability = 0.99;
-	$ip = ds_getRemote_ip_address();
-    $ch = curl_init();
-	curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-	curl_setopt( $ch, CURLOPT_TIMEOUT, $timeout );
-	curl_setopt( $ch, CURLOPT_URL, "https://check.getipintel.net/check.php?ip=$ip&contact=$DS_MAIL" );
-	$response = curl_exec( $ch );
-	if ( $response > $banOnProbability ) {
-		$is_vpn = true;
-	} else {
-		if ( $response < 0 || strcmp( $response, "" ) == 0 ) {
-		}
-		$is_vpn = false;		
+	$ban_on_probability = 0.99;
+	$ip = ds_get_remote_ip_address();
+	$contact_email = defined( 'DS_MAIL' ) ? DS_MAIL : get_option( 'admin_email' );
+	$url = add_query_arg(
+		array(
+			'ip'      => $ip,
+			'contact' => $contact_email,
+		),
+		'https://check.getipintel.net/check.php'
+	);
+	$response = wp_remote_get(
+		$url,
+		array(
+			'timeout' => $timeout,
+		)
+	);
+	if ( is_wp_error( $response ) ) {
+		return false;
 	}
-	return $is_vpn;
+	$body = wp_remote_retrieve_body( $response );
+	if ( $body > $ban_on_probability ) {
+		return true;
+	}
+	return false;
 }
 
 function ds_disable_activities() {
-	if ( get_option( 'ds_allow_vpn' ) == 'no' ) {
+	if ( get_option( 'ds_allow_vpn' ) === 'no' ) {
 		return;
 	}
-    // disable login, checkout, comments
-	if ( ( substr_count( $_SERVER['REQUEST_URI'], 'wp-login' ) || get_permalink() === wp_login_url() || substr_count( $_SERVER['REQUEST_URI'], 'checkout' ) ) || substr_count( $_SERVER['REQUEST_URI'], 'wp-comments-post' )) {
+	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+	$login_url = wp_login_url();
+	if ( substr_count( $request_uri, 'wp-login' ) || get_permalink() === $login_url || substr_count( $request_uri, 'checkout' ) || substr_count( $request_uri, 'wp-comments-post' ) ) {
 		$is_vpn = ds_check_proxy();
-		if ( $is_vpn == true ) {
+		if ( $is_vpn === true ) {
 			status_header( 403 );
 			wp_die( esc_html__( 'You cannot access this page.', 'dam-spam' ) );
 		}

@@ -1,8 +1,8 @@
 <?php
 
 if ( !defined( 'ABSPATH' ) ) {
-	http_response_code( 404 );
-	die();
+	status_header( 404 );
+	exit;
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
@@ -12,40 +12,36 @@ if ( !current_user_can( 'manage_options' ) ) {
 ds_fix_post_vars();
 $stats   = ds_get_stats();
 extract( $stats );
-$now	 = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
+$now	 = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 $options = ds_get_options();
 extract( $options );
-// temp: not used in file
 $nonce   = '';
 $ajaxurl = admin_url( 'admin-ajax.php' );
 
-// update options
 if ( array_key_exists( 'ds_control', $_POST ) ) {
-	$nonce = $_POST['ds_control'];
+	$nonce = isset( $_POST['ds_control'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_control'] ) ) : '';
 }
 
 if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
 	if ( array_key_exists( 'update_options', $_POST ) ) {
 		if ( array_key_exists( 'ds_cache', $_POST ) ) {
-			$ds_cache			= stripslashes( sanitize_text_field( $_POST['ds_cache'] ) );
+			$ds_cache = isset( $_POST['ds_cache'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_cache'] ) ) : '';
 			$options['ds_cache'] = $ds_cache;
 		}
 		if ( array_key_exists( 'ds_good', $_POST ) ) {
-			$ds_good			   = stripslashes( sanitize_text_field( $_POST['ds_good'] ) );
+			$ds_good = isset( $_POST['ds_good'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_good'] ) ) : '';
 			$options['ds_good'] = $ds_good;
 		}
 		ds_set_options( $options );
 	}
 }
 
-// clear the cache
 if ( array_key_exists( 'ds_control', $_POST ) ) {
-	$nonce = $_POST['ds_control'];
+	$nonce = isset( $_POST['ds_control'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_control'] ) ) : '';
 }
 
 if ( wp_verify_nonce( $nonce, 'ds_update' ) ) {
 	if ( array_key_exists( 'ds_clear_cache', $_POST ) ) {
-		// clear the cache
 		$badips		      = array();
 		$goodips		  = array();
 		$stats['badips']  = $badips;
@@ -130,15 +126,13 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<tr>
 				<?php if ( count( $badips ) > 0 ) { ?>
 					<td valign="top" id="badips"><?php
-						// use the be_load to get badips
-						$show = be_load( 'ds_get_bcache', 'x', $stats, $options );
+						$show = ds_load( 'get_bad_cache', 'x', $stats, $options );
 						echo wp_kses_post( $show );
 					?></td>
 				<?php } ?>
 				<?php if ( count( $goodips ) > 0 ) { arsort( $goodips ); ?>
 					<td valign="top" id="goodips"><?php
-						// use the be_load to get badips
-						$show = be_load( 'ds_get_gcache', 'x', $stats, $options );
+						$show = ds_load( 'get_good_cache', 'x', $stats, $options );
 						echo wp_kses_post( $show );
 						?>
 					</td>

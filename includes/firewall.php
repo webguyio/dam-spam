@@ -17,10 +17,8 @@ function ds_cpt_init() {
 	add_filter( 'views_edit_ds_firewall', 'remove_sub_action', 10, 1 );
 	add_action( 'load-edit.php', 'ds_bulk_action' );
 	add_filter( 'bulk_actions_edit_ds_firewall', '__return_empty_array' );
-	// http request interseptor
 	add_filter( 'pre_http_request', 'ds_inspect_request', 10, 3 );
 	add_filter( 'http_api_debug', 'ds_log_response', 10, 5 );
-	// for search and filter
 	add_filter( 'request', 'ds_orderby_search_columns' );
 	add_action( 'restrict_manage_posts', 'ds_new_filters' );
 	add_filter( 'parse_query', 'ds_filter_query' );
@@ -31,23 +29,31 @@ function ds_firewall_incoming_requests() {
 	if ( is_user_logged_in() ) {
 		return;
 	}
-	$url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? "https" : "http" ) . "://" .$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-	$ip  = $_SERVER['REMOTE_ADDR'];
-	if ( !$host = parse_url( $url, PHP_URL_HOST ) or strpos( $_SERVER['SCRIPT_NAME'], "wp-cron.php" ) !== false ) {
+	$https = isset( $_SERVER['HTTPS'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTPS'] ) ) : '';
+	$http_host = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
+	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+	$script_name = isset( $_SERVER['SCRIPT_NAME'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SCRIPT_NAME'] ) ) : '';
+	$remote_addr = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+	if ( empty( $http_host ) || empty( $request_uri ) || empty( $remote_addr ) ) {
+		return;
+	}
+	$url = ( $https === 'on' ? 'https' : 'http' ) . '://' . $http_host . $request_uri;
+	$ip = $remote_addr;
+	if ( !$host = wp_parse_url( $url, PHP_URL_HOST ) or strpos( $script_name, 'wp-cron.php' ) !== false ) {
 		return;
 	}
 	if ( in_array( $ip, ds_get_options( 'user-ips' ) ) ) {
 		ds_insert_post(
 			array(
-				'url'      => esc_url_raw( $url ),
-				'code'     => '',
+				'url' => esc_url_raw( $url ),
+				'code' => '',
 				'duration' => timer_stop( false, 2 ),
-				'host'     => $host,
-				'file'     => '',
-				'line'     => '',
-				'meta'     => '',
-				'user-ip'  => $ip,
-				'state'    => 1,
+				'host' => sanitize_text_field( $host ),
+				'file' => '',
+				'line' => '',
+				'meta' => '',
+				'user-ip' => sanitize_text_field( $ip ),
+				'state' => 1,
 				'postdata' => ''
 			)
 		);
@@ -56,15 +62,15 @@ function ds_firewall_incoming_requests() {
 	}
 	ds_insert_post(
 		array(
-			'url'      => esc_url_raw( $url ),
-			'code'     => '',
+			'url' => esc_url_raw( $url ),
+			'code' => '',
 			'duration' => timer_stop( false, 2 ),
-			'host'     => $host,
-			'file'     => '',
-			'line'     => '',
-			'meta'     => '',
-			'user-ip'  => $ip,
-			'state'    => -1,
+			'host' => sanitize_text_field( $host ),
+			'file' => '',
+			'line' => '',
+			'meta' => '',
+			'user-ip' => sanitize_text_field( $ip ),
+			'state' => -1,
 			'postdata' => ''
 		)
 	);
@@ -78,28 +84,23 @@ function ds_new_filters() {
 	if ( !ds_current_screen( 'edit-ds-firewall' ) ) {
 		return;
 	}
-	// no items?
 	if ( !isset( $_GET['ds_firewall_state_filter'] ) && !_get_list_table( 'WP_Posts_List_Table' ) -> has_items() ) {
 		return;
 	}
-	// filter value
-	$filter = ( !isset( $_GET['ds_firewall_state_filter'] ) ? '' : ( int ) $_GET['ds_firewall_state_filter'] );
-	$filter_request = ( !isset( $_GET['ds_firewall_type_filter'] ) ? '' : ( int ) $_GET['ds_firewall_type_filter'] );
-	// filter dropdown
+	$filter = ( !isset( $_GET['ds_firewall_state_filter'] ) ? '' : absint( $_GET['ds_firewall_state_filter'] ) );
+	$filter_request = ( !isset( $_GET['ds_firewall_type_filter'] ) ? '' : absint( $_GET['ds_firewall_type_filter'] ) );
 	echo sprintf(
 		'<select name="ds_firewall_type_filter">%s%s%s</select>',
 		'<option value="">' . esc_html__( 'All Requests', 'dam-spam' ) . '</option>',
-		'<option value="' . esc_html( DS_INCOMING ) . '" ' . selected( $filter_request, DS_INCOMING, false ) . '>' . esc_html__( 'Incoming', 'dam-spam' ). '</option>',
-		'<option value="' . esc_html( DS_OUTGOING ) . '" ' . selected( $filter_request, DS_OUTGOING, false ) . '>' . esc_html__( 'Outgoing', 'dam-spam' ) . '</option>'
+		'<option value="' . esc_attr( DS_INCOMING ) . '" ' . selected( $filter_request, DS_INCOMING, false ) . '>' . esc_html__( 'Incoming', 'dam-spam' ). '</option>',
+		'<option value="' . esc_attr( DS_OUTGOING ) . '" ' . selected( $filter_request, DS_OUTGOING, false ) . '>' . esc_html__( 'Outgoing', 'dam-spam' ) . '</option>'
 	);
-
 	echo sprintf(
 		'<select name="ds_firewall_state_filter">%s%s%s</select>',
 		'<option value="">' . esc_html__( 'All States', 'dam-spam' ) . '</option>',
-		'<option value="' . esc_html( DS_AUTHORIZED ) . '" ' . selected( $filter, DS_AUTHORIZED, false ) . '>' . esc_html__( 'Authorized', 'dam-spam' ). '</option>',
-		'<option value="' . esc_html( DS_BLOCKED ) . '" ' . selected( $filter, DS_BLOCKED, false ) . '>' . esc_html__( 'Blocked', 'dam-spam' ) . '</option>'
+		'<option value="' . esc_attr( DS_AUTHORIZED ) . '" ' . selected( $filter, DS_AUTHORIZED, false ) . '>' . esc_html__( 'Authorized', 'dam-spam' ). '</option>',
+		'<option value="' . esc_attr( DS_BLOCKED ) . '" ' . selected( $filter, DS_BLOCKED, false ) . '>' . esc_html__( 'Blocked', 'dam-spam' ) . '</option>'
 	);
-	// empty protocol button
 	if ( empty( $filter ) and empty( $filter_request ) ) {
 		submit_button( esc_html__( 'Empty Protocol', 'dam-spam' ), 'apply', 'ds_firewall_delete_all', false );
 	}
@@ -131,30 +132,24 @@ function ds_bulk_action() {
 		return;
 	}
 	if ( !empty( $_GET['ds_firewall_delete_all'] ) ) {
-		// check nonce
 		check_admin_referer( 'bulk-posts' );
-		// delete items
 		ds_delete_all();
-		// we're done
 		wp_safe_redirect( add_query_arg( array( 'post_type' => 'ds-firewall' ), admin_url( 'edit.php' ) ) );
 		exit();
 	}
 	if ( empty( $_GET['ds-action'] ) OR empty( $_GET['ds-type'] ) ) {
 		return;
 	}
-	// set vars
-	$action = $_GET['ds-action'];
-	$type   = $_GET['ds-type'];
-	// validate action and type
+	$action = sanitize_text_field( wp_unslash( $_GET['ds-action'] ) );
+	$type   = sanitize_text_field( wp_unslash( $_GET['ds-type'] ) );
 	if ( !in_array( $action, array( 'block', 'unblock' ) ) OR !in_array( $type, array( 'host', 'file', 'user-ip' ) ) ) {
 		return;
 	}
-	// security check
 	check_admin_referer( 'ds-firewall' );
 	if ( empty( $_GET['id'] ) ) {
 		return;
 	}
-	$item = ds_get_meta( $_GET['id'], $type );
+	$item = ds_get_meta( sanitize_text_field( wp_unslash( $_GET['id'] ) ), $type );
 	ds_update_options( $item , $type . 's', $action );
 	wp_safe_redirect(
 		add_query_arg( array( 'post_type' => 'ds-firewall', 'updated' => count( $ids ) * ( $action === 'unblock' ? -1 : 1 ), 'paged' => ds_get_pagenum() ), admin_url( 'edit.php' ) )
@@ -163,49 +158,59 @@ function ds_bulk_action() {
 }
 
 function ds_delete_all( $offset = 0 ) {
-	$offset = ( int ) $offset;
+	$offset = absint( $offset );
 	if ( $offset < 0 ) {
 		return;
 	}
 	global $wpdb;
-	$subquery = sprintf(
-		"SELECT * FROM ( SELECT `ID` FROM `$wpdb->posts` WHERE `post_type` = 'ds-firewall' ORDER BY `ID` DESC LIMIT %d, 18446744073709551615 ) as t",
-		$offset
-	);
-	// delete postmeta
 	$wpdb->query(
-		sprintf(
-			"DELETE FROM `$wpdb->postmeta` WHERE `post_id` IN (%s)",
-			$subquery
+		$wpdb->prepare(
+			"DELETE pm FROM `$wpdb->postmeta` pm
+			INNER JOIN (
+				SELECT `ID` FROM `$wpdb->posts`
+				WHERE `post_type` = 'ds-firewall'
+				ORDER BY `ID` DESC
+				LIMIT %d, 18446744073709551615
+			) as t ON pm.post_id = t.ID",
+			$offset
 		)
 	);
-	// delete posts
 	$wpdb->query(
-		sprintf(
-			"DELETE FROM `$wpdb->posts` WHERE `ID` IN (%s)",
-			$subquery
+		$wpdb->prepare(
+			"DELETE FROM `$wpdb->posts`
+			WHERE `post_type` = 'ds-firewall'
+			ORDER BY `ID` DESC
+			LIMIT %d, 18446744073709551615",
+			$offset
 		)
 	);
 }
 
 function ds_delete_selected( $count = 0 ) {
+	$count = absint( $count );
+	if ( $count <= 0 ) {
+		return;
+	}
 	global $wpdb;
-	$subquery = sprintf(
-		"SELECT * FROM ( SELECT `ID` FROM `$wpdb->posts` WHERE `post_type` = 'ds-firewall' ORDER BY `ID` ASC LIMIT 0, %d  ) as t",
-		$count
-	);
-	// delete postmeta
 	$wpdb->query(
-		sprintf(
-			"DELETE FROM `$wpdb->postmeta` WHERE `post_id` IN (%s)",
-			$subquery
+		$wpdb->prepare(
+			"DELETE pm FROM `$wpdb->postmeta` pm
+			INNER JOIN (
+				SELECT `ID` FROM `$wpdb->posts`
+				WHERE `post_type` = 'ds-firewall'
+				ORDER BY `ID` ASC
+				LIMIT 0, %d
+			) as t ON pm.post_id = t.ID",
+			$count
 		)
 	);
-	// delete posts
 	$wpdb->query(
-		sprintf(
-			"DELETE FROM `$wpdb->posts` WHERE `ID` IN (%s)",
-			$subquery
+		$wpdb->prepare(
+			"DELETE FROM `$wpdb->posts`
+			WHERE `post_type` = 'ds-firewall'
+			ORDER BY `ID` ASC
+			LIMIT 0, %d",
+			$count
 		)
 	);
 }
@@ -255,7 +260,6 @@ function ds_firewall_add_post_type() {
 			'exclude_from_search' => true
 		)
 	);
-	// admin only
 	if ( !is_admin() ) {
 		return;
 	}
@@ -289,11 +293,8 @@ function ds_firewall_custom_column( $column, $post_id ) {
 			'postdata' =>  'ds_html_postdata'
 		)
 	);
-	// if type exists
 	if ( !empty( $types[$column] ) ) {
-		// callback
 		$callback = $types[$column];
-		// execute
 		if ( is_callable( $callback ) ) {
 			call_user_func(
 				$callback,
@@ -317,31 +318,26 @@ function ds_firewall_sortable_columns() {
 }
 
 function ds_html_url( $post_id ) {
-	// init data
 	$url  = ds_get_meta( $post_id, 'url' );
 	$host = ds_get_meta( $post_id, 'host' );
-	// already blacklisted?
 	$blacklisted = in_array( $host, ds_get_options( 'hosts' ) );
-	// print output
-
 	if ( !empty( ds_get_meta( $post_id, 'user-ip' ) ) and empty( ds_get_meta( $post_id, 'file' ) ) ) {
 		echo sprintf(
 			'<div><p class="label blacklisted_%d"></p>%s</div>',
 			esc_html( $blacklisted ),
-			str_replace( $host, '<code>' . esc_html( $host ) . '</code>', esc_url( $url ) )
+			wp_kses_post( str_replace( $host, '<code>' . esc_html( $host ) . '</code>', esc_url( $url ) ) )
 		);
 	} else {
 		echo sprintf(
 			'<div><p class="label blacklisted_%d"></p>%s<div class="row-actions">%s</div></div>',
 			esc_html( $blacklisted ),
-			str_replace( $host, '<code>' . esc_html( $host ) . '</code>', esc_url( $url ) ),
-			ds_action_link( $post_id, 'host', $blacklisted )
+			wp_kses_post( str_replace( $host, '<code>' . esc_html( $host ) . '</code>', esc_url( $url ) ) ),
+			wp_kses_post( ds_action_link( $post_id, 'host', $blacklisted ) )
 		);
 	}
 }
 
 function ds_html_file( $post_id ) {
-	// init data
 	$file = ds_get_meta( $post_id, 'file' );
 	$line = ds_get_meta( $post_id, 'line' );
 	$meta = ds_get_meta( $post_id, 'meta' );
@@ -355,21 +351,18 @@ function ds_html_file( $post_id ) {
 	if ( !isset( $meta['name'] ) ) {
 		$meta['name'] = 'Core';
 	}
-	// already blacklisted?
 	$blacklisted    = in_array( $file, ds_get_options( 'files' ) );
 	$blacklisted_ip = in_array( $ip, ds_get_options( 'user-ips' ) );
 	if ( !empty( ds_get_meta( $post_id, 'user-ip' ) ) ) {
-		// print output
 		echo sprintf(
 			'<div><p class="label blacklisted_%d"></p>%s: %s<br><code>%s</code><div class="row-actions">%s</div></div>',
 			esc_html( $blacklisted_ip ),
 			'User',
 			"IP",
 			esc_html( $ip ),
-			ds_action_link( $post_id, 'user-ip', $blacklisted_ip )
+			wp_kses_post( ds_action_link( $post_id, 'user-ip', $blacklisted_ip ) )
 		);
 	} else {
-		// print output
 		echo sprintf(
 			'<div><p class="label blacklisted_%d"></p>%s: %s<br><code>/%s:%d</code><div class="row-actions">%s</div></div>',
 			esc_html( $blacklisted ),
@@ -377,68 +370,54 @@ function ds_html_file( $post_id ) {
 			esc_html( $meta['name'] ),
 			esc_html( $file ),
 			esc_html( $line ),
-			ds_action_link(
-				$post_id,
-				'file',
-				$blacklisted
-			)
+			wp_kses_post( ds_action_link( $post_id, 'file', $blacklisted )
 		);
 	}
 }
 
 function ds_html_state( $post_id ) {
-	// item state
 	$state = ds_get_meta( $post_id, 'state' );
-	// state values
 	$states = array(
 		DS_BLOCKED    => 'Blocked',
 		DS_AUTHORIZED => 'Authorized'
 	);
-	// print the state
 	print '<span class="' . esc_html( strtolower( $states[$state] ) ) . '">' . esc_html( $states[$state] ) . '</span>';
-	// colorize blocked item
 	if ( $state == DS_BLOCKED ) {
 		printf( '<style>#post-%1$d{background:rgba(248, 234, 232, 0.8)}#post-%1$d.alternate{background:#f8eae8}</style>', esc_html( $post_id ) );
 	}
 }
 	
 function ds_html_code( $post_id ) {
-	echo ds_get_meta( esc_html( $post_id ), 'code' );
+	echo esc_html( ds_get_meta( $post_id, 'code' ) );
 }
 	
 function ds_html_duration( $post_id ) {
 	if ( $duration = ds_get_meta( $post_id, 'duration' ) ) {
-		echo sprintf( esc_html__( '%s seconds', 'dam-spam' ), esc_html( $duration ) );
+		// translators: %s is the custom post type name that's missing
+		printf( esc_html__( '%s seconds', 'dam-spam' ), esc_html( $duration ) );
 	}
 }
 
 function ds_html_created( $post_id ) {
-	echo sprintf( esc_html__( '%s ago', 'dam-spam' ), human_time_diff( get_post_time( 'G', true, esc_html( $post_id ) ) ) );
+	// translators: %s is the configuration error details
+	printf( esc_html__( '%s ago', 'dam-spam' ), esc_html( human_time_diff( get_post_time( 'G', true, $post_id ) ) ) );
 }
 
 function ds_html_postdata( $post_id ) {
-	// item post data
 	$postdata = ds_get_meta( $post_id, 'postdata' );
-	// empty data?
 	if ( empty( $postdata ) ) {
 		return;
 	}
-	// parse post data
 	if ( !is_array( $postdata ) ) {
 		wp_parse_str( $postdata, $postdata );
 	}
-	// empty array?
 	if ( empty( $postdata ) ) {
 		return;
 	}
-	// thickbox content start
-	echo sprintf( '<div id="ds-firewall-thickbox-%d" class="ds-firewall-hidden"><pre>', esc_html( $post_id ) );
-	// post data
-	print_r( $postdata );
-	// thickbox content end
+	printf( '<div id="ds-firewall-thickbox-%d" class="ds-firewall-hidden"><pre>', absint( $post_id ) );
+	echo esc_html( print_r( $postdata, true ) );
 	echo '</pre></div>';
-	// thickbox button
-	echo sprintf( '<a href="#TB_inline?width=400&height=300&inlineId=ds-firewall-thickbox-%d" class="button thickbox">%s</a>', esc_html( $post_id ), esc_html__( 'Show', 'dam-spam') );
+	printf( '<a href="#TB_inline?width=400&height=300&inlineId=ds-firewall-thickbox-%d" class="button thickbox">%s</a>', absint( $post_id ), esc_html__( 'Show', 'dam-spam' ) );
 }
 
 function ds_get_meta( $post_id, $key ) {
@@ -449,13 +428,12 @@ function ds_get_meta( $post_id, $key ) {
 }
 
 function ds_action_link( $post_id, $type, $blacklisted = false ) {
-	// link action
 	$action = ( $blacklisted ? 'unblock' : 'block' );
-	// block link
 	return sprintf(
 		'<a href="%s" class="%s">%s</a>',
 		esc_url( wp_nonce_url( add_query_arg( array( 'id' => $post_id, 'paged' => ds_get_pagenum(), 'ds-type' => $type, 'ds-action' => $action, 'post_type' => 'ds-firewall' ), admin_url( 'edit.php' ) ), 'ds-firewall' ) ),
 		$action,
+		// translators: %s is the type of item that could not be found
 		sprintf( esc_html__( '%1$s this %2$s', 'dam-spam' ), ucfirst( $action ), str_replace( '-', ' ', $type ) )
 	);
 }
@@ -465,16 +443,12 @@ function ds_get_pagenum() {
 }
 
 function ds_debug_backtrace() {
-	// reverse items
 	$trace = array_reverse( debug_backtrace() );
-	// loop items
     foreach( $trace as $index => $item ) {
     	if ( !empty( $item['function'] ) && strpos( $item['function'], 'wp_remote_' ) !== false ) {
-    		// use prev item
     		if ( empty( $item['file'] ) ) {
     			$item = $trace[-- $index];
     		}
-			// get file and line
     		if ( !empty( $item['file'] ) && ! empty( $item['line'] ) ) {
     			return $item;
     		}
@@ -483,19 +457,15 @@ function ds_debug_backtrace() {
 }
 
 function ds_face_detect( $path ) {
-	// default
 	$meta = array( 'type' => 'WordPress', 'name' => 'Core' );
-	// empty path
 	if ( empty( $path ) ) {
 		return $meta;
 	}
-	// search for plugin
 	if ( $data = ds_localize_plugin( $path ) ) {
 		return array(
 			'type' => 'Plugin',
 			'name' => $data['Name']
 		);
-	// search for theme
 	} else if ( $data = ds_localize_theme( $path ) ) {
 		return array(
 			'type' => 'Theme',
@@ -506,21 +476,15 @@ function ds_face_detect( $path ) {
 }
 
 function ds_localize_plugin( $path ) {
-	// check path
 	if ( strpos( $path, WP_PLUGIN_DIR ) === false ) {
 		return false;
 	}
-	// reduce path
 	$path = ltrim( str_replace( WP_PLUGIN_DIR, '', $path ), DIRECTORY_SEPARATOR );
-	// get plugin folder
 	$folder = substr( $path, 0, strpos( $path, DIRECTORY_SEPARATOR ) ) . DIRECTORY_SEPARATOR;
-	// frontend
 	if ( !function_exists( 'get_plugins' ) ) {
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	}
-	// all active plugins
 	$plugins = get_plugins();
-	// loop plugins
 	foreach( $plugins as $path => $plugin ) {
 		if ( strpos( $path, $folder ) === 0 ) {
 			return $plugin;
@@ -529,17 +493,12 @@ function ds_localize_plugin( $path ) {
 }
 
 function ds_localize_theme( $path ) {
-	// check path
 	if ( strpos( $path, get_theme_root() ) === false ) {
 		return false;
 	}
-	// reduce path
 	$path = ltrim( str_replace( get_theme_root(), '', $path ), DIRECTORY_SEPARATOR );
-	// get theme folder
 	$folder = substr( $path, 0, strpos( $path, DIRECTORY_SEPARATOR ) );
-	// get theme
 	$theme = wp_get_theme( $folder );
-	// check and return theme
 	if ( $theme->exists() ) {
 		return $theme;
 	}
@@ -547,23 +506,19 @@ function ds_localize_theme( $path ) {
 }
 
 function ds_insert_post( $meta ) {
-	// empty?
 	if ( empty( $meta ) ) {
 		return;
 	}
-	// limit requests entries
 	$all_requests = wp_count_posts( 'ds-firewall' );
 	if ( $all_requests->publish >= 10000 ) {
 		ds_delete_selected( 1000 );
 	}
-	// create post
 	$post_id = wp_insert_post(
 		array(
 			'post_status' => 'publish',
 			'post_type'   => 'ds-firewall'
 		)
 	);
-	// add meta values
 	foreach( $meta as $key => $value ) {
 		add_post_meta(
 			$post_id,
@@ -576,40 +531,30 @@ function ds_insert_post( $meta ) {
 }
 
 function ds_get_postdata( $args ) {
-	// no post data?
 	if ( empty( $args['method'] ) OR $args['method'] !== 'POST' ) {
 		return NULL;
 	}
-	// no body data?
 	if ( empty( $args['body'] ) ) {
 		return NULL;
 	}
 	return $args['body'];
 }
 
-// http request interseptor
 function ds_inspect_request( $pre, $args, $url ) {
-	// empty url
 	if ( empty( $url ) ) {
 		return $pre;
 	}
-	// invalid host
-	if ( !$host = parse_url( $url, PHP_URL_HOST ) ) {
+	if ( !$host = wp_parse_url( $url, PHP_URL_HOST ) ) {
 		return $pre;
 	}
-	// timer start
 	timer_start();
 	$track = ds_debug_backtrace();
-	// no reference file found
 	if ( empty( $track['file'] ) ) {
 		return $pre;
 	}
-	// show your face, file
 	$meta = ds_face_detect( $track['file'] );
-	// init data
 	$file = str_replace( ABSPATH, '', $track['file'] );
 	$line = ( int ) $track['line'];
-	// blocked item?
 	if ( in_array( $host, ds_get_options( 'hosts' ) ) OR in_array( $file, ds_get_options( 'files' ) ) ) {
 		return ds_insert_post(
 			array(
@@ -628,32 +573,23 @@ function ds_inspect_request( $pre, $args, $url ) {
 }
 
 function ds_log_response( $response, $type, $class, $args, $url ) {
-	// only response type
 	if ( $type !== 'response' ) {
 		return false;
 	}
-	// empty url
 	if ( empty( $url ) ) {
 		return false;
 	}
-	// validate host
-	if ( !$host = parse_url( $url, PHP_URL_HOST ) ) {
+	if ( !$host = wp_parse_url( $url, PHP_URL_HOST ) ) {
 		return false;
 	}
-	// backtrace data
 	$backtrace = ds_debug_backtrace();
-	// no reference file found
 	if ( empty( $backtrace['file'] ) ) {
 		return false;
 	}
-	// show your face, file
 	$meta = ds_face_detect( $backtrace['file'] );
-	// extract backtrace data
 	$file = str_replace( ABSPATH, '', $backtrace['file'] );
 	$line = ( int ) $backtrace['line'];
-	// response code
 	$code = ( is_wp_error( $response ) ? -1 : wp_remote_retrieve_response_code( $response ) );
-	// insert cpt
 	ds_insert_post(
 		array(
 			'url'      => esc_url_raw( $url ),
@@ -676,14 +612,12 @@ function ds_orderby_search_columns( $vars ) {
 	if ( !ds_current_screen( 'edit-ds-firewall' ) ) {
 		return $vars;
 	}
-	// cpt search
 	if ( !empty( $vars['s'] ) ) {
 		add_filter( 'get_meta_sql', 'ds_modify_and_or' );
 		$search_key = "_ds-firewall_url";
 		if ( filter_var( $vars['s'], FILTER_VALIDATE_IP ) ) {
 			$search_key = "_ds-firewall_user-ip";
 		}
-		// search in urls
 		$meta_query = array(
 			array(
 				'key'     => $search_key,
@@ -691,7 +625,6 @@ function ds_orderby_search_columns( $vars ) {
 				'compare' => 'LIKE'
 			)
 		);
-		// combined with the filter
 		if ( !empty( $_GET['ds-firewall_state_filter'] ) ) {
 			$meta_query[] = array(
 				'key'     => '_ds-firewall_state',
@@ -700,7 +633,6 @@ function ds_orderby_search_columns( $vars ) {
 				'type'    => 'numeric'
 			);
 		}
-		// merge attrs
 		$vars = array_merge(
 			$vars,
 			array(
@@ -708,11 +640,9 @@ function ds_orderby_search_columns( $vars ) {
 			)
 		);
 	}
-	// cpt orderby
 	if ( empty( $vars['orderby'] ) OR !in_array( $vars['orderby'], array( 'url', 'file', 'state', 'code' ) ) ) {
 		return $vars;
 	}
-	// set var
 	$orderby = $vars['orderby'];
 	return array_merge(
 		$vars,

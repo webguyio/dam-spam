@@ -1,118 +1,118 @@
 <?php
 
 if ( !defined( 'ABSPATH' ) ) {
-	http_response_code( 404 );
-	die();
+	status_header( 404 );
+	exit;
 }
 
 function ds_admin_menu_l() {
 	add_menu_page(
-		'Dam Spam', // $page_title,
-		'Dam Spam', // $menu_title,
-		'manage_options', // $capability,
-		'dam-spam', // $menu_slug,
-		'ds_summary_menu', // $function
+		'Dam Spam',
+		'Dam Spam',
+		'manage_options',
+		'dam-spam',
+		'ds_summary_menu',
 		'dashicons-shield-alt'
 	);
 	if ( class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'protect' ) ) {
 		return;
 	}
 	add_submenu_page(
-		'dam-spam', // plugins parent
-		esc_html__( 'Summary — Dam Spam', 'dam-spam' ), // $page_title,
-		esc_html__( 'Summary', 'dam-spam' ), // $menu_title,
-		'manage_options', // $capability,
-		'dam-spam', // $menu_slug,
-		'ds_summary_menu' // $function
+		'dam-spam',
+		esc_html__( 'Summary — Dam Spam', 'dam-spam' ),
+		esc_html__( 'Summary', 'dam-spam' ),
+		'manage_options',
+		'dam-spam',
+		'ds_summary_menu'
 	);
 	add_submenu_page(
-		'dam-spam', // plugins parent
-		esc_html__( 'Protections — Dam Spam', 'dam-spam' ), // $page_title,
-		esc_html__( 'Protections', 'dam-spam' ), // $menu_title,
-		'manage_options', // $capability,
-		'ds-protections', // $menu_slug,
-		'ds_protections_menu' // function
+		'dam-spam',
+		esc_html__( 'Protections — Dam Spam', 'dam-spam' ),
+		esc_html__( 'Protections', 'dam-spam' ),
+		'manage_options',
+		'ds-protections',
+		'ds_protections_menu'
 	);
 	add_submenu_page(
-		'dam-spam', // plugins parent
-		esc_html__( 'Allowed — Dam Spam', 'dam-spam' ), // $page_title,
-		esc_html__( 'Allowed', 'dam-spam' ), // $menu_title,
-		'manage_options', // $capability,
-		'ds-allowed', // $menu_slug,
-		'ds_allowed_menu' // function
+		'dam-spam',
+		esc_html__( 'Allowed — Dam Spam', 'dam-spam' ),
+		esc_html__( 'Allowed', 'dam-spam' ),
+		'manage_options',
+		'ds-allowed',
+		'ds_allowed_menu'
 	);
 	add_submenu_page(
-		'dam-spam', // plugins parent
-		esc_html__( 'Blocked — Dam Spam', 'dam-spam' ), // $page_title,
-		esc_html__( 'Blocked', 'dam-spam' ), // $menu_title,
-		'manage_options', // $capability,
-		'ds-blocked', // $menu_slug,
-		'ds_blocked_menu' // function
+		'dam-spam',
+		esc_html__( 'Blocked — Dam Spam', 'dam-spam' ),
+		esc_html__( 'Blocked', 'dam-spam' ),
+		'manage_options',
+		'ds-blocked',
+		'ds_blocked_menu'
 	);
 	add_submenu_page(
-		'dam-spam', // plugins parent
-		esc_html__( 'Challenges — Dam Spam', 'dam-spam' ), // $page_title,
-		esc_html__( 'Challenges', 'dam-spam' ), // $menu_title,
-		'manage_options', // $capability,
-		'ds-challenges', // $menu_slug,
-		'ds_challenges_menu' // function
+		'dam-spam',
+		esc_html__( 'Challenges — Dam Spam', 'dam-spam' ),
+		esc_html__( 'Challenges', 'dam-spam' ),
+		'manage_options',
+		'ds-challenges',
+		'ds_challenges_menu'
 	);
 	add_submenu_page(
-		'dam-spam', // plugins parent
-		esc_html__( 'APIs — Dam Spam', 'dam-spam' ), // $page_title,
-		esc_html__( 'APIs', 'dam-spam' ), // $menu_title,
-		'manage_options', // $capability,
-		'ds-apis', // $menu_slug,
+		'dam-spam',
+		esc_html__( 'APIs — Dam Spam', 'dam-spam' ),
+		esc_html__( 'APIs', 'dam-spam' ),
+		'manage_options',
+		'ds-apis',
 		'ds_apis_menu'
 	);
 	add_submenu_page(
-		'dam-spam', // plugins parent
-		esc_html__( 'Cache — Dam Spam', 'dam-spam' ), // $page_title,
-		esc_html__( 'Cache', 'dam-spam' ), // $menu_title,
-		'manage_options', // $capability,
-		'ds-cache', // $menu_slug,
-		'ds_cache_menu' // function
+		'dam-spam',
+		esc_html__( 'Cache — Dam Spam', 'dam-spam' ),
+		esc_html__( 'Cache', 'dam-spam' ),
+		'manage_options',
+		'ds-cache',
+		'ds_cache_menu'
 	);
 	add_submenu_page(
-		'dam-spam', // plugins parent
-		esc_html__( 'Logs — Dam Spam', 'dam-spam' ), // $page_title,
-		esc_html__( 'Logs', 'dam-spam' ), // $menu_title,
-		'manage_options', // $capability,
-		'ds-logs', // $menu_slug,
-		'ds_logs_menu' // function
+		'dam-spam',
+		esc_html__( 'Logs — Dam Spam', 'dam-spam' ),
+		esc_html__( 'Logs', 'dam-spam' ),
+		'manage_options',
+		'ds-logs',
+		'ds_logs_menu'
 	);
 	add_submenu_page(
-		'dam-spam', // plugins parent
-		esc_html__( 'Diagnostics — Dam Spam', 'dam-spam' ), // $page_title,
-		esc_html__( 'Diagnostics', 'dam-spam' ), // $menu_title,
-		'manage_options', // $capability,
-		'ds-diagnostics', // $menu_slug,
-		'ds_diagnostics_menu' // function
+		'dam-spam',
+		esc_html__( 'Testing — Dam Spam', 'dam-spam' ),
+		esc_html__( 'Testing', 'dam-spam' ),
+		'manage_options',
+		'ds-testing',
+		'ds_testing_menu'
 	);
 	add_submenu_page(
-		'dam-spam', // plugins parent
-		esc_html__( 'Cleanup — Dam Spam', 'dam-spam' ), // $page_title,
-		esc_html__( 'Cleanup', 'dam-spam' ), // $menu_title,
-		'manage_options', // $capability,
-		'ds-cleanup', // $menu_slug,
-		'ds_cleanup_menu' // function
+		'dam-spam',
+		esc_html__( 'Cleanup — Dam Spam', 'dam-spam' ),
+		esc_html__( 'Cleanup', 'dam-spam' ),
+		'manage_options',
+		'ds-cleanup',
+		'ds_cleanup_menu'
 	);
 	add_submenu_page(
-		'dam-spam', // plugins parent
-		esc_html__( 'Advanced — Dam Spam', 'dam-spam' ), // $page_title,
-		esc_html__( 'Advanced', 'dam-spam' ), // $menu_title,
-		'manage_options', // $capability,
-		'ds-advanced', // $menu_slug,
-		'ds_advanced_menu' // function
+		'dam-spam',
+		esc_html__( 'Advanced — Dam Spam', 'dam-spam' ),
+		esc_html__( 'Advanced', 'dam-spam' ),
+		'manage_options',
+		'ds-advanced',
+		'ds_advanced_menu'
 	);
 	if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 		add_submenu_page(
-			'dam-spam', // plugins parent
-			esc_html__( 'Multisite — Dam Spam', 'dam-spam' ), // $page_title,
-			esc_html__( 'Multisite', 'dam-spam' ), // $menu_title,
-			'manage_options', // $capability,
-			'ds-multisite', // $menu_slug,
-			'ds_multisite_menu' // function
+			'dam-spam',
+			esc_html__( 'Multisite — Dam Spam', 'dam-spam' ),
+			esc_html__( 'Multisite', 'dam-spam' ),
+			'manage_options',
+			'ds-multisite',
+			'ds_multisite_menu'
 		);
 	}
 }
@@ -153,8 +153,8 @@ function ds_cleanup_menu() {
 	include_setting( "cleanup.php" );
 }
 
-function ds_diagnostics_menu() {
-	include_setting( "diagnostics.php" );
+function ds_testing_menu() {
+	include_setting( "testing.php" );
 }
 
 function ds_multisite_menu() {
@@ -162,14 +162,13 @@ function ds_multisite_menu() {
 }
 
 function include_setting( $file ) {
-	sfs_errorsonoff();
 	$ppath = plugin_dir_path( __FILE__ );
 	if ( file_exists( $ppath . $file ) ) {
 		require_once( $ppath . $file );
 	} else {
-		printf( '<br>' . esc_html__( 'Missing File: %1$s %2$s', 'dam-spam' ), esc_html( $ppath, $file ) ) . '<br>';
+		// translators: %1$s is the directory path, %2$s is the filename
+		printf( '<br>' . esc_html__( 'Missing File: %1$s %2$s', 'dam-spam' ), esc_html( $ppath ), esc_html( $file ) ) . '<br>';
 	}
-	sfs_errorsonoff( 'off' );
 }
 
 function ds_fix_post_vars() {
@@ -177,12 +176,12 @@ function ds_fix_post_vars() {
 		$keys = isset( $_POST ) ? ( array ) array_keys( $_POST ) : array();
 		foreach ( $keys as $key ) {
 			try {
-				$key = sanitize_key( $key ); 
-				if ( is_string( $_POST[$key] ) ) {
-					if ( strpos( $_POST[$key], "\n" ) !== false ) {
-						$val2 = sanitize_textarea_field( $_POST[$key] );
+				$key = sanitize_key( $key );
+				if ( isset( $_POST[$key] ) && is_string( $_POST[$key] ) ) {
+					if ( isset( $_POST[$key] ) && strpos( wp_unslash( $_POST[$key] ), "\n" ) !== false ) {
+						$val2 = sanitize_textarea_field( wp_unslash( $_POST[$key] ) );
 					} else {
-						$val2 = sanitize_text_field( $_POST[$key] );
+						$val2 = sanitize_text_field( wp_unslash( $_POST[$key] ) );
 					}
 					$_POST[$key] = $val2;
 				}

@@ -1,17 +1,17 @@
 <?php
 
 if ( !defined( 'ABSPATH' ) ) {
-	http_response_code( 404 );
-	die();
+	status_header( 404 );
+	exit;
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
-	die ( 'Access Blocked' );
+	die( 'Access Blocked' );
 }
 
 ds_fix_post_vars();
 
-$active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
+$active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'disable-users';
 
 ?>
 
@@ -23,59 +23,77 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 	?>
 	<div class="ds-info-box">
 		<h2 class="nav-tab-wrapper">
-        	<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-cleanup&tab=disable-users' ) ); ?>" class="nav-tab <?php echo 'disable-users' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Disable Users', 'dam-spam' ); ?></a>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-cleanup&tab=disable-users' ) ); ?>" class="nav-tab <?php echo 'disable-users' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Disable Users', 'dam-spam' ); ?></a>
 			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-cleanup&tab=delete-comments' ) ); ?>" class="nav-tab <?php echo 'delete-comments' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Delete Comments', 'dam-spam' ); ?></a>
 			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-cleanup&tab=db-cleanup' ) ); ?>" class="nav-tab <?php echo 'db-cleanup' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Database Cleanup', 'dam-spam' ); ?></a>
 		</h2>
 		<br>
 		<?php
 		global $wpdb;
-		$ptab  = $wpdb->options;
+		$ptab = $wpdb->options;
 		$nonce = '';
 		if ( array_key_exists( 'ds_opt_control', $_POST ) ) {
-			$nonce = $_POST['ds_opt_control'];
+			$nonce = sanitize_text_field( wp_unslash( $_POST['ds_opt_control'] ) );
 		}
 		if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
 			if ( array_key_exists( 'view', $_POST ) ) {
-				$op = sanitize_text_field( $_POST['view'] );
-				$v  = get_option( $op );
-				if ( is_serialized( $v ) && @unserialize( $v ) !== false ) {
+				$op = sanitize_text_field( wp_unslash( $_POST['view'] ) );
+				$v = get_option( $op );
+				if ( is_serialized( $v ) && false !== @unserialize( $v ) ) {
 					$v = @unserialize( $v );
 				}
 				$v = print_r( $v, true );
 				$v = htmlentities( $v );
-				printf( '<h2>' . esc_html__( 'contents of ', 'dam-spam' ) . esc_html( $op ) . '</h2><pre>' . esc_html( $v ) . '</pre>' );
+				// translators: %s is the option name
+				printf( '<h2>' . esc_html__( 'contents of %s', 'dam-spam' ) . '</h2><pre>%s</pre>', esc_html( $op ), esc_html( $v ) );
 			}
 			if ( array_key_exists( 'autol', $_POST ) ) {
-				foreach ( $_POST['autol'] as $name ) {
+				foreach ( sanitize_text_field( wp_unslash( $_POST['autol'] ) ) as $name ) {
+					$name = sanitize_text_field( wp_unslash( $name ) );
 					$au = substr( $name, 0, strpos( $name, '_' ) );
-					if ( strtolower( $au ) == 'no' ) {
+					if ( strtolower( $au ) === 'no' ) {
 						$au = 'yes';
 					} else {
 						$au = 'no';
 					}
 					$name = substr( $name, strpos( $name, '_' ) + 1 );
-					printf( esc_html__( 'changing %1$s autoload to %2$s', 'dam-spam' ), esc_html( $name, $au ) . '<br>' );
-					$sql  = "update $ptab set autoload='$au' where option_name='$name'";
-					$wpdb->query( $sql );
+					// translators: %1$s is the option name, %2$s is the new autoload value
+					printf( esc_html__( 'changing %1$s autoload to %2$s', 'dam-spam' ), esc_html( $name ), esc_html( $au ) );
+					echo '<br>';
+					$wpdb->update(
+						$ptab,
+						array( 'autoload' => $au ),
+						array( 'option_name' => $name ),
+						array( '%s' ),
+						array( '%s' )
+					);
 				}
 			}
 			if ( array_key_exists( 'delo', $_POST ) ) {
-				foreach ( $_POST['delo'] as $name ) {
-					$name = sanitize_key( $name );
-					printf( esc_html__( 'deleting %s ', 'dam-spam' ), esc_html( $name ) . '<br>' );
-					$sql = "delete from $ptab where option_name='$name'";
-					$wpdb->query( $sql );
+				foreach ( sanitize_text_field( wp_unslash( $_POST['delo'] ) ) as $name ) {
+					$name = sanitize_key( wp_unslash( $name ) );
+					// translators: %s is the option name being deleted
+					printf( esc_html__( 'deleting %s', 'dam-spam' ), esc_html( $name ) );
+					echo '<br>';
+					$wpdb->delete(
+						$ptab,
+						array( 'option_name' => $name ),
+						array( '%s' )
+					);
 				}
 			}
 		}
-    	$magic_string = __( "I am sure I want to delete all pending comments and realize this can't be undone", 'dam-spam' );	
-		if ( isset( $_POST['ds_delete_pending_comment'] ) and stripslashes ( $_POST['ds_delete_pending_comment_confirmation_text'] ) == $magic_string ) {
+		$magic_string = __( "I am sure I want to delete all pending comments and realize this can't be undone", 'dam-spam' );
+		if ( isset( $_POST['ds_delete_pending_comment'] ) && isset( $_POST['ds_delete_pending_comment_confirmation_text'] ) && sanitize_text_field( wp_unslash( $_POST['ds_delete_pending_comment_confirmation_text'] ) ) === $magic_string ) {
 			if ( !current_user_can( 'manage_options' ) ) {
 				return;
 			}
-			$wpdb->query( "DELETE FROM $wpdb->comments WHERE comment_approved = 0" );
-			esc_html_e( 'Comments', 'dam-spam' );
+			$wpdb->delete(
+				$wpdb->comments,
+				array( 'comment_approved' => '0' ),
+				array( '%s' )
+			);
+			esc_html_e( 'Comments deleted.', 'dam-spam' );
 		}
 		$sysops = array(
 			'_transient_',
@@ -89,7 +107,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 			'blog_public',
 			'blogdescription',
 			'blogname',
-			'can_compreds_scripts',
+			'can_compress_scripts',
 			'category_base',
 			'close_comments_days_old',
 			'close_comments_for_old_posts',
@@ -191,7 +209,6 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 			'widget_rss',
 			'widget_search',
 			'widget_text',
-			// some that I added because changing caused problems
 			'akismet_available_servers',
 			'auth_key',
 			'auth_salt',
@@ -204,7 +221,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 			'db_upgraded',
 			'recently_activated',
 			'rewrite_rules',
-			'wordpreds_api_key',
+			'wordpress_api_key',
 			'theme_mods_',
 			'widget_',
 			'_user_roles',
@@ -216,10 +233,8 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 			'auto_core_update_notified',
 			'link_manager_enabled',
 			'WPLANG',
-			// added by jetsam -------------------------------------------
-			'ds_options', // not for all
-			'ds_stats', // not for all
-			// wp opts
+			'ds_options',
+			'ds_stats',
 			'blacklist_keys',
 			'comment_whitelist',
 			'customize_stashed_theme_mods',
@@ -231,26 +246,16 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 			'site_icon',
 			'theme_switch_menu_locations',
 			'wp_page_for_privacy_policy',
-			// ----------------------------------------------------------
 		);
-		global $wpdb;
-		// global $wp_query;
-		$ptab  = $wpdb->options;
-		// option_id, option_name, option_value, autoload
-		$sql   = "SELECT * from $ptab order by autoload,option_name";
+		$sql = $wpdb->prepare( 'SELECT * FROM %i ORDER BY autoload, option_name', $ptab );
 		$arows = $wpdb->get_results( $sql, ARRAY_A );
-		// filter out the ones we don't like
-		// echo "<br> $sql : size of options array " . $ptab . " = " . count( $arows ) . "<br>";
-		$rows  = array();
+		$rows = array();
 		foreach ( $arows as $row ) {
-			$uop  = true;
+			$uop = true;
 			$name = $row['option_name'];
 			if ( !in_array( $name, $sysops ) ) {
-				// check for name like for transients
-				// _transient_ , _site_transient_
 				foreach ( $sysops as $op ) {
 					if ( strpos( $name, $op ) !== false ) {
-						// hit a name like
 						$uop = false;
 						break;
 					}
@@ -262,29 +267,29 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 				$rows[] = $row;
 			}
 		}
-		// $rows has the allowed options - all default and system options have been excluded
 		$nonce = wp_create_nonce( 'ds_update' );
 		?>
 		<form method="post" name="DOIT2" action="">
-			<!-- <input type="hidden" name="ds_opt_control" value="<?php echo esc_attr( $nonce ); ?>"> -->
-			<?php if ( !isset( $_GET['tab'] ) or $_GET['tab'] == 'disable-users' ) : ?>
-				<?php include_once DS_PLUGIN_FILE . '/includes/user_filter_list.php' ?>
+			<input type="hidden" name="ds_opt_control" value="<?php echo esc_attr( $nonce ); ?>">
+			<?php if ( !isset( $_GET['tab'] ) || sanitize_key( wp_unslash( $_GET['tab'] ) ) === 'disable-users' ) : ?>
+				<?php include_once DS_PLUGIN_FILE . '/includes/user-list-filter.php'; ?>
 			<?php endif; ?>
 			<?php
-			$pending_comment_ids    = $wpdb->get_col( "SELECT comment_ID FROM $wpdb->comments WHERE comment_approved = 0" );
+			$pending_comment_ids = $wpdb->get_col( $wpdb->prepare( 'SELECT comment_ID FROM %i WHERE comment_approved = %s', $wpdb->comments, '0' ) );
 			$pending_comments_count = count( $pending_comment_ids );
-			if ( isset ( $_GET['tab'] ) and  $_GET['tab'] == 'delete-comments' ) {
+			if ( isset( $_GET['tab'] ) && sanitize_key( wp_unslash( $_GET['tab'] ) ) === 'delete-comments' ) {
 				if ( $pending_comments_count > 0 ) {
 					?>
 					<p>
 						<?php
 						printf(
-							_n(
+							// translators: %s is the number of pending comments
+							esc_html( _n(
 								'You have %s pending comment in your site. Do you want to delete it?',
 								'You have %s pending comments in your site. Do you want to delete all of them?',
-								esc_html( $pending_comments_count ),
+								$pending_comments_count,
 								'dam-spam'
-							),
+							) ),
 							esc_html( number_format_i18n( $pending_comments_count ) )
 						);
 						?>
@@ -294,7 +299,7 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 					</p>
 					<blockquote>
 						<em>
-							<?php echo esc_html( $magic_string ) ?>
+							<?php echo esc_html( $magic_string ); ?>
 						</em>
 					</blockquote>
 					<textarea name="ds_delete_pending_comment_confirmation_text"></textarea>
@@ -309,9 +314,9 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 				}
 			}
 			?>
-			<?php if ( isset ( $_GET['tab'] ) and $_GET['tab'] == 'db-cleanup' ): ?>
-			<p><?php esc_html_e( 'Inspect and delete orphan or suspicious options or change plugin options so that they don&acute;t autoload. Be aware that you can break some plugins by deleting their options.', 'dam-spam' ); ?></p>
-			<table id="dstable" name="sstable" cellspacing="2">
+			<?php if ( isset( $_GET['tab'] ) && sanitize_key( wp_unslash( $_GET['tab'] ) ) === 'db-cleanup' ) : ?>
+			<p><?php esc_html_e( 'Inspect and delete orphan or suspicious options or change plugin options so that they don\'t autoload. Be aware that you can break some plugins by deleting their options.', 'dam-spam' ); ?></p>
+			<table id="ds-table" name="ds-table" cellspacing="2">
 				<thead>
 					<tr>
 						<th class="ds-cleanup"><?php esc_html_e( 'Option', 'dam-spam' ); ?></th>
@@ -324,54 +329,55 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 				</thead>
 				<?php
 				foreach ( $rows as $row ) {
-					extract( $row );
+					$option_name = $row['option_name'];
+					$option_value = $row['option_value'];
+					$autoload = $row['autoload'];
 					$sz = strlen( $option_value );
-					$au = $autoload;
 					$sz = number_format( $sz );
-					// if ( $autoload=='no' ) $au='No';
 					?>
 					<tr class="ds-cleanup-tr">
 						<td align="center"><?php echo esc_html( $option_name ); ?></td>
 						<td align="center"><?php echo esc_html( $autoload ); ?></td>
 						<td align="center"><?php echo esc_html( $sz ); ?></td>
-						<td align="center"><input type="checkbox" value="<?php echo esc_html( $autoload ) . '_' . esc_html( $option_name ); ?>" name="autol[]">&nbsp;<?php echo esc_html( $autoload ); ?></td>
-						<td align="center"><input type="checkbox" value="<?php echo esc_html( $option_name ); ?>" name="delo[]"></td>
-						<td align="center"><button type="submit" name="view" value="<?php echo esc_html( $option_name ); ?>"><?php esc_html_e( 'View', 'dam-spam' ); ?></button></td>
+						<td align="center"><input type="checkbox" value="<?php echo esc_attr( $autoload . '_' . $option_name ); ?>" name="autol[]">&nbsp;<?php echo esc_html( $autoload ); ?></td>
+						<td align="center"><input type="checkbox" value="<?php echo esc_attr( $option_name ); ?>" name="delo[]"></td>
+						<td align="center"><button type="submit" name="view" value="<?php echo esc_attr( $option_name ); ?>"><?php esc_html_e( 'View', 'dam-spam' ); ?></button></td>
 					</tr>
 					<?php
 				}
 				?>
 			</table>
-			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Update', 'dam-spam' ); ?>" type="submit" onclick="return confirm('Are you sure? These changes are permenant.');"></p>
-			<?php endif;?>
+			<p class="submit"><input class="button-primary" value="<?php esc_attr_e( 'Update', 'dam-spam' ); ?>" type="submit" onclick="return confirm('Are you sure? These changes are permanent.');"></p>
+			<?php endif; ?>
 		</form>
 		<?php
 		$m1 = memory_get_usage();
 		$m3 = memory_get_peak_usage();
 		$m1 = number_format( $m1 );
 		$m3 = number_format( $m3 );
-		printf( '<p>' . esc_html__( 'Memory Usage Currently: %1$s Peak: %2$s', 'dam-spam' ), esc_html( $m1 ), esc_html( $m3 ) . '</p>' );
-		$nonce		    = wp_create_nonce( 'ds_update2' );
-		$showtransients = false; // change to true to clean up transients
-		if ( $showtransients && countTransients() > 0 ) { // personal use - probably too dangerous for casual users ?>
+		// translators: %1$s is current memory usage, %2$s is peak memory usage
+		printf( '<p>' . esc_html__( 'Memory Usage Currently: %1$s Peak: %2$s', 'dam-spam' ) . '</p>', esc_html( $m1 ), esc_html( $m3 ) );
+		$nonce = wp_create_nonce( 'ds_update2' );
+		$showtransients = false;
+		if ( $showtransients && ds_count_transients() > 0 ) { ?>
 			<hr>
 			<p><?php esc_html_e( 'WordPress creates temporary objects in the database called transients. You can clean these up safely and it might speed things up.', 'dam-spam' ); ?></p>
 			<form method="post" name="DOIT2" action="">
 				<input type="hidden" name="ds_opt_tdel" value="<?php echo esc_attr( $nonce ); ?>">
-				<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Delete Transients', 'dam-spam' ); ?>" type="submit"></p>
+				<p class="submit"><input class="button-primary" value="<?php esc_attr_e( 'Delete Transients', 'dam-spam' ); ?>" type="submit"></p>
 			</form>
 			<?php
 			$nonce = '';
 			if ( array_key_exists( 'ds_opt_tdel', $_POST ) ) {
-				$nonce = $_POST['ds_opt_tdel'];
+				$nonce = sanitize_text_field( wp_unslash( $_POST['ds_opt_tdel'] ) );
 			}
 			if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update2' ) ) {
-				// doit!
-				deleteTransients();
+				ds_delete_transients();
 			}
 			?>
 			<p><?php
-			$countT = countTransients();
+			$countT = ds_count_transients();
+			// translators: %s is the number of transients found
 			printf( esc_html__( 'Currently there are %s found.', 'dam-spam' ), esc_html( $countT ) );
 			?></p>
 		<?php
@@ -382,62 +388,36 @@ $active_tab = !empty( $_GET['tab'] ) ? $_GET['tab'] : 'disable-users';
 
 <?php
 
-function countTransients() {
+function ds_count_transients() {
 	$blog_id = get_current_blog_id();
 	global $wpdb;
 	$optimeout = time() - 60;
-	$table	   = $wpdb->get_blog_prefix( $blog_id ) . 'options';
-	$count	   = 0;
-	$sql	   = "
-		select count(*) from $table 
-		where
-		option_name like '\_transient\_timeout\_%'
-		or option_name like '\_site\_transient\_timeout\_%'
-		or option_name like 'displayed\_galleries\_%'
-		or option_name like 'displayed\_gallery\_rendering\_%'
-		or t1.option_name like '\_transient\_feed\_mod_%' 
-		or t1.option_name like '\_transient\__bbp\_%' 
-		and option_value < '$optimeout'
-	";
-	$sql = str_replace( "\t", '', $sql );
-	$sql = "
-		select count(*) from $table 
-		where instr(t1.option_name,'DS_SECRET_WORD')>0
-	";
-	$sql = str_replace( "\t", '', $sql );
-	$count	  += $wpdb->get_var( $sql );
+	$table = $wpdb->get_blog_prefix( $blog_id ) . 'options';
+	$count = $wpdb->get_var(
+		$wpdb->prepare(
+			"SELECT COUNT(*) FROM %i WHERE INSTR(option_name, %s) > 0",
+			$table,
+			'DS_SECRET_WORD'
+		)
+	);
 	if ( empty( $count ) ) {
-		$count = "0";
+		$count = 0;
 	}
 	return $count;
 }
 
-// clear expired transients for current blog
-function deleteTransients() {
+function ds_delete_transients() {
 	$blog_id = get_current_blog_id();
 	global $wpdb;
 	$optimeout = time() - 60;
-	$table	   = $wpdb->get_blog_prefix( $blog_id ) . 'options';
-	$sql	   = "
-		delete from $table
-		where 
-		option_name like '\_transient\_timeout\_%'
-		or option_name like '\_site\_transient\_timeout\_%'
-		or option_name like 'displayed\_galleries\_%'
-		or option_name like 'displayed\_gallery\_rendering\_%'
-		or t1.option_name like '\_transient\_feed\_mod_%' 
-		or t1.option_name like '\_transient\__bbp\_%' 
-		or instr(t1.option_name,'DS_SECRET_WORD')>0
-		and option_value < '$optimeout'
-	";
-	$sql = str_replace( "\t", '', $sql );
-	$wpdb->query( $sql );
-	$sql = "
-		select count(*) from $table 
-		where instr(t1.option_name,'DS_SECRET_WORD')>0
-	";
-	$sql = str_replace( "\t", '', $sql );
-	$wpdb->query( $sql );
+	$table = $wpdb->get_blog_prefix( $blog_id ) . 'options';
+	$wpdb->query(
+		$wpdb->prepare(
+			"DELETE FROM %i WHERE INSTR(option_name, %s) > 0",
+			$table,
+			'DS_SECRET_WORD'
+		)
+	);
 }
 
 ?>

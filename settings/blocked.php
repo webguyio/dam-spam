@@ -1,8 +1,8 @@
 <?php
 
 if ( !defined( 'ABSPATH' ) ) {
-	http_response_code( 404 );
-	die();
+	status_header( 404 );
+	exit;
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
@@ -10,113 +10,112 @@ if ( !current_user_can( 'manage_options' ) ) {
 }
 
 ds_fix_post_vars();
-$now	 = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
+$now	 = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 $options = ds_get_options();
 extract( $options );
 $nonce   = '';
 
 if ( array_key_exists( 'ds_control', $_POST ) ) {
-	$nonce = $_POST['ds_control'];
+	$nonce = isset( $_POST['ds_control'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_control'] ) ) : '';
 }
 
 if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
-	if ( array_key_exists( 'blist', $_POST ) ) {
-		$blist = sanitize_textarea_field( $_POST['blist'] );
-		if ( empty( $blist ) ) {
-			$blist = array();
+	if ( array_key_exists( 'block_list', $_POST ) ) {
+		$block_list = isset( $_POST['block_list'] ) ? sanitize_textarea_field( wp_unslash( $_POST['block_list'] ) ) : '';
+		if ( empty( $block_list ) ) {
+			$block_list = array();
 		} else {
-			$blist = explode( "\n", $blist );
+			$block_list = explode( "\n", $block_list );
 		}
-		$tblist = array();
-		foreach ( $blist as $bl ) {
+		$tblock_list = array();
+		foreach ( $block_list as $bl ) {
 			$bl = trim( $bl );
 			if ( !empty( $bl ) ) {
-				$tblist[] = $bl;
+				$tblock_list[] = $bl;
 			}
 		}
-		$options['blist'] = $tblist;
-		$blist			  = $tblist;
+		$options['block_list'] = $tblock_list;
+		$block_list = $tblock_list;
 	}
-	if ( array_key_exists( 'spamwords', $_POST ) ) {
-		$spamwords = sanitize_textarea_field( $_POST['spamwords'] );
-		if ( empty( $spamwords ) ) {
-			$spamwords = array();
+	if ( array_key_exists( 'spam_words', $_POST ) ) {
+		$spam_words = isset( $_POST['spam_words'] ) ? sanitize_textarea_field( wp_unslash( $_POST['spam_words'] ) ) : '';
+		if ( empty( $spam_words ) ) {
+			$spam_words = array();
 		} else {
-			$spamwords = explode( "\n", $spamwords );
+			$spam_words = explode( "\n", $spam_words );
 		}
-		$tblist = array();
-		foreach ( $spamwords as $bl ) {
+		$tblock_list = array();
+		foreach ( $spam_words as $bl ) {
 			$bl = trim( $bl );
 			if ( !empty( $bl ) ) {
-				$tblist[] = $bl;
+				$tblock_list[] = $bl;
 			}
 		}
-		$options['spamwords'] = $tblist;
-		$spamwords			  = $tblist;
+		$options['spam_words'] = $tblock_list;
+		$spam_words = $tblock_list;
 	}
-	if ( array_key_exists( 'blockurlshortners', $_POST ) ) {
-		$blockurlshortners = sanitize_textarea_field( $_POST['blockurlshortners'] );
-		if ( empty( $blockurlshortners ) ) {
-			$blockurlshortners = array();
+	if ( array_key_exists( 'block_url_shortners', $_POST ) ) {
+		$block_url_shortners = isset( $_POST['block_url_shortners'] ) ? sanitize_textarea_field( wp_unslash( $_POST['block_url_shortners'] ) ) : '';
+		if ( empty( $block_url_shortners ) ) {
+			$block_url_shortners = array();
 		} else {
-			$blockurlshortners = explode( "\n", $blockurlshortners );
+			$block_url_shortners = explode( "\n", $block_url_shortners );
 		}
-		$tblist = array();
-		foreach ( $blockurlshortners as $bl ) {
+		$tblock_list = array();
+		foreach ( $block_url_shortners as $bl ) {
 			$bl = trim( $bl );
 			if ( !empty( $bl ) ) {
-				$tblist[] = $bl;
+				$tblock_list[] = $bl;
 			}
 		}
-		$options['blockurlshortners'] = $tblist;
-		$blockurlshortners			  = $tblist;
+		$options['block_url_shortners'] = $tblock_list;
+		$block_url_shortners = $tblock_list;
 	}
-	if ( array_key_exists( 'badTLDs', $_POST ) ) {
-		$badTLDs = sanitize_textarea_field( $_POST['badTLDs'] );
-		if ( empty( $badTLDs ) ) {
-			$badTLDs = array();
+	if ( array_key_exists( 'bad_tlds', $_POST ) ) {
+		$bad_tlds = isset( $_POST['bad_tlds'] ) ? sanitize_textarea_field( wp_unslash( $_POST['bad_tlds'] ) ) : '';
+		if ( empty( $bad_tlds ) ) {
+			$bad_tlds = array();
 		} else {
-			$badTLDs = explode( "\n", $badTLDs );
+			$bad_tlds = explode( "\n", $bad_tlds );
 		}
-		$tblist = array();
-		foreach ( $badTLDs as $bl ) {
+		$tblock_list = array();
+		foreach ( $bad_tlds as $bl ) {
 			$bl = trim( $bl );
 			if ( !empty( $bl ) ) {
-				$tblist[] = $bl;
+				$tblock_list[] = $bl;
 			}
 		}
-		$options['badTLDs'] = $tblist;
-		$badTLDs			= $tblist;
+		$options['bad_tlds'] = $tblock_list;
+		$bad_tlds = $tblock_list;
 	}
-	if ( array_key_exists( 'badagents', $_POST ) ) {
-		$badagents = sanitize_textarea_field( $_POST['badagents'] );
-		if ( empty( $badagents ) ) {
-			$badagents = array();
+	if ( array_key_exists( 'bad_agents', $_POST ) ) {
+		$bad_agents = isset( $_POST['bad_agents'] ) ? sanitize_textarea_field( wp_unslash( $_POST['bad_agents'] ) ) : '';
+		if ( empty( $bad_agents ) ) {
+			$bad_agents = array();
 		} else {
-			$badagents = explode( "\n", $badagents );
+			$bad_agents = explode( "\n", $bad_agents );
 		}
-		$tblist = array();
-		foreach ( $badagents as $bl ) {
+		$tblock_list = array();
+		foreach ( $bad_agents as $bl ) {
 			$bl = trim( $bl );
 			if ( !empty( $bl ) ) {
-				$tblist[] = $bl;
+				$tblock_list[] = $bl;
 			}
 		}
-		$options['badagents'] = $tblist;
-		$badagents			  = $tblist;
+		$options['bad_agents'] = $tblock_list;
+		$bad_agents = $tblock_list;
 	}
-	// check box setting
 	$optionlist = array(
-		'chkspamwords',
-		'chkbluserid',
-		'chkagent',
-		'chkipsync',
-		'chkurls'
+		'check_spam_words',
+		'check_blocked_user_id',
+		'check_agent',
+		'check_ipsync',
+		'check_urls'
 	);
 	foreach ( $optionlist as $check ) {
 		$v = 'N';
 		if ( array_key_exists( $check, $_POST ) ) {
-			$v = $_POST[$check];
+			$v = isset( $_POST[$check] ) ? sanitize_text_field( wp_unslash( $_POST[$check] ) ) : 'N';
 			if ( $v != 'Y' ) {
 				$v = 'N';
 			}
@@ -145,14 +144,14 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<div class="mainsection"><?php esc_html_e( 'Block List', 'dam-spam' ); ?></div>
 		<p><?php esc_html_e( 'One email or IP per line. You can use wild cards here for emails.', 'dam-spam' ); ?></p>
 		<div class="checkbox switcher">
-			<label class="ds-subhead" for="chkbluserid">
-				<input class="ds_toggle" type="checkbox" id="chkbluserid" name="chkbluserid" value="Y" <?php if ( $chkbluserid == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+			<label class="ds-subhead" for="check_blocked_user_id">
+				<input class="ds_toggle" type="checkbox" id="check_blocked_user_id" name="check_blocked_user_id" value="Y" <?php if ( $check_blocked_user_id == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Allow Usernames', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
-		<textarea name="blist" cols="40" rows="8"><?php
-			foreach ( $blist as $p ) {
+		<textarea name="block_list" cols="40" rows="8"><?php
+			foreach ( $block_list as $p ) {
 				echo esc_html( $p ) . "\r\n";
 			}
 		?></textarea>
@@ -160,50 +159,50 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<div class="mainsection"><?php esc_html_e( 'Spam Words List', 'dam-spam' ); ?></div>				
 		<div class="checkbox switcher">
-			<label class="ds-subhead" for="chkspamwords">
-				<input class="ds_toggle" type="checkbox" id="chkspamwords" name="chkspamwords" value="Y" <?php if ( $chkspamwords == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+			<label class="ds-subhead" for="check_spam_words">
+				<input class="ds_toggle" type="checkbox" id="check_spam_words" name="check_spam_words" value="Y" <?php if ( $check_spam_words == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 				<small><?php esc_html_e( 'Check Spam Words', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
-		<textarea name="spamwords" cols="40" rows="8"><?php
-			foreach ( $spamwords as $p ) {
+		<textarea name="spam_words" cols="40" rows="8"><?php
+			foreach ( $spam_words as $p ) {
 				echo esc_html( $p ) . "\r\n";
 			}
 		?></textarea>
 		<br>
 		<div class="mainsection"><?php esc_html_e( 'URL Shortening Services List', 'dam-spam' ); ?></div>			
 		<div class="checkbox switcher">
-			<label class="ds-subhead" for="chkurlshort">
-				<input class="ds_toggle" type="checkbox" id="chkurlshort" name="chkurlshort" value="Y" <?php if ( $chkurlshort == 'Y' ) { echo 'checked="checked"'; } ?>>
+			<label class="ds-subhead" for="check_url_short">
+				<input class="ds_toggle" type="checkbox" id="check_url_short" name="check_url_short" value="Y" <?php if ( $check_url_short == 'Y' ) { echo 'checked="checked"'; } ?>>
 				<span><small></small></span>
 				<small><?php esc_html_e( 'Check URL Shorteners', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
-		<textarea name="blockurlshortners" cols="40" rows="8"><?php
-			foreach ( $blockurlshortners as $p ) {
+		<textarea name="block_url_shortners" cols="40" rows="8"><?php
+			foreach ( $block_url_shortners as $p ) {
 				echo esc_html( $p ) . "\r\n";
 			}
 		?></textarea>
 		<div class="mainsection"><?php esc_html_e( 'Check for URLs', 'dam-spam' ); ?></div>	
 		<div class="checkbox switcher">
-			<label class="ds-subhead" for="chkurls">
-				<input class="ds_toggle" type="checkbox" id="chkurls" name="chkurls" value="Y" <?php if ( $chkurls == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+			<label class="ds-subhead" for="check_urls">
+				<input class="ds_toggle" type="checkbox" id="check_urls" name="check_urls" value="Y" <?php if ( $check_urls == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Check for any URL', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="mainsection"><?php esc_html_e( 'Bad User Agents List', 'dam-spam' ); ?></div>	
 		<div class="checkbox switcher">
-			<label class="ds-subhead" for="chkagent">
-				<input class="ds_toggle" type="checkbox" id="chkagent" name="chkagent" value="Y" <?php if ( $chkagent == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+			<label class="ds-subhead" for="check_agent">
+				<input class="ds_toggle" type="checkbox" id="check_agent" name="check_agent" value="Y" <?php if ( $check_agent == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Check Agents', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
-		<textarea name="badagents" cols="40" rows="8"><?php
-			foreach ( $badagents as $p ) {
+		<textarea name="bad_agents" cols="40" rows="8"><?php
+			foreach ( $bad_agents as $p ) {
 				echo esc_html( $p ) . "\r\n";
 			}
 		?></textarea>
@@ -211,8 +210,8 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<div class="mainsection"><?php esc_html_e( 'Blocked TLDs', 'dam-spam' ); ?></div>					
 		<p><?php esc_html_e( 'One TLD per line. Example: .com', 'dam-spam' ); ?></p>
-		<textarea name="badTLDs" cols="40" rows="8"><?php
-			foreach ( $badTLDs as $p ) {
+		<textarea name="bad_tlds" cols="40" rows="8"><?php
+			foreach ( $bad_tlds as $p ) {
 				echo esc_html( $p ) . "\r\n";
 			}
 		?></textarea>

@@ -1,8 +1,8 @@
 <?php
 
 if ( !defined( 'ABSPATH' ) ) {
-	http_response_code( 404 );
-	die();
+	status_header( 404 );
+	exit;
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
@@ -16,21 +16,20 @@ ds_fix_post_vars();
 <div id="ds-plugin" class="wrap">
 	<h1 id="ds-head"><?php esc_html_e( 'Multisite — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php
-	$now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
-	// $ip = ds_get_ip();
-	$ip	      = $_SERVER['REMOTE_ADDR'];
+	$now	  = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
+	$ip 	  = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 	$nonce	  = '';
 	$muswitch = get_option( 'ds_muswitch' );
 	if ( empty( $muswitch ) ) {
 		$muswitch = 'N';
 	}
 	if ( array_key_exists( 'ds_control', $_POST ) ) {
-		$nonce = $_POST['ds_control'];
+		$nonce = isset( $_POST['ds_control'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_control'] ) ) : '';
 	}
 	if ( wp_verify_nonce( $nonce, 'ds_update' ) ) {
 		if ( array_key_exists( 'action', $_POST ) ) {
 			if ( array_key_exists( 'muswitch', $_POST ) ) {
-				$muswitch = trim( stripslashes( sanitize_text_field( $_POST['muswitch'] ) ) );
+				$muswitch = isset( $_POST['muswitch'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['muswitch'] ) ) ) : '';
 			}
 			if ( empty( $muswitch ) ) {
 				$muswitch = 'N';
@@ -42,7 +41,6 @@ ds_fix_post_vars();
 			esc_html_e( 'Options Updated', 'dam-spam' );
 		}
 	} else {
-	// echo "no nonce<br>";
 	}
 	$nonce = wp_create_nonce( 'ds_update' );
 	?>

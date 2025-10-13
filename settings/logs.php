@@ -1,8 +1,8 @@
 <?php
 
 if ( !defined( 'ABSPATH' ) ) {
-	http_response_code( 404 );
-	die();
+	status_header( 404 );
+	exit;
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
@@ -10,50 +10,46 @@ if ( !current_user_can( 'manage_options' ) ) {
 }
 
 ds_fix_post_vars();
-$trash	  = DS_PLUGIN_URL . 'images/trash.png';
-$down	  = DS_PLUGIN_URL . 'images/down.png';
-$up		  = DS_PLUGIN_URL . 'images/up.png';
-$whois	  = DS_PLUGIN_URL . 'images/whois.png';
-$stophand = DS_PLUGIN_URL . 'images/stop.png';
-$search   = DS_PLUGIN_URL . 'images/search.png';
-$now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
+$trash	  = DS_PLUGIN_URL . 'assets/images/trash.png';
+$down	  = DS_PLUGIN_URL . 'assets/images/down.png';
+$up		  = DS_PLUGIN_URL . 'assets/images/up.png';
+$whois	  = DS_PLUGIN_URL . 'assets/images/whois.png';
+$stophand = DS_PLUGIN_URL . 'assets/images/stop.png';
+$search   = DS_PLUGIN_URL . 'assets/images/search.png';
+$now	  = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 
 ?>
 
 <div id="ds-plugin" class="wrap">
 	<h1 id="ds-head"><?php esc_html_e( 'Logs — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php
-	// $ip = ds_get_ip();
 	$stats = ds_get_stats();
 	extract( $stats );
 	$options = ds_get_options();
 	extract( $options );
-	$ip	   = $_SERVER['REMOTE_ADDR'];
+	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 	$nonce = '';
-	$msg   = '';
+	$msg = '';
 	if ( array_key_exists( 'ds_control', $_POST ) ) {
-		$nonce = $_POST['ds_control'];
+		$nonce = isset( $_POST['ds_control'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_control'] ) ) : '';
 	}
 	if ( wp_verify_nonce( $nonce, 'ds_update' ) ) {
 		if ( array_key_exists( 'ds_clear_hist', $_POST ) ) {
-			// clean out the history
-			$hist			  = array();
-			$stats['hist']	  = $hist;
-			$spcount		  = 0;
-			$stats['spcount'] = $spcount;
-			$spdate		      = $now;
-			$stats['spdate']  = $spdate;
+			$hist = array();
+			$stats['hist'] = $hist;
+			$spam_count = 0;
+			$stats['spam_count'] = $spam_count;
+			$spam_date = $now;
+			$stats['spam_date'] = $spam_date;
 			ds_set_stats( $stats );
-			extract( $stats ); // extract again to get the new options
-			$msg			  = '<div class="notice notice-success"><p>' . esc_html__( 'Log Cleared', 'dam-spam' ) . '</p></div>';
+			extract( $stats );
+			$msg = '<div class="notice notice-success"><p>' . esc_html__( 'Log Cleared', 'dam-spam' ) . '</p></div>';
 		}
 		if ( array_key_exists( 'ds_update_log_size', $_POST ) ) {
-			// update log size
 			if ( array_key_exists( 'ds_hist', $_POST ) ) {
-				$ds_hist			= stripslashes( sanitize_text_field( $_POST['ds_hist'] ) );
+				$ds_hist = isset( $_POST['ds_hist'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_hist'] ) ) : '';
 				$options['ds_hist'] = $ds_hist;
-				$msg				= '<div class="notice notice-success"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
-				// update the options
+				$msg = '<div class="notice notice-success"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
 				ds_set_options( $options );
 			}
 		}
@@ -64,20 +60,21 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->spam );
 	if ( $num_comm->spam > 0 && DS_MU != 'Y' ) { ?>
-		<p><?php printf( esc_html__( 'There are %1$s%2$s%3$s spam comments waiting to be reported.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=spam">', esc_html( $num ), '</a>' ); ?></p>
+		<p><?php
+			// translators: %s is the name of the log file being displayed
+			printf( esc_html__( 'There are %1$s%2$s%3$s spam comments waiting to be reported.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=spam">', esc_html( $num ), '</a>' );
+		?></p>
 	<?php }
 	$num_comm = wp_count_comments();
 	$num	  = number_format_i18n( $num_comm->moderated );
 	if ( $num_comm->moderated > 0 && DS_MU != 'Y' ) { ?>
-		<p><?php printf( esc_html__( 'There are %1$s%2$s%3$s comments waiting to be moderated.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=moderated">', esc_html( $num ), '</a>' ); ?></p>
+		<p><?php
+			// translators: %s is the name of the log file being displayed
+			printf( esc_html__( 'There are %1$s%2$s%3$s comments waiting to be moderated.', 'dam-spam' ), '<a href="edit-comments.php?comment_status=moderated">', esc_html( $num ), '</a>' );
+		?></p>
 	<?php }
 	$nonce = wp_create_nonce( 'ds_update' );
 	?>
-	<!-- <script>
-	setTimeout(function() {
-		window.location.reload(1);
-	}, 10000);
-	</script> -->
 	<form method="post" action="">
 		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<input type="hidden" name="ds_update_log_size" value="true">
@@ -105,8 +102,8 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 			esc_html_e( 'Nothing in the log.', 'dam-spam' );
 		} else { ?>
 		<br>
-		<input type="text" id="dsinput" onkeyup="ds_search()" placeholder="<?php esc_html_e( 'Date Search', 'dam-spam' ); ?>" title="<?php esc_html_e( 'Filter by a Value', 'dam-spam' ); ?>">
-		<table id="dstable" name="sstable" cellspacing="2">
+		<input type="text" id="ds-input" onkeyup="ds_search()" placeholder="<?php esc_html_e( 'Date Search', 'dam-spam' ); ?>" title="<?php esc_html_e( 'Filter by a Value', 'dam-spam' ); ?>">
+		<table id="ds-table" name="ds-table" cellspacing="2">
 			<thead>
 				<tr>
 					<th onclick="sortTable(0)" class="filterhead ds-cleanup"><?php esc_html_e( 'Date/Time', 'dam-spam' ); ?></th>
@@ -121,10 +118,8 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 			<?php } ?>
 			</tr>
 			<?php
-			// sort list by date descending
 			krsort( $hist );
 			foreach ( $hist as $key => $data ) {
-				// $hist[$now] = array( $ip, $email, $author ,$sname, 'begin' );
 				$em = wp_strip_all_tags( trim( $data[1] ) );
 				$dt = wp_strip_all_tags( $key );
 				$ip = $data[0];
@@ -156,7 +151,7 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 					<td>' . wp_kses_post( $dt ) . '</td>
 					<td>' . wp_kses_post( $em ) . '</td>
 					<td>' . wp_kses_post( $ip, $who, $stopper, $honeysearch, $botsearch );
-				if ( stripos( $reason, 'passed' ) !== false && ( $id == '/' || strpos( $id, 'login' ) ) !== false || strpos( $id, 'register' ) !== false && !in_array( $ip, $blist ) && !in_array( $ip, $wlist ) ) {
+				if ( stripos( $reason, 'passed' ) !== false && ( $id == '/' || strpos( $id, 'login' ) ) !== false || strpos( $id, 'register' ) !== false && !in_array( $ip, $block_list ) && !in_array( $ip, $allow_list ) ) {
 					$ajaxurl = admin_url( 'admin-ajax.php' );
 					echo '<a href="" onclick="sfs_ajax_process(\'' . esc_html( $ip ) . '\',\'log\',\'add_black\',\'' . esc_html( $ajaxurl ) . '\');return false;" title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" alt="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '"><img src="' . esc_url( $down ) . '" class="icon-action"></a>';
 					$options = get_option( 'ds_options' );
@@ -173,7 +168,6 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 					<td>' . wp_kses_post( $id ) . '</td>
 					<td>' . wp_kses_post( $reason ) . '</td>';
 				if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-					// switch to blog and back
 					$blogname  = get_blog_option( $blog, 'blogname' );
 					$blogadmin = esc_url( get_admin_url( $blog ) );
 					$blogadmin = trim( $blogadmin, '/' );
@@ -189,45 +183,33 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 		<script>
 		function sortTable(n) {
 			var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-			table = document.getElementById("dstable");
+			table = document.getElementById("ds-table");
 			switching = true;
-			// set the sorting direction to ascending
 			dir = "asc";
-			// make a loop that will continue until no switching has been done
 			while (switching) {
-				// start by saying: no switching is done
 				switching = false;
 				rows = table.rows;
-				// loop through all table rows (except the first, which contains table headers)
 				for (i = 1; i < (rows.length - 1); i++) {
-					// start by saying there should be no switching
 					shouldSwitch = false;
-					// get the two elements you want to compare, one from current row and one from the next
 					x = rows[i].getElementsByTagName("TD")[n];
 					y = rows[i + 1].getElementsByTagName("TD")[n];
-					// check if the two rows should switch place, based on the direction, asc or desc
 					if (dir == "asc") {
 						if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-							// if so, mark as a switch and break the loop
 							shouldSwitch = true;
 							break;
 						}
 					} else if (dir == "desc") {
 						if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-							// if so, mark as a switch and break the loop
 							shouldSwitch = true;
 							break;
 						}
 					}
 				}
 				if (shouldSwitch) {
-					// if a switch has been marked, make the switch and mark that a switch has been done
 					rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
 					switching = true;
-					// each time a switch is done, increase this count by 1
 					switchcount++;
 				} else {
-					// if no switching has been done AND the direction is "asc", set the direction to "desc" and run the while loop again
 					if (switchcount == 0 && dir == "asc") {
 						dir = "desc";
 						switching = true;
@@ -237,9 +219,9 @@ $now	  = date( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 		}
 		function ds_search() {
 			var input, filter, table, tr, td, i, txtValue;
-			input = document.getElementById("dsinput");
+			input = document.getElementById("ds-input");
 			filter = input.value.toUpperCase();
-			table = document.getElementById("dstable");
+			table = document.getElementById("ds-table");
 			tr = table.getElementsByTagName("tr");
 			for (i = 0; i < tr.length; i++) {
 				td = tr[i].getElementsByTagName("td")[0];
