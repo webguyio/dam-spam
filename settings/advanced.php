@@ -1232,9 +1232,9 @@ function ds_process_settings_import() {
 	if ( $extension !== 'application/json' ) {
 		wp_die( esc_html__( 'Please upload a valid .json file', 'dam-spam' ) );
 	}
-	$import_file = isset( $_FILES['import_file']['tmp_name'] ) ? sanitize_text_field( wp_unslash( $_FILES['import_file']['tmp_name'] ) ) : '';
-	if ( empty( $import_file ) ) {
-		wp_die( esc_html__( 'Please upload a file to import', 'dam-spam' ) );
+	$import_file = isset( $_FILES['import_file']['tmp_name'] ) ? $_FILES['import_file']['tmp_name'] : '';
+	if ( empty( $import_file ) || !is_uploaded_file( $import_file ) ) {
+		wp_die( esc_html__( 'Invalid file upload', 'dam-spam' ) );
 	}
 	global $wp_filesystem;
 	if ( empty( $wp_filesystem ) ) {

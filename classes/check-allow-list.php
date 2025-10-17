@@ -38,8 +38,8 @@ class check_allow_list extends ds_module {
 			'check_scripts',
 			'check_allowed_email',
 			'check_allowed_user_id',
-			'check_allow_list_email',
 			'check_allow_list_ip',
+			'check_allow_list_email',
 			'check_yahoo_merchant'
 		);
 		if ( !isset( $options['check_allow_list_email'] ) ) {

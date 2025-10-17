@@ -28,6 +28,7 @@ class get_options {
 			'check_allowed_email'		=> 'Y',
 			'check_allowed_user_id'		=> 'N',
 			'check_allow_list'			=> 'Y',
+			'check_allow_list_ip'		=> 'Y',
 			'check_allow_list_email'	=> 'Y',
 			'check_yahoo_merchant'		=> 'Y',
 			'check_stripe'				=> 'Y',
