@@ -126,14 +126,16 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<tr>
 				<?php if ( count( $badips ) > 0 ) { ?>
 					<td valign="top" id="badips"><?php
+						$allowed_html = ds_get_ajax_allowed_html();
 						$show = ds_load( 'get_bad_cache', 'x', $stats, $options );
-						echo wp_kses_post( $show );
+						echo wp_kses( $show, $allowed_html );
 					?></td>
 				<?php } ?>
 				<?php if ( count( $goodips ) > 0 ) { arsort( $goodips ); ?>
 					<td valign="top" id="goodips"><?php
+						$allowed_html = ds_get_ajax_allowed_html();
 						$show = ds_load( 'get_good_cache', 'x', $stats, $options );
-						echo wp_kses_post( $show );
+						echo wp_kses( $show, $allowed_html );
 						?>
 					</td>
 				<?php } ?>

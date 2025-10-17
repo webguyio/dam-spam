@@ -77,9 +77,9 @@ function ds_row( $actions, $comment ) {
 	$action   = '';
 	$whois	  = DS_PLUGIN_URL . 'assets/images/whois.png';
 	$who	  = "<a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://whois.domaintools.com/$ip\"><img src=\"$whois\" class=\"icon-action\"></a>";
-	$stophand = DS_PLUGIN_URL . 'assets/images/stop.png';
-	$stop	  = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/search.php?q=$ip\"><img src=\"$stophand\" class=\"icon-action\"> </a>";
-	$action  .= " $who $stop";
+	$stop	  = DS_PLUGIN_URL . 'assets/images/stop.png';
+	$hand	  = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/search.php?q=$ip\"><img src=\"$stop\" class=\"icon-action\"> </a>";
+	$action  .= " $who $hand";
 	$email = urlencode( $comment->comment_author_email );
 	if ( empty( $email ) ) {
 		$actions['check_spam'] = $action;
@@ -308,10 +308,8 @@ function sfs_watch( $data ) {
 		esc_html_e( ' Function Not Found', 'dam-spam' );
 		exit();
 	}
-	$trash     = DS_PLUGIN_URL . 'assets/images/trash.png';
-	$down      = DS_PLUGIN_URL . 'assets/images/down.png';
-	$up        = DS_PLUGIN_URL . 'assets/images/up.png';
-	$whois     = DS_PLUGIN_URL . 'assets/images/whois.png';
+	$icons = ds_get_icon_urls();
+	extract( $icons );
 	$ip        = isset( $_GET['ip'] ) ? sanitize_text_field( wp_unslash( $_GET['ip'] ) ) : '';
 	$email     = isset( $_GET['email'] ) ? sanitize_email( wp_unslash( $_GET['email'] ) ) : '';
 	$container = isset( $_GET['cont'] ) ? sanitize_text_field( wp_unslash( $_GET['cont'] ) ) : '';
@@ -319,58 +317,69 @@ function sfs_watch( $data ) {
 	$options   = ds_get_options();
 	$stats     = ds_get_stats();
 	$answer    = array();
+	$allowed_html = ds_get_ajax_allowed_html();
 	switch ( $func ) {
 		case 'delete_gcache':
 			$answer = ds_load( 'remove_good_cache', $ip, $stats, $options );
 			$show = ds_load( 'get_good_cache', 'x', $stats, $options );
-			echo esc_html( $show );
+			echo wp_kses( $show, $allowed_html );
 			exit();
 			break;
 		case 'delete_bcache':
 			$answer = ds_load( 'remove_bad_cache', $ip, $stats, $options );
 			$show = ds_load( 'get_bad_cache', 'x', $stats, $options );
-			echo esc_html( $show );
+			echo wp_kses( $show, $allowed_html );
 			exit();
 			break;
 		case 'add_black':
 			if ( $container == 'badips' ) {
 				ds_load( 'remove_bad_cache', $ip, $stats, $options );
+				$show = ds_load( 'get_bad_cache', 'x', $stats, $options );
+				echo wp_kses( $show, $allowed_html );
 			} else if ( $container == 'goodips' ) {
 				ds_load( 'remove_good_cache', $ip, $stats, $options );
+				$show = ds_load( 'get_good_cache', 'x', $stats, $options );
+				echo wp_kses( $show, $allowed_html );
 			} else {
 				ds_load( 'remove_bad_cache', $ip, $stats, $options );
 				ds_load( 'remove_good_cache', $ip, $stats, $options );
 			}
 			ds_load( 'add_to_block_list', $ip, $stats, $options );
+			exit();
 			break;
 		case 'add_white':
 			if ( $container == 'badips' ) {
 				ds_load( 'remove_bad_cache', $ip, $stats, $options );
+				$show = ds_load( 'get_bad_cache', 'x', $stats, $options );
+				echo wp_kses( $show, $allowed_html );
 			} else if ( $container == 'goodips' ) {
 				ds_load( 'remove_good_cache', $ip, $stats, $options );
+				$show = ds_load( 'get_good_cache', 'x', $stats, $options );
+				echo wp_kses( $show, $allowed_html );
 			} else {
 				ds_load( 'remove_bad_cache', $ip, $stats, $options );
 				ds_load( 'remove_good_cache', $ip, $stats, $options );
 			}
 			ds_load( 'add_to_allow_list', $ip, $stats, $options );
+			exit();
 			break;
 		case 'delete_wl_row':
 			$answer = ds_load( 'get_allow_requests', $ip, $stats, $options );
-			echo esc_html( $answer );
+			echo wp_kses( $answer, $allowed_html );
 			exit();
 			break;
 		case 'delete_wlip':
 			$answer = ds_load( 'get_allow_requests', $ip, $stats, $options );
-			echo esc_html( $answer );
+			echo wp_kses( $answer, $allowed_html );
 			exit();
 			break;
 		case 'delete_wlem':
 			$answer = ds_load( 'get_allow_requests', $ip, $stats, $options );
-			echo esc_html( $answer );
+			echo wp_kses( $answer, $allowed_html );
 			exit();
 			break;
 		default:
-			// translators: %s is the username being checked
+			// translators: %s is the unrecognized function name
 			printf( esc_html__( 'Unrecognized function "%s"', 'dam-spam' ), esc_html( $func ) );
 			exit();
 	}
@@ -379,32 +388,28 @@ function sfs_watch( $data ) {
 	switch ( $container ) {
 		case 'badips':
 			$show = ds_load( 'get_bad_cache', 'x', $stats, $options );
-			echo esc_html( $show );
+			echo wp_kses( $show, $allowed_html );
 			exit();
 			break;
 		case 'goodips':
 			$show = ds_load( 'get_good_cache', 'x', $stats, $options );
-			echo esc_html( $show );
+			echo wp_kses( $show, $allowed_html );
 			exit();
 			break;
 		case 'allow_list_request':
 			$answer = ds_load( 'get_allow_requests', $ip, $stats, $options );
-			echo esc_html( $answer );
+			echo wp_kses( $answer, $allowed_html );
 			exit();
 		default:
-			// translators: %s is the reason the item is in cache
+			// translators: %s is the missing container name
 			printf( esc_html__( 'Something is missing: %s', 'dam-spam' ), esc_html( $container ) );
 			exit();
 	}
 }
 
 function ds_sfs_ip_column( $value, $column_name, $user_id ) {
-	$trash	  = DS_PLUGIN_URL . 'assets/images/trash.png';
-	$down	  = DS_PLUGIN_URL . 'assets/images/down.png';
-	$up		  = DS_PLUGIN_URL . 'assets/images/up.png';
-	$whois	  = DS_PLUGIN_URL . 'assets/images/whois.png';
-	$stophand = DS_PLUGIN_URL . 'assets/images/stop.png';
-	$search   = DS_PLUGIN_URL . 'assets/images/search.png';
+	$icons = ds_get_icon_urls();
+	extract( $icons );
 	if ( $column_name == 'signup_ip' ) {
 		$signup_ip  = get_user_meta( $user_id, 'signup_ip', true );
 		$signup_ip2 = $signup_ip;
@@ -415,7 +420,7 @@ function ds_sfs_ip_column( $value, $column_name, $user_id ) {
 			$useremail   = urlencode( $user_info->user_email );
 			$userurl	 = urlencode( $user_info->user_url );
 			$username	 = $user_info->display_name;
-			$stopper	 = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/search.php?q=$signup_ip\"><img src=\"$stophand\" class=\"icon-action\"></a>";
+			$stopper	 = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/search.php?q=$signup_ip\"><img src=\"$stop\" class=\"icon-action\"></a>";
 			$honeysearch = "<a title=\"" . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.projecthoneypot.org/ip_$signup_ip\"><img src=\"$search\" class=\"icon-action\"></a>";
 			$botsearch   = "<a title=\"" . esc_attr__( 'Check BotScout', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://botscout.com/search.htm?stype=q&sterm=$signup_ip\"><img src=\"$search\" class=\"icon-action\"></a>";
 			$who		 = "<br><a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://whois.domaintools.com/$signup_ip\"><img src=\"$whois\" class=\"icon-action\"></a>";
@@ -423,7 +428,7 @@ function ds_sfs_ip_column( $value, $column_name, $user_id ) {
 			$options	 = ds_get_options();
 			$apikey	     = $options['apikey'];
 			if ( !empty( $apikey ) ) {
-				$report  = "<a title=\"" . esc_attr__( 'Report to SFS', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/add.php?username=$username&email=$useremail&ip_addr=$signup_ip&evidence=$userurl&api_key=$apikey\"><img src=\"$stophand\" class=\"icon-action\"></a>";
+				$report  = "<a title=\"" . esc_attr__( 'Report to SFS', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/add.php?username=$username&email=$useremail&ip_addr=$signup_ip&evidence=$userurl&api_key=$apikey\"><img src=\"$stop\" class=\"icon-action\"></a>";
 				$action .= $report;
 			}
 			return $ipline . $action;

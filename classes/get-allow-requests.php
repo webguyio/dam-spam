@@ -9,10 +9,8 @@ class get_allow_requests {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		extract( $stats );
 		extract( $options );
-		$trash	 = DS_PLUGIN_URL . 'assets/images/trash.png';
-		$down	 = DS_PLUGIN_URL . 'assets/images/down.png';
-		$up		 = DS_PLUGIN_URL . 'assets/images/up.png';
-		$whois	 = DS_PLUGIN_URL . 'assets/images/whois.png';
+		$icons = ds_get_icon_urls();
+		extract( $icons );
 		$ajaxurl = admin_url( 'admin-ajax.php' );
 		$show	 = '';
 		$nallow_list_requests = array();

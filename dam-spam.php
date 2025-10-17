@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Dam Spam
-Plugin URI: https://github.com/webguyio/dam-spam
+Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 0.1
+Version: 0.2
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DS_VERSION', '0.1' );
+define( 'DS_VERSION', '0.2' );
 define( 'DS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'DS_PLUGIN_FILE', plugin_dir_path( __FILE__ ) );
 
@@ -519,91 +519,105 @@ function ds_add_captcha() {
 }
 
 function ds_captcha_verify() {
+	static $verified = null;
+	if ( $verified !== null ) {
+		return $verified;
+	}
 	global $wpdb;
 	$options = ds_get_options();
 	$ip = ds_get_ip();
 	switch ( $options['check_captcha'] ) {
 		case 'G':
-			if ( array_key_exists( 'recaptcha', $_POST ) && !empty( $_POST['recaptcha'] ) && array_key_exists( 'g-recaptcha-response', $_POST ) ) {
-				$recaptchaapisecret = $options['recaptchaapisecret'];
-				$recaptchaapisite = $options['recaptchaapisite'];
-				if ( empty( $recaptchaapisecret ) || empty( $recaptchaapisite ) ) {
-					return esc_html__( 'Error: reCAPTCHA keys are not set.', 'dam-spam' );
-				} else { 
-					$g = isset( $_REQUEST['g-recaptcha-response'] ) ? sanitize_textarea_field( wp_unslash( $_REQUEST['g-recaptcha-response'] ) ) : '';
-					$url = "https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaapisecret&response=$g&remoteip=$ip";
-					$resp = ds_read_file( $url );
-					if ( strpos( $resp, '"success": true' ) === false ) {
-						$msg = esc_html__( 'Error: reCAPTCHA entry does not match. Try again.', 'dam-spam' );
-					}
-				}
+			if ( !array_key_exists( 'recaptcha', $_POST ) || empty( $_POST['recaptcha'] ) || !array_key_exists( 'g-recaptcha-response', $_POST ) ) {
+				$verified = esc_html__( 'Error: Please complete the reCAPTCHA.', 'dam-spam' );
+				return $verified;
+			}
+			$recaptchaapisecret = $options['recaptchaapisecret'];
+			$recaptchaapisite = $options['recaptchaapisite'];
+			if ( empty( $recaptchaapisecret ) || empty( $recaptchaapisite ) ) {
+				$verified = esc_html__( 'Error: reCAPTCHA keys are not set.', 'dam-spam' );
+				return $verified;
+			}
+			$g = isset( $_POST['g-recaptcha-response'] ) ? sanitize_textarea_field( wp_unslash( $_POST['g-recaptcha-response'] ) ) : '';
+			$response = wp_safe_remote_post( 'https://www.google.com/recaptcha/api/siteverify', array(
+				'body' => array(
+					'secret' => $recaptchaapisecret,
+					'response' => $g,
+					'remoteip' => $ip
+				)
+			) );
+			if ( is_wp_error( $response ) ) {
+				$verified = esc_html__( 'Error: reCAPTCHA connection failed.', 'dam-spam' );
+				return $verified;
+			}
+			$parsed = json_decode( wp_remote_retrieve_body( $response ) );
+			if ( !isset( $parsed->success ) || $parsed->success !== true ) {
+				$verified = esc_html__( 'Error: reCAPTCHA verification failed.', 'dam-spam' );
+				return $verified;
 			}
 		break;
 		case 'H':
-			if ( array_key_exists( 'h-captcha', $_POST ) && !empty( $_POST['h-captcha'] ) && array_key_exists( 'h-captcha-response', $_POST ) ) {
-				$hcaptchaapisecret = $options['hcaptchaapisecret'];
-				$hcaptchaapisite = $options['hcaptchaapisite'];
-				if ( empty( $hcaptchaapisecret ) || empty( $hcaptchaapisite ) ) {
-					return esc_html__( 'Error: hCaptcha keys are not set.', 'dam-spam' );
-				} else {
-					$h = isset( $_REQUEST['h-captcha-response'] ) ? sanitize_textarea_field( wp_unslash( $_REQUEST['h-captcha-response'] ) ) : '';
-					$url = "https://hcaptcha.com/siteverify?secret=$hcaptchaapisecret&response=$h&remoteip=$ip";
-					$resp = ds_read_file( $url );
-					$response = json_decode( $resp );
-					if ( !isset( $response->success ) or $response->success !== true ) { 
-						return esc_html__( 'Error: hCaptcha entry does not match. Try again.', 'dam-spam' );
-					}
-				}
+			if ( !array_key_exists( 'h-captcha', $_POST ) || empty( $_POST['h-captcha'] ) || !array_key_exists( 'h-captcha-response', $_POST ) ) {
+				$verified = esc_html__( 'Error: Please complete the hCaptcha.', 'dam-spam' );
+				return $verified;
+			}
+			$hcaptchaapisecret = $options['hcaptchaapisecret'];
+			$hcaptchaapisite = $options['hcaptchaapisite'];
+			if ( empty( $hcaptchaapisecret ) || empty( $hcaptchaapisite ) ) {
+				$verified = esc_html__( 'Error: hCaptcha keys are not set.', 'dam-spam' );
+				return $verified;
+			}
+			$h = isset( $_POST['h-captcha-response'] ) ? sanitize_textarea_field( wp_unslash( $_POST['h-captcha-response'] ) ) : '';
+			$response = wp_safe_remote_post( 'https://hcaptcha.com/siteverify', array(
+				'body' => array(
+					'secret' => $hcaptchaapisecret,
+					'response' => $h,
+					'remoteip' => $ip
+				)
+			) );
+			if ( is_wp_error( $response ) ) {
+				$verified = esc_html__( 'Error: hCaptcha connection failed.', 'dam-spam' );
+				return $verified;
+			}
+			$parsed = json_decode( wp_remote_retrieve_body( $response ) );
+			if ( !isset( $parsed->success ) || $parsed->success !== true ) {
+				$verified = esc_html__( 'Error: hCaptcha verification failed.', 'dam-spam' );
+				return $verified;
 			}
 		break;
 		case 'S':
-			if ( array_key_exists( 'adcopy_challenge', $_POST ) && !empty( $_POST['adcopy_challenge'] ) ) {
-				$solvmediaapivchallenge = $options['solvmediaapivchallenge'];
-				$solvmediaapiverify = $options['solvmediaapiverify'];
-				$adcopy_challenge = isset( $_REQUEST['adcopy_challenge'] ) ? sanitize_textarea_field( wp_unslash( $_REQUEST['adcopy_challenge'] ) ) : '';
-				$adcopy_response = isset( $_REQUEST['adcopy_response'] ) ? sanitize_textarea_field( wp_unslash( $_REQUEST['adcopy_response'] ) ) : '';
-				$postdata = http_build_query(
-					array(
-						'privatekey' => $solvmediaapiverify,
-						'challenge' => $adcopy_challenge,
-						'response' => $adcopy_response,
-						'remoteip' => $ip
-					)
-				);
-				$opts = array(
-					'http' =>
-						array(
-							'method' => 'POST',
-							'header' => 'Content-type: application/x-www-form-urlencoded',
-							'content' => $postdata
-						)
-				);
-				$body = array(
+			if ( !array_key_exists( 'adcopy_challenge', $_POST ) || empty( $_POST['adcopy_challenge'] ) ) {
+				$verified = esc_html__( 'Error: Please complete the CAPTCHA.', 'dam-spam' );
+				return $verified;
+			}
+			$solvmediaapivchallenge = $options['solvmediaapivchallenge'];
+			$solvmediaapiverify = $options['solvmediaapiverify'];
+			if ( empty( $solvmediaapivchallenge ) || empty( $solvmediaapiverify ) ) {
+				$verified = esc_html__( 'Error: Solve Media keys are not set.', 'dam-spam' );
+				return $verified;
+			}
+			$adcopy_challenge = isset( $_POST['adcopy_challenge'] ) ? sanitize_textarea_field( wp_unslash( $_POST['adcopy_challenge'] ) ) : '';
+			$adcopy_response = isset( $_POST['adcopy_response'] ) ? sanitize_textarea_field( wp_unslash( $_POST['adcopy_response'] ) ) : '';
+			$response = wp_safe_remote_post( 'https://verify.solvemedia.com/papi/verify/', array(
+				'body' => array(
 					'privatekey' => $solvmediaapiverify,
 					'challenge' => $adcopy_challenge,
 					'response' => $adcopy_response,
 					'remoteip' => $ip
-				);
-				$args = array(
-					'user-agent' => 'WordPress/' . '4.2' . '; ' . get_bloginfo( 'url' ),
-					'blocking' => true,
-					'headers' => array( 'Content-type: application/x-www-form-urlencoded' ),
-					'method' => 'POST',
-					'timeout' => 45,
-					'redirection' => 5,
-					'httpversion' => '1.0',
-					'body' => $body,
-					'cookies' => array()
-				);
-				$url = 'https://verify.solvemedia.com/papi/verify/';
-				$resultarray = wp_remote_post( $url, $args );
-				$result = $resultarray['body'];
-				if ( strpos( $result, 'true' ) === false ) {
-					return esc_html__( 'Error: CAPTCHA entry does not match. Try again.', 'dam-spam' );
-				}
+				)
+			) );
+			if ( is_wp_error( $response ) ) {
+				$verified = esc_html__( 'Error: Solve Media connection failed.', 'dam-spam' );
+				return $verified;
+			}
+			$result = wp_remote_retrieve_body( $response );
+			if ( strpos( $result, 'true' ) === false ) {
+				$verified = esc_html__( 'Error: Solve Media verification failed.', 'dam-spam' );
+				return $verified;
 			}
 		break;
 	}
+	$verified = true;
 	return true;
 }
 
@@ -666,7 +680,7 @@ function ds_user_reg_filter( $user_login ) {
 		$post['reason'] = esc_html__( 'Failed Registration: Bad Cache', 'dam-spam' );
 		$host['check'] = 'check_bad_cache';
 		$answer = ds_load( 'log_bad', ds_get_ip(), $stats, $options, $post );
-		wp_die( '$reject_message', esc_html__( 'Login Access Blocked', 'dam-spam' ), array( 'response' => 403 ) );
+		wp_die( esc_html( $reject_message ), esc_html__( 'Login Access Blocked', 'dam-spam' ), array( 'response' => 403 ) );
 		exit();
 	}
 	$reason = ds_load( 'check_periods', ds_get_ip(), $stats, $options, $post );
@@ -689,9 +703,10 @@ add_action( 'wp', 'ds_login_redirect' );
 function ds_login_redirect() {
 	global $pagenow, $post;
 	$options = ds_get_options();
-	if ( get_option( 'ds_enable_custom_login', '' ) and $options['ds_private_mode'] == "Y" and ( !is_user_logged_in() && $post->post_name != 'login' ) ) {
-		wp_redirect( site_url( 'login' ) ); exit;
-	} else if ( $options['ds_private_mode'] == "Y" and ( !is_user_logged_in() && ( $pagenow != 'wp-login.php' and $post->post_name != 'login' ) ) ) {
+	if ( get_option( 'ds_enable_custom_login', '' ) and $options['ds_private_mode'] == "Y" and ( !is_user_logged_in() && ( !$post || $post->post_name != 'login' ) ) ) {
+		wp_redirect( site_url( 'login' ) );
+		exit;
+	} elseif ( $options['ds_private_mode'] == "Y" and ( !is_user_logged_in() && ( $pagenow != 'wp-login.php' and ( !$post || $post->post_name != 'login' ) ) ) ) {
 		auth_redirect();
 	}
 }

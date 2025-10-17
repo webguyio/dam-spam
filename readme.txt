@@ -4,7 +4,7 @@ Contributors: webguyio
 Donate link: https://webguy.io/donate
 Tags: spam, security, anti-spam, spam protection, no spam
 Tested up to: 6.8
-Stable tag: 0.1
+Stable tag: 0.2
 License: GPL
 License URI: https://www.gnu.org/licenses/gpl.html
 
@@ -59,6 +59,9 @@ Toggle off the "Check Credentials on All Login Attempts" option and try again.
 Yes. See: [https://law.stackexchange.com/questions/28603/how-to-satisfy-gdprs-consent-requirement-for-ip-logging](https://law.stackexchange.com/questions/28603/how-to-satisfy-gdprs-consent-requirement-for-ip-logging). Dam Spam does not collect any data for any other purpose (like marketing or tracking). It is purely for legitimate security purposes only. Additionally, if any of your users ever requested it, all data can be deleted.
 
 == Changelog ==
+
+= 0.2 =
+* Fixes
 
 = 0.1 =
 * New fork of [Stop Spammers](https://wordpress.org/plugins/stop-spammer-registrations-plugin/)

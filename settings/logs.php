@@ -10,13 +10,9 @@ if ( !current_user_can( 'manage_options' ) ) {
 }
 
 ds_fix_post_vars();
-$trash	  = DS_PLUGIN_URL . 'assets/images/trash.png';
-$down	  = DS_PLUGIN_URL . 'assets/images/down.png';
-$up		  = DS_PLUGIN_URL . 'assets/images/up.png';
-$whois	  = DS_PLUGIN_URL . 'assets/images/whois.png';
-$stophand = DS_PLUGIN_URL . 'assets/images/stop.png';
-$search   = DS_PLUGIN_URL . 'assets/images/search.png';
-$now	  = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
+$icons = ds_get_icon_urls();
+extract( $icons );
+$now = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 
 ?>
 
@@ -142,7 +138,7 @@ $now	  = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) )
 				if ( empty( $reason ) ) {
 					$reason = "passed";
 				}
-				$stopper	 = '<a title="' . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . '" target="_blank" href="https://www.stopforumspam.com/search.php?q=' . $ip . '"><img src="' . $stophand . '" class="icon-action"></a>';
+				$stopper	 = '<a title="' . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . '" target="_blank" href="https://www.stopforumspam.com/search.php?q=' . $ip . '"><img src="' . $stop . '" class="icon-action"></a>';
 				$honeysearch = '<a title="' . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . '" target="_blank" href="https://www.projecthoneypot.org/ip_' . $ip . '"><img src="' . $search . '" class="icon-action"></a>';
 				$botsearch   = '<a title="' . esc_attr__( 'Check BotScout', 'dam-spam' ) . '" target="_blank" href="https://botscout.com/search.htm?stype=q&sterm=' . $ip . '"><img src="' . $search . '" class="icon-action"></a>';
 				$who		 = '<br><a title="' . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . '" target="_blank" href="https://whois.domaintools.com/' . $ip . '"><img src="' . $whois . '" class="icon-action"></a>';
@@ -160,7 +156,7 @@ $now	  = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) )
 						$href = 'href="#"';
 						$onclick = 'onclick="sfs_ajax_report_spam(this,\'registration\',\'' . esc_html( $blog ) . '\',\'' . esc_html( $ajaxurl ) . '\',\'' . esc_html( $em ) . '\',\'' . esc_html( $ip ) . '\',\'' . esc_html( $au ) . '\');return false;"';
 						echo '| ';
-						echo '<a title="' . esc_attr__( 'Report to Stop Forum Spam', 'dam-spam' ) . '" ' . esc_html( $href, $onclick ) . ' class="delete:the-comment-list:comment-$id::delete=1 delete vim-d vim-destructive">' . esc_html__( 'Report to SFS', 'dam-spam' ) . '</a>';
+						echo '<a title="' . esc_attr__( 'Report to Stop Forum Spam', 'dam-spam' ) . '" ' . $href . ' ' . $onclick . ' class="delete:the-comment-list:comment-$id::delete=1 delete vim-d vim-destructive">' . esc_html__( 'Report to SFS', 'dam-spam' ) . '</a>';
 					}
 				}
 				echo '

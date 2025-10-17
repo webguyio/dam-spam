@@ -29,6 +29,35 @@ function ds_read_file( $f, $method = 'GET' ) {
 	return '';
 }
 
+function ds_get_icon_urls() {
+	return array(
+		'up'	 => DS_PLUGIN_URL . 'assets/images/up.png',
+		'down'   => DS_PLUGIN_URL . 'assets/images/down.png',
+		'trash'  => DS_PLUGIN_URL . 'assets/images/trash.png',
+		'stop'   => DS_PLUGIN_URL . 'assets/images/stop.png',
+		'whois'  => DS_PLUGIN_URL . 'assets/images/whois.png',
+		'search' => DS_PLUGIN_URL . 'assets/images/search.png',
+	);
+}
+
+function ds_get_ajax_allowed_html() {
+	return array(
+		'a' => array(
+			'href' => array(),
+			'onclick' => array(),
+			'title' => array(),
+			'alt' => array(),
+			'target' => array(),
+		),
+		'img' => array(
+			'src' => array(),
+			'class' => array(),
+			'alt' => array(),
+		),
+		'br' => array(),
+	);
+}
+
 function ds_auto_migrate_from_stop_spammers() {
 	if ( get_option( 'ds_options' ) !== false ) {
 		return;
