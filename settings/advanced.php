@@ -1042,9 +1042,9 @@ add_filter( 'wp_setup_nav_menu_item', 'ds_nav_menu_type_label' );
 function ds_loginout_title( $title ) {
 	$titles = explode( '/', $title );
 	if ( !is_user_logged_in() ) {
-		return esc_html( isset( $titles[0] ) ? $titles[0] : esc_html__( 'Log In', 'dam-spam' ) );
+		return isset( $titles[0] ) ? esc_html( $titles[0] ) : esc_html__( 'Log In', 'dam-spam' );
 	} else {
-		return esc_html( isset( $titles[1] ) ? $titles[1] : esc_html__( 'Log Out', 'dam-spam' ) );
+		return isset( $titles[1] ) ? esc_html( $titles[1] ) : esc_html__( 'Log Out', 'dam-spam' );
 	}
 }
 
@@ -1052,7 +1052,7 @@ function ds_setup_nav_menu_item( $item ) {
 	global $pagenow;
 	if ( $pagenow !== 'nav-menus.php' && !defined( 'DOING_AJAX' ) && isset( $item->url ) && strstr( $item->url, '#ds-nav' ) && get_option( 'ds_enable_custom_login', '' ) !== 'yes' ) {
 		$item->_invalid = true;
-	} elseif ( $pagenow !== 'nav-menus.php' && !defined( 'DOING_AJAX' ) && isset( $item->url ) && strstr( $item->url, '#ds-nav' ) !== '' ) {
+	} elseif ( $pagenow !== 'nav-menus.php' && !defined( 'DOING_AJAX' ) && isset( $item->url ) && strstr( $item->url, '#ds-nav' ) !== false ) {
 		$login_url = get_permalink( get_page_by_path( 'login' ) );
 		$logout_url = get_permalink( get_page_by_path( 'logout' ) );
 		switch ( $item->url ) {
