@@ -153,7 +153,7 @@ if ( $total > count( $user_list ) ) {
 			echo '-';
 		} else {
 			$checked = ( isset( $_POST['f_users'] ) && is_array( $_POST['f_users'] ) && in_array( absint( $UR['ID'] ), array_map( 'absint', $_POST['f_users'] ) ) ) ? ' checked' : '';
-			echo '<input type="checkbox" name="f_users[]" value="' . esc_attr( $UR['ID'] ) . '"' . esc_attr( $checked ) . '>';
+			echo '<input type="checkbox" name="f_users[]" value="' . esc_attr( $UR['ID'] ) . '" ' . $checked . '>';
 		}
 		$last_login = $UR['last_login_classipress'] ? strtotime( $UR['last_login_classipress'] ) : absint( $UR['last_login'] );
 		$status = $UR['disabled_time'] ? esc_html__( 'blocked', 'dam-spam' ) . ' ' . esc_html( gmdate( '[d M Y]', absint( $UR['disabled_time'] ) ) ) : esc_html__( 'active', 'dam-spam' );

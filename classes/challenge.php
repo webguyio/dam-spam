@@ -187,7 +187,8 @@ class challenge extends ds_module {
 				$kr = $post['reason'];
 			}
 			$ka = isset( $post['author'] ) ? sanitize_user( $post['author'] ) : '';
-			$kp = base64_encode( wp_json_encode( $_POST ) );
+			$validated_post = array_map( 'sanitize_text_field', wp_unslash( $_POST ) );
+			$kp = base64_encode( wp_json_encode( $validated_post ) );
 		}
 		$knonce = wp_create_nonce( 'ds_block' );
 		if ( !empty( $msg ) ) {

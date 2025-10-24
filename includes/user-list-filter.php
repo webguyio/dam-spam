@@ -388,7 +388,8 @@ function ds_getUsersList( $environment, $ARGS = array() ) {
 	$joins[] = "LEFT JOIN {$wpdb->prefix}usermeta WUM21 ON WUM21.user_id = WU.ID AND WUM21.meta_key = 'last_login'";
 	if ( !empty( $conditions ) ) {
 		$flags_cnd = isset( $ARGS['flagsCND'] ) ? sanitize_text_field( wp_unslash( $ARGS['flagsCND'] ) ) : '';
-		$conditions_sec2[] = implode( $flags_cnd == 'add' ? ' OR ' : ' AND ', $conditions );
+		$operator = ( $flags_cnd === 'add' ) ? ' OR ' : ' AND ';
+		$conditions_sec2[] = implode( $operator, $conditions );
 	}
 	if ( !empty( $ARGS['ds_check_name'] ) ) {
 		if ( $ARGS['ds_check_name'] === 'yes' ) {
@@ -473,6 +474,9 @@ function ds_getUsersList( $environment, $ARGS = array() ) {
 }
 
 if ( isset( $_POST['op'] ) && isset( $_POST['ds_user_filter_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_user_filter_nonce'] ) ), 'ds_user_filter_nonce' ) ) {
+	if ( !current_user_can( 'manage_options' ) ) {
+		wp_die( esc_html__( 'Access Blocked', 'dam-spam' ) );
+	}
 	$op = sanitize_text_field( wp_unslash( $_POST['op'] ) );
 	if ( isset( $_POST['f_users'] ) && is_array( $_POST['f_users'] ) ) {
 		$f_users = array_map( 'absint', wp_unslash( $_POST['f_users'] ) );

@@ -206,7 +206,7 @@ function ds_advanced_menu() {
 					<hr>
 					<div class="inside">			
 						<p>
-							<?php wp_nonce_field( 'ds_login_type_nonce', 'ds_login_type_nonce' ); ?>
+							<?php wp_nonce_field( 'ds_advanced_settings', 'ds_advanced_settings_nonce' ); ?>
 							<?php submit_button( esc_html__( 'Save Changes', 'dam-spam' ), 'primary', 'submit', false ); ?>
 						</p>
 					</div>
@@ -351,7 +351,7 @@ function ds_contact_form_shortcode( $atts ) {
 		$body .= $message;
 		$body .= "\n";
 		// translators: %1$s is the sender's name, %2$s is the sender's email
-		$headers = sprintf( esc_html__( 'From: %1$s <%2$s>', 'dam-spam' ), $name, $email );
+		$headers = sprintf( 'From: %s <%s>', sanitize_text_field( $name ), sanitize_email( $email ) );
 		$success = wp_mail( $to, $subject, $body, $headers );
 		if ( $success ) {
 			print '<p id="send" class="success">' . esc_html__( 'Message Sent Successfully', 'dam-spam' ) . '</p>';
@@ -485,14 +485,14 @@ if ( get_option( 'ds_honeypot_divi', 'yes' ) === 'yes' ) {
 			}
 		}
 	}
-	add_action( 'admin_init', 'ds_divi_email_optin_verify_honeypot' );
+	add_action( 'et_pb_newsletter_fields_before', 'ds_divi_email_optin_verify_honeypot' );
 }
 
 function ds_enable_firewall() {
 	if ( empty( $_POST['ds_firewall_setting_placeholder'] ) || 'ds_firewall_setting' !== $_POST['ds_firewall_setting_placeholder'] ) {
 		return;
 	}
-	if ( !isset( $_POST['ds_login_type_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_login_type_nonce'] ) ), 'ds_login_type_nonce' ) ) {
+	if ( !isset( $_POST['ds_advanced_settings_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_advanced_settings_nonce'] ) ), 'ds_advanced_settings' ) ) {
 		return;
 	}
 	if ( !current_user_can( 'manage_options' ) ) {
@@ -627,7 +627,7 @@ function ds_enable_custom_login() {
 	if ( empty( $_POST['ds_login_setting_placeholder'] ) || 'ds_login_setting' !== $_POST['ds_login_setting_placeholder'] ) {
 		return;
 	}
-	if ( !isset( $_POST['ds_login_type_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_login_type_nonce'] ) ), 'ds_login_type_nonce' ) ) {
+	if ( !isset( $_POST['ds_advanced_settings_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_advanced_settings_nonce'] ) ), 'ds_advanced_settings' ) ) {
 		return;
 	}
 	if ( !current_user_can( 'manage_options' ) ) {
@@ -646,6 +646,12 @@ function ds_enable_custom_login() {
 add_action( 'admin_init', 'ds_enable_custom_login' );
 
 function ds_update_honeypot() {
+	if ( empty( $_POST['ds_honeypot_placeholder'] ) || 'ds_honeypot' !== $_POST['ds_honeypot_placeholder'] ) {
+		return;
+	}
+	if ( !isset( $_POST['ds_advanced_settings_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_advanced_settings_nonce'] ) ), 'ds_advanced_settings' ) ) {
+		return;
+	}
 	if ( !current_user_can( 'manage_options' ) ) {
 		return;
 	}
@@ -681,7 +687,7 @@ function ds_login_type_func() {
 	if ( empty( $_POST['ds_login_type_field'] ) || 'ds_login_type' !== $_POST['ds_login_type_field'] ) {
 		return;
 	}
-	if ( !isset( $_POST['ds_login_type_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_login_type_nonce'] ) ), 'ds_login_type_nonce' ) ) {
+	if ( !isset( $_POST['ds_advanced_settings_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_advanced_settings_nonce'] ) ), 'ds_advanced_settings' ) ) {
 		return;
 	}
 	if ( !current_user_can( 'manage_options' ) ) {
@@ -1081,7 +1087,7 @@ function ds_limit_login_attempts() {
 	if ( empty( $_POST['ds_login_setting_placeholder'] ) || 'ds_login_setting' !== $_POST['ds_login_setting_placeholder'] ) {
 		return;
 	}
-	if ( !isset( $_POST['ds_login_type_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_login_type_nonce'] ) ), 'ds_login_type_nonce' ) ) {
+	if ( !isset( $_POST['ds_advanced_settings_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_advanced_settings_nonce'] ) ), 'ds_advanced_settings' ) ) {
 		return;
 	}
 	if ( !current_user_can( 'manage_options' ) ) {
@@ -1121,9 +1127,10 @@ function ds_authenticate( $user, $username, $password ) {
 		$expiration = ds_get_user_lock_expiration( $userdata->ID );
 		if ( $expiration ) {
 			// translators: %s is the time remaining until the account is unlocked
-			return new WP_Error( 'locked_account', sprintf( esc_html__( '<strong>ERROR</strong>: This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) );
+			return new WP_Error( 'locked_account', sprintf( '<strong>%s</strong>: %s', esc_html__( 'ERROR', 'dam-spam' ), sprintf( esc_html__( 'This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) ) );
 		} else {
-			return new WP_Error( 'locked_account', esc_html__( '<strong>ERROR</strong>: This account has been locked.', 'dam-spam' ) );
+			// translators: %s is the time remaining until the account is unlocked
+			return new WP_Error( 'locked_account', sprintf( '<strong>%s</strong>: %s', esc_html__( 'ERROR', 'dam-spam' ), esc_html__( 'This account has been locked.', 'dam-spam' ) ) );
 		}
 	} elseif ( is_wp_error( $user ) && 'incorrect_password' === $user->get_error_code() && get_option( 'ds_login_attempts', 'no' ) === 'yes' ) {
 		ds_add_failed_login_attempt( $userdata->ID );
@@ -1133,7 +1140,7 @@ function ds_authenticate( $user, $username, $password ) {
 			$expiration = strtotime( $lockout_expiry );
 			ds_lock_user( $userdata->ID, $expiration );
 			// translators: %s is the time remaining until the account is unlocked
-			return new WP_Error( 'locked_account', sprintf( esc_html__( '<strong>ERROR</strong>: This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) );
+			return new WP_Error( 'locked_account', sprintf( '<strong>%s</strong>: %s', esc_html__( 'ERROR', 'dam-spam' ), sprintf( esc_html__( 'This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) ) );
 		}
 	}
 	return $user;
@@ -1245,7 +1252,10 @@ function ds_process_settings_import() {
 	if ( false === $file_contents ) {
 		wp_die( esc_html__( 'Error reading import file', 'dam-spam' ) );
 	}
-	$options = (array) json_decode( $file_contents );
+	$options = json_decode( $file_contents, true );
+	if ( !is_array( $options ) || json_last_error() !== JSON_ERROR_NONE ) {
+		wp_die( esc_html__( 'Invalid JSON file format', 'dam-spam' ) );
+	}
 	ds_set_options( $options );
 	add_action( 'admin_notices', 'ds_admin_notice_success' );
 }
@@ -1271,7 +1281,10 @@ function ds_process_settings_reset() {
 	if ( false === $file_contents ) {
 		wp_die( esc_html__( 'Error reading default settings file', 'dam-spam' ) );
 	}
-	$options = (array) json_decode( $file_contents );
+	$options = json_decode( $file_contents, true );
+	if ( !is_array( $options ) || json_last_error() !== JSON_ERROR_NONE ) {
+		wp_die( esc_html__( 'Error reading default settings file', 'dam-spam' ) );
+	}
 	ds_set_options( $options );
 	add_action( 'admin_notices', 'ds_admin_notice_success' );
 }

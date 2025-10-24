@@ -62,10 +62,10 @@ function ds_rightnow() {
 	}
 	if ( count( $allow_list_requests ) == 1 ) {
 		// translators: %1$s and %2$s are opening/closing link tags for the allow list page
-		echo '<p><strong>' . esc_html( count( $allow_list_requests ) ) . '</strong> ' . sprintf( esc_html__( 'user has been blocked and %1$srequested%2$s that you add them to the Allow List.', 'dam-spam' ), '<a href="admin.php?page=ds-allowed">', '</a>' ) . '</p>';
+		echo '<p><strong>' . esc_html( count( $allow_list_requests ) ) . '</strong> ' . sprintf( wp_kses_post( __( 'user has been blocked and <a href="%s">requested</a> that you add them to the Allow List.', 'dam-spam' ) ), esc_url( admin_url( 'admin.php?page=ds-allowed' ) ) ) . '</p>';
 	} else if ( count( $allow_list_requests ) > 0 ) {
 		// translators: %1$s and %2$s are opening/closing link tags for the allow list page
-		echo '<p><strong>' . esc_html( count( $allow_list_requests ) ) . '</strong> ' . sprintf( esc_html__( 'users have been blocked and %1$srequested%2$s that you add them to the Allow List.', 'dam-spam' ), '<a href="admin.php?page=ds-allowed">', '</a>' ) . '</p>';
+		echo '<p><strong>' . esc_html( count( $allow_list_requests ) ) . '</strong> ' . sprintf( wp_kses_post( __( 'users have been blocked and <a href="%s">requested</a> that you add them to the Allow List.', 'dam-spam' ) ), esc_url( admin_url( 'admin.php?page=ds-allowed' ) ) ) . '</p>';
 	}
 }
 
@@ -126,8 +126,8 @@ function ds_row( $actions, $comment ) {
 		$href	 = "href=\"#\"";
 		$onclick = "onclick=\"sfs_ajax_report_spam(this,'$ID','$blog','$ajaxurl');return false;\"";
 	}
-	$action .= '<span title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" onclick="sfs_ajax_process(\'' . $comment->comment_author_ip . '\',\'log\',\'add_black\',\'' . $ajaxurl . '\');return false;"><img src="' . DS_PLUGIN_URL . 'assets/images/down.png" class="icon-action"></span> ';
-	$action .= '<span title="' . esc_attr__( 'Add to Allow List', 'dam-spam' ) . '" onclick="sfs_ajax_process(\'' . $comment->comment_author_ip . '\',\'log\',\'add_white\',\'' . $ajaxurl . '\');return false;"><img src="' . DS_PLUGIN_URL . 'assets/images/up.png" class="icon-action"> | </span>';
+	$action .= '<span title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" onclick="sfs_ajax_process(\'' . esc_js( $comment->comment_author_ip ) . '\',\'log\',\'add_black\',\'' . esc_js( $ajaxurl ) . '\');return false;"><img src="' . esc_url( DS_PLUGIN_URL . 'assets/images/down.png' ) . '" class="icon-action"></span> ';
+	$action .= '<span title="' . esc_attr__( 'Add to Allow List', 'dam-spam' ) . '" onclick="sfs_ajax_process(\'' . esc_js( $comment->comment_author_ip ) . '\',\'log\',\'add_white\',\'' . esc_js( $ajaxurl ) . '\');return false;"><img src="' . esc_url( DS_PLUGIN_URL . 'assets/images/up.png' ) . '" class="icon-action"> | </span>';
 	if ( !empty( $email ) ) {
 		$action .= "<a $exst title=\"" . esc_attr__( 'Report to Stop Forum Spam', 'dam-spam' ) . "\" $target $href $onclick class='delete:the-comment-list:comment-$ID::delete=1 delete vim-d vim-destructive'>" . esc_html__( ' Report to SFS', 'dam-spam' ) . "</a>";
 	}

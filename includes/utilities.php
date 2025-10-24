@@ -242,4 +242,72 @@ function ds_map_old_to_new_stats( $old_stats ) {
 	return $new_stats;
 }
 
+class Dam_Spam_Updater {
+	private $plugin_slug;
+	private $plugin_file;
+	private $update_url;
+
+	public function __construct( $plugin_file ) {
+		$this->plugin_file = $plugin_file;
+		$this->plugin_slug = plugin_basename( $plugin_file );
+		$this->update_url  = 'https://damspam.com/updates.json';
+		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_for_updates' ) );
+		add_filter( 'plugins_api', array( $this, 'get_plugin_info' ), 10, 3 );
+	}
+
+	public function check_for_updates( $transient ) {
+		if ( empty( $transient->checked ) ) {
+			return $transient;
+		}
+		$remote_info = $this->get_remote_version_info();
+		if ( ! $remote_info || version_compare( $this->get_current_version(), $remote_info['version'], '>=' ) ) {
+			return $transient;
+		}
+		$transient->response[ $this->plugin_slug ] = ( object ) array(
+			'slug'        => dirname( $this->plugin_slug ),
+			'plugin'      => $this->plugin_slug,
+			'new_version' => $remote_info['version'],
+			'url'         => 'https://damspam.com',
+			'package'     => 'https://damspam.com/dam-spam.zip',
+		);
+		return $transient;
+	}
+
+	public function get_plugin_info( $response, $action, $args ) {
+		if ( $action !== 'plugin_information' || $args->slug !== dirname( $this->plugin_slug ) ) {
+			return $response;
+		}
+		$remote_info = $this->get_remote_version_info();
+		if ( $remote_info ) {
+			$response = ( object ) array(
+				'name'           => 'Dam Spam',
+				'version'        => $remote_info['version'],
+				'last_updated'   => $remote_info['last_updated'] ?? current_time( 'mysql' ),
+				'sections'       => array(
+					'description' => 'Anti-spam',
+				),
+				'download_link'  => 'https://damspam.com/dam-spam.zip',
+			);
+		}
+		return $response;
+	}
+
+	private function get_remote_version_info() {
+		$response = wp_remote_get( $this->update_url );
+		if ( is_wp_error( $response ) ) {
+			return false;
+		}
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body, true );
+		return $data ? $data : false;
+	}
+
+	private function get_current_version() {
+		$plugin_data = get_plugin_data( $this->plugin_file );
+		return $plugin_data['Version'];
+	}
+}
+
+new Dam_Spam_Updater( __FILE__ );
+
 ?>

@@ -77,7 +77,7 @@ class add_to_allow_list {
 		// translators: %s is the website name
 		$message = sprintf( esc_html__( 'Apologies for the inconvenience. You have now been cleared for %s.', 'dam-spam' ), $blog );
 		$message = str_replace( '&', 'and', $message );
-		$headers = esc_html__( 'From: ', 'dam-spam' ) . get_option( 'admin_email' ) . "\r\n";
+		$headers = 'From: ' . sanitize_email( get_option( 'admin_email' ) ) . "\r\n";
 		wp_mail( $to, $subject, $message, $headers );
 		return true;
 	}

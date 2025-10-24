@@ -389,7 +389,10 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 <?php
 
 function ds_count_transients() {
-	$blog_id = get_current_blog_id();
+	$blog_id = absint( get_current_blog_id() );
+	if ( $blog_id < 1 ) {
+		return 0;
+	}
 	global $wpdb;
 	$optimeout = time() - 60;
 	$table = $wpdb->get_blog_prefix( $blog_id ) . 'options';
@@ -407,7 +410,10 @@ function ds_count_transients() {
 }
 
 function ds_delete_transients() {
-	$blog_id = get_current_blog_id();
+	$blog_id = absint( get_current_blog_id() );
+	if ( $blog_id < 1 ) {
+		return;
+	}
 	global $wpdb;
 	$optimeout = time() - 60;
 	$table = $wpdb->get_blog_prefix( $blog_id ) . 'options';

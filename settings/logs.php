@@ -149,12 +149,12 @@ $now = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 					<td>' . wp_kses_post( $ip, $who, $stopper, $honeysearch, $botsearch );
 				if ( stripos( $reason, 'passed' ) !== false && ( $id == '/' || strpos( $id, 'login' ) ) !== false || strpos( $id, 'register' ) !== false && !in_array( $ip, $block_list ) && !in_array( $ip, $allow_list ) ) {
 					$ajaxurl = admin_url( 'admin-ajax.php' );
-					echo '<a href="" onclick="sfs_ajax_process(\'' . esc_html( $ip ) . '\',\'log\',\'add_black\',\'' . esc_html( $ajaxurl ) . '\');return false;" title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" alt="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '"><img src="' . esc_url( $down ) . '" class="icon-action"></a>';
+					echo '<a href="" onclick="sfs_ajax_process(\'' . esc_js( $ip ) . '\',\'log\',\'add_black\',\'' . esc_js( $ajaxurl ) . '\');return false;" title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" alt="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '"><img src="' . esc_url( $down ) . '" class="icon-action"></a>';
 					$options = get_option( 'ds_options' );
 					$apikey  = $options['apikey'];
 					if ( !empty( $apikey ) && !empty( $em ) ) {
 						$href = 'href="#"';
-						$onclick = 'onclick="sfs_ajax_report_spam(this,\'registration\',\'' . esc_html( $blog ) . '\',\'' . esc_html( $ajaxurl ) . '\',\'' . esc_html( $em ) . '\',\'' . esc_html( $ip ) . '\',\'' . esc_html( $au ) . '\');return false;"';
+						$onclick = 'onclick="sfs_ajax_report_spam(this,\'registration\',\'' . esc_js( $blog ) . '\',\'' . esc_js( $ajaxurl ) . '\',\'' . esc_js( $em ) . '\',\'' . esc_js( $ip ) . '\',\'' . esc_js( $au ) . '\');return false;"';
 						echo '| ';
 						echo '<a title="' . esc_attr__( 'Report to Stop Forum Spam', 'dam-spam' ) . '" ' . $href . ' ' . $onclick . ' class="delete:the-comment-list:comment-$id::delete=1 delete vim-d vim-destructive">' . esc_html__( 'Report to SFS', 'dam-spam' ) . '</a>';
 					}
