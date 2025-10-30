@@ -221,16 +221,16 @@ class challenge extends ds_module {
 		switch ( $check_captcha ) {
 			case 'G':
 				$recaptchaapisite = isset( $options['recaptchaapisite'] ) ? $options['recaptchaapisite'] : '';
-				wp_enqueue_script( 'ds-recaptcha', 'https://www.google.com/recaptcha/api.js', array(), '1', array( 'strategy' => 'async', 'in_footer' => true ) );
 				$cap = "
+					<script src='https://www.google.com/recaptcha/api.js' async defer></script>
 					<input type='hidden' name='recaptcha' value='recaptcha'>
 					<div class='g-recaptcha' data-sitekey='" . esc_attr( $recaptchaapisite ) . "'></div>
 				";
 				break;
 			case 'H':
 				$hcaptchaapisite = isset( $options['hcaptchaapisite'] ) ? $options['hcaptchaapisite'] : '';
-				wp_enqueue_script( 'ds-hcaptcha', 'https://hcaptcha.com/1/api.js', array(), '1', array( 'strategy' => 'async', 'in_footer' => true ) );
 				$cap = "
+					<script src='https://hcaptcha.com/1/api.js' async defer></script>
 					<input type='hidden' name='h-captcha' value='h-captcha'>
 					<div class='h-captcha' data-sitekey='" . esc_attr( $hcaptchaapisite ) . "'></div>
 				";
@@ -238,15 +238,15 @@ class challenge extends ds_module {
 			case 'S':
 				$solvmediaapivchallenge = isset( $options['solvmediaapivchallenge'] ) ? $options['solvmediaapivchallenge'] : '';
 				if ( !empty( $solvmediaapivchallenge ) ) {
-					wp_enqueue_script( 'ds-solvemedia', 'https://api-secure.solvemedia.com/papi/challenge.script?k=' . esc_attr( $solvmediaapivchallenge ), array(), '1', array( 'in_footer' => true ) );
+					$cap = "
+						<script src='https://api-secure.solvemedia.com/papi/challenge.script?k=" . esc_attr( $solvmediaapivchallenge ) . "'></script>
+						<noscript>
+						<iframe src='https://api-secure.solvemedia.com/papi/challenge.noscript?k=" . esc_attr( $solvmediaapivchallenge ) . "' height='300' width='500' frameborder='0'></iframe><br>
+						<textarea name='adcopy_challenge' rows='3' cols='40'></textarea>
+						<input type='hidden' name='adcopy_response' value='manual_challenge'>
+						</noscript><br>
+					";
 				}
-				$cap = "
-					<noscript>
-					<iframe src='https://api-secure.solvemedia.com/papi/challenge.noscript?k=" . esc_attr( $solvmediaapivchallenge ) . "' height='300' width='500' frameborder='0'></iframe><br>
-					<textarea name='adcopy_challenge' rows='3' cols='40'></textarea>
-					<input type='hidden' name='adcopy_response' value='manual_challenge'>
-					</noscript><br>
-				";
 				break;
 			case 'A':
 			case 'Y':
@@ -308,6 +308,11 @@ class challenge extends ds_module {
 			'div' => array(
 				'class' => array(),
 				'data-sitekey' => array(),
+			),
+			'script' => array(
+				'src' => array(),
+				'async' => array(),
+				'defer' => array(),
 			),
 			'h1' => array(),
 			'p' => array(),

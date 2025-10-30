@@ -55,6 +55,8 @@ function ds_get_ajax_allowed_html() {
 			'alt' => array(),
 		),
 		'br' => array(),
+		'tr' => array(),
+		'td' => array(),
 	);
 }
 

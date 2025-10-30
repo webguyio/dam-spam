@@ -146,7 +146,7 @@ $now = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 					<tr>
 					<td>' . wp_kses_post( $dt ) . '</td>
 					<td>' . wp_kses_post( $em ) . '</td>
-					<td>' . wp_kses_post( $ip, $who, $stopper, $honeysearch, $botsearch );
+					<td>' . esc_html( $ip ) . wp_kses_post( $who . $stopper . $honeysearch . $botsearch );
 				if ( stripos( $reason, 'passed' ) !== false && ( $id == '/' || strpos( $id, 'login' ) ) !== false || strpos( $id, 'register' ) !== false && !in_array( $ip, $block_list ) && !in_array( $ip, $allow_list ) ) {
 					$ajaxurl = admin_url( 'admin-ajax.php' );
 					echo '<a href="" onclick="sfs_ajax_process(\'' . esc_js( $ip ) . '\',\'log\',\'add_black\',\'' . esc_js( $ajaxurl ) . '\');return false;" title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" alt="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '"><img src="' . esc_url( $down ) . '" class="icon-action"></a>';

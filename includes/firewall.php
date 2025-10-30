@@ -370,7 +370,7 @@ function ds_html_file( $post_id ) {
 			esc_html( $meta['name'] ),
 			esc_html( $file ),
 			esc_html( $line ),
-			wp_kses_post( ds_action_link( $post_id, 'file', $blacklisted )
+			wp_kses_post( ds_action_link( $post_id, 'file', $blacklisted ) )
 		);
 	}
 }

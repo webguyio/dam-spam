@@ -334,34 +334,24 @@ function sfs_watch( $data ) {
 		case 'add_black':
 			if ( $container == 'badips' ) {
 				ds_load( 'remove_bad_cache', $ip, $stats, $options );
-				$show = ds_load( 'get_bad_cache', 'x', $stats, $options );
-				echo wp_kses( $show, $allowed_html );
 			} else if ( $container == 'goodips' ) {
 				ds_load( 'remove_good_cache', $ip, $stats, $options );
-				$show = ds_load( 'get_good_cache', 'x', $stats, $options );
-				echo wp_kses( $show, $allowed_html );
 			} else {
 				ds_load( 'remove_bad_cache', $ip, $stats, $options );
 				ds_load( 'remove_good_cache', $ip, $stats, $options );
 			}
 			ds_load( 'add_to_block_list', $ip, $stats, $options );
-			exit();
 			break;
 		case 'add_white':
 			if ( $container == 'badips' ) {
 				ds_load( 'remove_bad_cache', $ip, $stats, $options );
-				$show = ds_load( 'get_bad_cache', 'x', $stats, $options );
-				echo wp_kses( $show, $allowed_html );
 			} else if ( $container == 'goodips' ) {
 				ds_load( 'remove_good_cache', $ip, $stats, $options );
-				$show = ds_load( 'get_good_cache', 'x', $stats, $options );
-				echo wp_kses( $show, $allowed_html );
 			} else {
 				ds_load( 'remove_bad_cache', $ip, $stats, $options );
 				ds_load( 'remove_good_cache', $ip, $stats, $options );
 			}
 			ds_load( 'add_to_allow_list', $ip, $stats, $options );
-			exit();
 			break;
 		case 'delete_wl_row':
 			$answer = ds_load( 'get_allow_requests', $ip, $stats, $options );
@@ -397,6 +387,7 @@ function sfs_watch( $data ) {
 			exit();
 			break;
 		case 'allow_list_request':
+			$stats = ds_get_stats();
 			$answer = ds_load( 'get_allow_requests', $ip, $stats, $options );
 			echo wp_kses( $answer, $allowed_html );
 			exit();
