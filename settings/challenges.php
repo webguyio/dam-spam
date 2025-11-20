@@ -83,14 +83,6 @@ if ( wp_verify_nonce( $nonce, 'ds_update' ) ) {
 			$hcaptchaapisite = isset( $_POST['hcaptchaapisite'] ) ? sanitize_text_field( wp_unslash( $_POST['hcaptchaapisite'] ) ) : '';
 			$options['hcaptchaapisite'] = $hcaptchaapisite;
 		}
-		if ( array_key_exists( 'solvmediaapivchallenge', $_POST ) ) {
-			$solvmediaapivchallenge = isset( $_POST['solvmediaapivchallenge'] ) ? sanitize_text_field( wp_unslash( $_POST['solvmediaapivchallenge'] ) ) : '';
-			$options['solvmediaapivchallenge'] = $solvmediaapivchallenge;
-		}
-		if ( array_key_exists( 'solvmediaapiverify', $_POST ) ) {
-			$solvmediaapiverify = isset( $_POST['solvmediaapiverify'] ) ? sanitize_text_field( wp_unslash( $_POST['solvmediaapiverify'] ) ) : '';
-			$options['solvmediaapiverify'] = $solvmediaapiverify;
-		}
 		if ( $check_captcha == 'G' && ( $recaptchaapisecret == '' || $recaptchaapisite == '' ) ) {
 			$check_captcha = 'Y';
 			$options['check_captcha'] = $check_captcha;
@@ -100,11 +92,6 @@ if ( wp_verify_nonce( $nonce, 'ds_update' ) ) {
 			$check_captcha = 'Y';
 			$options['check_captcha'] = $check_captcha;
 			$msg = esc_html__( 'You cannot use hCaptcha unless you have entered an API key.', 'dam-spam' );
-		}
-		if ( $check_captcha == 'S' && ( $solvmediaapivchallenge == '' || $solvmediaapiverify == '' ) ) {
-			$check_captcha = 'Y';
-			$options['check_captcha'] = $check_captcha;
-			$msg = esc_html__( 'You cannot use Solve Media CAPTCHA unless you have entered an API key.', 'dam-spam' );
 		}
 		ds_set_options( $options );
 		extract( $options );
@@ -190,7 +177,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<br>
 		<div class="mainsection"><?php esc_html_e( 'CAPTCHA', 'dam-spam' ); ?></div>
 		<p><?php esc_html_e( 'Second Chance Challenge for Blocked Users', 'dam-spam' ); ?></p>
-		<p><?php esc_html_e( 'Google reCAPTCHA, hCaptcha, and Solve Media CAPTCHA Require an API Key (entered below).', 'dam-spam' ); ?></p>
+		<p><?php esc_html_e( 'Google reCAPTCHA and hCaptcha require an API Key (entered below).', 'dam-spam' ); ?></p>
 		<div>
 			<?php
 			if ( !empty( $msg ) ) {
@@ -216,13 +203,6 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<label class="ds-subhead" for="check_captcha3">
 				<input class="ds_toggle" type="radio" id="check_captcha3" name="check_captcha" value="H" <?php if ( $check_captcha == 'H' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'hCaptcha', 'dam-spam' ); ?></small>
-			</label>
-		</div>
-		<br>
-		<div class="checkbox switcher">
-			<label class="ds-subhead" for="check_captcha4">
-				<input class="ds_toggle" type="radio" id="check_captcha4" name="check_captcha" value="S" <?php if ( $check_captcha == 'S' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-		  		<small><?php esc_html_e( 'Solve Media CAPTCHA', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
@@ -277,15 +257,6 @@ $nonce = wp_create_nonce( 'ds_update' );
 			?>
 				<div class="h-captcha" data-sitekey="<?php echo esc_attr( $hcaptchaapisite ); ?>"></div>
 			<?php } ?>
-			<br>
-			<?php esc_html_e( 'Solve Media CAPTCHA', 'dam-spam' ); ?><br>
-			<input size="64" name="solvmediaapivchallenge" type="text" placeholder="<?php esc_html_e( 'Challenge Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $solvmediaapivchallenge ); ?>">
-			<br>
-			<input size="64" name="solvmediaapiverify" type="text" placeholder="<?php esc_html_e( 'Verification Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $solvmediaapiverify ); ?>">
-			<br>
-			<?php if ( !empty( $solvmediaapivchallenge ) ) {
-				wp_enqueue_script( 'ds-solvemedia', 'https://api-secure.solvemedia.com/papi/challenge.script?k=' . esc_attr( $solvmediaapivchallenge ), array(), '1', array( 'strategy' => 'async', 'in_footer' => true ) );
-			} ?>
 		</div>
 		<br>
 		<br>

@@ -1,5 +1,10 @@
 <?php
 
+if ( !defined( 'ABSPATH' ) ) {
+	status_header( 404 );
+	exit;
+}
+
 wp_enqueue_script( 'jquery' );
 wp_add_inline_script( 'jquery', "
 	jQuery(document).ready(function($) {

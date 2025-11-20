@@ -68,20 +68,6 @@ function sfs_ajax_return_spam(response) {
 }
 
 jQuery(function($) {
-	$('.ds-action').on('click', function() {
-		var data = {
-			action: 'ds_allow_block_ip',
-			type: $(this).data('type'),
-			ip: $(this).data('ip')
-		};
-		$.post(ajaxurl, data).then(data => {
-			alert('Successfully Added')
-		});
-	});
-	$('.ds-action').click(function(){
-		$(this).hide();
-		$(this).next().hide();
-	});
 	function checkFormStatus() {
 		if ($('#check_form').is(':checked')){
 			$('#check_woo_form').attr("disabled",true);

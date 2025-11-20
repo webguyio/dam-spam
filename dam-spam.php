@@ -3,7 +3,7 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 0.4
+Version: 0.5
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DS_VERSION', '0.4' );
+define( 'DS_VERSION', '0.5' );
 define( 'DS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'DS_PLUGIN_FILE', plugin_dir_path( __FILE__ ) );
 
@@ -55,8 +55,10 @@ function ds_admin_notice() {
 	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 	$admin_url = $protocol . '://' . $http_host . $request_uri;
 	$param = ( count( $_GET ) ) ? '&' : '?';
-	if ( !get_user_meta( $user_id, 'ds_notice_dismissed_1' ) && current_user_can( 'manage_options' ) ) {
-		echo '<div class="notice notice-info"><p><a href="' . esc_url( $admin_url . $param . 'dismiss' ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>Dam Spam</strong> — ' . esc_html__( 'Thank you for helping us dam spam!', 'dam-spam' ) . ' 💜</big><p><a href="https://webguy.io/donate" class="button-primary" style="border-color:green;background:green" target="_blank">' . esc_html__( 'Donate', 'dam-spam' ) . '</a></p></div>';
+	
+	if ( ! get_user_meta( $user_id, 'ds_notice_dismissed_2025' ) && current_user_can( 'manage_options' ) ) {
+		$dismiss_url = wp_nonce_url( $admin_url . $param . 'dismiss', 'dismiss_notice' );
+		echo '<div class="notice notice-info"><p><a href="' . esc_url( $dismiss_url ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'Thank you for helping us Dam Spam!', 'dam-spam' ) . '</strong></big><p><a href="https://damspam.com/donations" class="button-primary" style="border-color:#c6ac40;background:#c6ac40" target="_blank">' . esc_html__( 'I Need Your Help', 'dam-spam' ) . '</a></p></div>';
 	}
 }
 
@@ -64,7 +66,7 @@ add_action( 'admin_init', 'ds_notice_dismissed' );
 function ds_notice_dismissed() {
 	$user_id = get_current_user_id();
 	if ( isset( $_GET['dismiss'] ) && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dismiss_notice' ) ) {
-		add_user_meta( $user_id, 'ds_notice_dismissed_1', 'true', true );
+		update_user_meta( $user_id, 'ds_notice_dismissed_2025', 'true' );
 	}
 }
 
@@ -118,21 +120,12 @@ add_action( 'init', 'ds_init', 0 );
 add_filter( 'ds_addons_allow', 'ds_addons_d', 0 );
 add_filter( 'ds_addons_block', 'ds_addons_d', 0 );
 add_filter( 'ds_addons_get', 'ds_addons_d', 0 );
-
 function ds_init() {
 	remove_action( 'init', 'ds_init' );
 	add_filter( 'pre_user_login', 'ds_user_reg_filter', 1, 1 );
-	if ( !empty( $_POST ) && array_key_exists( 'jetpack_protect_num', $_POST ) ) {
-		return;
-	}
-	if ( function_exists( 'wp_emember_is_member_logged_in' ) ) {
-		if ( !empty( $_POST ) && array_key_exists( 'login_pwd', $_POST ) ) {
-			return;
-		}
-	}
 	add_action( 'akismet_spam_caught', 'ds_log_akismet' );
 	$muswitch = 'N';
-	if ( function_exists( 'is_multisite' ) && is_multisite() ) {
+	if ( is_multisite() ) {
 		switch_to_blog( 1 );
 		$muswitch = get_option( 'ds_muswitch' );
 		if ( $muswitch != 'N' ) {
@@ -147,24 +140,17 @@ function ds_init() {
 	} else {
 		define( 'DS_MU', $muswitch );
 	}
-	if ( function_exists( 'is_user_logged_in' ) ) {
-		if ( is_user_logged_in() ) {
-			remove_filter( 'pre_user_login', 'ds_user_reg_filter', 1 );
-			if ( current_user_can( 'manage_options' ) ) {
-				ds_require( 'includes/admins.php' );
-				return;
-			}
-		}
-	}
-	global $wp_version;
-	if ( !version_compare( $wp_version, "3.1", "<" ) ) {
-		add_action( 'user_register', 'ds_new_user_ip' );
-		add_action( 'wp_login', 'ds_log_user_ip', 10, 2 );
-	}
-	if ( function_exists( 'wp_emember_is_member_logged_in' ) ) {
-		if ( wp_emember_is_member_logged_in() ) {
+	if ( is_user_logged_in() ) {
+		remove_filter( 'pre_user_login', 'ds_user_reg_filter', 1 );
+		if ( current_user_can( 'manage_options' ) ) {
+			ds_require( 'includes/admins.php' );
 			return;
 		}
+	}
+	add_action( 'user_register', 'ds_new_user_ip' );
+	add_action( 'wp_login', 'ds_log_user_ip', 10, 2 );
+	if ( wp_doing_ajax() && is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
+		return;
 	}
 	if ( isset( $_POST ) && !empty( $_POST ) ) {
 		if ( array_key_exists( 'ds_block', $_POST ) && array_key_exists( 'kn', $_POST ) ) {
@@ -175,9 +161,6 @@ function ds_init() {
 				ds_load( 'challenge', ds_get_ip(), $stats, $options, $post );
 				return;
 			}
-		}
-		if ( class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'protect' ) ) {
-			return;
 		}
 		$post = get_post_variables();
 		if ( !empty( $post['email'] ) || !empty( $post['author'] ) || !empty( $post['comment'] ) ) {
@@ -259,12 +242,6 @@ function ds_load( $file, $ip, &$stats = array(), &$options = array(), &$post = a
 		$ppath = plugin_dir_path( __FILE__ ) . 'modules/';
 		$module_file = str_replace( '_', '-', $file );
 		$fd = $ppath . $module_file . '.php';
-		$fd = str_replace( "/", DIRECTORY_SEPARATOR, $fd );
-	}
-	if ( !file_exists( $fd ) ) {
-		$ppath = plugin_dir_path( __FILE__ ) . 'modules/countries/';
-		$country_file = str_replace( '_', '-', $file );
-		$fd = $ppath . $country_file . '.php';
 		$fd = str_replace( "/", DIRECTORY_SEPARATOR, $fd );
 	}
 	if ( !file_exists( $fd ) ) {
@@ -481,15 +458,6 @@ function ds_add_captcha() {
 			$html = '<input type="hidden" name="h-captcha" value="h-captcha">';
 			$html .= '<div class="h-captcha" data-sitekey="' . esc_attr( $hcaptchaapisite ) . '"></div>';
 		break;
-		case 'S':
-			$solvmediaapivchallenge = $options['solvmediaapivchallenge'];
-			wp_enqueue_script( 'solvmedia', 'https://api-secure.solvemedia.com/papi/challenge.script?k=' . $solvmediaapivchallenge, array(), '1', false );
-			$html = '<noscript>';
-			$html .= '<iframe src="https://api-secure.solvemedia.com/papi/challenge.noscript?k=' . esc_attr( $solvmediaapivchallenge ) . '" height="300" width="500" frameborder="0"></iframe><br>';
-			$html .= '<textarea name="adcopy_challenge" rows="3" cols="40"></textarea>';
-			$html .= '<input type="hidden" name="adcopy_response" value="manual_challenge">';
-			$html .= '</noscript>';
-		break;
 	}
 	$allowed_html = array(
 		'input' => array(
@@ -582,37 +550,6 @@ function ds_captcha_verify() {
 			$parsed = json_decode( wp_remote_retrieve_body( $response ) );
 			if ( !isset( $parsed->success ) || $parsed->success !== true ) {
 				$verified = esc_html__( 'Error: hCaptcha verification failed.', 'dam-spam' );
-				return $verified;
-			}
-		break;
-		case 'S':
-			if ( !array_key_exists( 'adcopy_challenge', $_POST ) || empty( $_POST['adcopy_challenge'] ) ) {
-				$verified = esc_html__( 'Error: Please complete the CAPTCHA.', 'dam-spam' );
-				return $verified;
-			}
-			$solvmediaapivchallenge = $options['solvmediaapivchallenge'];
-			$solvmediaapiverify = $options['solvmediaapiverify'];
-			if ( empty( $solvmediaapivchallenge ) || empty( $solvmediaapiverify ) ) {
-				$verified = esc_html__( 'Error: Solve Media keys are not set.', 'dam-spam' );
-				return $verified;
-			}
-			$adcopy_challenge = isset( $_POST['adcopy_challenge'] ) ? sanitize_textarea_field( wp_unslash( $_POST['adcopy_challenge'] ) ) : '';
-			$adcopy_response = isset( $_POST['adcopy_response'] ) ? sanitize_textarea_field( wp_unslash( $_POST['adcopy_response'] ) ) : '';
-			$response = wp_safe_remote_post( 'https://verify.solvemedia.com/papi/verify/', array(
-				'body' => array(
-					'privatekey' => $solvmediaapiverify,
-					'challenge' => $adcopy_challenge,
-					'response' => $adcopy_response,
-					'remoteip' => $ip
-				)
-			) );
-			if ( is_wp_error( $response ) ) {
-				$verified = esc_html__( 'Error: Solve Media connection failed.', 'dam-spam' );
-				return $verified;
-			}
-			$result = wp_remote_retrieve_body( $response );
-			if ( strpos( $result, 'true' ) === false ) {
-				$verified = esc_html__( 'Error: Solve Media verification failed.', 'dam-spam' );
 				return $verified;
 			}
 		break;

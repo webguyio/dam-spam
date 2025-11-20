@@ -44,7 +44,7 @@ class ds_module {
 				$sname = $script_name;
 				if ( isset( $_SERVER['QUERY_STRING'] ) && !empty( $_SERVER['QUERY_STRING'] ) ) {
 					$query_string = sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) );
-					$_SERVER['REQUEST_URI'] .= '?' . $query_string;
+					$_SERVER['REQUEST_URI'] .= '?' . sanitize_text_field( wp_unslash( $query_string ) );
 				}
 			}
 		}

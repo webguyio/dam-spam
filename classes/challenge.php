@@ -120,41 +120,6 @@ class challenge extends ds_module {
 							}
 						}
 						break;
-					case 'S':
-						if ( array_key_exists( 'adcopy_challenge', $_POST ) && !empty( $_POST['adcopy_challenge'] ) ) {
-							$solvmediaapivchallenge = isset( $options['solvmediaapivchallenge'] ) ? $options['solvmediaapivchallenge'] : '';
-							$solvmediaapiverify = isset( $options['solvmediaapiverify'] ) ? $options['solvmediaapiverify'] : '';
-							$adcopy_challenge = isset( $_REQUEST['adcopy_challenge'] ) ? sanitize_textarea_field( wp_unslash( $_REQUEST['adcopy_challenge'] ) ) : '';
-							$adcopy_response = isset( $_REQUEST['adcopy_response'] ) ? sanitize_textarea_field( wp_unslash( $_REQUEST['adcopy_response'] ) ) : '';
-							$body = array(
-								'privatekey' => $solvmediaapiverify,
-								'challenge'  => $adcopy_challenge,
-								'response'   => $adcopy_response,
-								'remoteip'   => $ip,
-							);
-							$args = array(
-								'user-agent'  => 'WordPress/4.2; ' . get_bloginfo( 'url' ),
-								'blocking'    => true,
-								'headers'     => array( 'Content-type' => 'application/x-www-form-urlencoded' ),
-								'method'      => 'POST',
-								'timeout'     => 45,
-								'redirection' => 5,
-								'httpversion' => '1.0',
-								'body'        => $body,
-								'cookies'     => array(),
-							);
-							$url = 'https://verify.solvemedia.com/papi/verify/';
-							$resultarray = wp_remote_post( $url, $args );
-							$result = wp_remote_retrieve_body( $resultarray );
-							if ( strpos( $result, 'true' ) !== false ) {
-								ds_log_good( $ip, esc_html__( 'Passed Solve Media CAPTCHA', 'dam-spam' ), 'pass' );
-								do_action( 'ds_ok', $ip, $post );
-								return false;
-							} else {
-								$msg = esc_html__( 'CAPTCHA entry does not match. Try again.', 'dam-spam' );
-							}
-						}
-						break;
 					case 'A':
 					case 'Y':
 						if ( array_key_exists( 'nums', $_POST ) && !empty( $_POST['nums'] ) ) {
@@ -234,19 +199,6 @@ class challenge extends ds_module {
 					<input type='hidden' name='h-captcha' value='h-captcha'>
 					<div class='h-captcha' data-sitekey='" . esc_attr( $hcaptchaapisite ) . "'></div>
 				";
-				break;
-			case 'S':
-				$solvmediaapivchallenge = isset( $options['solvmediaapivchallenge'] ) ? $options['solvmediaapivchallenge'] : '';
-				if ( !empty( $solvmediaapivchallenge ) ) {
-					$cap = "
-						<script src='https://api-secure.solvemedia.com/papi/challenge.script?k=" . esc_attr( $solvmediaapivchallenge ) . "'></script>
-						<noscript>
-						<iframe src='https://api-secure.solvemedia.com/papi/challenge.noscript?k=" . esc_attr( $solvmediaapivchallenge ) . "' height='300' width='500' frameborder='0'></iframe><br>
-						<textarea name='adcopy_challenge' rows='3' cols='40'></textarea>
-						<input type='hidden' name='adcopy_response' value='manual_challenge'>
-						</noscript><br>
-					";
-				}
 				break;
 			case 'A':
 			case 'Y':

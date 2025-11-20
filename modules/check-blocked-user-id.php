@@ -7,7 +7,7 @@ if ( !defined( 'ABSPATH' ) ) {
 
 class check_blocked_user_id extends ds_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
-		$this->searchname = 'Allow List Email';
+		$this->searchname = 'Block List User ID';
 		$user			  = $post['author'];
 		if ( empty( $user ) ) {
 			return false;

@@ -1,3 +1,10 @@
+<?php
+if ( !defined( 'ABSPATH' ) ) {
+	status_header( 404 );
+	exit;
+}
+?>
+
 <form name="registerform" id="registerform" action="<?php echo esc_url( home_url( '/register/' ) ); ?>" method="post" novalidate="novalidate">
 	<?php ds_show_error(); ?>
 	<p class="ds-input-wrapper">

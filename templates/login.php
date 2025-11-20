@@ -1,3 +1,10 @@
+<?php
+if ( !defined( 'ABSPATH' ) ) {
+	status_header( 404 );
+	exit;
+}
+?>
+
 <form name="loginform" action="<?php echo esc_url( home_url( '/login/' ) ); ?>" method="post">
 	<?php ds_show_error(); ?>
 	<p class="ds-input-wrapper">

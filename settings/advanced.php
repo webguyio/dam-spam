@@ -217,9 +217,9 @@ function ds_advanced_menu() {
 				<div class="inside">
 					<p><?php esc_html_e( 'Contact Form: [ds-contact-form]', 'dam-spam' ); ?></p>
 					<p><?php esc_html_e( 'Login Form: [ds-login]', 'dam-spam' ); ?></p>
-					<p><?php esc_html_e( 'Logged-in User Display Name: [show-displayname-as]', 'dam-spam' ); ?></p>
-					<p><?php esc_html_e( 'Logged-in User First/Last Name: [show-fullname-as]', 'dam-spam' ); ?></p>
-					<p><?php esc_html_e( 'Logged-in User Email Address: [show-email-as]', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Logged-in User Display Name: [ds-show-displayname-as]', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Logged-in User First/Last Name: [ds-show-fullname-as]', 'dam-spam' ); ?></p>
+					<p><?php esc_html_e( 'Logged-in User Email Address: [ds-show-email-as]', 'dam-spam' ); ?></p>
 				</div>
 			</div>
 			<div class="postbox">
@@ -267,6 +267,9 @@ function ds_advanced_menu() {
 	<?php
 }
 
+add_filter( 'widget_text', 'do_shortcode' );
+
+add_shortcode( 'ds-contact-form', 'ds_contact_form_shortcode' );
 function ds_contact_form_shortcode( $atts ) {
 	$atts = shortcode_atts( array(
 		'email'    => '',
@@ -363,10 +366,9 @@ function ds_contact_form_shortcode( $atts ) {
 	$output = ob_get_clean();
 	return $output;
 }
-add_shortcode( 'ds-contact-form', 'ds_contact_form_shortcode' );
-add_filter( 'widget_text', 'do_shortcode' );
 
 if ( get_option( 'ds_honeypot_cf7', 'yes' ) === 'yes' ) {
+	add_filter( 'wpcf7_form_elements', 'ds_cf7_add_honeypot', 10, 1 );
 	function ds_cf7_add_honeypot( $form ) {
 		$html  = '';
 		$html .= '<p class="ds-user">';
@@ -379,7 +381,7 @@ if ( get_option( 'ds_honeypot_cf7', 'yes' ) === 'yes' ) {
 		$html .= '<style>.ds-user{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
 		return $html . $form;
 	}
-	add_filter( 'wpcf7_form_elements', 'ds_cf7_add_honeypot', 10, 1 );
+	add_filter( 'wpcf7_spam', 'ds_cf7_verify_honeypot', 10, 1 );
 	function ds_cf7_verify_honeypot( $spam ) {
 		if ( $spam ) {
 			return $spam;
@@ -390,10 +392,11 @@ if ( get_option( 'ds_honeypot_cf7', 'yes' ) === 'yes' ) {
 		}
 		return $spam;
 	}
-	add_filter( 'wpcf7_spam', 'ds_cf7_verify_honeypot', 10, 1 );
 }
 
 if ( get_option( 'ds_honeypot_bbpress', 'yes' ) === 'yes' ) {
+	add_action( 'bbp_theme_before_reply_form_submit_wrapper', 'ds_bbp_add_honeypot' );
+	add_action( 'bbp_theme_before_topic_form_submit_wrapper', 'ds_bbp_add_honeypot' );
 	function ds_bbp_add_honeypot() {
 		$html  = '';
 		$html .= '<p class="ds-user">';
@@ -403,19 +406,18 @@ if ( get_option( 'ds_honeypot_bbpress', 'yes' ) === 'yes' ) {
 		$html .= '<style>.ds-user{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
 		echo wp_kses_post( $html );
 	}
-	add_action( 'bbp_theme_before_reply_form_submit_wrapper', 'ds_bbp_add_honeypot' );
-	add_action( 'bbp_theme_before_topic_form_submit_wrapper', 'ds_bbp_add_honeypot' );
+	add_action( 'bbp_new_reply_pre_extras', 'ds_bbp_verify_honeypot' );
+	add_action( 'bbp_new_topic_pre_extras', 'ds_bbp_verify_honeypot' );
 	function ds_bbp_verify_honeypot() {
 		$your_website = isset( $_POST['bbp_your-website'] ) ? sanitize_url( wp_unslash( $_POST['bbp_your-website'] ) ) : '';
 		if ( $your_website !== 'https://example.com/' ) {
 			bbp_add_error( 'bbp_throw_error', __( '<strong>ERROR</strong>: Something went wrong!', 'dam-spam' ) );
 		}
 	}
-	add_action( 'bbp_new_reply_pre_extras', 'ds_bbp_verify_honeypot' );
-	add_action( 'bbp_new_topic_pre_extras', 'ds_bbp_verify_honeypot' );
 }
 
 if ( get_option( 'ds_honeypot_elementor', 'yes' ) === 'yes' ) {
+	add_action( 'elementor/widget/render_content', 'ds_elementor_add_honeypot', 10, 2 );
 	function ds_elementor_add_honeypot( $content, $widget ) {
 		if ( 'form' === $widget->get_name() ) {
 			$html    = '';
@@ -428,7 +430,7 @@ if ( get_option( 'ds_honeypot_elementor', 'yes' ) === 'yes' ) {
 		}
 		return $content;
 	}
-	add_action( 'elementor/widget/render_content', 'ds_elementor_add_honeypot', 10, 2 );
+	add_action( 'elementor_pro/forms/validation', 'ds_elementor_verify_honeypot', 10, 2 );
 	function ds_elementor_verify_honeypot( $record, $ajax_handler ) {
 		$form_fields = isset( $_POST['form_fields'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['form_fields'] ) ) : array();
 		$your_website = isset( $form_fields['your-website'] ) ? sanitize_url( $form_fields['your-website'] ) : '';
@@ -436,10 +438,10 @@ if ( get_option( 'ds_honeypot_elementor', 'yes' ) === 'yes' ) {
 			$ajax_handler->add_error( 'your-website', esc_html__( 'Something went wrong!', 'dam-spam' ) );
 		}
 	}
-	add_action( 'elementor_pro/forms/validation', 'ds_elementor_verify_honeypot', 10, 2 );
 }
 
 if ( get_option( 'ds_honeypot_divi', 'yes' ) === 'yes' ) {
+	add_filter( 'et_module_shortcode_output', 'ds_et_add_honeypot', 20, 3 );
 	function ds_et_add_honeypot( $output, $render_slug, $module ) {
 		if ( isset( $_POST['et_pb_contact_your_website'] ) && sanitize_url( wp_unslash( $_POST['et_pb_contact_your_website'] ) ) === 'https://example.com/' ) {
 			unset( $_POST['et_pb_contact_your_website'] );
@@ -473,7 +475,7 @@ if ( get_option( 'ds_honeypot_divi', 'yes' ) === 'yes' ) {
 		}
 		return $output;
 	}
-	add_filter( 'et_module_shortcode_output', 'ds_et_add_honeypot', 20, 3 );
+	add_action( 'et_pb_newsletter_fields_before', 'ds_divi_email_optin_verify_honeypot' );
 	function ds_divi_email_optin_verify_honeypot() {
 		if ( isset( $_POST['et_custom_fields']['your-website'] ) ) {
 			$your_website = sanitize_url( wp_unslash( $_POST['et_custom_fields']['your-website'] ) );
@@ -485,9 +487,9 @@ if ( get_option( 'ds_honeypot_divi', 'yes' ) === 'yes' ) {
 			}
 		}
 	}
-	add_action( 'et_pb_newsletter_fields_before', 'ds_divi_email_optin_verify_honeypot' );
 }
 
+add_action( 'admin_init', 'ds_enable_firewall' );
 function ds_enable_firewall() {
 	if ( empty( $_POST['ds_firewall_setting_placeholder'] ) || 'ds_firewall_setting' !== $_POST['ds_firewall_setting_placeholder'] ) {
 		return;
@@ -621,8 +623,8 @@ function ds_enable_firewall() {
 		return insert_with_markers( $htaccess, 'Dam Spam', '' );
 	}
 }
-add_action( 'admin_init', 'ds_enable_firewall' );
 
+add_action( 'admin_init', 'ds_enable_custom_login' );
 function ds_enable_custom_login() {
 	if ( empty( $_POST['ds_login_setting_placeholder'] ) || 'ds_login_setting' !== $_POST['ds_login_setting_placeholder'] ) {
 		return;
@@ -643,8 +645,8 @@ function ds_enable_custom_login() {
 		ds_uninstall_custom_login();
 	}
 }
-add_action( 'admin_init', 'ds_enable_custom_login' );
 
+add_action( 'admin_init', 'ds_update_honeypot' );
 function ds_update_honeypot() {
 	if ( empty( $_POST['ds_honeypot_placeholder'] ) || 'ds_honeypot' !== $_POST['ds_honeypot_placeholder'] ) {
 		return;
@@ -681,8 +683,8 @@ function ds_update_honeypot() {
 		update_option( 'ds_allow_vpn', 'no' );
 	}
 }
-add_action( 'admin_init', 'ds_update_honeypot' );
 
+add_action( 'admin_init', 'ds_login_type_func' );
 function ds_login_type_func() {
 	if ( empty( $_POST['ds_login_type_field'] ) || 'ds_login_type' !== $_POST['ds_login_type_field'] ) {
 		return;
@@ -699,7 +701,6 @@ function ds_login_type_func() {
 		add_action( 'admin_notices', 'ds_admin_notice_success' );
 	}
 }
-add_action( 'admin_init', 'ds_login_type_func' );
 
 function ds_install_custom_login() {
 	$pages = array(
@@ -840,8 +841,8 @@ function ds_forgot_password() {
 		exit;
 	}
 }
-add_shortcode( 'ds-login', 'ds_login_cb' );
 
+add_shortcode( 'ds-login', 'ds_login_cb' );
 function ds_login_cb() {
 	global $post;
 	if ( !is_page() ) {
@@ -940,6 +941,7 @@ function ds_login() {
 	}
 }
 
+add_filter( 'login_url', 'ds_login_url', 10, 2 );
 function ds_login_url( $url ) {
 	if ( get_option( 'ds_enable_custom_login', '' ) === 'yes' && !is_user_logged_in() ) {
 		global $wp_query;
@@ -950,16 +952,16 @@ function ds_login_url( $url ) {
 	}
 	return $url;
 }
-add_filter( 'login_url', 'ds_login_url', 10, 2 );
 
+add_filter( 'logout_url', 'ds_logout_url', 10, 2 );
 function ds_logout_url( $url, $redirect ) {
 	if ( get_option( 'ds_enable_custom_login', '' ) === 'yes' ) {
 		$url = home_url( 'logout' );
 	}
 	return $url;
 }
-add_filter( 'logout_url', 'ds_logout_url', 10, 2 );
 
+add_action( 'init', 'ds_custom_login_module' );
 function ds_custom_login_module() {
 	$login_type = get_option( 'ds_login_type', '' );
 	if ( $login_type === 'username' ) {
@@ -968,7 +970,6 @@ function ds_custom_login_module() {
 		remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
 	}
 }
-add_action( 'init', 'ds_custom_login_module' );
 
 function ds_login_text( $translating ) {
 	$login_type = get_option( 'ds_login_type', '' );
@@ -981,12 +982,12 @@ function ds_login_text( $translating ) {
 	}
 }
 
+add_action( 'admin_head-nav-menus.php', 'ds_add_nav_menu_metabox' );
 function ds_add_nav_menu_metabox() {
 	if ( get_option( 'ds_enable_custom_login', '' ) === 'yes' ) {
 		add_meta_box( 'ds_menu_option', 'Dam Spam', 'ds_nav_menu_metabox', 'nav-menus', 'side', 'default' );
 	}
 }
-add_action( 'admin_head-nav-menus.php', 'ds_add_nav_menu_metabox' );
 
 function ds_nav_menu_metabox( $object ) {
 	global $nav_menu_selected_id;
@@ -1036,6 +1037,7 @@ function ds_nav_menu_metabox( $object ) {
 	<?php
 }
 
+add_filter( 'wp_setup_nav_menu_item', 'ds_nav_menu_type_label' );
 function ds_nav_menu_type_label( $menu_item ) {
 	$elems = array( '#ds-nav-login', '#ds-nav-logout', '#ds-nav-register', '#ds-nav-loginout' );
 	if ( isset( $menu_item->object, $menu_item->url ) && 'custom' === $menu_item->object && in_array( $menu_item->url, $elems ) ) {
@@ -1043,7 +1045,6 @@ function ds_nav_menu_type_label( $menu_item ) {
 	}
 	return $menu_item;
 }
-add_filter( 'wp_setup_nav_menu_item', 'ds_nav_menu_type_label' );
 
 function ds_loginout_title( $title ) {
 	$titles = explode( '/', $title );
@@ -1054,6 +1055,7 @@ function ds_loginout_title( $title ) {
 	}
 }
 
+add_filter( 'wp_setup_nav_menu_item', 'ds_setup_nav_menu_item' );
 function ds_setup_nav_menu_item( $item ) {
 	global $pagenow;
 	if ( $pagenow !== 'nav-menus.php' && !defined( 'DOING_AJAX' ) && isset( $item->url ) && strstr( $item->url, '#ds-nav' ) && get_option( 'ds_enable_custom_login', '' ) !== 'yes' ) {
@@ -1081,8 +1083,8 @@ function ds_setup_nav_menu_item( $item ) {
 	}
 	return $item;
 }
-add_filter( 'wp_setup_nav_menu_item', 'ds_setup_nav_menu_item' );
 
+add_action( 'admin_init', 'ds_limit_login_attempts' );
 function ds_limit_login_attempts() {
 	if ( empty( $_POST['ds_login_setting_placeholder'] ) || 'ds_login_setting' !== $_POST['ds_login_setting_placeholder'] ) {
 		return;
@@ -1114,8 +1116,8 @@ function ds_limit_login_attempts() {
 		update_option( 'ds_login_lockout_unit', sanitize_text_field( wp_unslash( $_POST['ds_login_lockout_unit'] ) ) );
 	}
 }
-add_action( 'admin_init', 'ds_limit_login_attempts' );
 
+add_action( 'authenticate', 'ds_authenticate', 100, 3 );
 function ds_authenticate( $user, $username, $password ) {
 	$field = is_email( $username ) ? 'email' : 'login';
 	$time = time();
@@ -1145,7 +1147,6 @@ function ds_authenticate( $user, $username, $password ) {
 	}
 	return $user;
 }
-add_action( 'authenticate', 'ds_authenticate', 100, 3 );
 
 function ds_add_failed_login_attempt( $user_id ) {
 	$new_attempts = array();
@@ -1201,6 +1202,7 @@ function ds_unlock_user( $user_id ) {
 	update_user_meta( $user_id, 'ds_failed_login_attempts', array() );
 }
 
+add_action( 'admin_init', 'ds_process_settings_export' );
 function ds_process_settings_export() {
 	if ( empty( $_POST['ds_action'] ) || 'export_settings' !== $_POST['ds_action'] ) {
 		return;
@@ -1220,8 +1222,8 @@ function ds_process_settings_export() {
 	echo wp_json_encode( $options );
 	exit;
 }
-add_action( 'admin_init', 'ds_process_settings_export' );
 
+add_action( 'admin_init', 'ds_process_settings_import' );
 function ds_process_settings_import() {
 	if ( empty( $_POST['ds_action'] ) || 'import_settings' !== $_POST['ds_action'] ) {
 		return;
@@ -1259,8 +1261,8 @@ function ds_process_settings_import() {
 	ds_set_options( $options );
 	add_action( 'admin_notices', 'ds_admin_notice_success' );
 }
-add_action( 'admin_init', 'ds_process_settings_import' );
 
+add_action( 'admin_init', 'ds_process_settings_reset' );
 function ds_process_settings_reset() {
 	if ( empty( $_POST['ds_action'] ) || 'reset_settings' !== $_POST['ds_action'] ) {
 		return;
@@ -1288,9 +1290,9 @@ function ds_process_settings_reset() {
 	ds_set_options( $options );
 	add_action( 'admin_notices', 'ds_admin_notice_success' );
 }
-add_action( 'admin_init', 'ds_process_settings_reset' );
 
-function show_loggedin_function( $atts ) {
+add_shortcode( 'ds-show-displayname-as', 'ds_show_loggedin_function' );
+function ds_show_loggedin_function( $atts ) {
 	global $current_user, $user_login;
 	wp_get_current_user();
 	add_filter( 'widget_text', 'do_shortcode' );
@@ -1298,9 +1300,9 @@ function show_loggedin_function( $atts ) {
 		return $current_user->display_name;
 	}
 }
-add_shortcode( 'show-displayname-as', 'show_loggedin_function' );
 
-function show_fullname_function( $atts ) {
+add_shortcode( 'ds-show-fullname-as', 'ds_show_fullname_function' );
+function ds_show_fullname_function( $atts ) {
 	global $current_user, $user_login;
 	wp_get_current_user();
 	add_filter( 'widget_text', 'do_shortcode' );
@@ -1308,9 +1310,9 @@ function show_fullname_function( $atts ) {
 		return $current_user->user_firstname . ' ' . $current_user->user_lastname;
 	}
 }
-add_shortcode( 'show-fullname-as', 'show_fullname_function' );
 
-function show_id_function( $atts ) {
+add_shortcode( 'ds-show-id-as', 'ds_show_id_function' );
+function ds_show_id_function( $atts ) {
 	global $current_user, $user_login;
 	wp_get_current_user();
 	add_filter( 'widget_text', 'do_shortcode' );
@@ -1318,9 +1320,9 @@ function show_id_function( $atts ) {
 		return $current_user->ID;
 	}
 }
-add_shortcode( 'show-id-as', 'show_id_function' );
 
-function show_level_function( $atts ) {
+add_shortcode( 'ds-show-level-as', 'ds_show_level_function' );
+function ds_show_level_function( $atts ) {
 	global $current_user, $user_login;
 	wp_get_current_user();
 	add_filter( 'widget_text', 'do_shortcode' );
@@ -1328,9 +1330,9 @@ function show_level_function( $atts ) {
 		return $current_user->user_level;
 	}
 }
-add_shortcode( 'show-level-as', 'show_level_function' );
 
-function show_email_function( $atts ) {
+add_shortcode( 'ds-show-email-as', 'ds_show_email_function' );
+function ds_show_email_function( $atts ) {
 	global $current_user, $user_login;
 	wp_get_current_user();
 	add_filter( 'widget_text', 'do_shortcode' );
@@ -1338,7 +1340,6 @@ function show_email_function( $atts ) {
 		return $current_user->user_email;
 	}
 }
-add_shortcode( 'show-email-as', 'show_email_function' );
 
 function ds_get_remote_ip_address() {
 	if ( !empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
@@ -1377,6 +1378,7 @@ function ds_check_proxy() {
 	return false;
 }
 
+add_action( 'init', 'ds_disable_activities' );
 function ds_disable_activities() {
 	if ( get_option( 'ds_allow_vpn' ) === 'no' ) {
 		return;
@@ -1391,4 +1393,3 @@ function ds_disable_activities() {
 		}
 	}
 }
-add_action( 'init', 'ds_disable_activities' );

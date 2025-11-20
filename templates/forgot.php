@@ -1,3 +1,10 @@
+<?php
+if ( !defined( 'ABSPATH' ) ) {
+	status_header( 404 );
+	exit;
+}
+?>
+
 <form name="lostpasswordform" id="lostpasswordform" action="<?php echo esc_url( home_url( '/forgot/' ) ); ?>" method="post">
 	<?php ds_show_error(); ?>
 	<p><?php esc_html_e( 'Please enter your username or email address. You will receive a link to create a new password via email.', 'dam-spam' ); ?></p>

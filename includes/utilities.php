@@ -155,10 +155,6 @@ function ds_map_old_to_new_options( $old_options ) {
 		'ss_sp_good'		=> 'ds_good',
 		'ss_sp_cache_em'	=> 'ds_cache_em',
 	);
-	$countries = array( 'ad', 'ae', 'af', 'al', 'am', 'ar', 'at', 'au', 'ax', 'az', 'ba', 'bb', 'bd', 'be', 'bg', 'bh', 'bn', 'bo', 'br', 'bs', 'by', 'bz', 'ca', 'cd', 'ch', 'cl', 'cn', 'co', 'cr', 'cu', 'cw', 'cy', 'cz', 'de', 'dk', 'do', 'dz', 'ec', 'ee', 'es', 'eu', 'fi', 'fj', 'fr', 'gb', 'ge', 'gf', 'gi', 'gp', 'gr', 'gt', 'gu', 'gy', 'hk', 'hn', 'hr', 'ht', 'hu', 'id', 'ie', 'il', 'in', 'iq', 'ir', 'is', 'it', 'jm', 'jo', 'jp', 'ke', 'kg', 'kh', 'kr', 'kw', 'ky', 'kz', 'la', 'lb', 'lk', 'lt', 'lu', 'lv', 'md', 'me', 'mk', 'mm', 'mn', 'mo', 'mp', 'mq', 'mt', 'mv', 'mx', 'my', 'nc', 'ni', 'nl', 'no', 'np', 'nz', 'om', 'pa', 'pe', 'pg', 'ph', 'pk', 'pl', 'pr', 'ps', 'pt', 'pw', 'py', 'qa', 'ro', 'rs', 'ru', 'sa', 'sc', 'se', 'sg', 'si', 'sk', 'sv', 'sx', 'sy', 'th', 'tj', 'tm', 'tr', 'tt', 'tw', 'ua', 'uk', 'us', 'uy', 'uz', 'vc', 've', 'vn', 'ye' );
-	foreach ( $countries as $cc ) {
-		$migration_map['chk' . strtoupper( $cc )] = 'check_' . $cc;
-	}
 	foreach ( $old_options as $old_key => $value ) {
 		if ( isset( $migration_map[$old_key] ) ) {
 			$new_options[$migration_map[$old_key]] = $value;
@@ -229,10 +225,6 @@ function ds_map_old_to_new_stats( $old_stats ) {
 		'spmdate'				=> 'spam_multisite_date',
 		'spdate'				=> 'spam_date',
 	);
-	$countries = array( 'ad', 'ae', 'af', 'al', 'am', 'ar', 'at', 'au', 'ax', 'az', 'ba', 'bb', 'bd', 'be', 'bg', 'bh', 'bn', 'bo', 'br', 'bs', 'by', 'bz', 'ca', 'cd', 'ch', 'cl', 'cn', 'co', 'cr', 'cu', 'cw', 'cy', 'cz', 'de', 'dk', 'do', 'dz', 'ec', 'ee', 'es', 'eu', 'fi', 'fj', 'fr', 'gb', 'ge', 'gf', 'gi', 'gp', 'gr', 'gt', 'gu', 'gy', 'hk', 'hn', 'hr', 'ht', 'hu', 'id', 'ie', 'il', 'in', 'iq', 'ir', 'is', 'it', 'jm', 'jo', 'jp', 'ke', 'kg', 'kh', 'kr', 'kw', 'ky', 'kz', 'la', 'lb', 'lk', 'lt', 'lu', 'lv', 'md', 'me', 'mk', 'mm', 'mn', 'mo', 'mp', 'mq', 'mt', 'mv', 'mx', 'my', 'nc', 'ni', 'nl', 'no', 'np', 'nz', 'om', 'pa', 'pe', 'pg', 'ph', 'pk', 'pl', 'pr', 'ps', 'pt', 'pw', 'py', 'qa', 'ro', 'rs', 'ru', 'sa', 'sc', 'se', 'sg', 'si', 'sk', 'sv', 'sx', 'sy', 'th', 'tj', 'tm', 'tr', 'tt', 'tw', 'ua', 'uk', 'us', 'uy', 'uz', 'vc', 've', 'vn', 'ye' );
-	foreach ( $countries as $cc ) {
-		$count_map['cntchk' . strtoupper( $cc )] = 'count_check_' . $cc;
-	}
 	foreach ( $old_stats as $old_key => $value ) {
 		if ( isset( $count_map[$old_key] ) ) {
 			$new_stats[$count_map[$old_key]] = $value;
