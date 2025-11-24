@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_general_allow_list extends ds_module {
+class dam_spam_check_general_allow_list extends dam_spam_module {
 	public $searchname = 'Generated Allow List';
 	public $searchlist = array(
 		array( '1.120.0.0', '1.127.255.255' ),

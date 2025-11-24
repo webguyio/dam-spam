@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_botscout extends ds_module {
+class dam_spam_check_botscout extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$disabled = true;
 		if ( $disabled ) {

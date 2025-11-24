@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_multi extends ds_module {
+class dam_spam_check_multi extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( function_exists( 'is_user_logged_in' ) ) {
 			if ( is_user_logged_in() ) {
@@ -42,7 +42,7 @@ class check_multi extends ds_module {
 		$row[1] ++;
 		$multi[$ip]   = $row;
 		$stats['multi'] = $multi;
-		ds_set_stats( $stats );
+		dam_spam_set_stats( $stats );
 		if ( $row[1] >= $multicount ) {
 			// translators: %s is the hit count value
 			return sprintf( esc_html__( '%s hits in last 3 minutes', 'dam-spam' ), $row[1] );

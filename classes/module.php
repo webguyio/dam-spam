@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class ds_module {
+class dam_spam_module {
 	public $searchname = '';
 	public $searchlist = array();
 
@@ -94,7 +94,7 @@ class ds_module {
 				}
 			}
 			if ( strpos( $search, '*' ) !== false || strpos( $search, '?' ) !== false ) {
-				if ( ds_module::wildcard_match( $search, $needle ) ) {
+				if ( dam_spam_module::wildcard_match( $search, $needle ) ) {
 					return "$searchname: $reason: $needle";
 				}
 				continue;
@@ -150,7 +150,7 @@ class ds_module {
 				return "$searchname: $needle";
 			}
 			if ( strpos( $search, '*' ) !== false || strpos( $search, '?' ) !== false ) {
-				if ( ds_module::wildcard_match( $search, $needle ) ) {
+				if ( dam_spam_module::wildcard_match( $search, $needle ) ) {
 					return "$searchname: $reason: $needle";
 				}
 			}
@@ -173,16 +173,16 @@ class ds_module {
 	}
 
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
-		return ds_module::ipListMatch( $ip );
+		return dam_spam_module::ipListMatch( $ip );
 	}
 
 	public function ipListMatch( $ip ) {
-		$ipt = ds_module::ip2numstr( $ip );
+		$ipt = dam_spam_module::ip2numstr( $ip );
 		foreach ( $this->searchlist as $c ) {
 			if ( !is_array( $c ) ) {
 				if ( substr_count( $c, '.' ) == 3 ) {
 					if ( strpos( $c, '/' ) !== false ) {
-						$c = ds_module::cidr2ip( $c );
+						$c = dam_spam_module::cidr2ip( $c );
 					} else {
 						$c = array( $c, $c );
 					}
@@ -207,10 +207,11 @@ class ds_module {
 						return $this->searchname . ': ' . $ip;
 					}
 				} else {
-					$ips = ds_module::ip2numstr( $ips );
-					$ipe = ds_module::ip2numstr( $ipe );
+					$ips = dam_spam_module::ip2numstr( $ips );
+					$ipe = dam_spam_module::ip2numstr( $ipe );
 					if ( $ipt >= $ips && $ipt <= $ipe ) {
 						if ( is_array( $ip ) ) {
+							// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Debug output for admin testing interface
 							echo esc_html__( 'Array in IP: ', 'dam-spam' ) . esc_html( print_r( $ip, true ) ) . '<br>';
 							$ip = $ip[0];
 						}
@@ -240,7 +241,7 @@ class ds_module {
 			return false;
 		}
 		list( $ip, $bits ) = explode( '/', $cidr );
-		$ip = ds_module::fixip( $ip );
+		$ip = dam_spam_module::fixip( $ip );
 		if ( $ip === false ) {
 			return false;
 		}
@@ -254,7 +255,7 @@ class ds_module {
 		$end2  = long2ip( $end );
 		if ( $end == '128.0.0.0' ) {
 		}
-		$start = ds_module::cidrStart2str( $start, $bits );
+		$start = dam_spam_module::cidrStart2str( $start, $bits );
 		return array( $start, $end2 );
 	}
 

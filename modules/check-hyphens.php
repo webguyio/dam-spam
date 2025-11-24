@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_hyphens extends ds_module { 
+class dam_spam_check_hyphens extends dam_spam_module { 
 	public function process( $ip, &$stats=array(), &$options=array(), &$post=array() ) {
 		if ( array_key_exists( 'email', $post ) ) {
 			$email = $post['email'];

@@ -5,11 +5,11 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class remove_bad_cache {
+class dam_spam_remove_bad_cache {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		extract( $stats );
 		extract( $options );
-		while ( count( $badips ) > $ds_cache ) {
+		while ( count( $badips ) > $dam_spam_cache ) {
 			array_shift( $badips );
 		}
 		$nowtimeout = gmdate( 'Y/m/d H:i:s', time() - ( 4 * 3600 ) + ( get_option( 'gmt_offset' ) * 3600 ) );
@@ -22,7 +22,7 @@ class remove_bad_cache {
 			}
 		}
 		$stats['badips'] = $badips;
-		ds_set_stats( $stats );
+		dam_spam_set_stats( $stats );
 		return $badips;
 	}
 }

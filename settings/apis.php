@@ -9,17 +9,19 @@ if ( !current_user_can( 'manage_options' ) ) {
 	die( esc_html__( 'Access Blocked', 'dam-spam' ) );
 }
 
-ds_fix_post_vars();
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Settings template file with local scope variables
+
+dam_spam_fix_post_vars();
 $now	 = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
-$options = ds_get_options();
+$options = dam_spam_get_options();
 extract( $options );
 $nonce   = '';
 
-if ( array_key_exists( 'ds_control', $_POST ) ) {
-	$nonce = isset( $_POST['ds_control'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_control'] ) ) : '';
+if ( array_key_exists( 'dam_spam_control', $_POST ) ) {
+	$nonce = isset( $_POST['dam_spam_control'] ) ? sanitize_text_field( wp_unslash( $_POST['dam_spam_control'] ) ) : '';
 }
 
-if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
+if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 	if ( array_key_exists( 'action', $_POST ) ) {
 		if ( array_key_exists( 'apikey', $_POST ) ) {
 			$apikey = isset( $_POST['apikey'] ) ? sanitize_text_field( wp_unslash( $_POST['apikey'] ) ) : '';
@@ -68,18 +70,18 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
 			}
 			$options[$check] = $v;
 		}
-		ds_set_options( $options );
+		dam_spam_set_options( $options );
 		extract( $options );
 	}
 	$msg = '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
 }
 
-$nonce = wp_create_nonce( 'ds_update' );
+$nonce = wp_create_nonce( 'dam_spam_update' );
 
 ?>
 
-<div id="ds-plugin" class="wrap">
-	<h1 id="ds-head"><?php esc_html_e( 'APIs — Dam Spam', 'dam-spam' ); ?></h1>
+<div id="dam-spam-plugin" class="wrap">
+	<h1 id="dam-spam-head"><?php esc_html_e( 'APIs — Dam Spam', 'dam-spam' ); ?></h1>
 	<br>
 	<?php if ( !empty( $msg ) ) {
 		echo wp_kses_post( $msg );
@@ -87,18 +89,18 @@ $nonce = wp_create_nonce( 'ds_update' );
 	<br>
 	<form method="post" action="">
 		<input type="hidden" name="action" value="update">
-		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
+		<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<div id="formchecking" class="mainsection"><?php esc_html_e( 'Blacklist Checking', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
-	  		<label class="ds-subhead" for="check_dnsbl">
-				<input class="ds_toggle" type="checkbox" id="check_dnsbl" name="check_dnsbl" value="Y" <?php if ( $check_dnsbl == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+	  		<label class="dam-spam-subhead" for="check_dnsbl">
+				<input class="dam_spam_toggle" type="checkbox" id="check_dnsbl" name="check_dnsbl" value="Y" <?php if ( $check_dnsbl == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Check DNSBLs (like Spamhaus.org)', 'dam-spam' ); ?></small>
 			</label>
 		</div>	  
 		<br>		
 		<div class="checkbox switcher">
-	  		<label class="ds-subhead" for="check_sfs">
-				<input class="ds_toggle" type="checkbox" id="check_sfs" name="check_sfs" value="Y" <?php if ( $check_sfs == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+	  		<label class="dam-spam-subhead" for="check_sfs">
+				<input class="dam_spam_toggle" type="checkbox" id="check_sfs" name="check_sfs" value="Y" <?php if ( $check_sfs == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Check Stop Forum Spam', 'dam-spam' ); ?></small>
 			</label>
 		</div>

@@ -3,7 +3,7 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 0.5
+Version: 0.6
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -21,30 +21,31 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DS_VERSION', '0.5' );
-define( 'DS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'DS_PLUGIN_FILE', plugin_dir_path( __FILE__ ) );
+define( 'DAM_SPAM_VERSION', '0.6' );
+define( 'DAM_SPAM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'DAM_SPAM_PLUGIN_FILE', plugin_dir_path( __FILE__ ) );
 
 // ============================================================================
 // Admin UI Functions
 // ============================================================================
 
-add_filter( 'admin_body_class', 'ds_body_class' );
-function ds_body_class( $classes ) {
+add_filter( 'admin_body_class', 'dam_spam_body_class' );
+function dam_spam_body_class( $classes ) {
 	$screen = get_current_screen();
-	if ( strpos( $screen->id, 'dam-spam' ) !== false || strpos( $screen->id, 'ds-' ) === 0 ) {
+	if ( strpos( $screen->id, 'dam-spam' ) !== false || strpos( $screen->id, 'dam-spam-' ) === 0 ) {
 		$classes .= ' dam-spam';
 	}
 	return $classes;
 }
 
-add_action( 'admin_print_styles', 'ds_styles' );
-function ds_styles() {
-	wp_enqueue_style( 'ds-admin', plugin_dir_url( __FILE__ ) . 'assets/css/admin.css', array(), DS_VERSION );
+add_action( 'admin_print_styles', 'dam_spam_styles' );
+function dam_spam_styles() {
+	wp_enqueue_style( 'dam-spam-admin', plugin_dir_url( __FILE__ ) . 'assets/css/admin.css', array(), DAM_SPAM_VERSION );
 }
 
-add_action( 'admin_notices', 'ds_admin_notice' );
-function ds_admin_notice() {
+add_action( 'admin_notices', 'dam_spam_admin_notice' );
+// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Only counting GET params for URL building, not processing form data
+function dam_spam_admin_notice() {
 	$user_id = get_current_user_id();
 	if ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ) {
 		$protocol = 'https';
@@ -56,22 +57,23 @@ function ds_admin_notice() {
 	$admin_url = $protocol . '://' . $http_host . $request_uri;
 	$param = ( count( $_GET ) ) ? '&' : '?';
 	
-	if ( ! get_user_meta( $user_id, 'ds_notice_dismissed_2025' ) && current_user_can( 'manage_options' ) ) {
+	if ( ! get_user_meta( $user_id, 'dam_spam_notice_dismissed_2025' ) && current_user_can( 'manage_options' ) ) {
 		$dismiss_url = wp_nonce_url( $admin_url . $param . 'dismiss', 'dismiss_notice' );
 		echo '<div class="notice notice-info"><p><a href="' . esc_url( $dismiss_url ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'Thank you for helping us Dam Spam!', 'dam-spam' ) . '</strong></big><p><a href="https://damspam.com/donations" class="button-primary" style="border-color:#c6ac40;background:#c6ac40" target="_blank">' . esc_html__( 'I Need Your Help', 'dam-spam' ) . '</a></p></div>';
 	}
 }
 
-add_action( 'admin_init', 'ds_notice_dismissed' );
-function ds_notice_dismissed() {
+add_action( 'admin_init', 'dam_spam_notice_dismissed' );
+function dam_spam_notice_dismissed() {
 	$user_id = get_current_user_id();
 	if ( isset( $_GET['dismiss'] ) && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dismiss_notice' ) ) {
-		update_user_meta( $user_id, 'ds_notice_dismissed_2025', 'true' );
+		update_user_meta( $user_id, 'dam_spam_notice_dismissed_2025', 'true' );
 	}
 }
 
-add_action( 'admin_notices', 'ds_wc_admin_notice' );
-function ds_wc_admin_notice() {
+add_action( 'admin_notices', 'dam_spam_wc_admin_notice' );
+// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Only counting GET params for URL building, not processing form data
+function dam_spam_wc_admin_notice() {
 	if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 		$user_id = get_current_user_id();
 		if ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ) {
@@ -83,31 +85,31 @@ function ds_wc_admin_notice() {
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		$admin_url = $protocol . '://' . $http_host . $request_uri;
 		$param = ( count( $_GET ) ) ? '&' : '?';
-		if ( !get_user_meta( $user_id, 'ds_wc_notice_dismissed' ) && current_user_can( 'manage_options' ) ) {
-			echo '<div class="notice notice-info"><p style="color:purple"><a href="' . esc_url( $admin_url . $param . 'dswc-dismiss' ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a>' . esc_html__( '<big><strong>WooCommerce Detected</strong></big> | We recommend <a href="admin.php?page=ds-protections">adjusting these options</a> if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ) . '</p></div>';
+		if ( !get_user_meta( $user_id, 'dam_spam_wc_notice_dismissed' ) && current_user_can( 'manage_options' ) ) {
+			echo '<div class="notice notice-info"><p style="color:purple"><a href="' . esc_url( $admin_url . $param . 'dam-spam-wc-dismiss' ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a>' . esc_html__( '<big><strong>WooCommerce Detected</strong></big> | We recommend <a href="admin.php?page=dam-spam-protections">adjusting these options</a> if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ) . '</p></div>';
 		}
 	}
 }
 
-add_action( 'admin_init', 'ds_wc_notice_dismissed' );
-function ds_wc_notice_dismissed() {
+add_action( 'admin_init', 'dam_spam_wc_notice_dismissed' );
+function dam_spam_wc_notice_dismissed() {
 	if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 		$user_id = get_current_user_id();
-		if ( isset( $_GET['dswc-dismiss'] ) && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dismiss_wc_notice' ) ) {
-			add_user_meta( $user_id, 'ds_wc_notice_dismissed', 'true', true );
+		if ( isset( $_GET['dam-spam-wc-dismiss'] ) && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dismiss_wc_notice' ) ) {
+			add_user_meta( $user_id, 'dam_spam_wc_notice_dismissed', 'true', true );
 		}
 	}
 }
 
-function ds_admin_menu() {
-	if ( !function_exists( 'ds_admin_menu_l' ) ) {
-		ds_require( 'settings/settings.php' );
+function dam_spam_admin_menu() {
+	if ( !function_exists( 'dam_spam_admin_menu_l' ) ) {
+		dam_spam_require( 'settings/settings.php' );
 	}
-	ds_admin_menu_l();
+	dam_spam_admin_menu_l();
 }
 
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'ds_summary_link' );
-function ds_summary_link( $links ) {
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'dam_spam_summary_link' );
+function dam_spam_summary_link( $links ) {
 	$links = array_merge( array( '<a href="' . admin_url( 'admin.php?page=dam-spam' ) . '">' . esc_html__( 'Settings', 'dam-spam' ) . '</a>' ), $links );
 	return $links;
 }
@@ -116,91 +118,91 @@ function ds_summary_link( $links ) {
 // Main Initialization
 // ============================================================================
 
-add_action( 'init', 'ds_init', 0 );
-add_filter( 'ds_addons_allow', 'ds_addons_d', 0 );
-add_filter( 'ds_addons_block', 'ds_addons_d', 0 );
-add_filter( 'ds_addons_get', 'ds_addons_d', 0 );
-function ds_init() {
-	remove_action( 'init', 'ds_init' );
-	add_filter( 'pre_user_login', 'ds_user_reg_filter', 1, 1 );
-	add_action( 'akismet_spam_caught', 'ds_log_akismet' );
+add_action( 'init', 'dam_spam_init', 0 );
+add_filter( 'dam_spam_addons_allow', 'dam_spam_addons_d', 0 );
+add_filter( 'dam_spam_addons_block', 'dam_spam_addons_d', 0 );
+add_filter( 'dam_spam_addons_get', 'dam_spam_addons_d', 0 );
+function dam_spam_init() {
+	remove_action( 'init', 'dam_spam_init' );
+	add_filter( 'pre_user_login', 'dam_spam_user_reg_filter', 1, 1 );
+	add_action( 'akismet_spam_caught', 'dam_spam_log_akismet' );
 	$muswitch = 'N';
 	if ( is_multisite() ) {
 		switch_to_blog( 1 );
-		$muswitch = get_option( 'ds_muswitch' );
+		$muswitch = get_option( 'dam_spam_muswitch' );
 		if ( $muswitch != 'N' ) {
 			$muswitch = 'Y';
 		}
 		restore_current_blog();
 		if ( $muswitch == 'Y' ) {
-			define( 'DS_MU', $muswitch );
-			ds_require( 'includes/multisite.php' );
-			ds_global_setup();
+			define( 'DAM_SPAM_MU', $muswitch );
+			dam_spam_require( 'includes/multisite.php' );
+			dam_spam_global_setup();
 		}
 	} else {
-		define( 'DS_MU', $muswitch );
+		define( 'DAM_SPAM_MU', $muswitch );
 	}
 	if ( is_user_logged_in() ) {
-		remove_filter( 'pre_user_login', 'ds_user_reg_filter', 1 );
+		remove_filter( 'pre_user_login', 'dam_spam_user_reg_filter', 1 );
 		if ( current_user_can( 'manage_options' ) ) {
-			ds_require( 'includes/admins.php' );
+			dam_spam_require( 'includes/admins.php' );
 			return;
 		}
 	}
-	add_action( 'user_register', 'ds_new_user_ip' );
-	add_action( 'wp_login', 'ds_log_user_ip', 10, 2 );
+	add_action( 'user_register', 'dam_spam_new_user_ip' );
+	add_action( 'wp_login', 'dam_spam_log_user_ip', 10, 2 );
 	if ( wp_doing_ajax() && is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
 		return;
 	}
 	if ( isset( $_POST ) && !empty( $_POST ) ) {
-		if ( array_key_exists( 'ds_block', $_POST ) && array_key_exists( 'kn', $_POST ) ) {
-			if ( !empty( $_POST['kn'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['kn'] ) ), 'ds_block' ) ) {
-				$options = ds_get_options();
-				$stats = ds_get_stats();
-				$post = get_post_variables();
-				ds_load( 'challenge', ds_get_ip(), $stats, $options, $post );
+		if ( array_key_exists( 'dam_spam_block', $_POST ) && array_key_exists( 'kn', $_POST ) ) {
+			if ( !empty( $_POST['kn'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['kn'] ) ), 'dam_spam_block' ) ) {
+				$options = dam_spam_get_options();
+				$stats = dam_spam_get_stats();
+				$post = dam_spam_get_post_variables();
+				dam_spam_load( 'challenge', dam_spam_get_ip(), $stats, $options, $post );
 				return;
 			}
 		}
-		$post = get_post_variables();
+		$post = dam_spam_get_post_variables();
 		if ( !empty( $post['email'] ) || !empty( $post['author'] ) || !empty( $post['comment'] ) ) {
-			$reason = ds_check_white();
+			$reason = dam_spam_check_white();
 			if ( $reason !== false ) {
 				return;
 			}
-			ds_check_post();
+			dam_spam_check_post();
 		}
 	} else {
 		$addons = array();
-		$addons = apply_filters( 'ds_addons_get', $addons );
+		$addons = apply_filters( 'dam_spam_addons_get', $addons );
 		if ( !empty( $addons ) && is_array( $addons ) ) {
 			foreach ( $addons as $add ) {
 				if ( !empty( $add ) && is_array( $add ) ) {
-					$options = ds_get_options();
-					$stats = ds_get_stats();
-					$post = get_post_variables();
-					$reason = ds_load( $add, ds_get_ip(), $stats, $options );
+					$options = dam_spam_get_options();
+					$stats = dam_spam_get_stats();
+					$post = dam_spam_get_post_variables();
+					$reason = dam_spam_load( $add, dam_spam_get_ip(), $stats, $options );
 					if ( $reason !== false ) {
-						remove_filter( 'pre_user_login', 'ds_user_reg_filter', 1 );
-						ds_log_bad( ds_get_ip(), $reason, $add[1], $add );
+						remove_filter( 'pre_user_login', 'dam_spam_user_reg_filter', 1 );
+						dam_spam_log_bad( dam_spam_get_ip(), $reason, $add[1], $add );
 						return;
 					}
 				}
 			}
 		}
 	}
-	add_action( 'template_redirect', 'ds_check_404s' );
-	add_action( 'ds_caught', 'ds_caught_action', 10, 2 );
-	add_action( 'ds_ok', 'ds_ok', 10, 2 );
-	$options = ds_get_options();
+	add_action( 'template_redirect', 'dam_spam_check_404s' );
+	add_action( 'dam_spam_caught', 'dam_spam_caught_action', 10, 2 );
+	add_action( 'dam_spam_ok', 'dam_spam_ok', 10, 2 );
+	$options = dam_spam_get_options();
 	if ( isset( $options['form_captcha_login'] ) and $options['form_captcha_login'] === 'Y' ) {
-		add_action( 'login_form', 'ds_add_captcha' );
+		add_action( 'login_form', 'dam_spam_add_captcha' );
 	}
 	if ( isset( $options['form_captcha_registration'] ) and $options['form_captcha_registration'] === 'Y' ) {
-		add_action( 'register_form', 'ds_add_captcha' );
+		add_action( 'register_form', 'dam_spam_add_captcha' );
 	}
 	if ( isset( $options['form_captcha_comment'] ) and $options['form_captcha_comment'] === 'Y' ) {
-		add_action( 'comment_form_after_fields', 'ds_add_captcha' );
+		add_action( 'comment_form_after_fields', 'dam_spam_add_captcha' );
 	}
 }
 
@@ -208,15 +210,15 @@ function ds_init() {
 // Core Loading Functions
 // ============================================================================
 
-function ds_require( $file ) {
+function dam_spam_require( $file ) {
 	require_once( $file );
 }
 
-function ds_load( $file, $ip, &$stats = array(), &$options = array(), &$post = array() ) {
+function dam_spam_load( $file, $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 	if ( empty( $file ) ) {
 		return false;
 	}
-	if ( !class_exists( 'ds_module' ) ) {
+	if ( !class_exists( 'dam_spam_module' ) ) {
 		require_once( 'classes/module.php' );
 	}
 	if ( is_array( $file ) ) {
@@ -248,7 +250,7 @@ function ds_load( $file, $ip, &$stats = array(), &$options = array(), &$post = a
 		return false;
 	}
 	require_once( $fd );
-	$class_name = str_replace( '-', '_', basename( $fd, '.php' ) );
+	$class_name = 'dam_spam_' . str_replace( '-', '_', basename( $fd, '.php' ) );
 	$class = new $class_name();
 	$result = $class->process( $ip, $stats, $options, $post );
 	$class = null;
@@ -256,8 +258,8 @@ function ds_load( $file, $ip, &$stats = array(), &$options = array(), &$post = a
 	return $result;
 }
 
-function ds_load_module() {
-	if ( !class_exists( 'ds_module' ) ) {
+function dam_spam_load_module() {
+	if ( !class_exists( 'dam_spam_module' ) ) {
 		require_once( 'classes/module.php' );
 	}
 }
@@ -266,28 +268,29 @@ function ds_load_module() {
 // Options & Stats Management
 // ============================================================================
 
-function ds_get_options() {
-	$options = get_option( 'ds_options' );
-	if ( !empty( $options ) && is_array( $options ) && array_key_exists( 'version', $options ) && $options['version'] == DS_VERSION ) {
+function dam_spam_get_options() {
+	$options = get_option( 'dam_spam_options' );
+	if ( !empty( $options ) && is_array( $options ) && array_key_exists( 'version', $options ) && $options['version'] == DAM_SPAM_VERSION ) {
 		return $options;
 	}
-	ds_auto_migrate_from_stop_spammers();
-	return ds_load( 'get_options', '' );
+	dam_spam_auto_migrate_from_old_dam_spam();
+	dam_spam_auto_migrate_from_stop_spammers();
+	return dam_spam_load( 'get_options', '' );
 }
 
-function ds_set_options( $options ) {
-	update_option( 'ds_options', $options );
+function dam_spam_set_options( $options ) {
+	update_option( 'dam_spam_options', $options );
 }
 
-function ds_get_stats() {
-	$stats = get_option( 'ds_stats' );
-	if ( !empty( $stats ) && is_array( $stats ) && array_key_exists( 'version', $stats ) && $stats['version'] == DS_VERSION ) {
+function dam_spam_get_stats() {
+	$stats = get_option( 'dam_spam_stats' );
+	if ( !empty( $stats ) && is_array( $stats ) && array_key_exists( 'version', $stats ) && $stats['version'] == DAM_SPAM_VERSION ) {
 		return $stats;
 	}
-	return ds_load( 'get_stats', '' );
+	return dam_spam_load( 'get_stats', '' );
 }
 
-function ds_set_stats( &$stats, $addon = array() ) {
+function dam_spam_set_stats( &$stats, $addon = array() ) {
 	if ( empty( $addon ) || !is_array( $addon ) ) {
 		if ( $stats['spam_count'] == 0 || empty( $stats['spam_date'] ) ) {
 			$stats['spam_date'] = gmdate( 'Y/m/d', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
@@ -310,14 +313,14 @@ function ds_set_stats( &$stats, $addon = array() ) {
 		$addonstats[$addon[1]] = $addstats;
 		$stats['addonstats'] = $addonstats;
 	}
-	update_option( 'ds_stats', $stats );
+	update_option( 'dam_spam_stats', $stats );
 }
 
 // ============================================================================
 // IP & User Functions
 // ============================================================================
 
-function ds_get_ip() {
+function dam_spam_get_ip() {
 	$ip = '';
 	if ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
 		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
@@ -325,12 +328,12 @@ function ds_get_ip() {
 	return $ip;
 }
 
-function ds_new_user_ip( $user_id ) {
-	$ip = ds_get_ip();
+function dam_spam_new_user_ip( $user_id ) {
+	$ip = dam_spam_get_ip();
 	update_user_meta( $user_id, 'signup_ip', $ip );
 }
 
-function ds_log_user_ip( $user_login = "", $user = "" ) {
+function dam_spam_log_user_ip( $user_login = "", $user = "" ) {
 	if ( empty( $user ) ) {
 		return;
 	}
@@ -341,14 +344,14 @@ function ds_log_user_ip( $user_login = "", $user = "" ) {
 		return;
 	}
 	$user_id = $user->ID;
-	$ip = ds_get_ip();
+	$ip = dam_spam_get_ip();
 	$oldip = get_user_meta( $user_id, 'signup_ip', true );
 	if ( empty( $oldip ) || $ip != $oldip ) {
 		update_user_meta( $user_id, 'signup_ip', $ip );
 	}
 }
 
-function ds_sfs_ip_column_head( $column_headers ) {
+function dam_spam_dam_spam_sfs_ip_column_head( $column_headers ) {
 	$column_headers['signup_ip'] = 'IP Address';
 	return $column_headers;
 }
@@ -357,43 +360,43 @@ function ds_sfs_ip_column_head( $column_headers ) {
 // Check Functions
 // ============================================================================
 
-function ds_check_white() {
-	$options = ds_get_options();
-	$stats = ds_get_stats();
-	$post = get_post_variables();
-	$answer = ds_load( 'check_allow_list', ds_get_ip(), $stats, $options, $post );
+function dam_spam_check_white() {
+	$options = dam_spam_get_options();
+	$stats = dam_spam_get_stats();
+	$post = dam_spam_get_post_variables();
+	$answer = dam_spam_load( 'check_allow_list', dam_spam_get_ip(), $stats, $options, $post );
 	return $answer;
 }
 
-function ds_check_white_block() {
-	$options = ds_get_options();
-	$stats = ds_get_stats();
-	$post = get_post_variables();
+function dam_spam_check_white_block() {
+	$options = dam_spam_get_options();
+	$stats = dam_spam_get_stats();
+	$post = dam_spam_get_post_variables();
 	$post['block'] = true;
-	$answer = ds_load( 'check_allow_list', ds_get_ip(), $stats, $options, $post );
+	$answer = dam_spam_load( 'check_allow_list', dam_spam_get_ip(), $stats, $options, $post );
 	return $answer;
 }
 
-function ds_check_post() {
-	$options = ds_get_options();
-	$stats = ds_get_stats();
-	$post = get_post_variables();
-	$ret = ds_load( 'check_post', ds_get_ip(), $stats, $options, $post );
+function dam_spam_check_post() {
+	$options = dam_spam_get_options();
+	$stats = dam_spam_get_stats();
+	$post = dam_spam_get_post_variables();
+	$ret = dam_spam_load( 'check_post', dam_spam_get_ip(), $stats, $options, $post );
 	return $ret;
 }
 
-function ds_check_site_get() {
-	$options = ds_get_options();
-	$stats = ds_get_stats();
-	$post = get_post_variables();
-	$ret = ds_load( 'check_site_get', ds_get_ip(), $stats, $options, $post );
+function dam_spam_check_site_get() {
+	$options = dam_spam_get_options();
+	$stats = dam_spam_get_stats();
+	$post = dam_spam_get_post_variables();
+	$ret = dam_spam_load( 'check_site_get', dam_spam_get_ip(), $stats, $options, $post );
 	return $ret;
 }
 
-function ds_check_404s() {
-	$options = ds_get_options();
-	$stats = ds_get_stats();
-	$ret = ds_load( 'check_404s', ds_get_ip(), $stats, $options );
+function dam_spam_check_404s() {
+	$options = dam_spam_get_options();
+	$stats = dam_spam_get_stats();
+	$ret = dam_spam_load( 'check_404s', dam_spam_get_ip(), $stats, $options );
 	return $ret;
 }
 
@@ -401,40 +404,40 @@ function ds_check_404s() {
 // Logging Functions
 // ============================================================================
 
-function ds_log_good( $ip, $reason, $check, $addon = array() ) {
-	$options = ds_get_options();
-	$stats = ds_get_stats();
-	$post = get_post_variables();
+function dam_spam_log_good( $ip, $reason, $check, $addon = array() ) {
+	$options = dam_spam_get_options();
+	$stats = dam_spam_get_stats();
+	$post = dam_spam_get_post_variables();
 	$post['reason'] = $reason;
 	$post['check'] = $check;
 	$post['addon'] = $addon;
-	return ds_load( 'log_good', ds_get_ip(), $stats, $options, $post );
+	return dam_spam_load( 'log_good', dam_spam_get_ip(), $stats, $options, $post );
 }
 
-function ds_log_bad( $ip, $reason, $check, $addon = array() ) {
-	$options = ds_get_options();
-	$stats = ds_get_stats();
-	$post = get_post_variables();
+function dam_spam_log_bad( $ip, $reason, $check, $addon = array() ) {
+	$options = dam_spam_get_options();
+	$stats = dam_spam_get_stats();
+	$post = dam_spam_get_post_variables();
 	$post['reason'] = $reason;
 	$post['check'] = $check;
 	$post['addon'] = $addon;
-	return ds_load( 'log_bad', ds_get_ip(), $stats, $options, $post );
+	return dam_spam_load( 'log_bad', dam_spam_get_ip(), $stats, $options, $post );
 }
 
-function ds_log_akismet() {
-	$options = ds_get_options();
-	$stats = ds_get_stats();
+function dam_spam_log_akismet() {
+	$options = dam_spam_get_options();
+	$stats = dam_spam_get_stats();
 	if ( $options['check_akismet'] != 'Y' ) {
 		return false;
 	}
-	$reason = ds_check_white();
+	$reason = dam_spam_check_white();
 	if ( $reason !== false ) {
 		return;
 	}
-	$post = get_post_variables();
+	$post = dam_spam_get_post_variables();
 	$post['reason'] = esc_html__( 'from Akismet', 'dam-spam' );
 	$post['check'] = 'check_akismet';
-	$answer = ds_load( 'log_bad', ds_get_ip(), $stats, $options, $post );
+	$answer = dam_spam_load( 'log_bad', dam_spam_get_ip(), $stats, $options, $post );
 	return $answer;
 }
 
@@ -442,18 +445,24 @@ function ds_log_akismet() {
 // CAPTCHA Functions
 // ============================================================================
 
-function ds_add_captcha() {
-	$options = ds_get_options();
+function dam_spam_add_captcha() {
+	$options = dam_spam_get_options();
 	$html = '';
 	switch ( $options['check_captcha'] ) {
 		case 'G':
-			wp_enqueue_script( 'google-recaptcha', 'https://www.google.com/recaptcha/api.js', array(), '1', false );
+			wp_enqueue_script( 'google-recaptcha', 'https://www.google.com/recaptcha/api.js', array(), '1', array(
+				'strategy'  => 'async',
+				'in_footer' => true,
+			) );
 			$recaptchaapisite = $options['recaptchaapisite'];
 			$html = '<input type="hidden" name="recaptcha" value="recaptcha">';
 			$html .= '<div class="g-recaptcha" data-sitekey="' . esc_attr( $recaptchaapisite ) . '"></div>';
 		break;
 		case 'H':
-			wp_enqueue_script( 'hcaptcha', 'https://hcaptcha.com/1/api.js', array(), '1', false );
+			wp_enqueue_script( 'hcaptcha', 'https://hcaptcha.com/1/api.js', array(), '1', array(
+				'strategy'  => 'async',
+				'in_footer' => true,
+			) );
 			$hcaptchaapisite = $options['hcaptchaapisite'];
 			$html = '<input type="hidden" name="h-captcha" value="h-captcha">';
 			$html .= '<div class="h-captcha" data-sitekey="' . esc_attr( $hcaptchaapisite ) . '"></div>';
@@ -486,16 +495,17 @@ function ds_add_captcha() {
 	echo wp_kses( $html, $allowed_html );
 }
 
-function ds_captcha_verify() {
+function dam_spam_captcha_verify() {
 	static $verified = null;
 	if ( $verified !== null ) {
 		return $verified;
 	}
 	global $wpdb;
-	$options = ds_get_options();
-	$ip = ds_get_ip();
+	$options = dam_spam_get_options();
+	$ip = dam_spam_get_ip();
 	switch ( $options['check_captcha'] ) {
 		case 'G':
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checking for response, shouldn't have nonce
 			if ( !array_key_exists( 'recaptcha', $_POST ) || empty( $_POST['recaptcha'] ) || !array_key_exists( 'g-recaptcha-response', $_POST ) ) {
 				$verified = esc_html__( 'Error: Please complete the reCAPTCHA.', 'dam-spam' );
 				return $verified;
@@ -506,6 +516,7 @@ function ds_captcha_verify() {
 				$verified = esc_html__( 'Error: reCAPTCHA keys are not set.', 'dam-spam' );
 				return $verified;
 			}
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checking for response, shouldn't have nonce
 			$g = isset( $_POST['g-recaptcha-response'] ) ? sanitize_textarea_field( wp_unslash( $_POST['g-recaptcha-response'] ) ) : '';
 			$response = wp_safe_remote_post( 'https://www.google.com/recaptcha/api/siteverify', array(
 				'body' => array(
@@ -525,6 +536,7 @@ function ds_captcha_verify() {
 			}
 		break;
 		case 'H':
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checking for response, shouldn't have nonce
 			if ( !array_key_exists( 'h-captcha', $_POST ) || empty( $_POST['h-captcha'] ) || !array_key_exists( 'h-captcha-response', $_POST ) ) {
 				$verified = esc_html__( 'Error: Please complete the hCaptcha.', 'dam-spam' );
 				return $verified;
@@ -535,6 +547,7 @@ function ds_captcha_verify() {
 				$verified = esc_html__( 'Error: hCaptcha keys are not set.', 'dam-spam' );
 				return $verified;
 			}
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checking for response, shouldn't have nonce
 			$h = isset( $_POST['h-captcha-response'] ) ? sanitize_textarea_field( wp_unslash( $_POST['h-captcha-response'] ) ) : '';
 			$response = wp_safe_remote_post( 'https://hcaptcha.com/siteverify', array(
 				'body' => array(
@@ -558,41 +571,41 @@ function ds_captcha_verify() {
 	return true;
 }
 
-add_filter( 'authenticate', 'ds_login_captcha_verify', 99 );
-function ds_login_captcha_verify( $user ) {
-	$options = ds_get_options();
+add_filter( 'authenticate', 'dam_spam_login_captcha_verify', 99 );
+function dam_spam_login_captcha_verify( $user ) {
+	$options = dam_spam_get_options();
 	if ( !isset( $options['form_captcha_login'] ) or $options['form_captcha_login'] !== 'Y' ) {
 		return $user;	
 	}
-	$response = ds_captcha_verify();
+	$response = dam_spam_captcha_verify();
 	if ( $response !== true ) {
-		return new WP_Error( 'ds_captcha_error', $response );
+		return new WP_Error( 'dam_spam_captcha_error', $response );
 	}
 	return $user;
 }
 
-add_filter( 'registration_errors', 'ds_registration_captcha_verify', 10 );
-function ds_registration_captcha_verify( $errors ) {
-	$options = ds_get_options();
+add_filter( 'registration_errors', 'dam_spam_registration_captcha_verify', 10 );
+function dam_spam_registration_captcha_verify( $errors ) {
+	$options = dam_spam_get_options();
 	if ( !isset( $options['form_captcha_registration'] ) or $options['form_captcha_registration'] !== 'Y' ) {
 		return $errors;	
 	}
-	$response = ds_captcha_verify();
+	$response = dam_spam_captcha_verify();
 	if ( $response !== true ) {
-		$errors->add( 'ds_captcha_error', $response );
+		$errors->add( 'dam_spam_captcha_error', $response );
 	}
 	return $errors;
 }
 
-add_filter( 'pre_comment_approved', 'ds_comment_captcha_verify', 99, 1 );
-function ds_comment_captcha_verify( $approved ) {
-	$options = ds_get_options();
+add_filter( 'pre_comment_approved', 'dam_spam_comment_captcha_verify', 99, 1 );
+function dam_spam_comment_captcha_verify( $approved ) {
+	$options = dam_spam_get_options();
 	if ( !isset( $options['form_captcha_comment'] ) or $options['form_captcha_comment'] !== 'Y' ) {
 		return $approved;	
 	}
-	$response = ds_captcha_verify();
+	$response = dam_spam_captcha_verify();
 	if ( $response !== true ) {
-		return new WP_Error( 'ds_captcha_error', $response, 403 );
+		return new WP_Error( 'dam_spam_captcha_error', $response, 403 );
 	}
 	return $approved;
 }
@@ -601,69 +614,69 @@ function ds_comment_captcha_verify( $approved ) {
 // User Registration & Authentication
 // ============================================================================
 
-function ds_user_reg_filter( $user_login ) {
-	$options = ds_get_options();
-	$stats = ds_get_stats();
-	$post = get_post_variables();
+function dam_spam_user_reg_filter( $user_login ) {
+	$options = dam_spam_get_options();
+	$stats = dam_spam_get_stats();
+	$post = dam_spam_get_post_variables();
 	$post['author'] = $user_login;
 	$post['addon'] = 'check_Register';
 	if ( $options['filter_registrations'] != 'Y' ) {
-		remove_filter( 'pre_user_login', 'ds_user_reg_filter', 1 );
+		remove_filter( 'pre_user_login', 'dam_spam_user_reg_filter', 1 );
 		return $user_login;
 	}
-	$reason = ds_load( 'check_bad_cache', ds_get_ip(), $stats, $options, $post );
+	$reason = dam_spam_load( 'check_bad_cache', dam_spam_get_ip(), $stats, $options, $post );
 	if ( $reason !== false ) {
 		$reject_message = $options['reject_message'];
 		$post['reason'] = esc_html__( 'Failed Registration: Bad Cache', 'dam-spam' );
 		$host['check'] = 'check_bad_cache';
-		$answer = ds_load( 'log_bad', ds_get_ip(), $stats, $options, $post );
+		$answer = dam_spam_load( 'log_bad', dam_spam_get_ip(), $stats, $options, $post );
 		wp_die( esc_html( $reject_message ), esc_html__( 'Login Access Blocked', 'dam-spam' ), array( 'response' => 403 ) );
 		exit();
 	}
-	$reason = ds_load( 'check_periods', ds_get_ip(), $stats, $options, $post );
+	$reason = dam_spam_load( 'check_periods', dam_spam_get_ip(), $stats, $options, $post );
 	if ( $reason !== false ) { 
 		wp_die( 'Registration Access Blocked', esc_html__( 'Login Access Blocked', 'dam-spam' ), array( 'response' => 403 ) );
 	}
-	$reason = ds_check_white();
+	$reason = dam_spam_check_white();
 	if ( $reason !== false ) {
 		$post['reason'] = esc_html__( 'Passed Registration: ', 'dam-spam' ) . $reason;
-		$answer = ds_load( 'log_good', ds_get_ip(), $stats, $options, $post );
+		$answer = dam_spam_load( 'log_good', dam_spam_get_ip(), $stats, $options, $post );
 		return $user_login;
 	}
-	$ret = ds_load( 'check_post', ds_get_ip(), $stats, $options, $post );
+	$ret = dam_spam_load( 'check_post', dam_spam_get_ip(), $stats, $options, $post );
 	$post['reason'] = esc_html__( 'Passed Registration ', 'dam-spam' ) . $ret;
-	$answer = ds_load( 'log_good', ds_get_ip(), $stats, $options, $post );
+	$answer = dam_spam_load( 'log_good', dam_spam_get_ip(), $stats, $options, $post );
 	return $user_login;
 }
 
-add_action( 'wp', 'ds_login_redirect' );
-function ds_login_redirect() {
+add_action( 'wp', 'dam_spam_login_redirect' );
+function dam_spam_login_redirect() {
 	global $pagenow, $post;
-	$options = ds_get_options();
-	if ( get_option( 'ds_enable_custom_login', '' ) and $options['ds_private_mode'] == "Y" and ( !is_user_logged_in() && ( !$post || $post->post_name != 'login' ) ) ) {
-		wp_redirect( site_url( 'login' ) );
+	$options = dam_spam_get_options();
+	if ( get_option( 'dam_spam_enable_custom_login', '' ) and $options['dam_spam_private_mode'] == "Y" and ( !is_user_logged_in() && ( !$post || $post->post_name != 'login' ) ) ) {
+		wp_safe_redirect( site_url( 'login' ) );
 		exit;
-	} elseif ( $options['ds_private_mode'] == "Y" and ( !is_user_logged_in() && ( $pagenow != 'wp-login.php' and ( !$post || $post->post_name != 'login' ) ) ) ) {
+	} elseif ( $options['dam_spam_private_mode'] == "Y" and ( !is_user_logged_in() && ( $pagenow != 'wp-login.php' and ( !$post || $post->post_name != 'login' ) ) ) ) {
 		auth_redirect();
 	}
 }
 
-function ds_sfs_check_admin() {
-	ds_sfs_reg_add_user_to_allowlist();
+function dam_spam_dam_spam_sfs_check_admin() {
+	dam_spam_dam_spam_sfs_reg_add_user_to_allowlist();
 }
 
-function ds_sfs_reg_add_user_to_allowlist() {
-	$options = ds_get_options();
-	$stats = ds_get_stats();
-	$post = get_post_variables();
-	return ds_load( 'add_to_allow_list', ds_get_ip(), $stats, $options );
+function dam_spam_dam_spam_sfs_reg_add_user_to_allowlist() {
+	$options = dam_spam_get_options();
+	$stats = dam_spam_get_stats();
+	$post = dam_spam_get_post_variables();
+	return dam_spam_load( 'add_to_allow_list', dam_spam_get_ip(), $stats, $options );
 }
 
 // ============================================================================
 // Helper & Utility Functions
 // ============================================================================
 
-function get_post_variables() {
+function dam_spam_get_post_variables() {
 	$answer = array(
 		'email' => '',
 		'author' => '',
@@ -672,9 +685,11 @@ function get_post_variables() {
 		'subject' => '',
 		'url' => ''
 	);
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checking for raw post data, can't have nonce
 	if ( empty( $_POST ) || !is_array( $_POST ) ) {
 		return $answer;
 	}
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checking raw post data, can't have nonce
 	$p = $_POST;
 	$search = array(
 		'email' => array(
@@ -732,6 +747,7 @@ function get_post_variables() {
 			foreach ( $p as $pkey => $pval ) {
 				if ( stripos( $pkey, $srch ) !== false ) {
 					if ( is_array( $pval ) ) {
+						// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Converting array to string for processing
 						$pval = print_r( $pval, true );
 					}
 					$answer[$var] = $pval;
@@ -746,6 +762,7 @@ function get_post_variables() {
 			foreach ( $p as $pkey => $pval ) {
 				if ( stripos( $pkey, 'input_' ) ) {
 					if ( is_array( $pval ) ) {
+						// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Converting array to string for processing
 						$pval = print_r( $pval, true );
 					}
 					if ( strpos( $pval, '@' ) !== false && strrpos( $pval, '.' ) > strpos( $pval, '@' ) ) {
@@ -780,36 +797,19 @@ function get_post_variables() {
 	return $answer;
 }
 
-function really_clean( $s ) {
-	if ( empty( $s ) ) {
-		return '';
-	}
-	$ss = array_slice( unpack( "c*", "\0" . $s ), 1 );
-	if ( empty( $ss ) ) {
-		return $s;
-	}
-	$s = '';
-	for ( $j = 0; $j < count( $ss ); $j ++ ) {
-		if ( $ss[$j] < 127 && $ss[$j] > 31 ) {
-			$s .= pack( 'C', $ss[$j] );
-		}
-	}
-	return $s;
-}
-
-function ds_addons_d( $config = array() ) {
+function dam_spam_addons_d( $config = array() ) {
 	return $config;
 }
 
-function ds_caught_action( $ip = '', $post = array() ) {}
+function dam_spam_caught_action( $ip = '', $post = array() ) {}
 
-function ds_ok( $ip = '', $post = array() ) {}
+function dam_spam_ok( $ip = '', $post = array() ) {}
 
 // ============================================================================
 // Classes
 // ============================================================================
 
-class DSRegDate {
+class Dam_Spam_Reg_Date {
 	public function __construct() {
 		add_action( 'init', array( &$this, 'init' ) );
 	}
@@ -849,6 +849,7 @@ class DSRegDate {
 	public static function users_orderby_column( $vars ) {
 		if ( isset( $vars['orderby'] ) && 'registerdate' == $vars['orderby'] ) {
 			$vars = array_merge( $vars, array(
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Necessary for user registration date sorting
 				'meta_key' => 'registerdate',
 				'orderby' => 'meta_value'
 			) );
@@ -856,7 +857,7 @@ class DSRegDate {
 		return $vars;
 	}
 }
-new DSRegDate();
+new Dam_Spam_Reg_Date();
 
 // ============================================================================
 // Required Files

@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // last updated from https://support.google.com/a/answer/10026322 on 12/22/20
-class check_google extends ds_module {
+class dam_spam_check_google extends dam_spam_module {
 	public $searchname = 'Google IP';
 	public $searchlist = array(
 		array( '107.167.160.0', '107.167.191.255' ),

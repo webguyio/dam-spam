@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // last updated from https://help.turbify.com/s/article/SLN19413 on 2/29/24
-class check_yahoo_merchant extends ds_module {
+class dam_spam_check_yahoo_merchant extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$yahoo = array(
 			'52.0.50.252',

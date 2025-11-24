@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_dnsbl {
+class dam_spam_check_dnsbl {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( strpos( $ip, '.' ) === false ) {
 			return false;

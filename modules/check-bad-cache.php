@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_bad_cache extends ds_module {
+class dam_spam_check_bad_cache extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$this->searchname = 'Bad Cache';
 		$gcache		      = $stats['badips'];

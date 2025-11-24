@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_honeypot {
+class dam_spam_check_honeypot {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( strpos( $ip, '.' ) === false ) {
 			return false;

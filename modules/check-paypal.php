@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // last updated from https://www.paypal.com/us/cshelp/article/what-are-the-ip-addresses-for-live-paypal-servers-ts1056 on 2/29/24
-class check_paypal extends ds_module {
+class dam_spam_check_paypal extends dam_spam_module {
 	public $searchname = 'PayPal';
 	public $searchlist = array(
 		'64.4.240.0/21',

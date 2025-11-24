@@ -1,4 +1,4 @@
-/* not prefixed with #ds-plugin for styling outside settings pages */
+/* not prefixed with #dam-spam-plugin for styling outside settings pages */
 .icon-action {
 	max-width: 16px;
 	max-height: 16px;
@@ -11,7 +11,7 @@
 	vertical-align: middle;
 }
 
-/* prefixed with #ds-plugin for styling inside settings pages only */
+/* prefixed with #dam-spam-plugin for styling inside settings pages only */
 body.dam-spam {
 	background: #111;
 }
@@ -21,52 +21,52 @@ body.dam-spam .wrap > div.notice {
 	background: #000;
 }
 
-#ds-plugin, #ds-plugin * {
+#dam-spam-plugin, #dam-spam-plugin * {
 	box-sizing: border-box;
 	transition: all 0.5s ease;
 }
 
-#ds-plugin, #ds-plugin h2, #ds-plugin h3, #ds-plugin h4, #ds-plugin h5, #ds-plugin h6, #ds-plugin p {
+#dam-spam-plugin, #dam-spam-plugin h2, #dam-spam-plugin h3, #dam-spam-plugin h4, #dam-spam-plugin h5, #dam-spam-plugin h6, #dam-spam-plugin p {
 	color: #fff;
 }
 
-#ds-plugin h1, #ds-plugin a {
+#dam-spam-plugin h1, #dam-spam-plugin a {
 	color: #c6ac40;
 }
 
-#ds-plugin hr {
+#dam-spam-plugin hr {
 	border-color: #333;
 }
 
-#ds-plugin img {
+#dam-spam-plugin img {
 	margin-right: 5px;
 }
 
-#ds-plugin ul, #ds-plugin ol {
+#dam-spam-plugin ul, #dam-spam-plugin ol {
 	margin: 30px 0 30px 60px;
 }
 
-#ds-plugin ul ul, #ds-plugin ol ol, #ds-plugin ul ol, #ds-plugin ol ul {
+#dam-spam-plugin ul ul, #dam-spam-plugin ol ol, #dam-spam-plugin ul ol, #dam-spam-plugin ol ul {
 	margin-top: 0;
 	margin-bottom: 0;
 }
 
-#ds-plugin ol {
+#dam-spam-plugin ol {
 	list-style: decimal outside;
 	list-style-type: decimal-leading-zero;
 	margin-left: 70px;
 }
 
-#ds-plugin ul li {
+#dam-spam-plugin ul li {
 	list-style-type: '— ';
 }
 
-#ds-plugin li {
+#dam-spam-plugin li {
 	line-height: 125%;
 	margin: 20px 0;
 }
 
-#ds-plugin input, #ds-plugin textarea, #ds-plugin select, #ds-plugin option {
+#dam-spam-plugin input, #dam-spam-plugin textarea, #dam-spam-plugin select, #dam-spam-plugin option {
 	color: #ccc;
 	border: 2px solid #333;
 	outline: 0;
@@ -74,15 +74,15 @@ body.dam-spam .wrap > div.notice {
 	background: #333;
 }
 
-#ds-plugin input:focus, #ds-plugin textarea:focus {
+#dam-spam-plugin input:focus, #dam-spam-plugin textarea:focus {
 	border: 2px solid #c6ac40;
 }
 
-#ds-plugin input[type="text"] {
+#dam-spam-plugin input[type="text"] {
 	max-width: 400px;
 }
 
-#ds-plugin input:disabled, #ds-plugin input:disabled *, #ds-plugin #check_form:checked + #check_wooform, #ds-plugin #check_form:checked + #check_wooform *, #ds-plugin #check_form:checked + #check_gvform, #ds-plugin #check_form:checked + #check_gvform *, #ds-plugin #check_form:checked + #check_wpform, #ds-plugin #check_form:checked + #check_wpform * {
+#dam-spam-plugin input:disabled, #dam-spam-plugin input:disabled *, #dam-spam-plugin #check_form:checked + #check_wooform, #dam-spam-plugin #check_form:checked + #check_wooform *, #dam-spam-plugin #check_form:checked + #check_gvform, #dam-spam-plugin #check_form:checked + #check_gvform *, #dam-spam-plugin #check_form:checked + #check_wpform, #dam-spam-plugin #check_form:checked + #check_wpform * {
 	color: gray !important;
 	border-color: gray !important;
 	background: gray !important;
@@ -91,52 +91,52 @@ body.dam-spam .wrap > div.notice {
 	pointer-events: none !important;
 }
 
-#ds-plugin textarea {
+#dam-spam-plugin textarea {
 	width: 100% !important;
 	max-width: 500px !important;
 }
 
-#ds-plugin select.ds-small-dropbox{
+#dam-spam-plugin select.dam-spam-small-dropbox{
 	vertical-align: baseline;
 }
 
-#ds-plugin #ds-input {
+#dam-spam-plugin #dam-spam-input {
 	width: 170px !important;
 	max-width: 170px !important;
 }
 
-#ds-plugin #ds-head {
+#dam-spam-plugin #dam-spam-head {
 	font-size: 30px;
 	font-weight: bold;
 }
 
-#ds-plugin .ds-subhead, #ds-plugin .ds-subhead2 {
+#dam-spam-plugin .dam-spam-subhead, #dam-spam-plugin .dam-spam-subhead2 {
 	color: #aaa;
 	font-size: 20px !important;
 	font-weight: 500;
 }
 
-#ds-plugin .ds-subhead2 {
+#dam-spam-plugin .dam-spam-subhead2 {
 	font-size: 16px;
 }
 
-#ds-plugin .ds-subhead div.container {
+#dam-spam-plugin .dam-spam-subhead div.container {
 	padding: 5% 0;
 }
 
-#ds-plugin .keyhead {
+#dam-spam-plugin .keyhead {
 	display: block;
 	font-size: 16px !important;
 }
 
-#ds-plugin div.mainsection {
+#dam-spam-plugin div.mainsection {
 	font-size: 18px;
 	font-weight: bold;
 	color: #eae4ca;
 	margin: 30px 0 15px;
 }
 
-#ds-plugin .ds-info-box {
+#dam-spam-plugin .dam-spam-info-box {
 	background: #222;
 	width: 100%;
 	padding: 0.1em 1.5em 1.5em;
@@ -144,13 +144,13 @@ body.dam-spam .wrap > div.notice {
 	box-sizing: border-box;
 }
 
-#ds-plugin .ds-small-box {
+#dam-spam-plugin .dam-spam-small-box {
 	width: 35px;
 	text-align: center;
 	display: initial !important;
 }
 
-#ds-plugin .stat-box {
+#dam-spam-plugin .stat-box {
 	padding: 5px 10px;
 	background: #222;
 	margin: 5px;
@@ -158,34 +158,34 @@ body.dam-spam .wrap > div.notice {
 	float: left;
 }
 
-#ds-plugin .postbox {
+#dam-spam-plugin .postbox {
 	border-color: #333;
 	background: #222;
 }
 
-#ds-plugin .postbox .inside {
+#dam-spam-plugin .postbox .inside {
 	padding-bottom: 0;
 }
 
-#ds-plugin #ds-table {
+#dam-spam-plugin #dam-spam-table {
 	width: 100%;
 	background: #222;
 }
 
-#ds-plugin tr {
+#dam-spam-plugin tr {
 	background: #c6ac40;
 }
 
-#ds-plugin td {
+#dam-spam-plugin td {
 	padding: 10px;
 	background: #222;
 }
 
-#ds-plugin .filterhead {
+#dam-spam-plugin .filterhead {
 	cursor: pointer;
 }
 
-#ds-plugin th.ds-cleanup {
+#dam-spam-plugin th.dam-spam-cleanup {
 	position: sticky;
 	top: 32px;
 	background: #c6ac40;
@@ -193,15 +193,15 @@ body.dam-spam .wrap > div.notice {
 	color: #fff;
 }
 
-#ds-plugin .ds-cleanup-tr:hover {
+#dam-spam-plugin .dam-spam-cleanup-tr:hover {
 	background: #222 !important;
 }
 
-#ds-plugin .phpinfodisplay table {
+#dam-spam-plugin .phpinfodisplay table {
 	width: 100%;
 }
 
-#ds-plugin .button-primary {
+#dam-spam-plugin .button-primary {
 	font-size: 14px;
 	color: #000;
 	font-weight: 500;
@@ -210,52 +210,52 @@ body.dam-spam .wrap > div.notice {
 	background-color: #c6ac40;
 }
 
-#ds-plugin .button-primary:hover, #ds-plugin .button-primary:focus {
+#dam-spam-plugin .button-primary:hover, #dam-spam-plugin .button-primary:focus {
 	opacity:0.8;
 }
 
-#ds-plugin #php-info.button-primary {
+#dam-spam-plugin #php-info.button-primary {
 	display: block;
 	text-align: center;
 	margin: 0 auto;
 }
 
-#ds-plugin .center {
+#dam-spam-plugin .center {
 	text-align: center;
 }
 
-#ds-plugin .nav-tab-wrapper, #ds-plugin .wrap h2.nav-tab-wrapper, #ds-plugin h1.nav-tab-wrapper {
+#dam-spam-plugin .nav-tab-wrapper, #dam-spam-plugin .wrap h2.nav-tab-wrapper, #dam-spam-plugin h1.nav-tab-wrapper {
 	border-color: #000;
 }
 
-#ds-plugin .nav-tab {
+#dam-spam-plugin .nav-tab {
 	color: #fff;
 	border-color: #000;
 	background: #000;
 }
 
-#ds-plugin .nav-tab-active {
+#dam-spam-plugin .nav-tab-active {
 	background: #333;
 }
 
 /* checkbox toggle switch */
-#ds-plugin div.checkbox.switcher label,
-#ds-plugin div.radio.switcher label {
+#dam-spam-plugin div.checkbox.switcher label,
+#dam-spam-plugin div.radio.switcher label {
 	padding: 0;
 }
 
-#ds-plugin div.checkbox.switcher label *,
-#ds-plugin div.radio.switcher label * {
+#dam-spam-plugin div.checkbox.switcher label *,
+#dam-spam-plugin div.radio.switcher label * {
 	vertical-align: middle;
 }
 
-#ds-plugin div.checkbox.switcher label input,
-#ds-plugin div.radio.switcher label input {
+#dam-spam-plugin div.checkbox.switcher label input,
+#dam-spam-plugin div.radio.switcher label input {
 	display: none;
 }
 
-#ds-plugin div.checkbox.switcher label input + span,
-#ds-plugin div.radio.switcher label input + span {
+#dam-spam-plugin div.checkbox.switcher label input + span,
+#dam-spam-plugin div.radio.switcher label input + span {
 	position: relative;
 	display: inline-block;
 	font-size: 12px;
@@ -270,8 +270,8 @@ body.dam-spam .wrap > div.notice {
 	cursor: pointer;
 }
 
-#ds-plugin div.checkbox.switcher label input + span small,
-#ds-plugin div.radio.switcher label input + span small {
+#dam-spam-plugin div.checkbox.switcher label input + span small,
+#dam-spam-plugin div.radio.switcher label input + span small {
 	position: absolute;
 	display: block;
 	width: 50%;
@@ -282,19 +282,19 @@ body.dam-spam .wrap > div.notice {
 	left: 0;
 }
 
-#ds-plugin div.checkbox.switcher label input:checked + span,
-#ds-plugin div.radio.switcher label input:checked + span {
+#dam-spam-plugin div.checkbox.switcher label input:checked + span,
+#dam-spam-plugin div.radio.switcher label input:checked + span {
 	background: #5cb85c;
 	border-color: #4cae4c;
 }
 
-#ds-plugin div.checkbox.switcher label input:checked + span small,
-#ds-plugin div.radio.switcher label input:checked + span small {
+#dam-spam-plugin div.checkbox.switcher label input:checked + span small,
+#dam-spam-plugin div.radio.switcher label input:checked + span small {
 	left: 50%;
 }
 
-#ds-plugin div.checkbox.switcher label input + span small:before,
-#ds-plugin div.radio.switcher label input + span small:before {
+#dam-spam-plugin div.checkbox.switcher label input + span small:before,
+#dam-spam-plugin div.radio.switcher label input + span small:before {
 	content: 'Off';
 	position: absolute;
 	top: 4.5px;
@@ -306,13 +306,13 @@ body.dam-spam .wrap > div.notice {
 	color: #fff;
 }
 
-#ds-plugin div.checkbox.switcher label input:checked + span small:before,
-#ds-plugin div.radio.switcher label input:checked + span small:before {
+#dam-spam-plugin div.checkbox.switcher label input:checked + span small:before,
+#dam-spam-plugin div.radio.switcher label input:checked + span small:before {
 	content: 'On';
 	left: -17px;
 }
 
-#ds-plugin div.checkbox.switcher label input:disabled + span {
+#dam-spam-plugin div.checkbox.switcher label input:disabled + span {
 	color: gray !important;
 	background: gray !important;
 	border-color: gray !important;
@@ -321,20 +321,68 @@ body.dam-spam .wrap > div.notice {
 	pointer-events: none !important;
 }
 
-#ds-plugin div.checkbox.switcher label:active:after {
+#dam-spam-plugin div.checkbox.switcher label:active:after {
 	width: 60px;
 }
 
 /* responsive layout */
 @media(max-width: 680px) {
 
-	#ds-plugin th.ds-cleanup {
+	#dam-spam-plugin th.dam-spam-cleanup {
 		top: 48px;
 	}
 
 }
 
-/* ds firewall */
+/* user list */
+#dam-spam-plugin .clickable {
+	cursor: pointer;
+}
+
+#dam-spam-plugin .header:after {
+	content: ' \25bc';
+	font-size: 0.8em;
+}
+
+#dam-spam-plugin .reverse:after {
+	content: ' \25b2'!important;
+	font-size: 0.8em;
+}
+
+#dam-spam-plugin .odd {
+	background-color: #FFFFEE;
+}
+
+#dam-spam-plugin .even {
+	background-color: #EEFFFF;
+}
+
+#dam-spam-plugin .button-secondary-red {
+	background: #ba0000;
+	border-color: #690000 #690000 #690000;
+	box-shadow: 0 1px 0 #690000;
+	color: #fff;
+	text-decoration: none;
+	text-shadow: 0 -1px 1px #690000, 1px 0 1px #690000, 0 1px 1px #690000, -1px 0 1px #690000;
+	display: inline-block;
+	font-size: 13px;
+	line-height: 26px;
+	height: 28px;
+	margin: 0;
+	padding: 0 10px 1px;
+	cursor: pointer;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+
+#dam-spam-plugin .button-secondary-red:hover {
+	background: #ca0000;
+	color: #fff;
+}
+
+/* firewall */
 .column-created, .column-duration {
 	width: 10%;
 }
@@ -344,17 +392,17 @@ body.dam-spam .wrap > div.notice {
 	font-family: inherit;
 }
 
-.ds-firewall-hidden {
+.dam-spam-firewall-hidden {
 	display: none;
 }
 
-.type-ds-firewall td {
+.type-dam-spam-firewall td {
 	height: 100%;
 	position: relative;
 	padding-bottom: 24px;
 }
 
-.type-ds-firewall .label {
+.type-dam-spam-firewall .label {
 	top: -2px;
 	left: 0;
 	width: 4px;
@@ -364,19 +412,19 @@ body.dam-spam .wrap > div.notice {
 	background: #0ee162;
 }
 
-.type-ds-firewall .label.blacklisted_1 {
+.type-dam-spam-firewall .label.blacklisted_1 {
 	background: #d54e21;
 }
 
-.type-ds-firewall .column-state .blocked, .type-ds-firewall .row-actions .block {
+.type-dam-spam-firewall .column-state .blocked, .type-dam-spam-firewall .row-actions .block {
 	color: #bc0b0b;
 }
 
-.type-ds-firewall .column-state .authorized, .type-ds-firewall .row-actions .unblock {
+.type-dam-spam-firewall .column-state .authorized, .type-dam-spam-firewall .row-actions .unblock {
 	color: #006505;
 }
 
-input#ds_firewall_delete_all {
+input#dam_spam_firewall_delete_all {
 	float: right;
 	margin: 1px 0 0 16px;
 }

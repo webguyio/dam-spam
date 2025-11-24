@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_akismet {
+class dam_spam_check_akismet {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( !function_exists( 'get_option' ) ) {
 			return false;
@@ -13,7 +13,7 @@ class check_akismet {
 		if ( !function_exists( 'site_url' ) ) {
 			return false;
 		}
-		$api_key = get_option( 'wordpreds_api_key' );
+		$api_key = get_option( 'wordpredam_spam_api_key' );
 		if ( empty( $api_key ) ) {
 			return false;
 		}

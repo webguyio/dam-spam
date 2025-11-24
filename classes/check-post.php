@@ -5,21 +5,21 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_post extends ds_module {
+class dam_spam_check_post extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
-		$reason = ds_load( 'check_good_cache', ds_get_ip(), $stats, $options, $post );
+		$reason = dam_spam_load( 'check_good_cache', dam_spam_get_ip(), $stats, $options, $post );
 		if ( $reason !== false ) {
 			return;
 		}
 		$addons = array();
-		$addons = apply_filters( 'ds_addons_block', $addons );
+		$addons = apply_filters( 'dam_spam_addons_block', $addons );
 		if ( !empty( $addons ) && is_array( $addons ) ) {
 			foreach ( $addons as $add ) {
 				if ( !empty( $add ) && is_array( $add ) ) {
-					$reason = ds_load( $add, ds_get_ip(), $stats, $options,
+					$reason = dam_spam_load( $add, dam_spam_get_ip(), $stats, $options,
 						$post );
 					if ( $reason !== false ) {
-						ds_log_bad( ds_get_ip(), $reason, $add[1], $add );
+						dam_spam_log_bad( dam_spam_get_ip(), $reason, $add[1], $add );
 						exit();
 					}
 				}
@@ -62,7 +62,7 @@ class check_post extends ds_module {
 		$check = '';
 		foreach ( $noipactions as $check ) {
 			if ( $options[$check] == 'Y' ) {
-				$reason = ds_load( $check, ds_get_ip(), $stats, $options, $post );
+				$reason = dam_spam_load( $check, dam_spam_get_ip(), $stats, $options, $post );
 				if ( $reason !== false ) {
 					break;
 				}
@@ -71,7 +71,7 @@ class check_post extends ds_module {
 		if ( $reason === false ) {
 			$actionvalid = array( 'check_valid_ip' );
 			foreach ( $actionvalid as $check ) {
-				$reason = ds_load( $check, ds_get_ip(), $stats, $options, $post );
+				$reason = dam_spam_load( $check, dam_spam_get_ip(), $stats, $options, $post );
 				if ( $reason !== false ) {
 					break;
 				}
@@ -83,7 +83,7 @@ class check_post extends ds_module {
 		if ( $reason === false ) {
 			foreach ( $actions as $check ) {
 				if ( $options[$check] == 'Y' ) {
-					$reason = ds_load( $check, ds_get_ip(), $stats, $options, $post );
+					$reason = dam_spam_load( $check, dam_spam_get_ip(), $stats, $options, $post );
 					if ( $reason !== false ) {
 						break;
 					}
@@ -92,13 +92,13 @@ class check_post extends ds_module {
 		}
 		if ( array_key_exists( 'email', $post ) && $post['email'] == 'email@example.com' ) {
 			$post['reason'] = esc_html__( 'Testing Email (will always be blocked)', 'dam-spam' );
-			ds_load( 'challenge', ds_get_ip(), $stats, $options, $post );
+			dam_spam_load( 'challenge', dam_spam_get_ip(), $stats, $options, $post );
 			return;
 		}
 		if ( $reason === false ) {
 			return false;
 		}
-		ds_log_bad( ds_get_ip(), $reason, $check );
+		dam_spam_log_bad( dam_spam_get_ip(), $reason, $check );
 		exit;
 	}
 }

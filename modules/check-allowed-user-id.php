@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_allowed_user_id extends ds_module {
+class dam_spam_check_allowed_user_id extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$this->searchname = 'Allow List Email';
 		$user			  = $post['author'];

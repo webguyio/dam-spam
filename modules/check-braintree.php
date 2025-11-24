@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // last updated from https://developer.paypal.com/braintree/docs/reference/general/braintree-ip-addresses on 2/29/24
-class check_braintree extends ds_module {
+class dam_spam_check_braintree extends dam_spam_module {
 	public $searchname = 'Braintree';
 	public $searchlist = array(
 		'63.146.102.0/26',

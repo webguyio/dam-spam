@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class log_bad extends ds_module {
+class dam_spam_log_bad extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$check = 'error';
 		extract( $stats );
@@ -27,10 +27,10 @@ class log_bad extends ds_module {
 		} else {
 			$stats['count_' . $check] = 1;
 		}
-		$ds_cache	 = $options['ds_cache'];
+		$dam_spam_cache	 = $options['dam_spam_cache'];
 		$badips[$ip] = $now;
 		asort( $badips );
-		while ( count( $badips ) > $ds_cache ) {
+		while ( count( $badips ) > $dam_spam_cache ) {
 			array_shift( $badips );
 		}
 		$nowtimeout = gmdate( 'Y/m/d H:i:s', time() - ( 4 * 3600 ) + ( get_option( 'gmt_offset' ) * 3600 ) );
@@ -47,19 +47,19 @@ class log_bad extends ds_module {
 				$blog = $blog_id;
 			}
 		}
-		$ds_hist = $options['ds_hist'];
-		while ( count( $hist ) > $ds_hist ) {
+		$dam_spam_hist = $options['dam_spam_hist'];
+		while ( count( $hist ) > $dam_spam_hist ) {
 			array_shift( $hist );
 		}
 		$hist[$now]	   = array( $ip, $email, $author, $sname, $reason, $blog );
 		$stats['hist'] = $hist;
 		if ( array_key_exists( 'addon', $post ) ) {
-			ds_set_stats( $stats, $post['addon'] );
+			dam_spam_set_stats( $stats, $post['addon'] );
 		} else {
-			ds_set_stats( $stats );
+			dam_spam_set_stats( $stats );
 		}
-		do_action( 'ds_caught', $ip, $post );
-		ds_load( 'challenge', $ip, $stats, $options, $post );
+		do_action( 'dam_spam_caught', $ip, $post );
+		dam_spam_load( 'challenge', $ip, $stats, $options, $post );
 		exit();
 	}
 }

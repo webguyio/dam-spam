@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_tld {
+class dam_spam_check_tld {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$tld = $options['bad_tlds'];
 		if ( empty( $tld ) ) {

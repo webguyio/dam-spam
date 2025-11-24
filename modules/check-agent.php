@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_agent extends ds_module {
+class dam_spam_check_agent extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( !array_key_exists( 'bad_agents', $options ) ) {
 			return false;

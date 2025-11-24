@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_disposable {
+class dam_spam_check_disposable {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( empty( $options['em'] ) ) {
 			return false;
@@ -604,8 +604,8 @@ class check_disposable {
 			'crastination.de',
 			'crazespaces.pw',
 			'crazymailing.com',
-			'crods-law.ga',
-			'crods-law.gq',
+			'cross-law.ga',
+			'cross-law.gq',
 			'crossroadsmail.com',
 			'crusthost.com',
 			'csh.ro',
@@ -2341,7 +2341,7 @@ class check_disposable {
 			'sendfree.org',
 			'sendingspecialflyers.com',
 			'sendspamhere.com',
-			'senseleds-entertainment.com',
+			'senseless-entertainment.com',
 			'server.ms',
 			'services391.com',
 			'sexforswingers.com',

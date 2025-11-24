@@ -5,11 +5,12 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_session {
+class dam_spam_check_session {
+	// phpcs:disable WordPress.Security.NonceVerification -- Spam detection module intentionally processes untrusted input
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( !isset( $_POST ) || empty( $_POST ) ) {
-			if ( !isset( $_COOKIE['ds_protection_time'] ) ) {
-				setcookie( 'ds_protection_time', strtotime( 'now' ), strtotime( '+1 min' ) );
+			if ( !isset( $_COOKIE['dam_spam_protection_time'] ) ) {
+				setcookie( 'dam_spam_protection_time', strtotime( 'now' ), strtotime( '+1 min' ) );
 			}
 			return false;
 		}
@@ -30,8 +31,8 @@ class check_session {
 		$sesstime = 2;
 		if ( !defined( 'WP_CACHE' ) || ( !WP_CACHE ) ) {
 			if ( strpos( $sname, 'wp-login.php' ) === false ) {
-				if ( isset( $_COOKIE['ds_time'] ) ) {
-					$stime = absint( $_COOKIE['ds_time'] );
+				if ( isset( $_COOKIE['dam_spam_time'] ) ) {
+					$stime = absint( $_COOKIE['dam_spam_time'] );
 					$tm = strtotime( 'now' ) - $stime;
 					if ( $tm > 0 && $tm <= $sesstime ) {
 						// translators: %s is the number of seconds for session speed

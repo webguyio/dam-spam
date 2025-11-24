@@ -5,10 +5,9 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-function ds_read_file( $f, $method = 'GET' ) {
-	if ( !class_exists( 'WP_Http' ) ) {
-		include_once ABSPATH . WPINC . '/class-http.php';
-	}
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Utility functions require direct DB access
+
+function dam_spam_read_file( $f, $method = 'GET' ) {
 	$request = new WP_Http();
 	$parms = array(
 		'timeout' => 10,
@@ -29,18 +28,18 @@ function ds_read_file( $f, $method = 'GET' ) {
 	return '';
 }
 
-function ds_get_icon_urls() {
+function dam_spam_get_icon_urls() {
 	return array(
-		'up'	 => DS_PLUGIN_URL . 'assets/images/up.png',
-		'down'   => DS_PLUGIN_URL . 'assets/images/down.png',
-		'trash'  => DS_PLUGIN_URL . 'assets/images/trash.png',
-		'stop'   => DS_PLUGIN_URL . 'assets/images/stop.png',
-		'whois'  => DS_PLUGIN_URL . 'assets/images/whois.png',
-		'search' => DS_PLUGIN_URL . 'assets/images/search.png',
+		'up'	 => DAM_SPAM_PLUGIN_URL . 'assets/images/up.png',
+		'down'   => DAM_SPAM_PLUGIN_URL . 'assets/images/down.png',
+		'trash'  => DAM_SPAM_PLUGIN_URL . 'assets/images/trash.png',
+		'stop'   => DAM_SPAM_PLUGIN_URL . 'assets/images/stop.png',
+		'whois'  => DAM_SPAM_PLUGIN_URL . 'assets/images/whois.png',
+		'search' => DAM_SPAM_PLUGIN_URL . 'assets/images/search.png',
 	);
 }
 
-function ds_get_ajax_allowed_html() {
+function dam_spam_get_ajax_allowed_html() {
 	return array(
 		'a' => array(
 			'href' => array(),
@@ -60,8 +59,8 @@ function ds_get_ajax_allowed_html() {
 	);
 }
 
-function ds_auto_migrate_from_stop_spammers() {
-	if ( get_option( 'ds_options' ) !== false ) {
+function dam_spam_auto_migrate_from_stop_spammers() {
+	if ( get_option( 'dam_spam_options' ) !== false ) {
 		return;
 	}
 	$ss_options = get_option( 'ss_stop_sp_reg_options' );
@@ -69,17 +68,53 @@ function ds_auto_migrate_from_stop_spammers() {
 	if ( $ss_options === false ) {
 		return;
 	}
-	$ds_options = ds_map_old_to_new_options( $ss_options );
-	update_option( 'ds_options', $ds_options );
+	$dam_spam_options = dam_spam_map_old_to_new_options( $ss_options );
+	update_option( 'dam_spam_options', $dam_spam_options );
 	if ( $ss_stats !== false ) {
-		$ds_stats = ds_map_old_to_new_stats( $ss_stats );
-		update_option( 'ds_stats', $ds_stats );
+		$dam_spam_stats = dam_spam_map_old_to_new_stats( $ss_stats );
+		update_option( 'dam_spam_stats', $dam_spam_stats );
 	}
-	update_option( 'ds_migrated_from_ss', gmdate( 'Y-m-d H:i:s' ) );
+	update_option( 'dam_spam_migrated_from_ss', gmdate( 'Y-m-d H:i:s' ) );
 }
 
-function ds_map_old_to_new_options( $old_options ) {
-	$new_options = ds_load( 'get_options', '' );
+function dam_spam_auto_migrate_from_old_dam_spam() {
+	if ( get_option( 'dam_spam_migrated_from_ds' ) !== false ) {
+		return;
+	}
+	if ( get_option( 'dam_spam_options' ) !== false ) {
+		return;
+	}
+	global $wpdb;
+	$old_options = $wpdb->get_results(
+		"SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'ds_%'",
+		ARRAY_A
+	);
+	if ( empty( $old_options ) ) {
+		return;
+	}
+	foreach ( $old_options as $option ) {
+		$old_name = $option['option_name'];
+		$new_name = str_replace( 'ds_', 'dam_spam_', $old_name );
+		$value = maybe_unserialize( $option['option_value'] );
+		if ( $old_name === 'ds_options' && is_array( $value ) ) {
+			$new_value = array();
+			foreach ( $value as $key => $val ) {
+				if ( strpos( $key, 'ds_' ) === 0 ) {
+					$new_key = str_replace( 'ds_', 'dam_spam_', $key );
+					$new_value[$new_key] = $val;
+				} else {
+					$new_value[$key] = $val;
+				}
+			}
+			$value = $new_value;
+		}
+		update_option( $new_name, $value );
+	}
+	update_option( 'dam_spam_migrated_from_ds', gmdate( 'Y-m-d H:i:s' ) );
+}
+
+function dam_spam_map_old_to_new_options( $old_options ) {
+	$new_options = dam_spam_load( 'get_options', '' );
 	$migration_map = array(
 		'chkadminlog'		=> 'check_admin_log',
 		'chkaws'			=> 'check_aws',
@@ -102,7 +137,7 @@ function ds_map_old_to_new_options( $old_options ) {
 		'chkbraintree'		=> 'check_braintree',
 		'chkrecurly'		=> 'check_recurly',
 		'chksquare'			=> 'check_square',
-		'ss_private_mode'	=> 'ds_private_mode',
+		'ss_private_mode'	=> 'dam_spam_private_mode',
 		'chk404'			=> 'check_404',
 		'chkaccept'			=> 'check_accept',
 		'chkadmin'			=> 'check_admin',
@@ -150,10 +185,10 @@ function ds_map_old_to_new_options( $old_options ) {
 		'logfilesize'		=> 'log_file_size',
 		'rejectmessage'		=> 'reject_message',
 		'multicnt'			=> 'multicount',
-		'ss_sp_cache'		=> 'ds_cache',
-		'ss_sp_hist'		=> 'ds_hist',
-		'ss_sp_good'		=> 'ds_good',
-		'ss_sp_cache_em'	=> 'ds_cache_em',
+		'ss_sp_cache'		=> 'dam_spam_cache',
+		'ss_sp_hist'		=> 'dam_spam_hist',
+		'ss_sp_good'		=> 'dam_spam_good',
+		'ss_sp_cache_em'	=> 'dam_spam_cache_em',
 	);
 	foreach ( $old_options as $old_key => $value ) {
 		if ( isset( $migration_map[$old_key] ) ) {
@@ -165,12 +200,12 @@ function ds_map_old_to_new_options( $old_options ) {
 	$new_options['check_woo_form'] = 'N';
 	$new_options['check_gravity_form'] = 'N';
 	$new_options['check_wp_form'] = 'N';
-	$new_options['version'] = DS_VERSION;
+	$new_options['version'] = DAM_SPAM_VERSION;
 	return $new_options;
 }
 
-function ds_map_old_to_new_stats( $old_stats ) {
-	$new_stats = ds_load( 'get_stats', '' );
+function dam_spam_map_old_to_new_stats( $old_stats ) {
+	$new_stats = dam_spam_load( 'get_stats', '' );
 	$count_map = array(
 		'cntchkaws'				=> 'count_check_aws',
 		'cntchkcloudflare'		=> 'count_check_cloudflare',
@@ -232,111 +267,8 @@ function ds_map_old_to_new_stats( $old_stats ) {
 			$new_stats[$old_key] = $value;
 		}
 	}
-	$new_stats['version'] = DS_VERSION;
+	$new_stats['version'] = DAM_SPAM_VERSION;
 	return $new_stats;
 }
-
-class Dam_Spam_Updater {
-	private $plugin_slug;
-	private $plugin_file;
-	private $update_url;
-
-	public function __construct( $plugin_file ) {
-		$this->plugin_file = $plugin_file;
-		$this->plugin_slug = plugin_basename( $plugin_file );
-		$this->update_url  = 'https://damspam.com/updates.json';
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_for_updates' ) );
-		add_filter( 'plugins_api', array( $this, 'get_plugin_info' ), 10, 3 );
-	}
-
-	public function check_for_updates( $transient ) {
-		if ( empty( $transient->checked ) ) {
-			return $transient;
-		}
-		$remote_info = $this->get_remote_version_info();
-		if ( !$remote_info || version_compare( $this->get_current_version(), $remote_info['version'], '>=' ) ) {
-			return $transient;
-		}
-		$transient->response[$this->plugin_slug] = (object) array(
-			'slug'        => dirname( $this->plugin_slug ),
-			'plugin'      => $this->plugin_slug,
-			'new_version' => $remote_info['version'],
-			'url'         => $remote_info['homepage'] ?? 'https://damspam.com',
-			'package'     => $remote_info['package'] ?? 'https://damspam.com/dam-spam.zip',
-			'icons'       => $remote_info['icons'] ?? array(),
-			'tested'      => $this->normalize_version( $remote_info['tested'] ?? '' ),
-			'requires'    => $remote_info['requires'] ?? '',
-			'requires_php' => $remote_info['requires_php'] ?? '',
-		);
-		return $transient;
-	}
-
-	public function get_plugin_info( $response, $action, $args ) {
-		if ( $action !== 'plugin_information' || $args->slug !== dirname( $this->plugin_slug ) ) {
-			return $response;
-		}
-		$remote_info = $this->get_remote_version_info();
-		if ( $remote_info ) {
-			$response = (object) array(
-				'name'          => $remote_info['name'] ?? 'Dam Spam',
-				'slug'          => dirname( $this->plugin_slug ),
-				'version'       => $remote_info['version'],
-				'author'        => $remote_info['author'] ?? 'Web Guy',
-				'homepage'      => $remote_info['homepage'] ?? 'https://damspam.com',
-				'requires'      => $remote_info['requires'] ?? '5.0',
-				'requires_php'  => $remote_info['requires_php'] ?? '7.0',
-				'tested'        => $this->normalize_version( $remote_info['tested'] ?? '' ),
-				'last_updated'  => $remote_info['last_updated'] ?? current_time( 'mysql' ),
-				'sections'      => array(
-					'description' => $remote_info['description'] ?? 'Anti-spam protection',
-					'changelog'   => $remote_info['changelog'] ?? '',
-				),
-				'download_link' => $remote_info['package'] ?? 'https://damspam.com/dam-spam.zip',
-				'icons'         => $remote_info['icons'] ?? array(),
-			);
-		}
-		return $response;
-	}
-
-	private function get_remote_version_info() {
-		$cache_key = 'ds_update_info';
-		$cached = get_transient( $cache_key );
-		if ( $cached !== false ) {
-			return $cached;
-		}
-		$response = wp_remote_get( $this->update_url, array( 'timeout' => 10 ) );
-		if ( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) !== 200 ) {
-			return false;
-		}
-		$body = wp_remote_retrieve_body( $response );
-		$data = json_decode( $body, true );
-		if ( $data ) {
-			set_transient( $cache_key, $data, 3 * HOUR_IN_SECONDS );
-		}
-		return $data ? $data : false;
-	}
-
-	private function get_current_version() {
-		$plugin_data = get_plugin_data( $this->plugin_file );
-		return $plugin_data['Version'];
-	}
-
-	private function normalize_version( $version ) {
-		global $wp_version;
-		if ( empty( $version ) ) {
-			return $wp_version;
-		}
-		$version_parts = explode( '.', $version );
-		$wp_parts = explode( '.', $wp_version );
-		if ( count( $version_parts ) === 2 && count( $wp_parts ) >= 3 ) {
-			if ( $version_parts[0] === $wp_parts[0] && $version_parts[1] === $wp_parts[1] ) {
-				return $wp_parts[0] . '.' . $wp_parts[1] . '.' . $wp_parts[2];
-			}
-		}
-		return $version;
-	}
-}
-
-new Dam_Spam_Updater( dirname( __DIR__ ) . '/dam-spam.php' );
 
 ?>

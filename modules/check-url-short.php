@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_url_short {
+class dam_spam_check_url_short {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$block_url_shortners = $options['block_url_shortners'];
 		foreach ( $post as $key => $data ) {

@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_invalid_ip {
+class dam_spam_check_invalid_ip {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( strpos( $ip, '.' ) === false && strpos( $ip, ':' ) === false ) {
 			return esc_html__( 'Invalid IP: ', 'dam-spam' ) . $ip;
@@ -19,7 +19,7 @@ class check_invalid_ip {
 				return esc_html__( 'Invalid IP: ', 'dam-spam' ) . $ip;
 			}
 		}
-		$ips = ds_module::ip2numstr( $ip );
+		$ips = dam_spam_module::ip2numstr( $ip );
 		if ( $ips >= '224000000000' && $ips <= '239255255255' ) {
 			return esc_html__( 'IPv4 Multicast Address Space Registry', 'dam-spam' );
 		}

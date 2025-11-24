@@ -1,88 +1,220 @@
-var sfs_ajax_who = '';
+(function() {
+	'use strict';
 
-function sfs_ajax_process(sip, contx, sfunc, url, email = '') {
-	sfs_ajax_who = contx;
-	var data = {
-		action: 'sfs_process',
-		ip: sip,
-		email: email,
-		cont: contx,
-		func: sfunc,
-		ajax_url: url
-	};
-	jQuery.get(ajaxurl, data, sfs_ajax_return_process);
-}
+	var damSpamAjaxWho = '';
 
-function sfs_ajax_return_process(response) {
-	var el = '';
-	if (response == "OK") {
+	function damSpamAjaxProcess(sip, contx, sfunc, url, email) {
+		email = email || '';
+		damSpamAjaxWho = contx;
+		var data = {
+			action: 'dam_spam_sfs_process',
+			ip: sip,
+			email: email,
+			cont: contx,
+			func: sfunc,
+			ajax_url: url,
+			nonce: damSpamAjax.nonce
+		};
+		var params = new URLSearchParams(data).toString();
+		fetch(ajaxurl + '?' + params)
+			.then(function(response) { return response.text(); })
+			.then(damSpamAjaxReturnProcess)
+			.catch(function(error) { console.error('AJAX Error:', error); });
+	}
+
+	function damSpamAjaxReturnProcess(response) {
+		if (response === "OK") {
+			return false;
+		}
+		if (response.substring(0, 3) === "err") {
+			alert(response);
+			return false;
+		}
+		if (response.substring(0, 4) === "\r\n\r\n") {
+			alert(response);
+			return false;
+		}
+		if (damSpamAjaxWho !== "") {
+			var el = document.getElementById(damSpamAjaxWho);
+			if (el) {
+				el.innerHTML = response;
+			}
+		}
 		return false;
 	}
-	if (response.substring(0, 3) == "err") {
+
+	function damSpamAjaxReportSpam(t, id, blog, url, email, ip, user) {
+		damSpamAjaxWho = t;
+		var data = {
+			action: 'dam_spam_sfs_sub',
+			blog_id: blog,
+			comment_id: id,
+			ajax_url: url,
+			email: email,
+			ip: ip,
+			user: user,
+			nonce: damSpamAjax.nonce
+		};
+		var params = new URLSearchParams(data).toString();
+		fetch(ajaxurl + '?' + params)
+			.then(function(response) { return response.text(); })
+			.then(damSpamAjaxReturnSpam)
+			.catch(function(error) { console.error('AJAX Error:', error); });
+	}
+
+	function damSpamAjaxReturnSpam(response) {
+		if (!damSpamAjaxWho) return;
+		damSpamAjaxWho.innerHTML = " Spam Reported";
+		damSpamAjaxWho.style.color = "green";
+		damSpamAjaxWho.style.fontWeight = "bolder";
+		if (response.indexOf('data submitted successfully') > 0) {
+			return false;
+		}
+		if (response.indexOf('recent duplicate entry') > 0) {
+			damSpamAjaxWho.innerHTML = " Spam Already Reported";
+			damSpamAjaxWho.style.color = "yellow";
+			damSpamAjaxWho.style.fontWeight = "bolder";
+			return false;
+		}
+		damSpamAjaxWho.innerHTML = " Status: " + response;
+		damSpamAjaxWho.style.color = "black";
+		damSpamAjaxWho.style.fontWeight = "bolder";
 		alert(response);
 		return false;
 	}
-	if (response.substring(0, 4) == "\r\n\r\n") {
-		alert(response);
-		return false;
-	}
-	if (sfs_ajax_who != "") {
-		var el = document.getElementById(sfs_ajax_who);
-		el.innerHTML = response;
-	}
-	return false;
-}
 
-function sfs_ajax_report_spam(t, id, blog, url, email, ip, user) {
-	sfs_ajax_who = t;
-	var data = {
-		action: 'sfs_sub',
-		blog_id: blog,
-		comment_id: id,
-		ajax_url: url,
-		email: email,
-		ip: ip,
-		user: user
-	};
-	jQuery.get(ajaxurl, data, sfs_ajax_return_spam);
-}
-
-function sfs_ajax_return_spam(response) {
-	sfs_ajax_who.innerHTML = " Spam Reported";
-	sfs_ajax_who.style.color = "green";
-	sfs_ajax_who.style.fontWeight = "bolder";
-	if (response.indexOf('data submitted successfully') > 0) {
-		return false;
-	}
-	if (response.indexOf('recent duplicate entry') > 0) {
-		sfs_ajax_who.innerHTML = " Spam Already Reported";
-		sfs_ajax_who.style.color = "yellow";
-		sfs_ajax_who.style.fontWeight = "bolder";
-		return false;
-	}
-	sfs_ajax_who.innerHTML = " Status: " + response;
-	sfs_ajax_who.style.color = "black";
-	sfs_ajax_who.style.fontWeight = "bolder";
-	alert(response);
-	return false;
-}
-
-jQuery(function($) {
-	function checkFormStatus() {
-		if ($('#check_form').is(':checked')){
-			$('#check_woo_form').attr("disabled",true);
-			$('#check_gravity_form').attr("disabled",true);
-			$('#check_wp_form').attr("disabled",true);
-		}
-		else {
-			$('#check_woo_form').attr("disabled",false);
-			$('#check_gravity_form').attr("disabled",false);	
-			$('#check_wp_form').attr("disabled",false);	
+	function damSpamToggle(checkboxId, targetId) {
+		var checkbox = document.getElementById(checkboxId);
+		var target = document.getElementById(targetId);
+		if (checkbox && target) {
+			target.style.display = checkbox.checked ? 'block' : 'none';
+			checkbox.addEventListener('change', function() {
+				target.style.display = this.checked ? 'block' : 'none';
+			});
 		}
 	}
-	$('#check_form').change(function(){
-		if ($('#check_form').data('status') == 'valid'){
-			checkFormStatus();
+
+	function damSpamCheckFormStatus() {
+		var checkForm = document.getElementById('check_form');
+		var checkWooForm = document.getElementById('check_woo_form');
+		var checkGravityForm = document.getElementById('check_gravity_form');
+		var checkWpForm = document.getElementById('check_wp_form');
+		if (checkForm && checkWooForm && checkGravityForm && checkWpForm) {
+			var disabled = checkForm.checked;
+			checkWooForm.disabled = disabled;
+			checkGravityForm.disabled = disabled;
+			checkWpForm.disabled = disabled;
+		}
+	}
+
+	function damSpamSortTable(n) {
+		var table = document.getElementById("dam-spam-table");
+		if (!table) return;
+		var rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+		switching = true;
+		dir = "asc";
+		while (switching) {
+			switching = false;
+			rows = table.rows;
+			for (i = 1; i < (rows.length - 1); i++) {
+				shouldSwitch = false;
+				x = rows[i].getElementsByTagName("TD")[n];
+				y = rows[i + 1].getElementsByTagName("TD")[n];
+				if (dir === "asc") {
+					if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+						shouldSwitch = true;
+						break;
+					}
+				} else if (dir === "desc") {
+					if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+						shouldSwitch = true;
+						break;
+					}
+				}
+			}
+			if (shouldSwitch) {
+				rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+				switching = true;
+				switchcount++;
+			} else {
+				if (switchcount === 0 && dir === "asc") {
+					dir = "desc";
+					switching = true;
+				}
+			}
+		}
+	}
+
+	function damSpamSearch() {
+		var input = document.getElementById("dam-spam-input");
+		var table = document.getElementById("dam-spam-table");
+		if (!input || !table) return;
+		var filter = input.value.toUpperCase();
+		var tr = table.getElementsByTagName("tr");
+		for (var i = 0; i < tr.length; i++) {
+			var td = tr[i].getElementsByTagName("td")[0];
+			if (td) {
+				var txtValue = td.textContent || td.innerText;
+				if (txtValue.toUpperCase().indexOf(filter) > -1) {
+					tr[i].style.display = '';
+				} else {
+					tr[i].style.display = "none";
+				}
+			}
+		}
+	}
+
+	function damSpamMarkAll(elements) {
+		if (elements.length > 0) {
+			for (var i = 0; i < elements.length; i++) {
+				elements[i].checked = true;
+			}
+		} else {
+			elements.checked = true;
+		}
+	}
+
+	function damSpamUnmarkAll(elements) {
+		if (elements.length > 0) {
+			for (var i = 0; i < elements.length; i++) {
+				elements[i].checked = false;
+			}
+		} else {
+			elements.checked = false;
+		}
+	}
+
+	function damSpamSortUserList(sortField) {
+		var sortOrder = document.getElementById('sort_order');
+		var form = document.getElementById('inactive-user-deleter-form');
+		if (sortOrder && form) {
+			sortOrder.value = sortField;
+			form.submit();
+		}
+	}
+
+	document.addEventListener('DOMContentLoaded', function() {
+		damSpamToggle('redir', 'dam_spam_show_option');
+		damSpamToggle('notify', 'dam_spam_show_notify');
+		damSpamToggle('check_session', 'dam_spam_show_quick');
+		damSpamToggle('check_multi', 'dam_spam_show_check_multi');
+		var checkForm = document.getElementById('check_form');
+		if (checkForm) {
+			damSpamCheckFormStatus();
+			checkForm.addEventListener('change', function() {
+				if (this.dataset.status === 'valid') {
+					damSpamCheckFormStatus();
+				}
+			});
 		}
 	});
-});
+
+	window.damSpamAjaxProcess = damSpamAjaxProcess;
+	window.damSpamAjaxReportSpam = damSpamAjaxReportSpam;
+	window.damSpamSortTable = damSpamSortTable;
+	window.damSpamSearch = damSpamSearch;
+	window.damSpamMarkAll = damSpamMarkAll;
+	window.damSpamUnmarkAll = damSpamUnmarkAll;
+	window.damSpamSortUserList = damSpamSortUserList;
+
+})();

@@ -5,74 +5,61 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$stats   = ds_get_stats();
-$options = ds_get_options();
-
 if ( !current_user_can( 'manage_options' ) ) {
 	die( esc_html__( 'Access Blocked', 'dam-spam' ) );
 }
 
-ds_fix_post_vars();
-$now = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Settings template file with local scope variables
 
-$ip  = ds_get_ip();
-$hip = 'unknown';
+dam_spam_fix_post_vars();
 
-if ( array_key_exists( 'SERVER_ADDR', $_SERVER ) && !empty( $_SERVER['SERVER_ADDR'] ) ) {
+if ( !empty( $_POST ) && ( !isset( $_POST['dam_spam_control'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_control'] ) ), 'dam_spam_update' ) ) ) {
+	wp_die( esc_html__( 'Security check failed', 'dam-spam' ) );
+}
+
+$stats   = dam_spam_get_stats();
+$options = dam_spam_get_options();
+$now     = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
+$ip      = dam_spam_get_ip();
+$hip     = 'unknown';
+
+if ( isset( $_SERVER['SERVER_ADDR'] ) && !empty( $_SERVER['SERVER_ADDR'] ) ) {
 	$hip = filter_var( wp_unslash( $_SERVER['SERVER_ADDR'] ), FILTER_VALIDATE_IP );
 	if ( !$hip ) {
 		$hip = 'unknown';
 	}
 }
 
-$email   = '';
-$author  = '';
-$subject = '';
-$body	 = '';
+$email   = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+$author  = isset( $_POST['author'] ) ? sanitize_text_field( wp_unslash( $_POST['author'] ) ) : '';
+$subject = isset( $_POST['subject'] ) ? sanitize_text_field( wp_unslash( $_POST['subject'] ) ) : '';
+$body    = isset( $_POST['body'] ) ? sanitize_textarea_field( wp_unslash( $_POST['body'] ) ) : '';
 
-if ( array_key_exists( 'ip', $_POST ) ) {
-	if ( filter_var( wp_unslash( $_POST['ip'] ), FILTER_VALIDATE_IP ) ) {
-		$ip = sanitize_text_field( wp_unslash( $_POST['ip'] ) );
-	}
+if ( isset( $_POST['ip'] ) && filter_var( wp_unslash( $_POST['ip'] ), FILTER_VALIDATE_IP ) ) {
+	$ip = sanitize_text_field( wp_unslash( $_POST['ip'] ) );
 }
 
-if ( array_key_exists( 'email', $_POST ) ) {
-	$email = sanitize_email( wp_unslash( $_POST['email'] ) );
-}
-
-if ( array_key_exists( 'author', $_POST ) ) {
-	$author = sanitize_text_field( wp_unslash( $_POST['author'] ) );
-}
-
-if ( array_key_exists( 'subject', $_POST ) ) {
-	$subject = sanitize_text_field( wp_unslash( $_POST['subject'] ) );
-}
-
-if ( array_key_exists( 'body', $_POST ) ) {
-	$body = sanitize_textarea_field( wp_unslash( $_POST['body'] ) );
-}
-
-$nonce = wp_create_nonce( 'ds_update' );
+$nonce = wp_create_nonce( 'dam_spam_update' );
 
 ?>
 
-<div id="ds-plugin" class="wrap">
-	<h1 id="ds-head"><?php esc_html_e( 'Testing — Dam Spam', 'dam-spam' ); ?></h1>
+<div id="dam-spam-plugin" class="wrap">
+	<h1 id="dam-spam-head"><?php esc_html_e( 'Testing — Dam Spam', 'dam-spam' ); ?></h1>
 	<form method="post" action="">
-		<div class="ds-info-box">
+		<div class="dam-spam-info-box">
 			<input type="hidden" name="action" value="update">
-			<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
+			<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<div class="mainsection"><?php esc_html_e( 'Option Testing', 'dam-spam' ); ?></div>
 			<p><?php esc_html_e( 'Run the settings against an IP address to test.', 'dam-spam' ); ?></p>
 			<?php esc_html_e( 'IP Address:', 'dam-spam' ); ?><br>
-			<input id="ds-input" name="ip" type="text" value="<?php echo esc_attr( $ip ); ?>">
+			<input id="dam-spam-input" name="ip" type="text" value="<?php echo esc_attr( $ip ); ?>">
 			(<?php esc_html_e( 'Server IP:', 'dam-spam' ); ?> <?php echo esc_html( $hip ); ?>)<br><br>
 			<?php esc_html_e( 'Email:', 'dam-spam' ); ?><br>
-			<input id="ds-input" name="email" type="text" value="<?php echo esc_attr( $email ); ?>"><br><br>
+			<input id="dam-spam-input" name="email" type="text" value="<?php echo esc_attr( $email ); ?>"><br><br>
 			<?php esc_html_e( 'Username:', 'dam-spam' ); ?><br>
-			<input id="ds-input" name="author" type="text" value="<?php echo esc_attr( $author ); ?>"><br><br>
+			<input id="dam-spam-input" name="author" type="text" value="<?php echo esc_attr( $author ); ?>"><br><br>
 			<?php esc_html_e( 'Subject:', 'dam-spam' ); ?><br>
-			<input id="ds-input" name="subject" type="text" value="<?php echo esc_attr( $subject ); ?>"><br><br>
+			<input id="dam-spam-input" name="subject" type="text" value="<?php echo esc_attr( $subject ); ?>"><br><br>
 			<?php esc_html_e( 'Comment:', 'dam-spam' ); ?><br>
 			<textarea name="body"><?php echo esc_html( $body ); ?></textarea><br>
 			<div>
@@ -81,11 +68,11 @@ $nonce = wp_create_nonce( 'ds_update' );
 			<br style="clear:both">
 			<?php
 			$nonce = '';
-			if ( array_key_exists( 'ds_control', $_POST ) ) {
-				$nonce = sanitize_text_field( wp_unslash( $_POST['ds_control'] ) );
+			if ( array_key_exists( 'dam_spam_control', $_POST ) ) {
+				$nonce = sanitize_text_field( wp_unslash( $_POST['dam_spam_control'] ) );
 			}
-			if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
-				$post = get_post_variables();
+			if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
+				$post = dam_spam_get_post_variables();
 				if ( array_key_exists( 'testopt', $_POST ) ) {
 					$optionlist = array(
 						'check_aws',
@@ -112,7 +99,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 					esc_html_e( 'Allow Checks', 'dam-spam' );
 					echo '<ul>';
 					foreach ( $optionlist as $check ) {
-						$answer = ds_load( $check, $ip, $stats, $options, $post );
+						$answer = dam_spam_load( $check, $ip, $stats, $options, $post );
 						if ( empty( $answer ) ) {
 							$answer = 'OK';
 						}
@@ -160,7 +147,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 					esc_html_e( 'Block Checks', 'dam-spam' );
 					echo '<ul>';
 					foreach ( $optionlist as $check ) {
-						$answer = ds_load( $check, $ip, $stats, $options, $post );
+						$answer = dam_spam_load( $check, $ip, $stats, $options, $post );
 						if ( empty( $answer ) ) {
 							$answer = 'OK';
 						}
@@ -168,15 +155,15 @@ $nonce = wp_create_nonce( 'ds_update' );
 					}
 					echo '</ul>';
 					$optionlist = array();
-					$a1		    = apply_filters( 'ds_addons_allow', $optionlist );
-					$a3		    = apply_filters( 'ds_addons_block', $optionlist );
-					$a5		    = apply_filters( 'ds_addons_get', $optionlist );
+					$a1		    = apply_filters( 'dam_spam_addons_allow', $optionlist );
+					$a3		    = apply_filters( 'dam_spam_addons_block', $optionlist );
+					$a5		    = apply_filters( 'dam_spam_addons_get', $optionlist );
 					$optionlist = array_merge( $a1, $a3, $a5 );
 					if ( !empty( $optionlist ) ) {
 						echo 'Add-on Checks';
 						echo '<ul>';
 						foreach ( $optionlist as $check ) {
-							$answer = ds_load( $check, $ip, $stats, $options, $post );
+							$answer = dam_spam_load( $check, $ip, $stats, $options, $post );
 							if ( empty( $answer ) ) {
 								$answer = 'OK';
 							}
@@ -194,7 +181,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 			}
 			?>
 		</div>
-		<div class="ds-info-box">
+		<div class="dam-spam-info-box">
 			<div class="half">
 				<h2><?php esc_html_e( 'Display All Options', 'dam-spam' ); ?></h2>
 				<p><?php esc_html_e( 'You can dump all options here (useful for debugging).', 'dam-spam' ); ?></p>
@@ -207,17 +194,18 @@ $nonce = wp_create_nonce( 'ds_update' );
 			</div>
 			<br style="clear:both">
 			<?php
-			if ( array_key_exists( 'ds_control', $_POST ) ) {
-				$nonce = sanitize_text_field( wp_unslash( $_POST['ds_control'] ) );
+			if ( array_key_exists( 'dam_spam_control', $_POST ) ) {
+				$nonce = sanitize_text_field( wp_unslash( $_POST['dam_spam_control'] ) );
 			}
-			if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
+			if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 				if ( array_key_exists( 'dumpoptions', $_POST ) ) { ?>
 					<?php
 					echo '<pre>';
 					echo "\r\n";
-					$options = ds_get_options();
+					$options = dam_spam_get_options();
 					foreach ( $options as $key => $val ) {
 						if ( is_array( $val ) ) {
+							// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Intentional debug output in testing page
 							$val = print_r( $val, true );
 						}
 						echo '<strong>&bull; ' . esc_html( $key ) . '</strong> = ' . esc_html( $val ) . "\r\n";
@@ -229,17 +217,18 @@ $nonce = wp_create_nonce( 'ds_update' );
 			}
 			?>
 			<?php
-			if ( array_key_exists( 'ds_control', $_POST ) ) {
-				$nonce = sanitize_text_field( wp_unslash( $_POST['ds_control'] ) );
+			if ( array_key_exists( 'dam_spam_control', $_POST ) ) {
+				$nonce = sanitize_text_field( wp_unslash( $_POST['dam_spam_control'] ) );
 			}
-			if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
+			if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 				if ( array_key_exists( 'dumpstats', $_POST ) ) { ?>
 					<?php
-					$stats = ds_get_stats();
+					$stats = dam_spam_get_stats();
 					echo '<pre>';
 					echo "\r\n";
 					foreach ( $stats as $key => $val ) {
 						if ( is_array( $val ) ) {
+							// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Intentional debug output in testing page
 							$val = print_r( $val, true );
 						}
 						echo '<strong>&bull; ' . esc_html( $key ) . '</strong> = ' . esc_html( $val ) . "\r\n";
@@ -267,6 +256,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<a href="" onclick="var el=document.getElementById('shpinf');el.style.display=(el.style.display==='none'?'block':'none');this.textContent=(el.style.display==='none'?'<?php echo esc_js( __( 'Show PHP Info', 'dam-spam' ) ); ?>':'<?php echo esc_js( __( 'Hide PHP Info', 'dam-spam' ) ); ?>');return false;" id="php-info" class="button-primary"><?php esc_html_e( 'Show PHP Info', 'dam-spam' ); ?></a>
 		<?php
 		ob_start();
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_phpinfo -- Intentional phpinfo display in testing page
 		phpinfo();
 		preg_match( '%<style type="text/css">(.*?)</style>.*?(<body>.*</body>)%s', ob_get_clean(), $matches );
 		$allowed_tags = array(
@@ -302,28 +292,28 @@ $nonce = wp_create_nonce( 'ds_update' );
 	}
 	?>
 	<?php
-	ds_fix_post_vars();
+	dam_spam_fix_post_vars();
 	global $wpdb;
 	global $wp_query;
 	$pre	 = $wpdb->prefix;
 	$runscan = false;
 	$nonce   = '';
-	if ( array_key_exists( 'ds_control', $_POST ) ) {
-		$nonce = sanitize_text_field( wp_unslash( $_POST['ds_control'] ) );
+	if ( array_key_exists( 'dam_spam_control', $_POST ) ) {
+		$nonce = sanitize_text_field( wp_unslash( $_POST['dam_spam_control'] ) );
 	}
-	if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
+	if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 		if ( array_key_exists( 'update_options', $_POST ) ) {
 			$runscan = true;
 		}
 	}
-	$nonce = wp_create_nonce( 'ds_update' );
+	$nonce = wp_create_nonce( 'dam_spam_update' );
 	?>
-	<div class="ds-info-box">
+	<div class="dam-spam-info-box">
 		<div id="scan" class="mainsection"><?php esc_html_e( 'Threat Scan', 'dam-spam' ); ?></div>
 		<p><?php esc_html_e( 'Simple scan that looks for odd thing in /wp-content and the database.', 'dam-spam' ); ?></p>
 		<form method="post" action="#scan">
 			<input type="hidden" name="update_options" value="update">
-			<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
+			<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Run Scan', 'dam-spam' ); ?>" type="submit"></p>
 		</form>
 	</div>
@@ -362,6 +352,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 			'document.write(unescape(', 'try{window.onload', "setAttribute('src'", 'script'
 		);
 		flush();
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Testing/diagnostic query
 		$myrows = $wpdb->get_results( $sql );
 		if ( $myrows ) {
 			foreach ( $myrows as $myrow ) {
@@ -460,6 +451,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 			'eval (', 'eval (', 'eval (', 'eval (',
 			'<script', 'eval(', 'eval (', 'document.write(unescape(', 'try{window.onload', "setAttribute('src'", 'javascript:'
 		);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Testing/diagnostic query
 		$myrows = $wpdb->get_results( $sql );
 		if ( $myrows ) {
 			foreach ( $myrows as $myrow ) {
@@ -558,6 +550,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 			'eval (', 'eval (', 'eval (', 'eval (', 'eval (',
 			'javascript:'
 		);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Testing/diagnostic query
 		$myrows = $wpdb->get_results( $sql );
 		if ( $myrows ) {
 			foreach ( $myrows as $myrow ) {
@@ -646,6 +639,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 			'eval (', 'eval (', 'eval (', 'eval (', 'eval (',
 			'javascript:', 'javascript:'
 		);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Testing/diagnostic query
 		$myrows = $wpdb->get_results( $sql );
 		if ( $myrows ) {
 			foreach ( $myrows as $myrow ) {
@@ -736,7 +730,9 @@ $nonce = wp_create_nonce( 'ds_update' );
 			$values[] = $baddie;
 		}
 		$sql .= implode( ' + ', $placeholders ) . ' > 0';
-		$sql = $wpdb->prepare( $sql, $values );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Dynamic SQL with prepared placeholders
+		$sql = $wpdb->prepare( $sql, ...$values );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Testing/diagnostic query with prepared parameters
 		$myrows = $wpdb->get_results( $sql );
 		if ( $myrows ) {
 			foreach ( $myrows as $myrow ) {
@@ -750,7 +746,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 					$disp = true;
 					foreach ( $badguys as $baddie => $reas ) {
 						if ( !( strpos( $line, $baddie ) === false ) ) {
-							$line   = ds_make_red( $baddie, $line );
+							$line   = dam_spam_make_red( $baddie, $line );
 							$reason .= $reas . ' ';
 						}
 					}
@@ -766,7 +762,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		echo '<hr>';
 		echo '<h2>' . esc_html__( 'Scanning Themes and Plugins for eval...', 'dam-spam' ) . '</h2>';
 		flush();
-		if ( ds_scan_for_eval() ) {
+		if ( dam_spam_scan_for_eval() ) {
 			$disp = true;
 		}
 		if ( $disp ) { ?>
@@ -780,15 +776,15 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<?php }
 		flush();
 	}
-	function ds_scan_for_eval() {
+	function dam_spam_scan_for_eval() {
 		$phparray = array();
-		$phparray = ds_scan_for_eval_recurse( realpath( get_home_path() ), $phparray );
+		$phparray = dam_spam_scan_for_eval_recurse( realpath( get_home_path() ), $phparray );
 		$disp = false;
 		esc_html_e( 'Files:', 'dam-spam' );
 		echo '<ol>';
 		for ( $j = 0; $j < count( $phparray ); $j ++ ) {
 			if ( strpos( $phparray[$j], 'threat_scan' ) === false && strpos( $phparray[$j], 'threat-scan' ) === false ) {
-				$answer = ds_look_in_file( $phparray[$j] );
+				$answer = dam_spam_look_in_file( $phparray[$j] );
 				if ( count( $answer ) > 0 ) {
 					$disp = true;
 					echo '<li>' . esc_html( $phparray[$j] ) . ' <br> ';
@@ -802,7 +798,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		echo '</ol>';
 		return $disp;
 	}
-	function ds_scan_for_eval_recurse( $dir, $phparray ) {
+	function dam_spam_scan_for_eval_recurse( $dir, $phparray ) {
 		if ( !@is_dir( $dir ) ) {
 			return $phparray;
 		}
@@ -816,7 +812,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 			while ( ( $file = readdir( $dh ) ) !== false ) {
 				if ( @is_dir( $dir . '/' . $file ) ) {
 					if ( $file != '.' && $file != '..' && $file != ':' && strpos( '/', $file ) === false ) {
-						$phparray = ds_scan_for_eval_recurse( $dir . '/' . $file, $phparray );
+						$phparray = dam_spam_scan_for_eval_recurse( $dir . '/' . $file, $phparray );
 					}
 				} else if ( strpos( $file, '.php' ) > 0 ) {
 					$phparray[count( $phparray )] = $dir . '/' . $file;
@@ -826,7 +822,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		}
 		return $phparray;
 	}
-	function ds_look_in_file( $file ) {
+	function dam_spam_look_in_file( $file ) {
 		if ( !file_exists( $file ) ) {
 			return false;
 		}
@@ -868,8 +864,8 @@ $nonce = wp_create_nonce( 'ds_update' );
 			$line_num = $n + 1;
 			foreach ( $badguys as $baddie ) {
 				if ( !( strpos( $line, $baddie ) === false ) ) {
-					if ( ds_ok_list( $file, $line_num ) ) {
-						$line		  = ds_make_red( $baddie, $line );
+					if ( dam_spam_ok_list( $file, $line_num ) ) {
+						$line		  = dam_spam_make_red( $baddie, $line );
 						$answer[$idx] = $line_num . ': ' . $line;
 						$idx ++;
 					}
@@ -903,9 +899,9 @@ $nonce = wp_create_nonce( 'ds_update' );
 				$m ++;
 			}
 			if ( $f ) {
-				if ( ds_ok_list( $file, $line_num ) ) {
+				if ( dam_spam_ok_list( $file, $line_num ) ) {
 					$ll		    = substr( $line, $m, 7 );
-					$line		= ds_make_red( $ll, $line );
+					$line		= dam_spam_make_red( $ll, $line );
 					$answer[$idx] = $line_num . ': ' . $line;
 					$idx ++;
 				}
@@ -913,22 +909,22 @@ $nonce = wp_create_nonce( 'ds_update' );
 		}
 		return $answer;
 	}
-	function ds_make_red( $needle, $haystack ) {
+	function dam_spam_make_red( $needle, $haystack ) {
 		$j = strpos( $haystack, $needle );
 		$s = substr_replace( $haystack, '</span>', $j + strlen( $needle ), 0 );
 		$s = substr_replace( $s, '<span style="color:red">', $j, 0 );
 		return $s;
 	}
-	function ds_ok_list( $file, $line ) {
+	function dam_spam_ok_list( $file, $line ) {
 		$exclude = array(
 			'class-pclzip.php'								   => array( 3700, 4300 ),
 			'wp-admin/includes/file.php'					   => array( 450, 550 ),
-			'wp-admin/preds-this.php'						   => array( 200, 250, 400, 450 ),
+			'wp-admin/press-this.php'						   => array( 200, 250, 400, 450 ),
 			'jetpack/class.jetpack.php'						   => array( 5000, 5100 ),
 			'jetpack/locales.php'							   => array( 25, 75 ),
 			'custom-css/preprocessors/lessc.inc.php'		   => array( 25, 75, 1500, 1600 ),
 			'preprocessors/scss.inc.php'					   => array( 800, 900, 1800, 1900 ),
-			'ds_challenge.php'								   => array( 0, 300 ),
+			'dam_spam_challenge.php'								   => array( 0, 300 ),
 			'modules/check-exploits.php'					   => array( 10, 30 ),
 			'wp-includes/class-http.php'					   => array( 2000, 2300 ),
 			'class-IXR.php'									   => array( 300, 350 ),

@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_admin_log extends ds_module {
+class dam_spam_check_admin_log extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$sname = $this->getSname();
 		if ( !class_exists( 'GoogleAuthenticator' )

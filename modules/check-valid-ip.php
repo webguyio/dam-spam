@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_valid_ip {
+class dam_spam_check_valid_ip {
 	private static function _is_fake_ip( $client_ip ) {
 		$client_host = '';
 		$host_by_ip = gethostbyaddr( $client_ip );
@@ -67,7 +67,7 @@ class check_valid_ip {
 			array( '172016000000', '172031255255' ),
 			array( '192168000000', '192168255255' )
 		);
-		$ip2  = ds_module::ip2numstr( $ip );
+		$ip2  = dam_spam_module::ip2numstr( $ip );
 		foreach ( $priv as $ips ) {
 			if ( $ip2 >= $ips[0] && $ip2 <= $ips[1] ) {
 				return esc_html__( 'Local IP Address: ', 'dam-spam' ) . $ip;

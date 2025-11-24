@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_sfs extends ds_module {
+class dam_spam_check_sfs extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$query = "https://www.stopforumspam.com/api?ip=$ip";
 		$check = '';

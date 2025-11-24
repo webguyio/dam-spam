@@ -9,39 +9,43 @@ if ( !current_user_can( 'manage_options' ) ) {
 	die( 'Access Blocked' );
 }
 
-ds_fix_post_vars();
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Admin cleanup/diagnostic page requires direct DB access
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Settings template file with local scope variables
+
+dam_spam_fix_post_vars();
 
 $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'disable-users';
 
 ?>
 
-<div id="ds-plugin" class="wrap">
-	<h1 id="ds-head"><?php esc_html_e( 'Cleanup — Dam Spam', 'dam-spam' ); ?></h1>
+<div id="dam-spam-plugin" class="wrap">
+	<h1 id="dam-spam-head"><?php esc_html_e( 'Cleanup — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php if ( array_key_exists( 'autol', $_POST ) || array_key_exists( 'delo', $_POST ) ) {
 		echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
 	}
 	?>
-	<div class="ds-info-box">
+	<div class="dam-spam-info-box">
 		<h2 class="nav-tab-wrapper">
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-cleanup&tab=disable-users' ) ); ?>" class="nav-tab <?php echo 'disable-users' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Disable Users', 'dam-spam' ); ?></a>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-cleanup&tab=delete-comments' ) ); ?>" class="nav-tab <?php echo 'delete-comments' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Delete Comments', 'dam-spam' ); ?></a>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ds-cleanup&tab=db-cleanup' ) ); ?>" class="nav-tab <?php echo 'db-cleanup' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Database Cleanup', 'dam-spam' ); ?></a>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dam-spam-cleanup&tab=disable-users' ) ); ?>" class="nav-tab <?php echo 'disable-users' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Disable Users', 'dam-spam' ); ?></a>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dam-spam-cleanup&tab=delete-comments' ) ); ?>" class="nav-tab <?php echo 'delete-comments' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Delete Comments', 'dam-spam' ); ?></a>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dam-spam-cleanup&tab=db-cleanup' ) ); ?>" class="nav-tab <?php echo 'db-cleanup' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Database Cleanup', 'dam-spam' ); ?></a>
 		</h2>
 		<br>
 		<?php
 		global $wpdb;
 		$ptab = $wpdb->options;
 		$nonce = '';
-		if ( array_key_exists( 'ds_opt_control', $_POST ) ) {
-			$nonce = sanitize_text_field( wp_unslash( $_POST['ds_opt_control'] ) );
+		if ( array_key_exists( 'dam_spam_opt_control', $_POST ) ) {
+			$nonce = sanitize_text_field( wp_unslash( $_POST['dam_spam_opt_control'] ) );
 		}
-		if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update' ) ) {
+		if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 			if ( array_key_exists( 'view', $_POST ) ) {
 				$op = sanitize_text_field( wp_unslash( $_POST['view'] ) );
 				$v = get_option( $op );
 				if ( is_serialized( $v ) && false !== @unserialize( $v ) ) {
 					$v = @unserialize( $v );
 				}
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Intentional debug output for viewing option contents
 				$v = print_r( $v, true );
 				$v = htmlentities( $v );
 				// translators: %s is the option name
@@ -84,7 +88,7 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 			}
 		}
 		$magic_string = __( "I am sure I want to delete all pending comments and realize this can't be undone", 'dam-spam' );
-		if ( isset( $_POST['ds_delete_pending_comment'] ) && isset( $_POST['ds_delete_pending_comment_confirmation_text'] ) && sanitize_text_field( wp_unslash( $_POST['ds_delete_pending_comment_confirmation_text'] ) ) === $magic_string ) {
+		if ( isset( $_POST['dam_spam_delete_pending_comment'] ) && isset( $_POST['dam_spam_delete_pending_comment_confirmation_text'] ) && sanitize_text_field( wp_unslash( $_POST['dam_spam_delete_pending_comment_confirmation_text'] ) ) === $magic_string ) {
 			if ( !current_user_can( 'manage_options' ) ) {
 				return;
 			}
@@ -173,7 +177,7 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 			'posts_per_rss',
 			'recently_edited',
 			'require_name_email',
-			'rds_use_excerpt',
+			'rdam_spam_use_excerpt',
 			'show_avatars',
 			'show_on_front',
 			'sidebars_widgets',
@@ -183,8 +187,8 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 			'stylesheet',
 			'tag_base',
 			'template',
-			'theme_mods_harptab',
-			'theme_mods_twentyeleven',
+			'theme_modam_spam_harptab',
+			'theme_modam_spam_twentyeleven',
 			'theme_switched',
 			'thread_comments',
 			'thread_comments_depth',
@@ -196,7 +200,7 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 			'uninstall_plugins',
 			'upload_path',
 			'upload_url_path',
-			'uploads_use_yearmonth_folders',
+			'uploadam_spam_use_yearmonth_folders',
 			'use_balanceTags',
 			'use_smilies',
 			'use_trackback',
@@ -222,7 +226,7 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 			'recently_activated',
 			'rewrite_rules',
 			'wordpress_api_key',
-			'theme_mods_',
+			'theme_modam_spam_',
 			'widget_',
 			'_user_roles',
 			'logged_in_key',
@@ -233,8 +237,8 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 			'auto_core_update_notified',
 			'link_manager_enabled',
 			'WPLANG',
-			'ds_options',
-			'ds_stats',
+			'dam_spam_options',
+			'dam_spam_stats',
 			'blacklist_keys',
 			'comment_whitelist',
 			'customize_stashed_theme_mods',
@@ -248,6 +252,7 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 			'wp_page_for_privacy_policy',
 		);
 		$sql = $wpdb->prepare( 'SELECT * FROM %i ORDER BY autoload, option_name', $ptab );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is prepared above
 		$arows = $wpdb->get_results( $sql, ARRAY_A );
 		$rows = array();
 		foreach ( $arows as $row ) {
@@ -267,12 +272,12 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 				$rows[] = $row;
 			}
 		}
-		$nonce = wp_create_nonce( 'ds_update' );
+		$nonce = wp_create_nonce( 'dam_spam_update' );
 		?>
 		<form method="post" name="DOIT2" action="">
-			<input type="hidden" name="ds_opt_control" value="<?php echo esc_attr( $nonce ); ?>">
+			<input type="hidden" name="dam_spam_opt_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<?php if ( !isset( $_GET['tab'] ) || sanitize_key( wp_unslash( $_GET['tab'] ) ) === 'disable-users' ) : ?>
-				<?php include_once DS_PLUGIN_FILE . '/includes/user-list-filter.php'; ?>
+				<?php include_once DAM_SPAM_PLUGIN_FILE . '/includes/user-list-filter.php'; ?>
 			<?php endif; ?>
 			<?php
 			$pending_comment_ids = $wpdb->get_col( $wpdb->prepare( 'SELECT comment_ID FROM %i WHERE comment_approved = %s', $wpdb->comments, '0' ) );
@@ -302,8 +307,8 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 							<?php echo esc_html( $magic_string ); ?>
 						</em>
 					</blockquote>
-					<textarea name="ds_delete_pending_comment_confirmation_text"></textarea>
-					<button name="ds_delete_pending_comment" class="button-primary"><?php esc_html_e( 'Delete', 'dam-spam' ); ?></button>
+					<textarea name="dam_spam_delete_pending_comment_confirmation_text"></textarea>
+					<button name="dam_spam_delete_pending_comment" class="button-primary"><?php esc_html_e( 'Delete', 'dam-spam' ); ?></button>
 					<?php
 				} else {
 					?>
@@ -316,15 +321,15 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 			?>
 			<?php if ( isset( $_GET['tab'] ) && sanitize_key( wp_unslash( $_GET['tab'] ) ) === 'db-cleanup' ) : ?>
 			<p><?php esc_html_e( 'Inspect and delete orphan or suspicious options or change plugin options so that they don\'t autoload. Be aware that you can break some plugins by deleting their options.', 'dam-spam' ); ?></p>
-			<table id="ds-table" name="ds-table" cellspacing="2">
+			<table id="dam-spam-table" name="dam-spam-table" cellspacing="2">
 				<thead>
 					<tr>
-						<th class="ds-cleanup"><?php esc_html_e( 'Option', 'dam-spam' ); ?></th>
-						<th class="ds-cleanup"><?php esc_html_e( 'Autoload', 'dam-spam' ); ?></th>
-						<th class="ds-cleanup"><?php esc_html_e( 'Size', 'dam-spam' ); ?></th>
-						<th class="ds-cleanup"><?php esc_html_e( 'Change Autoload', 'dam-spam' ); ?></th>
-						<th class="ds-cleanup"><?php esc_html_e( 'Delete', 'dam-spam' ); ?></th>
-						<th class="ds-cleanup"><?php esc_html_e( 'View Contents', 'dam-spam' ); ?></th>
+						<th class="dam-spam-cleanup"><?php esc_html_e( 'Option', 'dam-spam' ); ?></th>
+						<th class="dam-spam-cleanup"><?php esc_html_e( 'Autoload', 'dam-spam' ); ?></th>
+						<th class="dam-spam-cleanup"><?php esc_html_e( 'Size', 'dam-spam' ); ?></th>
+						<th class="dam-spam-cleanup"><?php esc_html_e( 'Change Autoload', 'dam-spam' ); ?></th>
+						<th class="dam-spam-cleanup"><?php esc_html_e( 'Delete', 'dam-spam' ); ?></th>
+						<th class="dam-spam-cleanup"><?php esc_html_e( 'View Contents', 'dam-spam' ); ?></th>
 					</tr>
 				</thead>
 				<?php
@@ -335,7 +340,7 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 					$sz = strlen( $option_value );
 					$sz = number_format( $sz );
 					?>
-					<tr class="ds-cleanup-tr">
+					<tr class="dam-spam-cleanup-tr">
 						<td align="center"><?php echo esc_html( $option_name ); ?></td>
 						<td align="center"><?php echo esc_html( $autoload ); ?></td>
 						<td align="center"><?php echo esc_html( $sz ); ?></td>
@@ -357,26 +362,26 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 		$m3 = number_format( $m3 );
 		// translators: %1$s is current memory usage, %2$s is peak memory usage
 		printf( '<p>' . esc_html__( 'Memory Usage Currently: %1$s Peak: %2$s', 'dam-spam' ) . '</p>', esc_html( $m1 ), esc_html( $m3 ) );
-		$nonce = wp_create_nonce( 'ds_update2' );
+		$nonce = wp_create_nonce( 'dam_spam_update2' );
 		$showtransients = false;
-		if ( $showtransients && ds_count_transients() > 0 ) { ?>
+		if ( $showtransients && dam_spam_count_transients() > 0 ) { ?>
 			<hr>
 			<p><?php esc_html_e( 'WordPress creates temporary objects in the database called transients. You can clean these up safely and it might speed things up.', 'dam-spam' ); ?></p>
 			<form method="post" name="DOIT2" action="">
-				<input type="hidden" name="ds_opt_tdel" value="<?php echo esc_attr( $nonce ); ?>">
+				<input type="hidden" name="dam_spam_opt_tdel" value="<?php echo esc_attr( $nonce ); ?>">
 				<p class="submit"><input class="button-primary" value="<?php esc_attr_e( 'Delete Transients', 'dam-spam' ); ?>" type="submit"></p>
 			</form>
 			<?php
 			$nonce = '';
-			if ( array_key_exists( 'ds_opt_tdel', $_POST ) ) {
-				$nonce = sanitize_text_field( wp_unslash( $_POST['ds_opt_tdel'] ) );
+			if ( array_key_exists( 'dam_spam_opt_tdel', $_POST ) ) {
+				$nonce = sanitize_text_field( wp_unslash( $_POST['dam_spam_opt_tdel'] ) );
 			}
-			if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'ds_update2' ) ) {
-				ds_delete_transients();
+			if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update2' ) ) {
+				dam_spam_delete_transients();
 			}
 			?>
 			<p><?php
-			$countT = ds_count_transients();
+			$countT = dam_spam_count_transients();
 			// translators: %s is the number of transients found
 			printf( esc_html__( 'Currently there are %s found.', 'dam-spam' ), esc_html( $countT ) );
 			?></p>
@@ -388,7 +393,7 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 
 <?php
 
-function ds_count_transients() {
+function dam_spam_count_transients() {
 	$blog_id = absint( get_current_blog_id() );
 	if ( $blog_id < 1 ) {
 		return 0;
@@ -400,7 +405,7 @@ function ds_count_transients() {
 		$wpdb->prepare(
 			"SELECT COUNT(*) FROM %i WHERE INSTR(option_name, %s) > 0",
 			$table,
-			'DS_SECRET_WORD'
+			'DAM_SPAM_SECRET_WORD'
 		)
 	);
 	if ( empty( $count ) ) {
@@ -409,7 +414,7 @@ function ds_count_transients() {
 	return $count;
 }
 
-function ds_delete_transients() {
+function dam_spam_delete_transients() {
 	$blog_id = absint( get_current_blog_id() );
 	if ( $blog_id < 1 ) {
 		return;
@@ -421,7 +426,7 @@ function ds_delete_transients() {
 		$wpdb->prepare(
 			"DELETE FROM %i WHERE INSTR(option_name, %s) > 0",
 			$table,
-			'DS_SECRET_WORD'
+			'DAM_SPAM_SECRET_WORD'
 		)
 	);
 }

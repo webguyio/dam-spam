@@ -5,18 +5,18 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_allow_list extends ds_module {
+class dam_spam_check_allow_list extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$email = $post['email'];
-		$ip = ds_get_ip();
+		$ip = dam_spam_get_ip();
 		$addons = array();
-		$addons = apply_filters( 'ds_addons_allow', $addons );
+		$addons = apply_filters( 'dam_spam_addons_allow', $addons );
 		if ( !empty( $addons ) && is_array( $addons ) ) {
 			foreach ( $addons as $add ) {
 				if ( !empty( $add ) && is_array( $add ) ) {
-					$reason = ds_load( $add, ds_get_ip(), $stats, $options, $post );
+					$reason = dam_spam_load( $add, dam_spam_get_ip(), $stats, $options, $post );
 					if ( $reason !== false ) {
-						ds_log_good( ds_get_ip(), $reason, $add[1], $add );
+						dam_spam_log_good( dam_spam_get_ip(), $reason, $add[1], $add );
 						return $reason;
 					}
 				}
@@ -47,9 +47,9 @@ class check_allow_list extends ds_module {
 		}
 		foreach ( $actions as $check ) {
 			if ( $options[$check] == 'Y' ) {
-				$reason = ds_load( $check, ds_get_ip(), $stats, $options, $post );
+				$reason = dam_spam_load( $check, dam_spam_get_ip(), $stats, $options, $post );
 				if ( $reason !== false ) {
-					ds_log_good( ds_get_ip(), $reason, $check );
+					dam_spam_log_good( dam_spam_get_ip(), $reason, $check );
 					return $reason;
 				}
 			} else {

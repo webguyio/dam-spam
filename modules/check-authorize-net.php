@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // last updated from https://support.authorize.net/knowledgebase/Knowledgearticle/?code=000001158 on 2/29/24
-class check_authorize_net extends ds_module {
+class dam_spam_check_authorize_net extends dam_spam_module {
 	public $searchname = 'Authorize.net';
 	public $searchlist = array(
 		'198.241.206.38',

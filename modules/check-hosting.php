@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_hosting extends ds_module {
+class dam_spam_check_hosting extends dam_spam_module {
 	public $searchname = 'Generated Allow List';
 	public $searchlist = array(
 		'Amazon AWS Server',

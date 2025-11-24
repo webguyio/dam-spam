@@ -5,7 +5,8 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class add_to_allow_list {
+// phpcs:disable WordPress.Security.NonceVerification.Recommended -- AJAX handler, processes admin requests with capability checks
+class dam_spam_add_to_allow_list {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$now = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 		$allow_list = $options['allow_list'];
@@ -25,7 +26,7 @@ class add_to_allow_list {
 			}
 		}
 		$options['allow_list_email'] = $allow_list_email;
-		ds_set_options( $options );
+		dam_spam_set_options( $options );
 		$badips = $stats['badips'];
 		if ( array_key_exists( $ip, $badips ) ) {
 			unset( $badips[$ip] );
@@ -36,14 +37,14 @@ class add_to_allow_list {
 			unset( $goodips[$ip] );
 			$stats['goodips'] = $goodips;
 		}
-		ds_set_stats( $stats );
+		dam_spam_set_stats( $stats );
 		if ( isset( $_GET['func'] ) && sanitize_key( $_GET['func'] ) === 'add_white' ) {
-			$this->ds_send_approval_email( $ip, $stats, $options, $post );
+			$this->dam_spam_send_approval_email( $ip, $stats, $options, $post );
 		}
 		return false;
 	}
 
-	public function ds_send_approval_email( $ip, $stats = array(), $options = array(), $post = array() ) {
+	public function dam_spam_send_approval_email( $ip, $stats = array(), $options = array(), $post = array() ) {
 		if ( !array_key_exists( 'email_request', $options ) ) {
 			return false;
 		}

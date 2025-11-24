@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_accept {
+class dam_spam_check_accept {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( array_key_exists( 'HTTP_ACCEPT', $_SERVER ) ) {
 			return false;

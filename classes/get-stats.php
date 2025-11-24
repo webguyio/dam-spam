@@ -5,10 +5,10 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class get_stats {
+class dam_spam_get_stats {
 	public function process(
 		$ip, &$stats = array(), &$options = array(), &$post = array() ) {
-		$stats = get_option( 'ds_stats' );
+		$stats = get_option( 'dam_spam_stats' );
 		if ( empty( $stats ) || !is_array( $stats ) ) {
 			$stats = array();
 		}
@@ -110,8 +110,8 @@ class get_stats {
 		if ( $answer['spam_multisite_count'] == 0 ) {
 			$answer['spam_multisite_date'] = gmdate( 'Y/m/d', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 		}
-		$answer['version'] = DS_VERSION;
-		ds_set_stats( $answer );
+		$answer['version'] = DAM_SPAM_VERSION;
+		dam_spam_set_stats( $answer );
 		return $answer;
 	}
 }

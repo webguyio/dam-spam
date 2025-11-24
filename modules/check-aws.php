@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // last updated from https://docs.aws.amazon.com/general/latest/gr/aws-ip-ranges.html on 12/22/20
-class check_aws extends ds_module {
+class dam_spam_check_aws extends dam_spam_module {
 	public $searchname = 'Amazon AWS Server';
 	public $searchlist = array(
 		'Amazon AWS Server Allow',

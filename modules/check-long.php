@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_long {
+class dam_spam_check_long {
 	public $searchname = 'Email/Username/Password Too Long';
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( array_key_exists( 'email', $post ) ) {

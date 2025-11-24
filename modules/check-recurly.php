@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // last updated from https://docs.recurly.com/docs/ip-allowlist on 2/29/24
-class check_recurly extends ds_module {
+class dam_spam_check_recurly extends dam_spam_module {
 	public $searchname = 'Recurly';
 	public $searchlist = array(
 		'34.105.107.15',

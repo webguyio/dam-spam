@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_admin extends ds_module {
+class dam_spam_check_admin extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$login = $post['author'];
 		$pwd   = $post['pwd'];

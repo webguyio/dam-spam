@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // last updated from https://squareup.com/help/us/en/article/6537-square-terminal-troubleshooting on 2/29/24
-class check_square extends ds_module {
+class dam_spam_check_square extends dam_spam_module {
 	public $searchname = 'Square';
 	public $searchlist = array(
 		'74.122.184.0/21',

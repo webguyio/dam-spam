@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_site_get extends ds_module {
+class dam_spam_check_site_get extends dam_spam_module {
 	public function process(
 		$ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		return false;

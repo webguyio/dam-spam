@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_urls {
+class dam_spam_check_urls {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$comment = explode( " ", $post['comment'] );
 		for ( $i = 0 ; $i < count( $comment ) ; $i++ ) {

@@ -4,7 +4,7 @@ Contributors: webguyio
 Donate link: https://webguy.io/donate
 Tags: spam, security, anti-spam, spam protection, no spam
 Tested up to: 6.8
-Stable tag: 0.5
+Stable tag: 0.6
 License: GPL
 License URI: https://www.gnu.org/licenses/gpl.html
 
@@ -109,6 +109,9 @@ Yes. Dam Spam does not collect any data for marketing or tracking purposes. All 
 There are several optional services you may use that involve sending data to third parties including: [Google reCAPTCHA](https://policies.google.com/privacy), [hCaptcha](https://www.hcaptcha.com/privacy), [Spamhaus](https://www.spamhaus.org/privacy-notice/), [Stop Forum Spam](https://www.stopforumspam.com/privacy), [Project Honeypot](https://www.projecthoneypot.org/privacy_policy.php), and [BotScout](https://botscout.com/w3c/privacy.htm). You may wish to read each services' privacy policy to see if you're comfortable using them, but generally speaking, whenever someone for example tries to use a contact form on your website, their IP address, name, and email may be sent to these services to check against spam blocklists.
 
 == Changelog ==
+
+= 0.6 =
+* Moved to WordPress.org
 
 = 0.5 =
 * Removed country checks

@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_misc_allow_list extends ds_module {
+class dam_spam_check_misc_allow_list extends dam_spam_module {
 	public $searchname = 'VaultPress';
 	public $searchlist = array(
 		'VaultPress',

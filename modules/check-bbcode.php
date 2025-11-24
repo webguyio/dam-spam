@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_bbcode {
+class dam_spam_check_bbcode {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$bbcodes = array(
 			'[php',

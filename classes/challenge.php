@@ -5,16 +5,17 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class challenge extends ds_module {
+class dam_spam_challenge extends dam_spam_module {
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Form inputs sanitized before nonce verification
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
-		$ip = ds_get_ip();
-		$stats = ds_get_stats();
-		$options = ds_get_options();
+		$ip = dam_spam_get_ip();
+		$stats = dam_spam_get_stats();
+		$options = dam_spam_get_options();
 		if ( isset( $options['redir'] ) && $options['redir'] === 'Y' && !empty( $options['redirect_url'] ) ) {
 			if ( isset( $_POST['_wpcf7'] ) ) {
 				return wp_json_encode( $_POST );
 			} else {
-				wp_redirect( $options['redirect_url'], 307 );
+				wp_safe_redirect( $options['redirect_url'], 307 );
 				exit();
 			}
 		}
@@ -47,11 +48,11 @@ class challenge extends ds_module {
 			if ( array_key_exists( 'kp', $_POST ) ) {
 				$kp = sanitize_textarea_field( wp_unslash( $_POST['kp'] ) );
 			}
-			if ( !empty( $_POST['kn'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['kn'] ) ), 'ds_block' ) ) {
-				$emailsent = $this->ds_send_email( $options );
+			if ( !empty( $_POST['kn'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['kn'] ) ), 'dam_spam_block' ) ) {
+				$emailsent = $this->dam_spam_send_email( $options );
 				$allowset = false;
 				if ( $allow_list_request === 'Y' ) {
-					$allowset = $this->ds_add_allow( $ip, $options, $stats, $post, $post );
+					$allowset = $this->dam_spam_add_allow( $ip, $options, $stats, $post, $post );
 				}
 				$msg = esc_html__( 'Thank you,', 'dam-spam' ) . '<br>';
 				if ( $emailsent ) {
@@ -81,10 +82,10 @@ class challenge extends ds_module {
 									),
 									'https://www.google.com/recaptcha/api/siteverify'
 								);
-								$resp = ds_read_file( $url );
+								$resp = dam_spam_read_file( $url );
 								if ( strpos( $resp, '"success": true' ) !== false ) {
-									ds_log_good( $ip, esc_html__( 'Passed reCAPTCHA', 'dam-spam' ), 'pass' );
-									do_action( 'ds_ok', $ip, $post );
+									dam_spam_log_good( $ip, esc_html__( 'Passed reCAPTCHA', 'dam-spam' ), 'pass' );
+									do_action( 'dam_spam_ok', $ip, $post );
 									return false;
 								} else {
 									$msg = esc_html__( 'Google reCAPTCHA entry does not match. Try again.', 'dam-spam' );
@@ -108,11 +109,11 @@ class challenge extends ds_module {
 									),
 									'https://hcaptcha.com/siteverify'
 								);
-								$resp = ds_read_file( $url );
+								$resp = dam_spam_read_file( $url );
 								$response = json_decode( $resp );
 								if ( isset( $response->success ) && $response->success === true ) {
-									ds_log_good( $ip, esc_html__( 'Passed hCaptcha', 'dam-spam' ), 'pass' );
-									do_action( 'ds_ok', $ip, $post );
+									dam_spam_log_good( $ip, esc_html__( 'Passed hCaptcha', 'dam-spam' ), 'pass' );
+									do_action( 'dam_spam_ok', $ip, $post );
 									return false;
 								} else {
 									$msg = esc_html__( 'hCaptcha entry does not match. Try again.', 'dam-spam' );
@@ -132,8 +133,8 @@ class challenge extends ds_module {
 							$nums += $seed;
 							$sum = isset( $_POST['sum'] ) ? intval( wp_unslash( $_POST['sum'] ) ) : 0;
 							if ( $sum === $nums ) {
-								ds_log_good( $ip, esc_html__( 'Passed Simple Arithmetic CAPTCHA', 'dam-spam' ), 'pass' );
-								do_action( 'ds_ok', $ip, $post );
+								dam_spam_log_good( $ip, esc_html__( 'Passed Simple Arithmetic CAPTCHA', 'dam-spam' ), 'pass' );
+								do_action( 'dam_spam_ok', $ip, $post );
 								return false;
 							} else {
 								$msg = esc_html__( 'Incorrect. Try again.', 'dam-spam' );
@@ -155,14 +156,14 @@ class challenge extends ds_module {
 			$validated_post = array_map( 'sanitize_text_field', wp_unslash( $_POST ) );
 			$kp = base64_encode( wp_json_encode( $validated_post ) );
 		}
-		$knonce = wp_create_nonce( 'ds_block' );
+		$knonce = wp_create_nonce( 'dam_spam_block' );
 		if ( !empty( $msg ) ) {
 			$msg = "\r\n<br><span style='color:red'> " . esc_html( $msg ) . " </span><hr>\r\n";
 		}
 		$formtop = '
 			<form action="" method="post">
 				<input type="hidden" name="kn" value="' . esc_attr( $knonce ) . '">
-				<input type="hidden" name="ds_block" value="' . esc_attr( $check_captcha ) . '">
+				<input type="hidden" name="dam_spam_block" value="' . esc_attr( $check_captcha ) . '">
 				<input type="hidden" name="kp" value="' . esc_attr( $kp ) . '">
 				<input type="hidden" name="kr" value="' . esc_attr( $kr ) . '">
 				<input type="hidden" name="ka" value="' . esc_attr( $ka ) . '">
@@ -186,19 +187,17 @@ class challenge extends ds_module {
 		switch ( $check_captcha ) {
 			case 'G':
 				$recaptchaapisite = isset( $options['recaptchaapisite'] ) ? $options['recaptchaapisite'] : '';
-				$cap = "
-					<script src='https://www.google.com/recaptcha/api.js' async defer></script>
+				// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- External reCAPTCHA script must be loaded inline
+				$cap = "<script src='https://www.google.com/recaptcha/api.js' async defer></script>
 					<input type='hidden' name='recaptcha' value='recaptcha'>
-					<div class='g-recaptcha' data-sitekey='" . esc_attr( $recaptchaapisite ) . "'></div>
-				";
+					<div class='g-recaptcha' data-sitekey='" . esc_attr( $recaptchaapisite ) . "'></div>";
 				break;
 			case 'H':
 				$hcaptchaapisite = isset( $options['hcaptchaapisite'] ) ? $options['hcaptchaapisite'] : '';
-				$cap = "
-					<script src='https://hcaptcha.com/1/api.js' async defer></script>
+				// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- External hCaptcha script must be loaded inline
+				$cap = "<script src='https://hcaptcha.com/1/api.js' async defer></script>
 					<input type='hidden' name='h-captcha' value='h-captcha'>
-					<div class='h-captcha' data-sitekey='" . esc_attr( $hcaptchaapisite ) . "'></div>
-				";
+					<div class='h-captcha' data-sitekey='" . esc_attr( $hcaptchaapisite ) . "'></div>";
 				break;
 			case 'A':
 			case 'Y':
@@ -286,7 +285,7 @@ class challenge extends ds_module {
 		exit();
 	}
 
-	public function ds_send_email( $options = array() ) {
+	public function dam_spam_send_email( $options = array() ) {
 		if ( !array_key_exists( 'notify', $options ) ) {
 			return false;
 		}
@@ -312,8 +311,8 @@ class challenge extends ds_module {
 			}
 			// translators: %s is the website name
 			$subject = sprintf( esc_html__( 'Allow List Request from %s', 'dam-spam' ), get_bloginfo( 'name' ) );
-			$ip = ds_get_ip();
-			$web = esc_html__( 'Approve or Block Request: ', 'dam-spam' ) . admin_url( 'admin.php?page=ds-allowed' );
+			$ip = dam_spam_get_ip();
+			$web = esc_html__( 'Approve or Block Request: ', 'dam-spam' ) . admin_url( 'admin.php?page=dam-spam-allowed' );
 			// translators: 1: time, 2: IP address, 3: email, 4: reason, 5: message, 6: approval URL
 			$message = wp_specialchars_decode( sprintf( esc_html__( '
 				Someone was blocked from registering or commenting and has requested access.
@@ -343,7 +342,7 @@ class challenge extends ds_module {
 		return false;
 	}
 
-	public function ds_add_allow( $ip, $options = array(), $stats = array(), $post = array(), $post1 = array() ) {
+	public function dam_spam_add_allow( $ip, $options = array(), $stats = array(), $post = array(), $post1 = array() ) {
 		$sname = $this->getSname();
 		$now = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 		$ke = '';
@@ -372,7 +371,7 @@ class challenge extends ds_module {
 		}
 		$allow_list_requests[ $now ] = $req;
 		$stats['allow_list_requests'] = $allow_list_requests;
-		ds_set_stats( $stats );
+		dam_spam_set_stats( $stats );
 		return true;
 	}
 }

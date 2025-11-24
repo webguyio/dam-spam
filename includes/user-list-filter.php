@@ -5,12 +5,16 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$nonce_field = wp_create_nonce( 'ds_user_filter_nonce' );
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Settings template file with local scope variables
+// phpcs:disable WordPress.Security.NonceVerification.Missing -- Template displays data passed from parent, no direct form processing
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- User list filtering requires direct queries
+
+$nonce_field = wp_create_nonce( 'dam_spam_user_filter_nonce' );
 
 ?>
 
 <input type="hidden" name="op" value="search_users">
-<input type="hidden" name="ds_user_filter_nonce" value="<?php echo esc_attr( $nonce_field ); ?>">
+<input type="hidden" name="dam_spam_user_filter_nonce" value="<?php echo esc_attr( $nonce_field ); ?>">
 
 <table>
 	<tr>
@@ -91,15 +95,15 @@ $nonce_field = wp_create_nonce( 'ds_user_filter_nonce' );
 		</td>
 		<td align="left" width="250">
 			<?php
-			$ds_check_name = isset( $_POST['ds_check_name'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_check_name'] ) ) : 'no';
+			$dam_spam_check_name = isset( $_POST['dam_spam_check_name'] ) ? sanitize_text_field( wp_unslash( $_POST['dam_spam_check_name'] ) ) : 'no';
 			?>
-			<label for="ds_check_name_no">
+			<label for="dam_spam_check_name_no">
 				<?php esc_html_e( 'No', 'dam-spam' ) ?>
-				<input id="ds_check_name_no" type="radio" name="ds_check_name" value="no" <?php checked( $ds_check_name, 'no' ); ?>>
+				<input id="dam_spam_check_name_no" type="radio" name="dam_spam_check_name" value="no" <?php checked( $dam_spam_check_name, 'no' ); ?>>
 			</label>
-			<label for="ds_check_name_yes">
+			<label for="dam_spam_check_name_yes">
 				<?php esc_html_e( 'Yes', 'dam-spam' ) ?>
-				<input id="ds_check_name_yes" type="radio" name="ds_check_name" value="yes" <?php checked( $ds_check_name, 'yes' ); ?>>
+				<input id="dam_spam_check_name_yes" type="radio" name="dam_spam_check_name" value="yes" <?php checked( $dam_spam_check_name, 'yes' ); ?>>
 			</label>
 		</td>
 	</tr>
@@ -109,18 +113,18 @@ $nonce_field = wp_create_nonce( 'ds_user_filter_nonce' );
 		</td>
 		<td align="left" width="250">
 			<?php
-			$ds_domain = isset( $_POST['ds_domain'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_domain'] ) ) : 'no';
-			$ds_domain_text = isset( $_POST['ds_domain_text'] ) ? sanitize_textarea_field( wp_unslash( $_POST['ds_domain_text'] ) ) : '';
+			$dam_spam_domain = isset( $_POST['dam_spam_domain'] ) ? sanitize_text_field( wp_unslash( $_POST['dam_spam_domain'] ) ) : 'no';
+			$dam_spam_domain_text = isset( $_POST['dam_spam_domain_text'] ) ? sanitize_textarea_field( wp_unslash( $_POST['dam_spam_domain_text'] ) ) : '';
 			?>
-			<label for="ds_domain_no">
+			<label for="dam_spam_domain_no">
 				<?php esc_html_e( 'No', 'dam-spam' ) ?>
-				<input id="ds_domain_no" type="radio" name="ds_domain" value="no" <?php checked( $ds_domain, 'no' ); ?>>
+				<input id="dam_spam_domain_no" type="radio" name="dam_spam_domain" value="no" <?php checked( $dam_spam_domain, 'no' ); ?>>
 			</label>
-			<label for="ds_domain_yes">
+			<label for="dam_spam_domain_yes">
 				<?php esc_html_e( 'Yes', 'dam-spam' ) ?>
-				<input id="ds_domain_yes" type="radio" name="ds_domain" value="yes" <?php checked( $ds_domain, 'yes' ); ?>>
+				<input id="dam_spam_domain_yes" type="radio" name="dam_spam_domain" value="yes" <?php checked( $dam_spam_domain, 'yes' ); ?>>
 			</label>
-			<textarea cols="100" rows="2" name="ds_domain_text"><?php echo esc_textarea( $ds_domain_text ); ?></textarea>
+			<textarea cols="100" rows="2" name="dam_spam_domain_text"><?php echo esc_textarea( $dam_spam_domain_text ); ?></textarea>
 		</td>
 	</tr>
 	<tr valign="top">
@@ -136,9 +140,9 @@ $nonce_field = wp_create_nonce( 'ds_user_filter_nonce' );
 				<?php esc_html_e( 'Username', 'dam-spam' ) ?>
 			</label>
 			<?php
-			$ds_username = isset( $_POST['ds_username'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_username'] ) ) : '';
+			$dam_spam_username = isset( $_POST['dam_spam_username'] ) ? sanitize_text_field( wp_unslash( $_POST['dam_spam_username'] ) ) : '';
 			?>
-			<input type="text" size="15" name="ds_username" value="<?php echo esc_attr( $ds_username ); ?>" id="usernameFilter">
+			<input type="text" size="15" name="dam_spam_username" value="<?php echo esc_attr( $dam_spam_username ); ?>" id="usernameFilter">
 			<br>
 			<small>
 				<?php esc_html_e( 'Refine list by a username (test, example).', 'dam-spam' ) ?>
@@ -248,7 +252,7 @@ $nonce_field = wp_create_nonce( 'ds_user_filter_nonce' );
 	</tr>
 	<tr>
 		<td colspan="2">
-			<input class="button-primary" type="submit" value="<?php esc_html_e( 'Search', 'dam-spam' ) ?>" name="ds_search">
+			<input class="button-primary" type="submit" value="<?php esc_html_e( 'Search', 'dam-spam' ) ?>" name="dam_spam_search">
 		</td>
 	</tr>
 </table>
@@ -258,9 +262,9 @@ $nonce_field = wp_create_nonce( 'ds_user_filter_nonce' );
 <?php
 
 $name = array();
-if ( isset( $_POST['ds_search'] ) && isset( $_POST['ds_user_filter_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_user_filter_nonce'] ) ), 'ds_user_filter_nonce' ) ) {
-	if ( isset( $_POST['ds_username'] ) ) {
-		$userListObject = ds_getUsersList( $_POST, '' );
+if ( isset( $_POST['dam_spam_search'] ) && isset( $_POST['dam_spam_user_filter_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_user_filter_nonce'] ) ), 'dam_spam_user_filter_nonce' ) ) {
+	if ( isset( $_POST['dam_spam_username'] ) ) {
+		$userListObject = dam_spam_getUsersList( $_POST, '' );
 		$user_list = $userListObject->rows;
 		$total = $userListObject->total;
 		if ( empty( $userListObject->rows ) ) {
@@ -271,7 +275,7 @@ if ( isset( $_POST['ds_search'] ) && isset( $_POST['ds_user_filter_nonce'] ) && 
 	}
 }
 
-function ds_isVIPUser( $userID ) {
+function dam_spam_isVIPUser( $userID ) {
 	global $user_ID;
 	if ( $userID == $user_ID ) {
 		return esc_html__( 'I can\'t delete your profile!', 'dam-spam' );
@@ -282,7 +286,7 @@ function ds_isVIPUser( $userID ) {
 	return false;
 }
 
-function ds_getUsersList( $environment, $ARGS = array() ) {
+function dam_spam_getUsersList( $environment, $ARGS = array() ) {
 	global $wpdb;
 	$conditions = array();
 	$conditions_sec2 = array( 1 );
@@ -329,13 +333,13 @@ function ds_getUsersList( $environment, $ARGS = array() ) {
 			$conditions[] = "NOT EXISTS (SELECT * FROM {$wpdb->prefix}posts WP WHERE WP.post_author = WU.ID AND NOT WP.post_type in ( 'attachment', 'revision' ) AND WP.post_status = 'publish' )";
 		}
 	}
-	if ( !empty( $ARGS['ds_username'] ) ) {
-		$like = '%' . $wpdb->esc_like( sanitize_text_field( wp_unslash( $ARGS['ds_username'] ) ) ) . '%';
+	if ( !empty( $ARGS['dam_spam_username'] ) ) {
+		$like = '%' . $wpdb->esc_like( sanitize_text_field( wp_unslash( $ARGS['dam_spam_username'] ) ) ) . '%';
 		$conditions_sec2[] = $wpdb->prepare( "WU.user_login like %s", $like );
 	}
-	if ( !empty( $ARGS['ds_domain'] ) ) {
-		if ( $ARGS['ds_domain'] === 'yes' && !empty( $ARGS['ds_domain_text'] ) ) {
-			$domain_text = sanitize_textarea_field( wp_unslash( $ARGS['ds_domain_text'] ) );
+	if ( !empty( $ARGS['dam_spam_domain'] ) ) {
+		if ( $ARGS['dam_spam_domain'] === 'yes' && !empty( $ARGS['dam_spam_domain_text'] ) ) {
+			$domain_text = sanitize_textarea_field( wp_unslash( $ARGS['dam_spam_domain_text'] ) );
 			$domains = array_map( 'trim', explode( ',', $domain_text ) );
 			$domain_conditions = array();
 			foreach ( $domains as $domain ) {
@@ -391,8 +395,8 @@ function ds_getUsersList( $environment, $ARGS = array() ) {
 		$operator = ( $flags_cnd === 'add' ) ? ' OR ' : ' AND ';
 		$conditions_sec2[] = implode( $operator, $conditions );
 	}
-	if ( !empty( $ARGS['ds_check_name'] ) ) {
-		if ( $ARGS['ds_check_name'] === 'yes' ) {
+	if ( !empty( $ARGS['dam_spam_check_name'] ) ) {
+		if ( $ARGS['dam_spam_check_name'] === 'yes' ) {
 			$havings[] = 'first_name = last_name and first_name!=""';
 		}
 	}
@@ -438,6 +442,7 @@ function ds_getUsersList( $environment, $ARGS = array() ) {
 	}
 	$max_size = isset( $ARGS['max_size_output'] ) ? sanitize_text_field( wp_unslash( $ARGS['max_size_output'] ) ) : '150';
 	$query .= $max_size == 'all' ? ' ' : ' LIMIT ' . absint( $max_size );
+	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Complex dynamic query with sanitized inputs
 	$rows = $wpdb->get_results( $query, ARRAY_A );
 	$total = $wpdb->get_var( "SELECT FOUND_ROWS();" );
 	$user_list = array();
@@ -448,16 +453,28 @@ function ds_getUsersList( $environment, $ARGS = array() ) {
 		}
 	}
 	$tmStr_prepared = isset( $tmStr ) ? $tmStr : gmdate( 'Y-m-d H:i:s' );
-	$query = $wpdb->prepare( "
-		SELECT COUNT(WP.ID) as recs, WU.ID
-		FROM {$wpdb->posts} WP
-		LEFT JOIN {$wpdb->users} WU ON WP.post_author = WU.ID
-		WHERE 1 " . ( empty( $ARGS['f_daysleft'] ) ? '' : "AND WU.user_registered < %s " ) . "
-		AND NOT WP.post_type in ( 'attachment', 'revision' ) AND post_status = 'publish'
-		GROUP BY WU.ID
-		HAVING COUNT(WP.ID) > 0",
-		empty( $ARGS['f_daysleft'] ) ? null : $tmStr_prepared
-	);
+	if ( empty( $ARGS['f_daysleft'] ) ) {
+		$query = "
+			SELECT COUNT(WP.ID) as recs, WU.ID
+			FROM {$wpdb->posts} WP
+			LEFT JOIN {$wpdb->users} WU ON WP.post_author = WU.ID
+			WHERE 1 
+			AND NOT WP.post_type in ( 'attachment', 'revision' ) AND post_status = 'publish'
+			GROUP BY WU.ID
+			HAVING COUNT(WP.ID) > 0";
+	} else {
+		$query = $wpdb->prepare( "
+			SELECT COUNT(WP.ID) as recs, WU.ID
+			FROM {$wpdb->posts} WP
+			LEFT JOIN {$wpdb->users} WU ON WP.post_author = WU.ID
+			WHERE 1 AND WU.user_registered < %s 
+			AND NOT WP.post_type in ( 'attachment', 'revision' ) AND post_status = 'publish'
+			GROUP BY WU.ID
+			HAVING COUNT(WP.ID) > 0",
+			$tmStr_prepared
+		);
+	}
+	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared above
 	$rows = $wpdb->get_results( $query, ARRAY_A );
 	if ( !empty( $rows ) ) {
 		foreach ( $rows as $k => $UR ) {
@@ -473,7 +490,7 @@ function ds_getUsersList( $environment, $ARGS = array() ) {
 	return $result;
 }
 
-if ( isset( $_POST['op'] ) && isset( $_POST['ds_user_filter_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_user_filter_nonce'] ) ), 'ds_user_filter_nonce' ) ) {
+if ( isset( $_POST['op'] ) && isset( $_POST['dam_spam_user_filter_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_user_filter_nonce'] ) ), 'dam_spam_user_filter_nonce' ) ) {
 	if ( !current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'Access Blocked', 'dam-spam' ) );
 	}
@@ -485,7 +502,7 @@ if ( isset( $_POST['op'] ) && isset( $_POST['ds_user_filter_nonce'] ) && wp_veri
 				echo esc_html__( 'Disabling...', 'dam-spam' ) . '<br>';
 				$count_disabled = 0;
 				foreach ( $f_users as $user_id_to_disable ) {
-					$result = ds_isVIPUser( $user_id_to_disable );
+					$result = dam_spam_isVIPUser( $user_id_to_disable );
 					if ( $result === false ) {
 						$tm = get_user_meta( $user_id_to_disable, '_IUD_userBlockedTime', true );
 						if ( !$tm ) {

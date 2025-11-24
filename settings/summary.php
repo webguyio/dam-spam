@@ -14,8 +14,10 @@ if ( class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'protect' ) ) {
 	return;
 }
 
-ds_fix_post_vars();
-$stats = ds_get_stats();
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Settings template file with local scope variables
+
+dam_spam_fix_post_vars();
+$stats = dam_spam_get_stats();
 extract( $stats );
 $now = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 
@@ -73,11 +75,11 @@ $message = '';
 $msg = '';
 $nonce = '';
 
-if ( array_key_exists( 'ds_control', $_POST ) ) {
-	$nonce = sanitize_text_field( wp_unslash( $_POST['ds_control'] ) );
+if ( array_key_exists( 'dam_spam_control', $_POST ) ) {
+	$nonce = sanitize_text_field( wp_unslash( $_POST['dam_spam_control'] ) );
 }
 
-if ( wp_verify_nonce( $nonce, 'ds_update' ) ) {
+if ( wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 	if ( array_key_exists( 'clear', $_POST ) ) {
 		foreach ( $counters as $v1 => $v2 ) {
 			$stats[$v1] = 0;
@@ -85,33 +87,33 @@ if ( wp_verify_nonce( $nonce, 'ds_update' ) ) {
 		$addonstats = array();
 		$stats['addonstats'] = $addonstats;
 		$msg = '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Summary Cleared', 'dam-spam' ) . '</p></div>';
-		ds_set_stats( $stats );
+		dam_spam_set_stats( $stats );
 		extract( $stats );
 	}
 	if ( array_key_exists( 'update_total', $_POST ) ) {
 		$stats['spam_multisite_count'] = isset( $_POST['spam_multisite_count'] ) ? sanitize_text_field( wp_unslash( $_POST['spam_multisite_count'] ) ) : '';
 		$stats['spam_multisite_date'] = isset( $_POST['spam_multisite_date'] ) ? sanitize_text_field( wp_unslash( $_POST['spam_multisite_date'] ) ) : '';
-		ds_set_stats( $stats );
+		dam_spam_set_stats( $stats );
 		extract( $stats );
 	}
 }
 
-$nonce = wp_create_nonce( 'ds_update' );
+$nonce = wp_create_nonce( 'dam_spam_update' );
 
 ?>
 
-<div id="ds-plugin" class="wrap">
-	<h1 id="ds-head"><?php esc_html_e( 'Summary — Dam Spam', 'dam-spam' ); ?></h1>
+<div id="dam-spam-plugin" class="wrap">
+	<h1 id="dam-spam-head"><?php esc_html_e( 'Summary — Dam Spam', 'dam-spam' ); ?></h1>
 	<br>
-	<?php esc_html_e( 'Version', 'dam-spam' ); ?>: <strong><?php echo esc_html( DS_VERSION ); ?></strong>
+	<?php esc_html_e( 'Version', 'dam-spam' ); ?>: <strong><?php echo esc_html( DAM_SPAM_VERSION ); ?></strong>
 	<?php
-	$ip = ds_get_ip();
+	$ip = dam_spam_get_ip();
 	?>
 	| <?php esc_html_e( 'IP', 'dam-spam' ); ?>: <strong><?php echo esc_html( $ip ); ?></strong>
 	<?php
-	$answer = ds_load( 'check_valid_ip', ds_get_ip() );
+	$answer = dam_spam_load( 'check_valid_ip', dam_spam_get_ip() );
 	if ( $answer === false ) {
-		$answer = ds_load( 'check_cloudflare', ds_get_ip() );
+		$answer = dam_spam_load( 'check_cloudflare', dam_spam_get_ip() );
 	}
 	if ( $answer !== false ) {
 		?>
@@ -171,7 +173,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<?php }
 		$num_comm = wp_count_comments();
 		$num = number_format_i18n( $num_comm->spam );
-		if ( $num_comm->spam > 0 && DS_MU !== 'Y' ) {
+		if ( $num_comm->spam > 0 && DAM_SPAM_MU !== 'Y' ) {
 			?>
 			<p>
 			<?php
@@ -187,7 +189,7 @@ $nonce = wp_create_nonce( 'ds_update' );
 		<?php }
 		$num_comm = wp_count_comments();
 		$num = number_format_i18n( $num_comm->moderated );
-		if ( $num_comm->moderated > 0 && DS_MU !== 'Y' ) {
+		if ( $num_comm->moderated > 0 && DAM_SPAM_MU !== 'Y' ) {
 			?>
 			<p>
 			<?php
@@ -216,31 +218,31 @@ $nonce = wp_create_nonce( 'ds_update' );
 	echo wp_kses_post( $summary );
 	?>
 	<form method="post" action="">
-		<input type="hidden" name="ds_control" value="<?php echo esc_attr( $nonce ); ?>">
+		<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<input type="hidden" name="clear" value="clear summary">
 		<p class="submit" style="clear:both"><input class="button-primary" value="<?php esc_attr_e( 'Clear Summary', 'dam-spam' ); ?>" type="submit"></p>
 	</form>
 	<?php
-	function ds_control() {
-		if ( array_key_exists( 'resetOptions', $_POST ) && isset( $_POST['ds_control'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ds_control'] ) ), 'ds_update' ) ) {
-			ds_force_reset_options();
+	function dam_spam_control() {
+		if ( array_key_exists( 'resetOptions', $_POST ) && isset( $_POST['dam_spam_control'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_control'] ) ), 'dam_spam_update' ) ) {
+			dam_spam_force_reset_options();
 		}
-		$ip = ds_get_ip();
-		$nonce = wp_create_nonce( 'ds_options' );
-		$options = ds_get_options();
+		$ip = dam_spam_get_ip();
+		$nonce = wp_create_nonce( 'dam_spam_options' );
+		$options = dam_spam_get_options();
 		extract( $options );
 	}
-	function ds_force_reset_options() {
-		$ds_opt = isset( $_POST['ds_opt'] ) ? sanitize_text_field( wp_unslash( $_POST['ds_opt'] ) ) : '';
-		if ( !wp_verify_nonce( $ds_opt, 'ds_options' ) ) {
+	function dam_spam_force_reset_options() {
+		$dam_spam_opt = isset( $_POST['dam_spam_opt'] ) ? sanitize_text_field( wp_unslash( $_POST['dam_spam_opt'] ) ) : '';
+		if ( !wp_verify_nonce( $dam_spam_opt, 'dam_spam_options' ) ) {
 			esc_html_e( 'Session Timeout — Please Refresh the Page', 'dam-spam' );
 			exit;
 		}
-		if ( !function_exists( 'ds_reset_options' ) ) {
-			ds_require( 'includes/ds-init-options.php' );
+		if ( !function_exists( 'dam_spam_reset_options' ) ) {
+			dam_spam_require( 'includes/dam-spam-init-options.php' );
 		}
-		ds_reset_options();
-		delete_option( 'ds_cache' );
+		dam_spam_reset_options();
+		delete_option( 'dam_spam_cache' );
 	}
 	?>
 </div>

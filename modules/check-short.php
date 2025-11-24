@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_short {
+class dam_spam_check_short {
 	public $searchname = 'Email/Username Too Short';
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( array_key_exists( 'email', $post ) ) {

@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // last updated from https://docs.stripe.com/ips on 2/29/24
-class check_stripe extends ds_module {
+class dam_spam_check_stripe extends dam_spam_module {
 	public $searchname = 'Stripe';
 	public $searchlist = array(
 		'3.104.99.60',

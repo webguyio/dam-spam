@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class check_spam_words {
+class dam_spam_check_spam_words {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$spam_words = $options['spam_words'];
 		foreach ( $post as $key => $data ) {

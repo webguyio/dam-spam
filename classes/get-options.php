@@ -5,10 +5,10 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class get_options {
+class dam_spam_get_options {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-		$options = get_option( 'ds_options' );
+		$options = get_option( 'dam_spam_options' );
 		$defaultWL = array(
 			'check_admin_log'			=> 'Y',
 			'check_aws'					=> 'N',
@@ -22,7 +22,7 @@ class get_options {
 			'check_woo_form'			=> 'N',
 			'check_gravity_form'		=> 'N',
 			'check_wp_form'				=> 'N',
-			'ds_private_mode'			=> 'N',
+			'dam_spam_private_mode'			=> 'N',
 			'check_scripts'				=> 'Y',
 			'check_valid_ip'			=> 'Y',
 			'check_allowed_email'		=> 'Y',
@@ -1242,11 +1242,11 @@ class get_options {
 		);
 		$force	  = true;
 		$defaults = array(
-			'version'		=> DS_VERSION,
-			'ds_cache'		=> 25,
-			'ds_hist'		=> 25,
-			'ds_good'		=> 2,
-			'ds_cache_em'	=> 4,
+			'version'		=> DAM_SPAM_VERSION,
+			'dam_spam_cache'		=> 25,
+			'dam_spam_hist'		=> 25,
+			'dam_spam_good'		=> 2,
+			'dam_spam_cache_em'	=> 4,
 			'redirect_url'		=> '',
 			'log_file_size'	=> 0,
 			'reject_message' => "Access Blocked"
@@ -1261,7 +1261,7 @@ class get_options {
 			} else {
 			}
 		}
-		$answer['version'] = DS_VERSION;
+		$answer['version'] = DAM_SPAM_VERSION;
 		if ( !is_numeric( $answer['botage'] ) ) {
 			$answer['botage'] = 9999;
 		}
@@ -1274,17 +1274,17 @@ class get_options {
 		if ( !is_numeric( $answer['hnylevel'] ) ) {
 			$answer['hnylevel'] = 5;
 		}
-		if ( !is_numeric( $answer['ds_cache'] ) ) {
-			$answer['ds_cache'] = 25;
+		if ( !is_numeric( $answer['dam_spam_cache'] ) ) {
+			$answer['dam_spam_cache'] = 25;
 		}
-		if ( !is_numeric( $answer['ds_cache_em'] ) ) {
-			$answer['ds_cache_em'] = 10;
+		if ( !is_numeric( $answer['dam_spam_cache_em'] ) ) {
+			$answer['dam_spam_cache_em'] = 10;
 		}
-		if ( !is_numeric( $answer['ds_good'] ) ) {
-			$answer['ds_good'] = 2;
+		if ( !is_numeric( $answer['dam_spam_good'] ) ) {
+			$answer['dam_spam_good'] = 2;
 		}
-		if ( !is_numeric( $answer['ds_hist'] ) ) {
-			$answer['ds_hist'] = 25;
+		if ( !is_numeric( $answer['dam_spam_hist'] ) ) {
+			$answer['dam_spam_hist'] = 25;
 		}
 		if ( !is_numeric( $answer['sesstime'] ) ) {
 			$answer['sesstime'] = 4;
@@ -1295,14 +1295,14 @@ class get_options {
 		if ( !is_numeric( $answer['sfsfreq'] ) ) {
 			$answer['sfsfreq'] = 0;
 		}
-		if ( !is_numeric( $answer['ds_good'] ) ) {
-			$answer['ds_good'] = 0;
+		if ( !is_numeric( $answer['dam_spam_good'] ) ) {
+			$answer['dam_spam_good'] = 0;
 		}
 		if ( !is_numeric( trim( $answer['log_file_size'] ) ) ) {
 			$answer['log_file_size'] = 0;
 		}
 		$answer['check_cloudflare'] = 'Y';
-		ds_set_options( $answer );
+		dam_spam_set_options( $answer );
 		return $answer;
 	}
 }

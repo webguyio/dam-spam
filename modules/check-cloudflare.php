@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // last updated from https://www.cloudflare.com/ips/ on 2/29/24
-class check_cloudflare extends ds_module {
+class dam_spam_check_cloudflare extends dam_spam_module {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		if ( function_exists( 'cloudflare_init' ) ) {
 			return false;
