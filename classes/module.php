@@ -10,26 +10,18 @@ class dam_spam_module {
 	public $searchlist = array();
 
 	public static function getafile( $f, $method = 'GET' ) {
-		if ( !class_exists( 'WP_Http' ) ) {
-			include_once( ABSPATH . WPINC . '/class-http.php' );
+		$parms = array(
+			'timeout' => 10,
+			'method' => $method
+		);
+		$result = wp_remote_request( $f, $parms );
+		if ( is_wp_error( $result ) ) {
+			return 'ERR: ' . $result->get_error_message();
 		}
-		$request		  = new WP_Http;
-		$parms			  = array();
-		$parms['timeout'] = 10;
-		$parms['method']  = $method;
-		$result		      = $request->request( $f, $parms );
 		if ( empty( $result ) ) {
 			return '';
 		}
-		if ( is_array( $result ) ) {
-			$answer = $result['body'];
-			return $answer;
-		}
-		if ( is_object( $result ) ) {
-			$answer = 'ERR: ' . $result->get_error_message();
-			return $answer;
-		}
-		return '';
+		return wp_remote_retrieve_body( $result );
 	}
 
 	public static function getSname() {
@@ -40,11 +32,10 @@ class dam_spam_module {
 		if ( empty( $sname ) ) {
 			if ( isset( $_SERVER['SCRIPT_NAME'] ) ) {
 				$script_name = sanitize_text_field( wp_unslash( $_SERVER['SCRIPT_NAME'] ) );
-				$_SERVER['REQUEST_URI'] = $script_name;
 				$sname = $script_name;
 				if ( isset( $_SERVER['QUERY_STRING'] ) && !empty( $_SERVER['QUERY_STRING'] ) ) {
 					$query_string = sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) );
-					$_SERVER['REQUEST_URI'] .= '?' . sanitize_text_field( wp_unslash( $query_string ) );
+					$sname .= '?' . $query_string;
 				}
 			}
 		}

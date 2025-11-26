@@ -41,6 +41,7 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 		if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 			if ( array_key_exists( 'view', $_POST ) ) {
 				$op = sanitize_text_field( wp_unslash( $_POST['view'] ) );
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- Admin diagnostic tool, capability checked, nonce verified, input sanitized. Viewing any option is intentional functionality.
 				$v = get_option( $op );
 				if ( is_serialized( $v ) && false !== @unserialize( $v ) ) {
 					$v = @unserialize( $v );

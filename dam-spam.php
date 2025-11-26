@@ -142,6 +142,9 @@ function dam_spam_init() {
 	} else {
 		define( 'DAM_SPAM_MU', $muswitch );
 	}
+	if ( wp_doing_ajax() && is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
+		return;
+	}
 	if ( is_user_logged_in() ) {
 		remove_filter( 'pre_user_login', 'dam_spam_user_reg_filter', 1 );
 		if ( current_user_can( 'manage_options' ) ) {
@@ -151,9 +154,6 @@ function dam_spam_init() {
 	}
 	add_action( 'user_register', 'dam_spam_new_user_ip' );
 	add_action( 'wp_login', 'dam_spam_log_user_ip', 10, 2 );
-	if ( wp_doing_ajax() && is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
-		return;
-	}
 	if ( isset( $_POST ) && !empty( $_POST ) ) {
 		if ( array_key_exists( 'dam_spam_block', $_POST ) && array_key_exists( 'kn', $_POST ) ) {
 			if ( !empty( $_POST['kn'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['kn'] ) ), 'dam_spam_block' ) ) {
@@ -690,7 +690,8 @@ function dam_spam_get_post_variables() {
 		return $answer;
 	}
 	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checking raw post data, can't have nonce
-	$p = $_POST;
+	// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Raw data needed for spam detection, sanitized at output
+	$p = array_map( 'wp_unslash', $_POST );
 	$search = array(
 		'email' => array(
 			'email',
@@ -745,6 +746,7 @@ function dam_spam_get_post_variables() {
 	foreach ( $search as $var => $sa ) {
 		foreach ( $sa as $srch ) {
 			foreach ( $p as $pkey => $pval ) {
+				$pkey = sanitize_key( $pkey );
 				if ( stripos( $pkey, $srch ) !== false ) {
 					if ( is_array( $pval ) ) {
 						// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Converting array to string for processing
@@ -760,7 +762,8 @@ function dam_spam_get_post_variables() {
 		}
 		if ( empty( $answer[$var] ) && $var == 'email' ) {
 			foreach ( $p as $pkey => $pval ) {
-				if ( stripos( $pkey, 'input_' ) ) {
+				$pkey = sanitize_key( $pkey );
+				if ( stripos( $pkey, 'input_' ) !== false ) {
 					if ( is_array( $pval ) ) {
 						// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Converting array to string for processing
 						$pval = print_r( $pval, true );

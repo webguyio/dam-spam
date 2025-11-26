@@ -264,7 +264,11 @@ $nonce_field = wp_create_nonce( 'dam_spam_user_filter_nonce' );
 $name = array();
 if ( isset( $_POST['dam_spam_search'] ) && isset( $_POST['dam_spam_user_filter_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_user_filter_nonce'] ) ), 'dam_spam_user_filter_nonce' ) ) {
 	if ( isset( $_POST['dam_spam_username'] ) ) {
-		$userListObject = dam_spam_getUsersList( $_POST, '' );
+		$sanitized_post = array();
+		foreach ( $_POST as $key => $value ) {
+			$sanitized_post[ sanitize_key( $key ) ] = wp_unslash( $value );
+		}
+		$userListObject = dam_spam_getUsersList( $sanitized_post, '' );
 		$user_list = $userListObject->rows;
 		$total = $userListObject->total;
 		if ( empty( $userListObject->rows ) ) {

@@ -449,8 +449,9 @@ if ( get_option( 'dam_spam_honeypot_divi', 'yes' ) === 'yes' ) {
 	function dam_spam_et_add_honeypot( $output, $render_slug, $module ) {
 		if ( isset( $_POST['et_pb_contact_your_website'] ) && sanitize_url( wp_unslash( $_POST['et_pb_contact_your_website'] ) ) === 'https://example.com/' ) {
 			unset( $_POST['et_pb_contact_your_website'] );
-			$post_last_key = array_key_last( $_POST );
-			if ( isset( $_POST[ $post_last_key ] ) ) {
+			$post_keys = array_keys( $_POST );
+			$post_last_key = !empty( $post_keys ) ? sanitize_key( end( $post_keys ) ) : '';
+			if ( !empty( $post_last_key ) && isset( $_POST[ $post_last_key ] ) ) {
 				$form_json = isset( $_POST[$post_last_key] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST[$post_last_key] ) ) ) : null;
 				if ( is_array( $form_json ) ) {
 					array_pop( $form_json );

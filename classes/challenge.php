@@ -13,7 +13,16 @@ class dam_spam_challenge extends dam_spam_module {
 		$options = dam_spam_get_options();
 		if ( isset( $options['redir'] ) && $options['redir'] === 'Y' && !empty( $options['redirect_url'] ) ) {
 			if ( isset( $_POST['_wpcf7'] ) ) {
-				return wp_json_encode( $_POST );
+				$sanitized_post = array();
+				foreach ( $_POST as $key => $value ) {
+					$sanitized_key = sanitize_key( $key );
+					if ( is_array( $value ) ) {
+						$sanitized_post[ $sanitized_key ] = array_map( 'sanitize_text_field', array_map( 'wp_unslash', $value ) );
+					} else {
+						$sanitized_post[ $sanitized_key ] = sanitize_text_field( wp_unslash( $value ) );
+					}
+				}
+				return wp_json_encode( $sanitized_post );
 			} else {
 				wp_safe_redirect( $options['redirect_url'], 307 );
 				exit();
