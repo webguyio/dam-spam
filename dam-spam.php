@@ -3,7 +3,7 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 0.6
+Version: 0.7
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DAM_SPAM_VERSION', '0.6' );
+define( 'DAM_SPAM_VERSION', '0.7' );
 define( 'DAM_SPAM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'DAM_SPAM_PLUGIN_FILE', plugin_dir_path( __FILE__ ) );
 
@@ -142,15 +142,15 @@ function dam_spam_init() {
 	} else {
 		define( 'DAM_SPAM_MU', $muswitch );
 	}
-	if ( wp_doing_ajax() && is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
+	if ( wp_doing_ajax() && is_user_logged_in() && current_user_can( 'edit_posts' ) && !is_admin() ) {
 		return;
+	}
+	if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
+		dam_spam_require( 'includes/admins.php' );
 	}
 	if ( is_user_logged_in() ) {
 		remove_filter( 'pre_user_login', 'dam_spam_user_reg_filter', 1 );
-		if ( current_user_can( 'manage_options' ) ) {
-			dam_spam_require( 'includes/admins.php' );
-			return;
-		}
+		return;
 	}
 	add_action( 'user_register', 'dam_spam_new_user_ip' );
 	add_action( 'wp_login', 'dam_spam_log_user_ip', 10, 2 );
@@ -351,7 +351,7 @@ function dam_spam_log_user_ip( $user_login = "", $user = "" ) {
 	}
 }
 
-function dam_spam_dam_spam_sfs_ip_column_head( $column_headers ) {
+function dam_spam_sfs_ip_column_head( $column_headers ) {
 	$column_headers['signup_ip'] = 'IP Address';
 	return $column_headers;
 }
@@ -661,11 +661,11 @@ function dam_spam_login_redirect() {
 	}
 }
 
-function dam_spam_dam_spam_sfs_check_admin() {
-	dam_spam_dam_spam_sfs_reg_add_user_to_allowlist();
+function dam_spam_sfs_check_admin() {
+	dam_spam_sfs_reg_add_user_to_allowlist();
 }
 
-function dam_spam_dam_spam_sfs_reg_add_user_to_allowlist() {
+function dam_spam_sfs_reg_add_user_to_allowlist() {
 	$options = dam_spam_get_options();
 	$stats = dam_spam_get_stats();
 	$post = dam_spam_get_post_variables();

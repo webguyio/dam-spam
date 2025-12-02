@@ -10,32 +10,32 @@ if ( !defined( 'ABSPATH' ) ) {
 $options = dam_spam_get_options();
 
 if ( $options['add_to_allow_list'] == 'Y' ) {
-	dam_spam_dam_spam_sfs_check_admin();
+	dam_spam_sfs_check_admin();
 }
 
 if ( get_option( 'dam_spam_muswitch', 'N' ) == 'Y' ) {
 	add_action( 'mu_rightnow_end', 'dam_spam_rightnow' );
 	add_filter( 'network_admin_plugin_action_links_' . plugin_basename( __FILE__ ), 'dam_spam_action_links' );
 	add_filter( 'plugin_row_meta', 'dam_spam_action_links', 10, 2 );
-	add_filter( 'wpmu_users_columns', 'dam_spam_dam_spam_sfs_ip_column_head' );
+	add_filter( 'wpmu_users_columns', 'dam_spam_sfs_ip_column_head' );
 } else {
 	add_action( 'admin_menu', 'dam_spam_admin_menu' );
 	add_action( 'rightnow_end', 'dam_spam_rightnow' );
 	add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'dam_spam_action_links' );
-	add_filter( 'manage_users_columns', 'dam_spam_dam_spam_sfs_ip_column_head' );
+	add_filter( 'manage_users_columns', 'dam_spam_sfs_ip_column_head' );
 }
 
 add_action( 'network_admin_menu', 'dam_spam_admin_menu' );
 add_filter( 'comment_row_actions', 'dam_spam_row', 1, 2 );
 add_action( 'wp_ajax_dam_spam_sfs_sub', 'dam_spam_sfs_handle_ajax_sub' );
 add_action( 'wp_ajax_dam_spam_sfs_process', 'dam_spam_sfs_handle_process' );
-add_action( 'manage_users_custom_column', 'dam_spam_dam_spam_sfs_ip_column', 10, 3 );
+add_action( 'manage_users_custom_column', 'dam_spam_sfs_ip_column', 10, 3 );
 if ( function_exists( 'register_uninstall_hook' ) ) {
 }
 
 add_action( 'admin_enqueue_scripts', 'dam_spam_sfs_handle_ajax' );
 function dam_spam_sfs_handle_ajax() {
-	wp_enqueue_script( 'dam-spam', DAM_SPAM_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery' ), DAM_SPAM_VERSION, array( 'in_footer' => true ) );
+	wp_enqueue_script( 'dam-spam', DAM_SPAM_PLUGIN_URL . 'assets/js/admin.js', array(), DAM_SPAM_VERSION );
 	wp_localize_script( 'dam-spam', 'damSpamAjax', array(
 		'nonce' => wp_create_nonce( 'dam_spam_ajax' )
 	) );
@@ -278,7 +278,7 @@ function dam_spam_sfs_handle_ajax_check( $data ) {
 	}
 	$query = "https://www.stopforumspam.com/api?ip=91.186.18.61";
 	$check = '';
-	$check = dam_spam_dam_spam_sfs_files( $query );
+	$check = dam_spam_sfs_files( $query );
 	if ( !empty( $check ) ) {
 		$check = trim( $check );
 		$check = trim( $check, '0' );
@@ -410,7 +410,7 @@ function dam_spam_sfs_watch( $data ) {
 	}
 }
 
-function dam_spam_dam_spam_sfs_ip_column( $value, $column_name, $user_id ) {
+function dam_spam_sfs_ip_column( $value, $column_name, $user_id ) {
 	$icons = dam_spam_get_icon_urls();
 	extract( $icons );
 	if ( $column_name == 'signup_ip' ) {
