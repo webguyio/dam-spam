@@ -35,7 +35,7 @@ if ( function_exists( 'register_uninstall_hook' ) ) {
 
 add_action( 'admin_enqueue_scripts', 'dam_spam_sfs_handle_ajax' );
 function dam_spam_sfs_handle_ajax() {
-	wp_enqueue_script( 'dam-spam', DAM_SPAM_PLUGIN_URL . 'assets/js/admin.js', array(), DAM_SPAM_VERSION );
+	wp_enqueue_script( 'dam-spam', DAM_SPAM_PLUGIN_URL . 'assets/js/admin.js', array(), DAM_SPAM_VERSION, false );
 	wp_localize_script( 'dam-spam', 'damSpamAjax', array(
 		'nonce' => wp_create_nonce( 'dam_spam_ajax' )
 	) );

@@ -41,18 +41,53 @@ class dam_spam_check_google_safe extends dam_spam_module {
 		if ( empty( $urls3 ) ) {
 			return false;
 		}
-		for ( $j = 0; $j < count( $urls3 ); $j ++ ) {
-			$urls3[$j] = urlencode( $urls3[$j] );
-		}
 		for ( $j = 0; $j < count( $urls3 ) && $j < 4; $j ++ ) {
 			$url = $urls3[$j];
 			if ( !empty( $url ) ) {
-				$query = "https://sb-ssl.google.com/safebrowsing/api/lookup?client=dam-spam&apikey=$googleapi&appver=9.3&pver=3.0&url=$url";
-				$r	   = $this->getafile( $query );
-				if ( !empty( $r ) ) {
-					if ( strpos( $r, 'phishing' ) !== false || strpos( $r, 'malware' ) !== false ) {
-						return esc_html__( 'Google Safe: ', 'dam-spam' ) . $r;
+				$url = urldecode( $url );
+				if ( strpos( $url, 'http://' ) !== 0 && strpos( $url, 'https://' ) !== 0 ) {
+					$url = 'https://' . $url;
+				}
+				$data = array(
+					'client' => array(
+						'clientId' => 'dam-spam',
+						'clientVersion' => DAM_SPAM_VERSION
+					),
+					'threatInfo' => array(
+						'threatTypes' => array( 'MALWARE', 'SOCIAL_ENGINEERING', 'UNWANTED_SOFTWARE', 'POTENTIALLY_HARMFUL_APPLICATION' ),
+						'platformTypes' => array( 'ANY_PLATFORM' ),
+						'threatEntryTypes' => array( 'URL' ),
+						'threatEntries' => array(
+							array( 'url' => $url )
+						)
+					)
+				);
+				$response = wp_remote_post(
+					'https://safebrowsing.googleapis.com/v4/threatMatches:find?key=' . $googleapi,
+					array(
+						'headers' => array( 'Content-Type' => 'application/json' ),
+						'body' => wp_json_encode( $data ),
+						'timeout' => 10
+					)
+				);
+				if ( is_wp_error( $response ) ) {
+					continue;
+				}
+				$body = wp_remote_retrieve_body( $response );
+				$result = json_decode( $body, true );
+				if ( !empty( $result['matches'] ) ) {
+					$threat_type = $result['matches'][0]['threatType'];
+					$threat_name = $threat_type;
+					if ( $threat_type === 'SOCIAL_ENGINEERING' ) {
+						$threat_name = 'phishing';
+					} elseif ( $threat_type === 'MALWARE' ) {
+						$threat_name = 'malware';
+					} elseif ( $threat_type === 'UNWANTED_SOFTWARE' ) {
+						$threat_name = 'unwanted software';
+					} elseif ( $threat_type === 'POTENTIALLY_HARMFUL_APPLICATION' ) {
+						$threat_name = 'harmful application';
 					}
+					return esc_html__( 'Google Safe: ', 'dam-spam' ) . $threat_name;
 				}
 			}
 		}

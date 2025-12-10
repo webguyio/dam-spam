@@ -59,9 +59,7 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 			'check_braintree',
 			'check_recurly',
 			'check_square',
-			'check_general_allow_list',
-			'check_misc_allow_list',
-			'check_yahoo_merchant'
+			'check_misc_allow_list'
 		);
 		foreach ( $optionlist as $check ) {
 			$v = 'N';
@@ -179,13 +177,6 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		</div>
 		<br>
 		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_general_allow_list">
-				<input class="dam_spam_toggle" type="checkbox" id="check_general_allow_list" name="check_general_allow_list" value="Y" <?php if ( $check_general_allow_list == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><?php esc_html_e( 'Generated Allow List', 'dam-spam' ); ?></small>
-			</label>
-		</div>
-		<br>
-		<div class="checkbox switcher">
 	  		<label class="dam-spam-subhead" for="check_misc_allow_list">
 				<input class="dam_spam_toggle" type="checkbox" id="check_misc_allow_list" name="check_misc_allow_list" value="Y" <?php if ( $check_misc_allow_list == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 				<small><?php esc_html_e( 'Other Allow Lists', 'dam-spam' ); ?></small>
@@ -231,13 +222,6 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 	  		<label class="dam-spam-subhead" for="check_square">
 				<input class="dam_spam_toggle" type="checkbox" id="check_square" name="check_square" value="Y" <?php if ( $check_square == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Square</small>
-			</label>
-		</div>
-		<br>
-		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_yahoo_merchant">
-				<input class="dam_spam_toggle" type="checkbox" id="check_yahoo_merchant" name="check_yahoo_merchant" value="Y" <?php if ( $check_yahoo_merchant == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Yahoo Merchant Services</small>
 			</label>
 		</div>
 		<br>

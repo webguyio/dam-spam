@@ -24,7 +24,6 @@ class dam_spam_get_stats {
 			'count_check_aws'				 => 0,
 			'count_check_cloudflare'		 => 0,
 			'count_check_good_cache'		 => 0,
-			'count_check_general_allow_list' => 0,
 			'count_check_google'			 => 0,
 			'count_check_misc_allow_list'	 => 0,
 			'count_check_paypal'			 => 0,
@@ -33,8 +32,7 @@ class dam_spam_get_stats {
 			'count_check_valid_ip'			 => 0,
 			'count_check_allowed_email'		 => 0,
 			'count_check_allowed_user_id'	 => 0,
-			'count_check_allow_list'		 => 0,
-			'count_check_yahoo_merchant'	 => 0
+			'count_check_allow_list'		 => 0
 		);
 		$defaultsBL = array(
 			'count_check_404'			  => 0,

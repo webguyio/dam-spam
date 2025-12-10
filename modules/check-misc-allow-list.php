@@ -10,12 +10,6 @@ class dam_spam_check_misc_allow_list extends dam_spam_module {
 	public $searchlist = array(
 		'VaultPress',
 		array( '207.198.112.0', '207.198.113.255' ),
-		'RssGrafitti',
-		array( '23.21.82.184', '23.21.82.184' ),
-		array( '54.235.100.22', '54.235.100.22' ),
-		array( '54.235.94.95', '54.235.94.95' ),
-		array( '54.235.97.10', '54.235.97.10' ),
-		array( '54.235.98.169', '54.235.98.169' ),
 		'WorldPay',
 		'207.242.204.32/29',
 		'12.220.48.112/28',

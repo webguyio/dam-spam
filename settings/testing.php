@@ -78,7 +78,6 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 						'check_aws',
 						'check_cloudflare',
 						'check_good_cache',
-						'check_general_allow_list',
 						'check_google',
 						'check_misc_allow_list',
 						'check_paypal',
@@ -88,8 +87,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 						'check_allowed_user_id',
 						'check_allow_list',
 						'check_allow_list_email',
-						'check_form',
-						'check_yahoo_merchant'
+						'check_form'
 					);
 					$m1 = memory_get_usage( true );
 					$m2 = memory_get_peak_usage( true );

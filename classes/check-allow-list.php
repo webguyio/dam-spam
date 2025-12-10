@@ -27,7 +27,6 @@ class dam_spam_check_allow_list extends dam_spam_module {
 			'check_admin_log',
 			'check_aws',
 			'check_good_cache',
-			'check_general_allow_list',
 			'check_google',
 			'check_misc_allow_list',
 			'check_paypal',
@@ -39,8 +38,7 @@ class dam_spam_check_allow_list extends dam_spam_module {
 			'check_allowed_email',
 			'check_allowed_user_id',
 			'check_allow_list_ip',
-			'check_allow_list_email',
-			'check_yahoo_merchant'
+			'check_allow_list_email'
 		);
 		if ( !isset( $options['check_allow_list_email'] ) ) {
 			$options['check_allow_list_email'] = 'Y';

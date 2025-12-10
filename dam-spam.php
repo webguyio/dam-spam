@@ -3,7 +3,7 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 0.7
+Version: 0.8
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DAM_SPAM_VERSION', '0.7' );
+define( 'DAM_SPAM_VERSION', '0.8' );
 define( 'DAM_SPAM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'DAM_SPAM_PLUGIN_FILE', plugin_dir_path( __FILE__ ) );
 
@@ -324,6 +324,9 @@ function dam_spam_get_ip() {
 	$ip = '';
 	if ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
 		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+		if ( strpos( $ip, ':' ) !== false ) {
+			$ip = inet_ntop( inet_pton( $ip ) );
+		}
 	}
 	return $ip;
 }

@@ -13,10 +13,6 @@ function dam_spam_admin_notice_success() {
 	<?php
 }
 
-if ( defined( 'DAM_SPAM_ENABLE_FIREWALL' ) ) {
-	include __DIR__ . '/includes/firewall.php';
-}
-
 function dam_spam_advanced_menu() {
 	$dam_spam_firewall_setting = '';
 	if ( get_option( 'dam_spam_enable_firewall', '' ) === 'yes' ) {
@@ -58,10 +54,6 @@ function dam_spam_advanced_menu() {
 	if ( get_option( 'dam_spam_honeypot_divi', 'yes' ) === 'yes' && ( $theme->name === 'Divi' || $theme->parent_theme === 'Divi' ) ) {
 		$dam_spam_honeypot_divi = "checked='checked'";
 	}
-	$dam_spam_allow_vpn_setting = '';
-	if ( get_option( 'dam_spam_allow_vpn', '' ) === 'yes' ) {
-		$dam_spam_allow_vpn_setting = "checked='checked'";
-	}
 	?>
 	<div id="dam-spam-plugin" class="wrap">
 		<h1 id="dam-spam-head"><?php esc_html_e( 'Advanced — Dam Spam', 'dam-spam' ); ?></h1>
@@ -72,11 +64,6 @@ function dam_spam_advanced_menu() {
 						<h3><span><?php esc_html_e( 'Firewall Settings', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="dam_spam_firewall_setting">
-								<?php if ( defined( 'DAM_SPAM_ENABLE_FIREWALL' ) ) { ?>
-								<p><a href="edit.php?post_type=dam-spam-firewall" class="button-primary"><?php esc_html_e( 'Monitor Real-time Firewall', 'dam-spam' ); ?></a></p>
-								<?php } else { ?>
-								<p><em><?php esc_html_e( 'For advanced users only: If you\'d like to enable the real-time firewall beta feature, add define( \'DAM_SPAM_ENABLE_FIREWALL\', true ); to your wp-config.php file. This feature is resource-intensive, requiring a lot of memory and database space.', 'dam-spam' ); ?></em></p>
-								<?php } ?>
 								<input type="checkbox" name="dam_spam_firewall_setting" id="dam_spam_firewall_setting" value="yes" <?php echo esc_attr( $dam_spam_firewall_setting ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Enable Server-side Security Rules', 'dam-spam' ); ?>
@@ -194,16 +181,6 @@ function dam_spam_advanced_menu() {
 						</div>
 					</div>
 					<hr>
-					<div class="inside">
-						<h3><span><?php esc_html_e( 'Block VPNs', 'dam-spam' ); ?></span></h3>
-						<div class="checkbox switcher">
-							<label for="dam_spam_allow_vpn">
-								<input type="checkbox" name="dam_spam_allow_vpn" id="dam_spam_allow_vpn" value="yes" <?php echo esc_attr( $dam_spam_allow_vpn_setting ); ?>>
-								<span><small></small></span>
-							</label>
-						</div>
-					</div>
-					<hr>
 					<div class="inside">			
 						<p>
 							<?php wp_nonce_field( 'dam_spam_advanced_settings', 'dam_spam_advanced_settings_nonce' ); ?>
@@ -253,7 +230,7 @@ function dam_spam_advanced_menu() {
 				<h3><span><?php esc_html_e( 'Reset Settings', 'dam-spam' ); ?></span></h3>
 				<div class="inside">
 					<p><?php esc_html_e( 'Reset all plugin settings.', 'dam-spam' ); ?></p>
-					<form method="post">
+					<form method="post" onsubmit="return confirm('<?php echo esc_js( __( 'Are you sure you want to reset all settings? This cannot be undone.', 'dam-spam' ) ); ?>');">
 						<p><input type="hidden" name="dam_spam_action" value="reset_settings"></p>
 						<p>
 							<?php wp_nonce_field( 'dam_spam_reset_nonce', 'dam_spam_reset_nonce' ); ?>
@@ -261,7 +238,7 @@ function dam_spam_advanced_menu() {
 						</p>
 					</form>
 				</div>
-			</div>			
+			</div>
 		</div>
 	</div>
 	<?php
@@ -682,11 +659,6 @@ function dam_spam_update_honeypot() {
 		update_option( 'dam_spam_honeypot_divi', 'yes' );
 	} else {
 		update_option( 'dam_spam_honeypot_divi', 'no' );
-	}
-	if ( isset( $_POST['dam_spam_allow_vpn'] ) && sanitize_text_field( wp_unslash( $_POST['dam_spam_allow_vpn'] ) ) === 'yes' ) {
-		update_option( 'dam_spam_allow_vpn', 'yes' );
-	} else {
-		update_option( 'dam_spam_allow_vpn', 'no' );
 	}
 }
 
@@ -1359,55 +1331,4 @@ function dam_spam_show_email_function( $atts ) {
 	}
 }
 
-function dam_spam_get_remote_ip_address() {
-	if ( !empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_CLIENT_IP'] ) );
-	} elseif ( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
-	}
-	return isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
-}
-
-function dam_spam_check_proxy() {
-	$timeout = 5;
-	$ban_on_probability = 0.99;
-	$ip = dam_spam_get_remote_ip_address();
-	$contact_email = defined( 'DAM_SPAM_MAIL' ) ? DAM_SPAM_MAIL : get_option( 'admin_email' );
-	$url = add_query_arg(
-		array(
-			'ip'      => $ip,
-			'contact' => $contact_email,
-		),
-		'https://check.getipintel.net/check.php'
-	);
-	$response = wp_remote_get(
-		$url,
-		array(
-			'timeout' => $timeout,
-		)
-	);
-	if ( is_wp_error( $response ) ) {
-		return false;
-	}
-	$body = wp_remote_retrieve_body( $response );
-	if ( $body > $ban_on_probability ) {
-		return true;
-	}
-	return false;
-}
-
-add_action( 'init', 'dam_spam_disable_activities' );
-function dam_spam_disable_activities() {
-	if ( get_option( 'dam_spam_allow_vpn' ) === 'no' ) {
-		return;
-	}
-	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-	$login_url = wp_login_url();
-	if ( substr_count( $request_uri, 'wp-login' ) || get_permalink() === $login_url || substr_count( $request_uri, 'checkout' ) || substr_count( $request_uri, 'wp-comments-post' ) ) {
-		$is_vpn = dam_spam_check_proxy();
-		if ( $is_vpn === true ) {
-			status_header( 403 );
-			wp_die( esc_html__( 'You cannot access this page.', 'dam-spam' ) );
-		}
-	}
-}
+?>

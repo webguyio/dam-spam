@@ -3,8 +3,8 @@
 Contributors: webguyio
 Donate link: https://webguy.io/donate
 Tags: spam, security, anti-spam, spam protection, no spam
-Tested up to: 6.8
-Stable tag: 0.7
+Tested up to: 6.9
+Stable tag: 0.8
 License: GPL
 License URI: https://www.gnu.org/licenses/gpl.html
 
@@ -42,7 +42,7 @@ After installation, go to the Dam Spam settings in your WordPress admin to:
 
 **Differences from Stop Spammers**
 
-Dam Spam is a fork of the Stop Spammers plugin with ongoing maintenance, bug fixes, and security improvements. While the core spam protection functionality remains similar, Dam Spam's file and code structure has been significantly cleaned up and will continue to be further modernized.
+Dam Spam is a fork of the Stop Spammers. While the core spam protection functionality remains similar, Dam Spam's file and code structure has been significantly cleaned up and modernized.
 
 **Addon Support**
 
@@ -138,6 +138,14 @@ Yes. Dam Spam does not collect any data for marketing or tracking purposes. All 
 There are several optional services you may use that involve sending data to third parties including: [Google reCAPTCHA](https://policies.google.com/privacy), [hCaptcha](https://www.hcaptcha.com/privacy), [Spamhaus](https://www.spamhaus.org/privacy-notice/), [Stop Forum Spam](https://www.stopforumspam.com/privacy), [Project Honeypot](https://www.projecthoneypot.org/privacy_policy.php), and [BotScout](https://botscout.com/w3c/privacy.htm). You may wish to read each services' privacy policy to see if you're comfortable using them, but generally speaking, whenever someone for example tries to use a contact form on your website, their IP address, name, and email may be sent to these services to check against spam blocklists.
 
 == Changelog ==
+
+= 0.8 =
+* Fixed bug caused by incorrectly added IP ranges
+* Updated Google Safe Browsing API
+* Updated IP lists
+* Code cleanup and organization
+* Removed dated firewall feature
+* Removed dated/defunct checks
 
 = 0.7 =
 * Minor fixes

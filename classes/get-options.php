@@ -10,32 +10,30 @@ class dam_spam_get_options {
 		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		$options = get_option( 'dam_spam_options' );
 		$defaultWL = array(
-			'check_admin_log'			=> 'Y',
-			'check_aws'					=> 'N',
-			'check_cloudflare'			=> 'Y',
-			'check_good_cache'			=> 'Y',
-			'check_general_allow_list'	=> 'N',
-			'check_google'				=> 'Y',
-			'check_misc_allow_list'		=> 'Y',
-			'check_paypal'				=> 'Y',
-			'check_form'				=> ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) ? 'Y' : 'N',
-			'check_woo_form'			=> 'N',
-			'check_gravity_form'		=> 'N',
-			'check_wp_form'				=> 'N',
-			'dam_spam_private_mode'			=> 'N',
-			'check_scripts'				=> 'Y',
-			'check_valid_ip'			=> 'Y',
-			'check_allowed_email'		=> 'Y',
-			'check_allowed_user_id'		=> 'N',
-			'check_allow_list'			=> 'Y',
-			'check_allow_list_ip'		=> 'Y',
-			'check_allow_list_email'	=> 'Y',
-			'check_yahoo_merchant'		=> 'Y',
-			'check_stripe'				=> 'Y',
-			'check_authorize_net'		=> 'Y',
-			'check_braintree'			=> 'Y',
-			'check_recurly'				=> 'Y',
-			'check_square'				=> 'Y'
+			'check_admin_log'		 => 'Y',
+			'check_aws'				 => 'N',
+			'check_cloudflare'		 => 'Y',
+			'check_good_cache'		 => 'Y',
+			'check_google'			 => 'Y',
+			'check_misc_allow_list'	 => 'Y',
+			'check_paypal'			 => 'Y',
+			'check_form'			 => ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) ? 'Y' : 'N',
+			'check_woo_form'		 => 'N',
+			'check_gravity_form'	 => 'N',
+			'check_wp_form'			 => 'N',
+			'dam_spam_private_mode'	 => 'N',
+			'check_scripts'			 => 'Y',
+			'check_valid_ip'		 => 'Y',
+			'check_allowed_email'	 => 'Y',
+			'check_allowed_user_id'	 => 'N',
+			'check_allow_list'		 => 'Y',
+			'check_allow_list_ip'	 => 'Y',
+			'check_allow_list_email' => 'Y',
+			'check_stripe'			 => 'Y',
+			'check_authorize_net'	 => 'Y',
+			'check_braintree'		 => 'Y',
+			'check_recurly'			 => 'Y',
+			'check_square'			 => 'Y'
 		);
 		$defaultBL = array(
 			'check_404'				=> 'Y',
@@ -68,6 +66,7 @@ class dam_spam_get_options {
 			'check_ubiquity'		=> 'Y',
 			'check_akismet'			=> 'Y',
 			'check_multi'			=> 'Y',
+			'check_vpn'				=> 'N',
 			'check_tor'				=> 'N',
 			'check_periods'			=> 'Y',
 			'check_hyphens'			=> 'Y'
@@ -91,6 +90,10 @@ class dam_spam_get_options {
 			'filter_registrations'     => 'Y'
 		);
 		$defaultARRAY = array(
+			'block_list'	   => array(),
+			'allow_list'	   => array(),
+			'allow_list_email' => array(),
+			'bad_tlds'		   => array(),
 			'bad_agents'  => array(
 				"Abonti",
 				"aggregator",
@@ -247,12 +250,7 @@ class dam_spam_get_options {
 				'Unknown',
 				'uptime files'
 			),
-			'bad_tlds'	  => array(),
-			'block_list'	      => array(),
-			'pay_options'  => array(),
-			'allow_list'	      => array(),
-			'allow_list_email' => array(),
-			'spam_words'   => array(
+			'spam_words'	   => array(
 				'-online',
 				'#1',
 				'$$$',
@@ -1221,35 +1219,34 @@ class dam_spam_get_options {
 			)
 		);
 		$defaultSVC = array(
-			'apikey'				 => '',
-			'honeyapi'			     => '',
-			'botscoutapi'			 => '',
-			'googleapi'			     => '',
-			'recaptchaapisecret'	 => '',
-			'recaptchaapisite'	     => '',
-			'hcaptchaapisecret'		 => '',
-			'hcaptchaapisite'	     => '',
-			'blogseyekey'			 => '',
-			'sesstime'			     => 4,
-			'sfsfreq'				 => 0,
-			'hnyage'				 => 9999,
-			'botfreq'				 => 0,
-			'sfsage'				 => 9999,
-			'hnylevel'			     => 5,
-			'botage'				 => 9999,
-			'multicount'			     => 5,
-			'multitime'			     => 3
+			'apikey'			 => '',
+			'honeyapi'			 => '',
+			'botscoutapi'		 => '',
+			'googleapi'			 => '',
+			'recaptchaapisecret' => '',
+			'recaptchaapisite'	 => '',
+			'hcaptchaapisecret'	 => '',
+			'hcaptchaapisite'	 => '',
+			'sesstime'			 => 4,
+			'sfsfreq'			 => 0,
+			'hnyage'			 => 9999,
+			'botfreq'			 => 0,
+			'sfsage'			 => 9999,
+			'hnylevel'			 => 5,
+			'botage'			 => 9999,
+			'multicount'		 => 5,
+			'multitime'			 => 3
 		);
 		$force	  = true;
 		$defaults = array(
-			'version'		=> DAM_SPAM_VERSION,
-			'dam_spam_cache'		=> 25,
+			'version'			=> DAM_SPAM_VERSION,
+			'dam_spam_cache'	=> 25,
 			'dam_spam_hist'		=> 25,
 			'dam_spam_good'		=> 2,
 			'dam_spam_cache_em'	=> 4,
 			'redirect_url'		=> '',
-			'log_file_size'	=> 0,
-			'reject_message' => "Access Blocked"
+			'log_file_size'		=> 0,
+			'reject_message'	=> "Access Blocked"
 		);
 		$answer = array_merge( $defaultWL, $defaultsCTRL, $defaultBL, $defaultARRAY, $defaultSVC, $defaults );
 		if ( empty( $options ) || !is_array( $options ) ) {

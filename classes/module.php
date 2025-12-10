@@ -77,11 +77,17 @@ class dam_spam_module {
 				 && strpos( $search, '.' ) !== false
 				 && strpos( $search, '/' ) !== false
 			) {
-				list( $subnet, $mask ) = explode( '/', $search );
-				$x2 = ip2long( $needle ) & ~( ( 1 << ( 32 - $mask ) ) - 1 );
-				$x3 = ip2long( $subnet ) & ~( ( 1 << ( 32 - $mask ) ) - 1 );
-				if ( $x2 == $x3 ) {
-					return "$searchname: $reason";
+				$parts = explode( '/', $search );
+				if ( count( $parts ) === 2 ) {
+					list( $subnet, $mask ) = $parts;
+					$mask = intval( $mask );
+					if ( $mask > 0 && $mask <= 32 ) {
+						$x2 = ip2long( $needle ) & ~( ( 1 << ( 32 - $mask ) ) - 1 );
+						$x3 = ip2long( $subnet ) & ~( ( 1 << ( 32 - $mask ) ) - 1 );
+						if ( $x2 == $x3 ) {
+							return "$searchname: $reason";
+						}
+					}
 				}
 			}
 			if ( strpos( $search, '*' ) !== false || strpos( $search, '?' ) !== false ) {
@@ -152,11 +158,17 @@ class dam_spam_module {
 				}
 			}
 			if ( substr_count( $needle, '.' ) == 3 && strpos( $search, '/' ) !== false ) {
-				list( $subnet, $mask ) = explode( '/', $search );
-				$x2 = ip2long( $needle ) & ~( ( 1 << ( 32 - $mask ) ) - 1 );
-				$x3 = ip2long( $subnet ) & ~( ( 1 << ( 32 - $mask ) ) - 1 );
-				if ( $x2 == $x3 ) {
-					return "$searchname: $reason";
+				$parts = explode( '/', $search );
+				if ( count( $parts ) === 2 ) {
+					list( $subnet, $mask ) = $parts;
+					$mask = intval( $mask );
+					if ( $mask > 0 && $mask <= 32 ) {
+						$x2 = ip2long( $needle ) & ~( ( 1 << ( 32 - $mask ) ) - 1 );
+						$x3 = ip2long( $subnet ) & ~( ( 1 << ( 32 - $mask ) ) - 1 );
+						if ( $x2 == $x3 ) {
+							return "$searchname: $reason";
+						}
+					}
 				}
 			}
 		}

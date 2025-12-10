@@ -40,6 +40,7 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 		'check_exploits',
 		'check_admin_log',
 		'check_hosting',
+		'check_vpn',
 		'check_tor',
 		'check_akismet',
 		'filter_registrations',
@@ -259,9 +260,16 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		</div>
 		<br>
 		<div class="checkbox switcher">
+			<label class="dam-spam-subhead" for="check_vpn">
+				<input class="dam_spam_toggle" type="checkbox" id="check_vpn" name="check_vpn" value="Y" <?php if ( $check_vpn == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+				<small><?php esc_html_e( 'Check for VPNs', 'dam-spam' ); ?></small>
+			</label>
+		</div>
+		<br>
+		<div class="checkbox switcher">
 			<label class="dam-spam-subhead" for="check_tor">
 				<input class="dam_spam_toggle" type="checkbox" id="check_tor" name="check_tor" value="Y" <?php if ( $check_tor == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
-				<small><?php esc_html_e( 'Check for Tor Exit Nodes', 'dam-spam' ); ?></small>
+				<small><?php esc_html_e( 'Check for Tor', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
