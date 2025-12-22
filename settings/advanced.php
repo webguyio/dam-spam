@@ -736,13 +736,15 @@ function dam_spam_get_page_id( $slug ) {
 	}
 }
 
-// phpcs:disable WordPress.Security.NonceVerification -- Template redirect for logout and login pages
 add_action( 'template_redirect', function() {
 	global $post;
 	if ( !is_object( $post ) || !isset( $post->post_name ) ) {
 		return;
 	}
 	if ( is_page( 'logout' ) ) {
+		if ( !isset( $_REQUEST['_wpnonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'dam_spam_logout' ) ) {
+			wp_die( esc_html__( 'Security check failed', 'dam-spam' ), 403 );
+		}
 		$user = wp_get_current_user();
 		wp_logout();
 		if ( !empty( $_REQUEST['redirect_to'] ) ) {

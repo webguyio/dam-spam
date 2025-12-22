@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// phpcs:disable WordPress.Security.NonceVerification.Recommended -- AJAX handler, processes admin requests with capability checks
+// phpcs:disable WordPress.Security.NonceVerification.Missing -- Called by dam_spam_sfs_handle_process which verifies nonce
 class dam_spam_add_to_allow_list {
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$now = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
@@ -19,8 +19,8 @@ class dam_spam_add_to_allow_list {
 			$allow_list[] = $ip;
 		}
 		$options['allow_list'] = $allow_list;
-		if ( isset( $_GET['email'] ) && is_email( wp_unslash( $_GET['email'] ) ) ) {
-			$email = sanitize_email( wp_unslash( $_GET['email'] ) );
+		if ( isset( $_POST['email'] ) && is_email( wp_unslash( $_POST['email'] ) ) ) {
+			$email = sanitize_email( wp_unslash( $_POST['email'] ) );
 			if ( !in_array( $email, $allow_list_email ) ) {
 				$allow_list_email[] = $email;
 			}
@@ -38,7 +38,7 @@ class dam_spam_add_to_allow_list {
 			$stats['goodips'] = $goodips;
 		}
 		dam_spam_set_stats( $stats );
-		if ( isset( $_GET['func'] ) && sanitize_key( $_GET['func'] ) === 'add_white' ) {
+		if ( isset( $_POST['func'] ) && sanitize_key( $_POST['func'] ) === 'add_white' ) {
 			$this->dam_spam_send_approval_email( $ip, $stats, $options, $post );
 		}
 		return false;
@@ -51,10 +51,10 @@ class dam_spam_add_to_allow_list {
 		if ( $options['email_request'] === 'N' ) {
 			return false;
 		}
-		if ( !isset( $_GET['ip'] ) ) {
+		if ( !isset( $_POST['ip'] ) ) {
 			return false;
 		}
-		$get_ip = sanitize_text_field( wp_unslash( $_GET['ip'] ) );
+		$get_ip = sanitize_text_field( wp_unslash( $_POST['ip'] ) );
 		$allow_list_requests = $stats['allow_list_requests'];
 		$request = array();
 		foreach ( $allow_list_requests as $r ) {

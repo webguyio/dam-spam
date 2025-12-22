@@ -16,7 +16,13 @@
 			nonce: damSpamAjax.nonce
 		};
 		var params = new URLSearchParams(data).toString();
-		fetch(ajaxurl + '?' + params)
+		fetch(ajaxurl, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: params
+		})
 			.then(function(response) { return response.text(); })
 			.then(damSpamAjaxReturnProcess)
 			.catch(function(error) { console.error('AJAX Error:', error); });
@@ -56,7 +62,13 @@
 			nonce: damSpamAjax.nonce
 		};
 		var params = new URLSearchParams(data).toString();
-		fetch(ajaxurl + '?' + params)
+		fetch(ajaxurl, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: params
+		})
 			.then(function(response) { return response.text(); })
 			.then(damSpamAjaxReturnSpam)
 			.catch(function(error) { console.error('AJAX Error:', error); });

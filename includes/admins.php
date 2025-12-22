@@ -158,7 +158,7 @@ function dam_spam_sfs_handle_ajax_sub( $data ) {
 	if ( !current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	if ( !isset( $_GET['nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'dam_spam_ajax' ) ) {
+	if ( !isset( $_POST['nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'dam_spam_ajax' ) ) {
 		wp_die( esc_html__( 'Security check failed', 'dam-spam' ) );
 	}
 	$options = get_option( 'dam_spam_options' );
@@ -308,24 +308,24 @@ function dam_spam_sfs_handle_process( $data ) {
 	if ( !current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	if ( !isset( $_GET['nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'dam_spam_ajax' ) ) {
+	if ( !isset( $_POST['nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'dam_spam_ajax' ) ) {
 		wp_die( esc_html__( 'Security check failed', 'dam-spam' ) );
 	}
 	dam_spam_sfs_watch( $data );
 }
 
-// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce verified in calling function dam_spam_sfs_handle_process()
+// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in calling function dam_spam_sfs_handle_process()
 function dam_spam_sfs_watch( $data ) {
-	if ( !array_key_exists( 'func', $_GET ) ) {
+	if ( !array_key_exists( 'func', $_POST ) ) {
 		esc_html_e( ' Function Not Found', 'dam-spam' );
 		exit();
 	}
 	$icons = dam_spam_get_icon_urls();
 	extract( $icons );
-	$ip        = isset( $_GET['ip'] ) ? sanitize_text_field( wp_unslash( $_GET['ip'] ) ) : '';
-	$email     = isset( $_GET['email'] ) ? sanitize_email( wp_unslash( $_GET['email'] ) ) : '';
-	$container = isset( $_GET['cont'] ) ? sanitize_text_field( wp_unslash( $_GET['cont'] ) ) : '';
-	$func      = isset( $_GET['func'] ) ? sanitize_text_field( wp_unslash( $_GET['func'] ) ) : '';
+	$ip        = isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '';
+	$email     = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+	$container = isset( $_POST['cont'] ) ? sanitize_text_field( wp_unslash( $_POST['cont'] ) ) : '';
+	$func      = isset( $_POST['func'] ) ? sanitize_text_field( wp_unslash( $_POST['func'] ) ) : '';
 	$options   = dam_spam_get_options();
 	$stats     = dam_spam_get_stats();
 	$answer    = array();
@@ -409,6 +409,7 @@ function dam_spam_sfs_watch( $data ) {
 			exit();
 	}
 }
+// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 function dam_spam_sfs_ip_column( $value, $column_name, $user_id ) {
 	$icons = dam_spam_get_icon_urls();

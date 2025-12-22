@@ -3,7 +3,7 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 0.8
+Version: 0.9
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -21,7 +21,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DAM_SPAM_VERSION', '0.8' );
+define( 'DAM_SPAM_VERSION', '0.9' );
 define( 'DAM_SPAM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'DAM_SPAM_PLUGIN_FILE', plugin_dir_path( __FILE__ ) );
 

@@ -5,8 +5,8 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.Security.NonceVerification.Missing -- Redirect nonce verified on line 27; challenge form nonce verified on line 60; Contact Form 7 and CAPTCHA responses don't require nonce
 class dam_spam_challenge extends dam_spam_module {
-	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Form inputs sanitized before nonce verification
 	public function process( $ip, &$stats = array(), &$options = array(), &$post = array() ) {
 		$ip = dam_spam_get_ip();
 		$stats = dam_spam_get_stats();
@@ -23,7 +23,11 @@ class dam_spam_challenge extends dam_spam_module {
 					}
 				}
 				return wp_json_encode( $sanitized_post );
-			} else {
+			}
+			if ( !empty( $_POST ) ) {
+				if ( !isset( $_POST['dam_spam_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_nonce'] ) ), 'dam_spam_redirect' ) ) {
+					wp_die( esc_html__( 'Security check failed', 'dam-spam' ), 403 );
+				}
 				wp_safe_redirect( $options['redirect_url'], 307 );
 				exit();
 			}
