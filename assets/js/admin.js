@@ -6,6 +6,7 @@
 	function damSpamAjaxProcess(sip, contx, sfunc, url, email) {
 		email = email || '';
 		damSpamAjaxWho = contx;
+		var func_nonce = damSpamAjax.func_nonces[sfunc] || '';
 		var data = {
 			action: 'dam_spam_sfs_process',
 			ip: sip,
@@ -13,7 +14,8 @@
 			cont: contx,
 			func: sfunc,
 			ajax_url: url,
-			nonce: damSpamAjax.nonce
+			nonce: damSpamAjax.nonce,
+			func_nonce: func_nonce
 		};
 		var params = new URLSearchParams(data).toString();
 		fetch(ajaxurl, {

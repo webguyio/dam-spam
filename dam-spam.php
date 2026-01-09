@@ -3,12 +3,11 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 0.9
+Version: 1.0
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
 License URI: https://www.gnu.org/licenses/gpl.html
-Domain Path: /languages
 Text Domain: dam-spam
 */
 
@@ -21,7 +20,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DAM_SPAM_VERSION', '0.9' );
+define( 'DAM_SPAM_VERSION', '1.0' );
 define( 'DAM_SPAM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'DAM_SPAM_PLUGIN_FILE', plugin_dir_path( __FILE__ ) );
 
@@ -56,8 +55,8 @@ function dam_spam_admin_notice() {
 	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 	$admin_url = $protocol . '://' . $http_host . $request_uri;
 	$param = ( count( $_GET ) ) ? '&' : '?';
-	
-	if ( ! get_user_meta( $user_id, 'dam_spam_notice_dismissed_2025' ) && current_user_can( 'manage_options' ) ) {
+
+	if ( !get_user_meta( $user_id, 'dam_spam_notice_dismissed_2025' ) && current_user_can( 'manage_options' ) ) {
 		$dismiss_url = wp_nonce_url( $admin_url . $param . 'dismiss', 'dismiss_notice' );
 		echo '<div class="notice notice-info"><p><a href="' . esc_url( $dismiss_url ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'Thank you for helping us Dam Spam!', 'dam-spam' ) . '</strong></big><p><a href="https://damspam.com/donations" class="button-primary" style="border-color:#c6ac40;background:#c6ac40" target="_blank">' . esc_html__( 'I Need Your Help', 'dam-spam' ) . '</a></p></div>';
 	}
@@ -86,7 +85,7 @@ function dam_spam_wc_admin_notice() {
 		$admin_url = $protocol . '://' . $http_host . $request_uri;
 		$param = ( count( $_GET ) ) ? '&' : '?';
 		if ( !get_user_meta( $user_id, 'dam_spam_wc_notice_dismissed' ) && current_user_can( 'manage_options' ) ) {
-			echo '<div class="notice notice-info"><p style="color:purple"><a href="' . esc_url( $admin_url . $param . 'dam-spam-wc-dismiss' ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a>' . esc_html__( '<big><strong>WooCommerce Detected</strong></big> | We recommend <a href="admin.php?page=dam-spam-protections">adjusting these options</a> if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ) . '</p></div>';
+			echo '<div class="notice notice-info"><p style="color:purple"><a href="' . esc_url( $admin_url . $param . 'dam-spam-wc-dismiss' ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'WooCommerce Detected', 'dam-spam' ) . '</strong></big> | ' . sprintf( esc_html__( 'We recommend %sadjusting these options%s if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ), '<a href="admin.php?page=dam-spam-protections">', '</a>' ) . '</p></div>';
 		}
 	}
 }
@@ -578,7 +577,7 @@ add_filter( 'authenticate', 'dam_spam_login_captcha_verify', 99 );
 function dam_spam_login_captcha_verify( $user ) {
 	$options = dam_spam_get_options();
 	if ( !isset( $options['form_captcha_login'] ) or $options['form_captcha_login'] !== 'Y' ) {
-		return $user;	
+		return $user;
 	}
 	$response = dam_spam_captcha_verify();
 	if ( $response !== true ) {
@@ -591,7 +590,7 @@ add_filter( 'registration_errors', 'dam_spam_registration_captcha_verify', 10 );
 function dam_spam_registration_captcha_verify( $errors ) {
 	$options = dam_spam_get_options();
 	if ( !isset( $options['form_captcha_registration'] ) or $options['form_captcha_registration'] !== 'Y' ) {
-		return $errors;	
+		return $errors;
 	}
 	$response = dam_spam_captcha_verify();
 	if ( $response !== true ) {
@@ -604,7 +603,7 @@ add_filter( 'pre_comment_approved', 'dam_spam_comment_captcha_verify', 99, 1 );
 function dam_spam_comment_captcha_verify( $approved ) {
 	$options = dam_spam_get_options();
 	if ( !isset( $options['form_captcha_comment'] ) or $options['form_captcha_comment'] !== 'Y' ) {
-		return $approved;	
+		return $approved;
 	}
 	$response = dam_spam_captcha_verify();
 	if ( $response !== true ) {
@@ -637,7 +636,7 @@ function dam_spam_user_reg_filter( $user_login ) {
 		exit();
 	}
 	$reason = dam_spam_load( 'check_periods', dam_spam_get_ip(), $stats, $options, $post );
-	if ( $reason !== false ) { 
+	if ( $reason !== false ) {
 		wp_die( 'Registration Access Blocked', esc_html__( 'Login Access Blocked', 'dam-spam' ), array( 'response' => 403 ) );
 	}
 	$reason = dam_spam_check_white();

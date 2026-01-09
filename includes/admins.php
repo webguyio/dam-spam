@@ -37,7 +37,16 @@ add_action( 'admin_enqueue_scripts', 'dam_spam_sfs_handle_ajax' );
 function dam_spam_sfs_handle_ajax() {
 	wp_enqueue_script( 'dam-spam', DAM_SPAM_PLUGIN_URL . 'assets/js/admin.js', array(), DAM_SPAM_VERSION, false );
 	wp_localize_script( 'dam-spam', 'damSpamAjax', array(
-		'nonce' => wp_create_nonce( 'dam_spam_ajax' )
+		'nonce' => wp_create_nonce( 'dam_spam_ajax' ),
+		'func_nonces' => array(
+			'add_white' => wp_create_nonce( 'dam_spam_process_add_white' ),
+			'add_black' => wp_create_nonce( 'dam_spam_process_add_black' ),
+			'delete_gcache' => wp_create_nonce( 'dam_spam_process_delete_gcache' ),
+			'delete_bcache' => wp_create_nonce( 'dam_spam_process_delete_bcache' ),
+			'delete_wl_row' => wp_create_nonce( 'dam_spam_process_delete_wl_row' ),
+			'delete_wlip' => wp_create_nonce( 'dam_spam_process_delete_wlip' ),
+			'delete_wlem' => wp_create_nonce( 'dam_spam_process_delete_wlem' ),
+		),
 	) );
 }
 
@@ -310,6 +319,14 @@ function dam_spam_sfs_handle_process( $data ) {
 	}
 	if ( !isset( $_POST['nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'dam_spam_ajax' ) ) {
 		wp_die( esc_html__( 'Security check failed', 'dam-spam' ) );
+	}
+	$func = isset( $_POST['func'] ) ? sanitize_text_field( wp_unslash( $_POST['func'] ) ) : '';
+	if ( empty( $func ) ) {
+		wp_die( esc_html__( 'Function not specified', 'dam-spam' ) );
+	}
+	$func_nonce = isset( $_POST['func_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['func_nonce'] ) ) : '';
+	if ( !wp_verify_nonce( $func_nonce, 'dam_spam_process_' . $func ) ) {
+		wp_die( esc_html__( 'Invalid function nonce', 'dam-spam' ) );
 	}
 	dam_spam_sfs_watch( $data );
 }
