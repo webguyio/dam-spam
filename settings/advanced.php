@@ -38,20 +38,20 @@ function dam_spam_advanced_menu() {
 		$dam_spam_login_type_default = "checked='checked'";
 	}
 	$dam_spam_honeypot_cf7 = '';
-	if ( get_option( 'dam_spam_honeypot_cf7', 'yes' ) === 'yes' && is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ) {
+	if ( get_option( 'dam_spam_honeypot_cf7' ) === 'yes' && is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ) {
 		$dam_spam_honeypot_cf7 = "checked='checked'";
 	}
 	$dam_spam_honeypot_bbpress = '';
-	if ( get_option( 'dam_spam_honeypot_bbpress', 'yes' ) === 'yes' && is_plugin_active( 'bbpress/bbpress.php' ) ) {
+	if ( get_option( 'dam_spam_honeypot_bbpress' ) === 'yes' && is_plugin_active( 'bbpress/bbpress.php' ) ) {
 		$dam_spam_honeypot_bbpress = "checked='checked'";
 	}
 	$dam_spam_honeypot_elementor = '';
-	if ( get_option( 'dam_spam_honeypot_elementor', 'yes' ) === 'yes' && is_plugin_active( 'elementor/elementor.php' ) ) {
+	if ( get_option( 'dam_spam_honeypot_elementor' ) === 'yes' && is_plugin_active( 'elementor/elementor.php' ) ) {
 		$dam_spam_honeypot_elementor = "checked='checked'";
 	}
 	$theme = wp_get_theme();
 	$dam_spam_honeypot_divi = '';
-	if ( get_option( 'dam_spam_honeypot_divi', 'yes' ) === 'yes' && ( $theme->name === 'Divi' || $theme->parent_theme === 'Divi' ) ) {
+	if ( get_option( 'dam_spam_honeypot_divi' ) === 'yes' && ( $theme->name === 'Divi' || $theme->parent_theme === 'Divi' ) ) {
 		$dam_spam_honeypot_divi = "checked='checked'";
 	}
 	?>
@@ -107,7 +107,7 @@ function dam_spam_advanced_menu() {
 								// translators: Label before the lockout duration field
 								esc_html_e( 'lockout the account for', 'dam-spam' );
 								?>
-								<input type="text" name="dam_spam_login_lockout_duration" id="dam_spam_login_lockout_duration" class="dam-spam-small-box" value="<?php echo esc_attr( get_option( 'dam_spam_login_lockout_duration', 24 ) ); ?>"> 
+								<input type="text" name="dam_spam_login_lockout_duration" id="dam_spam_login_lockout_duration" class="dam-spam-small-box" value="<?php echo esc_attr( get_option( 'dam_spam_login_lockout_duration', 24 ) ); ?>">
 								<select name="dam_spam_login_lockout_unit" id="dam_spam_login_lockout_unit" class="dam-spam-small-dropbox">
 									<option value="minute" <?php selected( get_option( 'dam_spam_login_lockout_unit', 'hour' ), 'minute' ); ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
 									<option value="hour" <?php selected( get_option( 'dam_spam_login_lockout_unit', 'hour' ), 'hour' ); ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
@@ -179,9 +179,10 @@ function dam_spam_advanced_menu() {
 								<?php esc_html_e( 'Divi Forms', 'dam-spam' ); ?>
 							</label>
 						</div>
+						<p><input type="hidden" name="dam_spam_honeypot_placeholder" value="dam_spam_honeypot"></p>
 					</div>
 					<hr>
-					<div class="inside">			
+					<div class="inside">
 						<p>
 							<?php wp_nonce_field( 'dam_spam_advanced_settings', 'dam_spam_advanced_settings_nonce' ); ?>
 							<?php submit_button( esc_html__( 'Save Changes', 'dam-spam' ), 'primary', 'submit', false ); ?>
@@ -345,7 +346,7 @@ function dam_spam_contact_form_shortcode( $atts ) {
 	return $output;
 }
 
-if ( get_option( 'dam_spam_honeypot_cf7', 'yes' ) === 'yes' ) {
+if ( get_option( 'dam_spam_honeypot_cf7' ) === 'yes' ) {
 	add_filter( 'wpcf7_form_elements', 'dam_spam_cf7_add_honeypot', 10, 1 );
 	function dam_spam_cf7_add_honeypot( $form ) {
 		$html  = '';
@@ -373,7 +374,7 @@ if ( get_option( 'dam_spam_honeypot_cf7', 'yes' ) === 'yes' ) {
 	}
 }
 
-if ( get_option( 'dam_spam_honeypot_bbpress', 'yes' ) === 'yes' ) {
+if ( get_option( 'dam_spam_honeypot_bbpress' ) === 'yes' ) {
 	add_action( 'bbp_theme_before_reply_form_submit_wrapper', 'dam_spam_bbp_add_honeypot' );
 	add_action( 'bbp_theme_before_topic_form_submit_wrapper', 'dam_spam_bbp_add_honeypot' );
 	function dam_spam_bbp_add_honeypot() {
@@ -396,9 +397,13 @@ if ( get_option( 'dam_spam_honeypot_bbpress', 'yes' ) === 'yes' ) {
 	}
 }
 
-if ( get_option( 'dam_spam_honeypot_elementor', 'yes' ) === 'yes' ) {
+if ( get_option( 'dam_spam_honeypot_elementor' ) === 'yes' ) {
 	add_action( 'elementor/widget/render_content', 'dam_spam_elementor_add_honeypot', 10, 2 );
+	add_action( 'elementor_pro/forms/validation', 'dam_spam_elementor_verify_honeypot', 10, 2 );
 	function dam_spam_elementor_add_honeypot( $content, $widget ) {
+		if ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
+			return $content;
+		}
 		if ( 'form' === $widget->get_name() ) {
 			$html    = '';
 			$html   .= '<div class="elementor-field-type-text">';
@@ -410,7 +415,6 @@ if ( get_option( 'dam_spam_honeypot_elementor', 'yes' ) === 'yes' ) {
 		}
 		return $content;
 	}
-	add_action( 'elementor_pro/forms/validation', 'dam_spam_elementor_verify_honeypot', 10, 2 );
 	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Elementor honeypot verification hook
 	function dam_spam_elementor_verify_honeypot( $record, $ajax_handler ) {
 		$form_fields = isset( $_POST['form_fields'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['form_fields'] ) ) : array();
@@ -421,30 +425,43 @@ if ( get_option( 'dam_spam_honeypot_elementor', 'yes' ) === 'yes' ) {
 	}
 }
 
-if ( get_option( 'dam_spam_honeypot_divi', 'yes' ) === 'yes' ) {
-	add_filter( 'et_module_shortcode_output', 'dam_spam_et_add_honeypot', 20, 3 );
-	function dam_spam_et_add_honeypot( $output, $render_slug, $module ) {
-		if ( isset( $_POST['et_pb_contact_your_website'] ) && sanitize_url( wp_unslash( $_POST['et_pb_contact_your_website'] ) ) === 'https://example.com/' ) {
-			unset( $_POST['et_pb_contact_your_website'] );
-			$post_keys = array_keys( $_POST );
-			$post_last_key = !empty( $post_keys ) ? sanitize_key( end( $post_keys ) ) : '';
-			if ( !empty( $post_last_key ) && isset( $_POST[ $post_last_key ] ) ) {
-				$form_json = isset( $_POST[$post_last_key] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST[$post_last_key] ) ) ) : null;
-				if ( is_array( $form_json ) ) {
-					array_pop( $form_json );
-					$_POST[ $post_last_key ] = wp_json_encode( $form_json );
+if ( get_option( 'dam_spam_honeypot_divi' ) === 'yes' ) {
+	add_action( 'init', 'dam_spam_divi_contact_verify_honeypot_early', 1 );
+	function dam_spam_divi_contact_verify_honeypot_early() {
+		if ( isset( $_POST['your-website'] ) ) {
+			$your_website = sanitize_url( wp_unslash( $_POST['your-website'] ) );
+			if ( $your_website !== 'https://example.com/' ) {
+				wp_die( esc_html__( 'Invalid submission. Please refresh the page and try again.', 'dam-spam' ) );
+			}
+			unset( $_POST['your-website'] );
+			foreach ( $_POST as $key => $value ) {
+				if ( strpos( $key, 'et_pb_contact_email_fields_' ) === 0 ) {
+					$form_json = json_decode( str_replace( '\\', '', $value ), true );
+					if ( is_array( $form_json ) ) {
+						foreach ( $form_json as $index => $field ) {
+							if ( isset( $field['field_id'] ) && $field['field_id'] === 'your-website' ) {
+								unset( $form_json[$index] );
+								$_POST[$key] = wp_json_encode( array_values( $form_json ) );
+								break;
+							}
+						}
+					}
 				}
 			}
 		}
+	}
+	add_filter( 'et_module_shortcode_output', 'dam_spam_et_add_honeypot', 20, 3 );
+	function dam_spam_et_add_honeypot( $output, $render_slug, $module ) {
+		if ( function_exists( 'et_fb_is_enabled' ) && et_fb_is_enabled() ) {
+			return $output;
+		}
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['et_fb_ajax_nonce'] ) ) {
+			return $output;
+		}
 		$html = '';
 		if ( $render_slug === 'et_pb_contact_form' ) {
-			$html  .= '<p class="et_pb_contact_field et_pb_contact_your_website">';
-			$html  .= '<label for="et_pb_contact_your_website" class="et_pb_contact_form_label">' . esc_html__( 'Your Website', 'dam-spam' ) . '</label>';
-			$html  .= '<input type="text" name="et_pb_contact_your_website" id="et_pb_contact_your_website" placeholder="' . esc_attr__( 'Your Website', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" required>';
-			$html  .= '</p>';
-			$html  .= '<style>.et_pb_contact_your_website{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
-			$html  .= '<input type="hidden" value="et_contact_proccess" name="et_pb_contactform_submit';
-			$output = str_replace( '<input type="hidden" value="et_contact_proccess" name="et_pb_contactform_submit', $html, $output );
+			$html  .= '<input type="text" name="your-website" id="your-website" value="https://example.com/" autocomplete="off" style="position:absolute;opacity:0;pointer-events:none;left:-9999px" tabindex="-1" aria-hidden="true">';
+			$output = str_replace( '</form>', $html . '</form>', $output );
 		} elseif ( $render_slug === 'et_pb_signup' ) {
 			$html   = '';
 			$html  .= '<p class="et_pb_signup_custom_field et_pb_signup_your_website et_pb_newsletter_field et_pb_contact_field_last et_pb_contact_field_last_tablet et_pb_contact_field_last_phone">';
@@ -456,6 +473,19 @@ if ( get_option( 'dam_spam_honeypot_divi', 'yes' ) === 'yes' ) {
 			$output = str_replace( '<p class="et_pb_newsletter_button_wrap">', $html, $output );
 		}
 		return $output;
+	}
+	add_filter( 'et_contact_error_messages', 'dam_spam_divi_contact_verify_honeypot', 10, 1 );
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Divi contact form honeypot verification hook
+	function dam_spam_divi_contact_verify_honeypot( $error_messages ) {
+		if ( isset( $_POST['et_pb_contact_your_website'] ) ) {
+			$your_website = sanitize_url( wp_unslash( $_POST['et_pb_contact_your_website'] ) );
+			if ( $your_website !== 'https://example.com/' ) {
+				$error_messages[] = esc_html__( 'Invalid submission. Please refresh the page and try again.', 'dam-spam' );
+			} else {
+				unset( $_POST['et_pb_contact_your_website'] );
+			}
+		}
+		return $error_messages;
 	}
 	add_action( 'et_pb_newsletter_fieldam_spam_before', 'dam_spam_divi_email_optin_verify_honeypot' );
 	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Divi honeypot verification hook

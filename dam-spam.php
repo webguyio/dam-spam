@@ -85,7 +85,8 @@ function dam_spam_wc_admin_notice() {
 		$admin_url = $protocol . '://' . $http_host . $request_uri;
 		$param = ( count( $_GET ) ) ? '&' : '?';
 		if ( !get_user_meta( $user_id, 'dam_spam_wc_notice_dismissed' ) && current_user_can( 'manage_options' ) ) {
-			echo '<div class="notice notice-info"><p style="color:purple"><a href="' . esc_url( $admin_url . $param . 'dam-spam-wc-dismiss' ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'WooCommerce Detected', 'dam-spam' ) . '</strong></big> | ' . sprintf( esc_html__( 'We recommend %sadjusting these options%s if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ), '<a href="admin.php?page=dam-spam-protections">', '</a>' ) . '</p></div>';
+			// translators: %1$s and %2$s is the link HTML
+			echo '<div class="notice notice-info"><p style="color:purple"><a href="' . esc_url( $admin_url . $param . 'dam-spam-wc-dismiss' ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'WooCommerce Detected', 'dam-spam' ) . '</strong></big> | ' . sprintf( esc_html__( 'We recommend %1$sadjusting these options%2$s if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ), '<a href="admin.php?page=dam-spam-protections">', '</a>' ) . '</p></div>';
 		}
 	}
 }
@@ -140,9 +141,6 @@ function dam_spam_init() {
 		}
 	} else {
 		define( 'DAM_SPAM_MU', $muswitch );
-	}
-	if ( wp_doing_ajax() && is_user_logged_in() && current_user_can( 'edit_posts' ) && !is_admin() ) {
-		return;
 	}
 	if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
 		dam_spam_require( 'includes/admins.php' );

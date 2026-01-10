@@ -140,6 +140,8 @@ There are several optional services you may use that involve sending data to thi
 == Changelog ==
 
 = 1.0 =
+* Fixed Divi compatibility issues
+* Fixed honeypots
 * Fixed CSRF issues
 
 = 0.9 =
