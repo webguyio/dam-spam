@@ -194,6 +194,7 @@ function dam_spam_map_old_to_new_options( $old_options ) {
 			$new_options[$old_key] = $value;
 		}
 	}
+	$new_options['check_credit_card'] = 'Y';
 	$new_options['check_woo_form'] = 'N';
 	$new_options['check_gravity_form'] = 'N';
 	$new_options['check_wp_form'] = 'N';

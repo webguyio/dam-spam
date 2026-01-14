@@ -9,7 +9,7 @@
 	"check_allow_list_email": "Y",
 	"check_allowed_email": "Y",
 	"check_allowed_user_id": "N",
-	
+
 	"_comment_payment": "=== PAYMENT PROCESSOR ALLOW LIST ===",
 	"check_paypal": "Y",
 	"check_stripe": "Y",
@@ -17,20 +17,21 @@
 	"check_braintree": "Y",
 	"check_recurly": "Y",
 	"check_square": "Y",
-	
+
 	"_comment_hosting": "=== HOSTING/CLOUD ALLOW LIST ===",
 	"check_aws": "N",
 	"check_cloudflare": "Y",
 	"check_google": "Y",
-	
+
 	"_comment_security": "=== SECURITY CHECKS ===",
 	"check_scripts": "Y",
 	"check_valid_ip": "Y",
 	"check_form": "N",
+	"check_credit_card": "Y",
 	"check_woo_form": "N",
 	"check_gravity_form": "N",
 	"check_wp_form": "N",
-	
+
 	"_comment_blocklist": "=== BLOCK LIST CHECKS ===",
 	"check_404": "Y",
 	"check_accept": "Y",
@@ -41,7 +42,7 @@
 	"check_blocked_user_id": "N",
 	"check_blocked_ip": "Y",
 	"check_invalid_ip": "Y",
-	
+
 	"_comment_content": "=== CONTENT ANALYSIS ===",
 	"check_bbcode": "Y",
 	"check_exploits": "Y",
@@ -53,12 +54,12 @@
 	"check_urls": "Y",
 	"check_url_short": "Y",
 	"check_tld": "Y",
-	
+
 	"_comment_behavior": "=== BEHAVIORAL CHECKS ===",
 	"check_session": "Y",
 	"check_referer": "Y",
 	"check_multi": "Y",
-	
+
 	"_comment_external": "=== EXTERNAL API CHECKS ===",
 	"check_sfs": "Y",
 	"check_honeypot": "Y",
@@ -67,17 +68,17 @@
 	"check_disposable": "Y",
 	"check_dnsbl": "Y",
 	"check_google_safe": "N",
-	
+
 	"_comment_network": "=== NETWORK/HOSTING CHECKS ===",
 	"check_amazon": "N",
 	"check_hosting": "Y",
 	"check_vpn": "N",
 	"check_tor": "N",
-	
+
 	"_comment_advanced": "=== ADVANCED CHECKS ===",
 	"check_ubiquity": "Y",
 	"dam_spam_private_mode": "N",
-	
+
 	"_comment_control": "=== CONTROL SETTINGS ===",
 	"check_email": "Y",
 	"check_ip": "Y",
@@ -97,7 +98,7 @@
 	"check_spoof": "N",
 	"redirect_url": "",
 	"reject_message": "Access Blocked",
-	
+
 	"_comment_api_keys": "=== API KEYS ===",
 	"apikey": "",
 	"honeyapi": "",
@@ -107,7 +108,7 @@
 	"recaptchaapisite": "",
 	"hcaptchaapisecret": "",
 	"hcaptchaapisite": "",
-	
+
 	"_comment_thresholds": "=== THRESHOLDS ===",
 	"sesstime": 4,
 	"sfsfreq": 0,
@@ -118,14 +119,14 @@
 	"botage": 9999,
 	"multicount": 5,
 	"multitime": 3,
-	
+
 	"_comment_cache": "=== CACHE SETTINGS ===",
 	"dam_spam_cache": 25,
 	"dam_spam_hist": 25,
 	"dam_spam_good": 2,
 	"dam_spam_cache_em": 4,
 	"log_file_size": 0,
-	
+
 	"_comment_lists": "=== DEFAULT LISTS ===",
 	"block_list": [],
 	"allow_list": [],

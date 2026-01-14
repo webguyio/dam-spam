@@ -30,8 +30,6 @@ add_filter( 'comment_row_actions', 'dam_spam_row', 1, 2 );
 add_action( 'wp_ajax_dam_spam_sfs_sub', 'dam_spam_sfs_handle_ajax_sub' );
 add_action( 'wp_ajax_dam_spam_sfs_process', 'dam_spam_sfs_handle_process' );
 add_action( 'manage_users_custom_column', 'dam_spam_sfs_ip_column', 10, 3 );
-if ( function_exists( 'register_uninstall_hook' ) ) {
-}
 
 add_action( 'admin_enqueue_scripts', 'dam_spam_sfs_handle_ajax' );
 function dam_spam_sfs_handle_ajax() {

@@ -45,6 +45,7 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 		'check_akismet',
 		'filter_registrations',
 		'check_form',
+		'check_credit_card',
 		'check_woo_form',
 		'check_gravity_form',
 		'check_wp_form',
@@ -105,23 +106,30 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		</div>
 		<br>
 		<div class="checkbox switcher">
+			<label class="dam-spam-subhead" for="check_credit_card">
+				<input class="dam_spam_toggle" type="checkbox" id="check_credit_card" name="check_credit_card" value="Y" <?php if ( $check_credit_card == 'Y' ) { echo 'checked="checked"'; } ?> <?php if ( $check_form == 'Y' ) { echo 'disabled'; } ?>><span><small></small></span>
+				<small><?php esc_html_e( 'Skip Payment Forms', 'dam-spam' ); ?></small>
+			</label>
+		</div>
+		<br>
+		<div class="checkbox switcher">
 			<label class="dam-spam-subhead" for="check_woo_form">
 				<input class="dam_spam_toggle" type="checkbox" id="check_woo_form" name="check_woo_form" value="Y" <?php if ( $check_woo_form == 'Y' ) { echo 'checked="checked"'; } ?> <?php if ( $check_form == 'Y' ) { echo 'disabled'; } ?>><span><small></small></span>
-				<small><?php esc_html_e( 'Ignore WooCommerce Forms', 'dam-spam' ); ?></small>
+				<small><?php esc_html_e( 'Skip WooCommerce Forms', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 	 	<br>
 		<div class="checkbox switcher">
 			<label class="dam-spam-subhead" for="check_gravity_form">
 				<input class="dam_spam_toggle" type="checkbox" id="check_gravity_form" name="check_gravity_form" value="Y" <?php if ( $check_gravity_form == 'Y' ) { echo 'checked="checked"'; } ?> <?php if ( $check_form == 'Y' ) { echo 'disabled'; } ?>><span><small></small></span>
-				<small><?php esc_html_e( 'Ignore Gravity Forms', 'dam-spam' ); ?></small>
+				<small><?php esc_html_e( 'Skip Gravity Forms', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
 			<label class="dam-spam-subhead" for="check_wp_form">
 				<input class="dam_spam_toggle" type="checkbox" id="check_wp_form" name="check_wp_form" value="Y" <?php if ( $check_wp_form == 'Y' ) { echo 'checked="checked"'; } ?> <?php if ( $check_form == 'Y' ) { echo 'disabled'; } ?>><span><small></small></span>
-				<small><?php esc_html_e( 'Ignore WP Forms', 'dam-spam' ); ?></small>
+				<small><?php esc_html_e( 'Skip WP Forms', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>

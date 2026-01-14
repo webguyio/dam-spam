@@ -110,11 +110,13 @@
 
 	function damSpamCheckFormStatus() {
 		var checkForm = document.getElementById('check_form');
+		var checkCreditCard = document.getElementById('check_credit_card');
 		var checkWooForm = document.getElementById('check_woo_form');
 		var checkGravityForm = document.getElementById('check_gravity_form');
 		var checkWpForm = document.getElementById('check_wp_form');
-		if (checkForm && checkWooForm && checkGravityForm && checkWpForm) {
+		if (checkForm && checkCreditCard && checkWooForm && checkGravityForm && checkWpForm) {
 			var disabled = checkForm.checked;
+			checkCreditCard.disabled = disabled;
 			checkWooForm.disabled = disabled;
 			checkGravityForm.disabled = disabled;
 			checkWpForm.disabled = disabled;

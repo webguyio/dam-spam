@@ -18,9 +18,22 @@ function dam_spam_advanced_menu() {
 	if ( get_option( 'dam_spam_enable_firewall', '' ) === 'yes' ) {
 		$dam_spam_firewall_setting = "checked='checked'";
 	}
+	$existing_login_pages = false;
+	$login_page = get_page_by_path( 'login' );
+	$register_page = get_page_by_path( 'register' );
+	$forgot_page = get_page_by_path( 'forgot' );
+	if ( ( $login_page && get_option( 'dam_spam_enable_custom_login', '' ) !== 'yes' ) ||
+	     ( $register_page && get_option( 'dam_spam_enable_custom_login', '' ) !== 'yes' ) ||
+	     ( $forgot_page && get_option( 'dam_spam_enable_custom_login', '' ) !== 'yes' ) ) {
+		$existing_login_pages = true;
+	}
 	$dam_spam_login_setting = '';
+	$dam_spam_login_disabled = '';
 	if ( get_option( 'dam_spam_enable_custom_login', '' ) === 'yes' ) {
 		$dam_spam_login_setting = "checked='checked'";
+	}
+	if ( $existing_login_pages ) {
+		$dam_spam_login_disabled = "disabled='disabled'";
 	}
 	$dam_spam_login_attempts = '';
 	if ( get_option( 'dam_spam_login_attempts', '' ) === 'yes' ) {
@@ -75,9 +88,14 @@ function dam_spam_advanced_menu() {
 					<hr>
 					<div class="inside">
 						<h3><span><?php esc_html_e( 'Login Settings', 'dam-spam' ); ?></span></h3>
+						<?php if ( $existing_login_pages ): ?>
+							<div class="dam-spam-info-box">
+								<p><strong><?php esc_html_e( 'Custom login pages detected. You may have added these manually or you are using a plugin that auto creates them.', 'dam-spam' ); ?></strong></p>
+							</div>
+						<?php endif; ?>
 						<div class="checkbox switcher">
 							<label for="dam_spam_login_setting">
-								<input type="checkbox" name="dam_spam_login_setting" id="dam_spam_login_setting" value="yes" <?php echo esc_attr( $dam_spam_login_setting ); ?>>
+								<input type="checkbox" name="dam_spam_login_setting" id="dam_spam_login_setting" value="yes" <?php echo esc_attr( $dam_spam_login_setting ); ?> <?php echo esc_attr( $dam_spam_login_disabled ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Enable themed registration and login pages (disables the default wp-login.php).', 'dam-spam' ); ?>
 							</label>

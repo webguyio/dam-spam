@@ -162,7 +162,7 @@ function dam_spam_multisite_menu() {
 }
 
 function dam_spam_include_setting( $file ) {
-	$ppath = plugin_dir_path( __FILE__ );
+	$ppath = DAM_SPAM_PLUGIN_FILE;
 	if ( file_exists( $ppath . $file ) ) {
 		require_once( $ppath . $file );
 	} else {

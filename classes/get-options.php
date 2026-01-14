@@ -18,6 +18,7 @@ class dam_spam_get_options {
 			'check_misc_allow_list'	 => 'Y',
 			'check_paypal'			 => 'Y',
 			'check_form'			 => ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) ? 'Y' : 'N',
+			'check_credit_card'		 => 'Y',
 			'check_woo_form'		 => 'N',
 			'check_gravity_form'	 => 'N',
 			'check_wp_form'			 => 'N',
