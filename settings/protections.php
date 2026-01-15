@@ -96,7 +96,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<div id="formchecking" class="mainsection"><?php esc_html_e( 'Form Checking', 'dam-spam' ); ?></div>
 		<?php if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			echo '<p><span style="color:purple">' . esc_html__( 'WooCommerce detected. If you experience any issues using WooCommerce and Dam Spam together, you may need to adjust these settings.', 'dam-spam' ) . '</span></p>';
+			echo '<div class="notice inline"><p style="color:purple">' . esc_html__( 'WooCommerce detected. If you experience any issues using WooCommerce and Dam Spam together, you may need to adjust these settings.', 'dam-spam' ) . '</p></div>';
 		} ?>
 		<div class="checkbox switcher">
 			<label class="dam-spam-subhead" for="check_form">

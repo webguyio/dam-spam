@@ -33,7 +33,7 @@ add_action( 'manage_users_custom_column', 'dam_spam_sfs_ip_column', 10, 3 );
 
 add_action( 'admin_enqueue_scripts', 'dam_spam_sfs_handle_ajax' );
 function dam_spam_sfs_handle_ajax() {
-	wp_enqueue_script( 'dam-spam', DAM_SPAM_PLUGIN_URL . 'assets/js/admin.js', array(), DAM_SPAM_VERSION, false );
+	wp_enqueue_script( 'dam-spam', DAM_SPAM_URL . 'assets/js/admin.js', array(), DAM_SPAM_VERSION, false );
 	wp_localize_script( 'dam-spam', 'damSpamAjax', array(
 		'nonce' => wp_create_nonce( 'dam_spam_ajax' ),
 		'func_nonces' => array(
@@ -87,9 +87,9 @@ function dam_spam_row( $actions, $comment ) {
 	$email	  = urlencode( $comment->comment_author_email );
 	$ip	      = $comment->comment_author_ip;
 	$action   = '';
-	$whois	  = DAM_SPAM_PLUGIN_URL . 'assets/images/whois.png';
+	$whois	  = DAM_SPAM_URL . 'assets/images/whois.png';
 	$who	  = "<a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://whois.domaintools.com/$ip\"><img src=\"$whois\" class=\"icon-action\"></a>";
-	$stop	  = DAM_SPAM_PLUGIN_URL . 'assets/images/stop.png';
+	$stop	  = DAM_SPAM_URL . 'assets/images/stop.png';
 	$hand	  = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/search.php?q=$ip\"><img src=\"$stop\" class=\"icon-action\"> </a>";
 	$action  .= " $who $hand";
 	$email = urlencode( $comment->comment_author_email );
@@ -138,8 +138,8 @@ function dam_spam_row( $actions, $comment ) {
 		$href	 = "href=\"#\"";
 		$onclick = "onclick=\"damSpamAjaxReportSpam(this,'$ID','$blog','$ajaxurl');return false;\"";
 	}
-	$action .= '<span title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" onclick="damSpamAjaxProcess(\'' . esc_js( $comment->comment_author_ip ) . '\',\'log\',\'add_black\',\'' . esc_js( $ajaxurl ) . '\');return false;"><img src="' . esc_url( DAM_SPAM_PLUGIN_URL . 'assets/images/down.png' ) . '" class="icon-action"></span> ';
-	$action .= '<span title="' . esc_attr__( 'Add to Allow List', 'dam-spam' ) . '" onclick="damSpamAjaxProcess(\'' . esc_js( $comment->comment_author_ip ) . '\',\'log\',\'add_white\',\'' . esc_js( $ajaxurl ) . '\');return false;"><img src="' . esc_url( DAM_SPAM_PLUGIN_URL . 'assets/images/up.png' ) . '" class="icon-action"> | </span>';
+	$action .= '<span title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" onclick="damSpamAjaxProcess(\'' . esc_js( $comment->comment_author_ip ) . '\',\'log\',\'add_black\',\'' . esc_js( $ajaxurl ) . '\');return false;"><img src="' . esc_url( DAM_SPAM_URL . 'assets/images/down.png' ) . '" class="icon-action"></span> ';
+	$action .= '<span title="' . esc_attr__( 'Add to Allow List', 'dam-spam' ) . '" onclick="damSpamAjaxProcess(\'' . esc_js( $comment->comment_author_ip ) . '\',\'log\',\'add_white\',\'' . esc_js( $ajaxurl ) . '\');return false;"><img src="' . esc_url( DAM_SPAM_URL . 'assets/images/up.png' ) . '" class="icon-action"> | </span>';
 	if ( !empty( $email ) ) {
 		$action .= "<a $exst title=\"" . esc_attr__( 'Report to Stop Forum Spam', 'dam-spam' ) . "\" $target $href $onclick class='delete:the-comment-list:comment-$ID::delete=1 delete vim-d vim-destructive'>" . esc_html__( ' Report to SFS', 'dam-spam' ) . "</a>";
 	}

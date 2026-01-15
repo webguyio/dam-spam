@@ -5,6 +5,10 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// ============================================================================
+// Admin UI
+// ============================================================================
+
 function dam_spam_admin_notice_success() {
 	?>
 	<div class="notice notice-success is-dismissible">
@@ -77,10 +81,12 @@ function dam_spam_advanced_menu() {
 						<h3><span><?php esc_html_e( 'Firewall Settings', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="dam_spam_firewall_setting">
+								<div class="notice notice-warning inline">
+									<p><em><?php esc_html_e( 'For advanced users only: This option will modify your .htaccess file with extra security rules and in some small cases, conflict with your server settings. If you do not understand how to edit your .htaccess file to remove these rules in the event of an error, do not enable.', 'dam-spam' ); ?></em></p>
+								</div>
 								<input type="checkbox" name="dam_spam_firewall_setting" id="dam_spam_firewall_setting" value="yes" <?php echo esc_attr( $dam_spam_firewall_setting ); ?>>
 								<span><small></small></span>
 								<?php esc_html_e( 'Enable Server-side Security Rules', 'dam-spam' ); ?>
-								<p><em><?php esc_html_e( 'For advanced users only: This option will modify your .htaccess file with extra security rules and in some small cases, conflict with your server settings. If you do not understand how to edit your .htaccess file to remove these rules in the event of an error, do not enable.', 'dam-spam' ); ?></em></p>
 							</label>
 						</div>
 						<p><input type="hidden" name="dam_spam_firewall_setting_placeholder" value="dam_spam_firewall_setting"></p>
@@ -89,7 +95,7 @@ function dam_spam_advanced_menu() {
 					<div class="inside">
 						<h3><span><?php esc_html_e( 'Login Settings', 'dam-spam' ); ?></span></h3>
 						<?php if ( $existing_login_pages ): ?>
-							<div class="dam-spam-info-box">
+							<div class="notice inline">
 								<p><strong><?php esc_html_e( 'Custom login pages detected. You may have added these manually or you are using a plugin that auto creates them.', 'dam-spam' ); ?></strong></p>
 							</div>
 						<?php endif; ?>
@@ -263,262 +269,9 @@ function dam_spam_advanced_menu() {
 	<?php
 }
 
-add_filter( 'widget_text', 'do_shortcode' );
-
-add_shortcode( 'dam-spam-contact-form', 'dam_spam_contact_form_shortcode' );
-// phpcs:disable WordPress.Security.NonceVerification.Missing -- Public contact form shortcode with honeypot protection
-function dam_spam_contact_form_shortcode( $atts ) {
-	$atts = shortcode_atts( array(
-		'email'    => '',
-		'accent'   => '',
-		'unstyled' => '',
-	), $atts );
-	ob_start();
-	echo '
-	<script>
-	function nospam() {
-		var message = document.forms["dam-spam-contact-form"]["message"].value;
-		var comment = document.getElementById("comment");
-		var link = message.indexOf("http");
-		if (link > -1) {
-			comment.setCustomValidity("' . esc_html__( 'Links are welcome, but please remove the https:// portion of them.', 'dam-spam' ) . '");
-			comment.reportValidity();
-		} else {
-			comment.setCustomValidity("");
-			comment.reportValidity();
-		}
-	}
-	</script>
-	<form id="dam-spam-contact-form" name="dam-spam-contact-form" method="post" action="#send">
-		<p id="name"><input type="text" name="sign" placeholder="' . esc_attr__( 'Name', 'dam-spam' ) . '" autocomplete="off" size="35" required></p>
-		<p id="email"><input type="email" name="email" placeholder="' . esc_attr__( 'Email', 'dam-spam' ) . '" autocomplete="off" size="35" required></p>
-		<p id="phone"><input type="tel" name="phone" placeholder="' . esc_attr__( 'Phone (optional)', 'dam-spam' ) . '" autocomplete="off" size="35"></p>
-		<p id="url"><input type="url" name="url" placeholder="' . esc_attr__( 'URL', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" size="35" required></p>
-		<p id="message"><textarea id="comment" name="message" placeholder="' . esc_attr__( 'Message', 'dam-spam' ) . '" rows="5" cols="100" onkeyup="nospam()"></textarea></p>
-		<p id="submit"><input type="submit" value="' . esc_attr__( 'Submit', 'dam-spam' ) . '"></p>
-	</form>
-	';
-	if ( $atts['unstyled'] === 'yes' ) {
-		echo '
-		<style>
-		#dam-spam-contact-form #url{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}
-		#send{text-align:center;padding:5%}
-		#send.success{color:green}
-		#send.fail{color:red}
-		</style>
-		';
-	} else {
-		$accent_color = !empty( $atts['accent'] ) ? esc_attr( $atts['accent'] ) : '#007acc';
-		echo '
-		<style>
-		#dam-spam-contact-form, #dam-spam-contact-form *{box-sizing:border-box;transition:all 0.5s ease}
-		#dam-spam-contact-form input, #dam-spam-contact-form textarea{width:100%;font-family:arial,sans-serif;font-size:14px;color:#767676;padding:15px;border:1px solid transparent;background:#f6f6f6}
-		#dam-spam-contact-form input:focus, #dam-spam-contact-form textarea:focus{color:#000;border:1px solid ' . esc_attr( $accent_color ) . '}
-		#dam-spam-contact-form #submit input{display:inline-block;font-size:18px;color:#fff;text-align:center;text-decoration:none;padding:15px 25px;background:' . esc_attr( $accent_color ) . ';cursor:pointer}
-		#dam-spam-contact-form #submit input:hover, #submit input:focus{opacity:0.8}
-		#dam-spam-contact-form #url{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}
-		#send{text-align:center;padding:5%}
-		#send.success{color:green}
-		#send.fail{color:red}
-		</style>
-		';
-	}
-	$url = isset( $_POST['url'] ) ? sanitize_url( wp_unslash( $_POST['url'] ) ) : '';
-	$message = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
-	if ( ( $url === 'https://example.com/' ) && ( stripos( $message, 'http' ) === false ) ) {
-		if ( !empty( $atts['email'] ) ) {
-			$to = sanitize_email( $atts['email'] );
-		} else {
-			$to = sanitize_email( get_option( 'admin_email' ) );
-		}
-		// translators: %s is the website name
-		$subject = sprintf( esc_html__( 'New Message from %s', 'dam-spam' ), esc_html( get_option( 'blogname' ) ) );
-		$name = isset( $_POST['sign'] ) ? sanitize_text_field( wp_unslash( $_POST['sign'] ) ) : '';
-		$email = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
-		$phone = isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '';
-		$body  = '';
-		$body .= esc_html__( 'Name: ', 'dam-spam' );
-		$body .= $name;
-		$body .= "\n";
-		$body .= esc_html__( 'Email: ', 'dam-spam' );
-		$body .= $email;
-		if ( !empty( $phone ) ) {
-			$body .= "\n";
-			$body .= esc_html__( 'Phone: ', 'dam-spam' );
-			$body .= $phone;
-		}
-		$body .= "\n\n";
-		$body .= $message;
-		$body .= "\n";
-		// translators: %1$s is the sender's name, %2$s is the sender's email
-		$headers = sprintf( 'From: %s <%s>', sanitize_text_field( $name ), sanitize_email( $email ) );
-		$success = wp_mail( $to, $subject, $body, $headers );
-		if ( $success ) {
-			print '<p id="send" class="success">' . esc_html__( 'Message Sent Successfully', 'dam-spam' ) . '</p>';
-		} else {
-			print '<p id="send" class="fail">' . esc_html__( 'Message Failed', 'dam-spam' ) . '</p>';
-			exit;
-		}
-	}
-	$output = ob_get_clean();
-	return $output;
-}
-
-if ( get_option( 'dam_spam_honeypot_cf7' ) === 'yes' ) {
-	add_filter( 'wpcf7_form_elements', 'dam_spam_cf7_add_honeypot', 10, 1 );
-	function dam_spam_cf7_add_honeypot( $form ) {
-		$html  = '';
-		$html .= '<p class="dam-spam-user">';
-		$html .= '<label>' . esc_html__( 'Your Website (required)', 'dam-spam' ) . '<br>';
-		$html .= '<span class="wpcf7-form-control-wrap your-website">';
-		$html .= '<input type="text" name="your-website" value="https://example.com/" autocomplete="off" tabindex="-1" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" required>';
-		$html .= '</span>';
-		$html .= '<label>';
-		$html .= '</p>';
-		$html .= '<style>.dam-spam-user{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
-		return $html . $form;
-	}
-	add_filter( 'wpcf7_spam', 'dam_spam_cf7_verify_honeypot', 10, 1 );
-	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Contact Form 7 honeypot verification hook
-	function dam_spam_cf7_verify_honeypot( $spam ) {
-		if ( $spam ) {
-			return $spam;
-		}
-		$your_website = isset( $_POST['your-website'] ) ? sanitize_url( wp_unslash( $_POST['your-website'] ) ) : '';
-		if ( $your_website !== 'https://example.com/' ) {
-			return true;
-		}
-		return $spam;
-	}
-}
-
-if ( get_option( 'dam_spam_honeypot_bbpress' ) === 'yes' ) {
-	add_action( 'bbp_theme_before_reply_form_submit_wrapper', 'dam_spam_bbp_add_honeypot' );
-	add_action( 'bbp_theme_before_topic_form_submit_wrapper', 'dam_spam_bbp_add_honeypot' );
-	function dam_spam_bbp_add_honeypot() {
-		$html  = '';
-		$html .= '<p class="dam-spam-user">';
-		$html .= '<label for="bbp_your-website">' . esc_html__( 'Your Website:', 'dam-spam' ) . '</label><br>';
-		$html .= '<input type="text" value="https://example.com/" autocomplete="off" tabindex="-1" size="40" name="bbp_your-website" id="bbp_your-website" required>';
-		$html .= '</p>';
-		$html .= '<style>.dam-spam-user{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
-		echo wp_kses_post( $html );
-	}
-	add_action( 'bbp_new_reply_pre_extras', 'dam_spam_bbp_verify_honeypot' );
-	add_action( 'bbp_new_topic_pre_extras', 'dam_spam_bbp_verify_honeypot' );
-	// phpcs:disable WordPress.Security.NonceVerification.Missing -- bbPress honeypot verification hook
-	function dam_spam_bbp_verify_honeypot() {
-		$your_website = isset( $_POST['bbp_your-website'] ) ? sanitize_url( wp_unslash( $_POST['bbp_your-website'] ) ) : '';
-		if ( $your_website !== 'https://example.com/' ) {
-			bbp_add_error( 'bbp_throw_error', __( '<strong>ERROR</strong>: Something went wrong!', 'dam-spam' ) );
-		}
-	}
-}
-
-if ( get_option( 'dam_spam_honeypot_elementor' ) === 'yes' ) {
-	add_action( 'elementor/widget/render_content', 'dam_spam_elementor_add_honeypot', 10, 2 );
-	add_action( 'elementor_pro/forms/validation', 'dam_spam_elementor_verify_honeypot', 10, 2 );
-	function dam_spam_elementor_add_honeypot( $content, $widget ) {
-		if ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
-			return $content;
-		}
-		if ( 'form' === $widget->get_name() ) {
-			$html    = '';
-			$html   .= '<div class="elementor-field-type-text">';
-			$html   .= '<input size="40" type="text" value="https://example.com/" autocomplete="off" tabindex="-1" name="form_fields[your-website]" id="form-field-your-website" class="elementor-field elementor-size-sm">';
-			$html   .= '</div>';
-			$html   .= '<style>#form-field-your-website{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
-			$content = str_replace( '<div class="elementor-field-group', $html . '<div class="elementor-field-group', $content );
-			return $content;
-		}
-		return $content;
-	}
-	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Elementor honeypot verification hook
-	function dam_spam_elementor_verify_honeypot( $record, $ajax_handler ) {
-		$form_fields = isset( $_POST['form_fields'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['form_fields'] ) ) : array();
-		$your_website = isset( $form_fields['your-website'] ) ? sanitize_url( $form_fields['your-website'] ) : '';
-		if ( $your_website !== 'https://example.com/' ) {
-			$ajax_handler->add_error( 'your-website', esc_html__( 'Something went wrong!', 'dam-spam' ) );
-		}
-	}
-}
-
-if ( get_option( 'dam_spam_honeypot_divi' ) === 'yes' ) {
-	add_action( 'init', 'dam_spam_divi_contact_verify_honeypot_early', 1 );
-	function dam_spam_divi_contact_verify_honeypot_early() {
-		if ( isset( $_POST['your-website'] ) ) {
-			$your_website = sanitize_url( wp_unslash( $_POST['your-website'] ) );
-			if ( $your_website !== 'https://example.com/' ) {
-				wp_die( esc_html__( 'Invalid submission. Please refresh the page and try again.', 'dam-spam' ) );
-			}
-			unset( $_POST['your-website'] );
-			foreach ( $_POST as $key => $value ) {
-				if ( strpos( $key, 'et_pb_contact_email_fields_' ) === 0 ) {
-					$form_json = json_decode( str_replace( '\\', '', $value ), true );
-					if ( is_array( $form_json ) ) {
-						foreach ( $form_json as $index => $field ) {
-							if ( isset( $field['field_id'] ) && $field['field_id'] === 'your-website' ) {
-								unset( $form_json[$index] );
-								$_POST[$key] = wp_json_encode( array_values( $form_json ) );
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	add_filter( 'et_module_shortcode_output', 'dam_spam_et_add_honeypot', 20, 3 );
-	function dam_spam_et_add_honeypot( $output, $render_slug, $module ) {
-		if ( function_exists( 'et_fb_is_enabled' ) && et_fb_is_enabled() ) {
-			return $output;
-		}
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['et_fb_ajax_nonce'] ) ) {
-			return $output;
-		}
-		$html = '';
-		if ( $render_slug === 'et_pb_contact_form' ) {
-			$html  .= '<input type="text" name="your-website" id="your-website" value="https://example.com/" autocomplete="off" style="position:absolute;opacity:0;pointer-events:none;left:-9999px" tabindex="-1" aria-hidden="true">';
-			$output = str_replace( '</form>', $html . '</form>', $output );
-		} elseif ( $render_slug === 'et_pb_signup' ) {
-			$html   = '';
-			$html  .= '<p class="et_pb_signup_custom_field et_pb_signup_your_website et_pb_newsletter_field et_pb_contact_field_last et_pb_contact_field_last_tablet et_pb_contact_field_last_phone">';
-			$html  .= '<label for="et_pb_signup_your_website" class="et_pb_contact_form_label">' . esc_html__( 'Your Website', 'dam-spam' ) . '</label>';
-			$html  .= '<input type="text" class="input" id="et_pb_signup_your_website" placeholder="' . esc_attr__( 'Your Website', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" data-original_id="your-website" required>';
-			$html  .= '</p>';
-			$html  .= '<style>.et_pb_signup_your_website{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
-			$html  .= '<p class="et_pb_newsletter_button_wrap">';
-			$output = str_replace( '<p class="et_pb_newsletter_button_wrap">', $html, $output );
-		}
-		return $output;
-	}
-	add_filter( 'et_contact_error_messages', 'dam_spam_divi_contact_verify_honeypot', 10, 1 );
-	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Divi contact form honeypot verification hook
-	function dam_spam_divi_contact_verify_honeypot( $error_messages ) {
-		if ( isset( $_POST['et_pb_contact_your_website'] ) ) {
-			$your_website = sanitize_url( wp_unslash( $_POST['et_pb_contact_your_website'] ) );
-			if ( $your_website !== 'https://example.com/' ) {
-				$error_messages[] = esc_html__( 'Invalid submission. Please refresh the page and try again.', 'dam-spam' );
-			} else {
-				unset( $_POST['et_pb_contact_your_website'] );
-			}
-		}
-		return $error_messages;
-	}
-	add_action( 'et_pb_newsletter_fieldam_spam_before', 'dam_spam_divi_email_optin_verify_honeypot' );
-	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Divi honeypot verification hook
-	function dam_spam_divi_email_optin_verify_honeypot() {
-		if ( isset( $_POST['et_custom_fields']['your-website'] ) ) {
-			$your_website = sanitize_url( wp_unslash( $_POST['et_custom_fields']['your-website'] ) );
-			if ( $your_website !== 'https://example.com/' ) {
-				echo '{"error":"Subscription Error: An error occurred, please try later."}';
-				exit;
-			} else {
-				unset( $_POST['et_custom_fields']['your-website'] );
-			}
-		}
-	}
-}
+// ============================================================================
+// Admin Settings
+// ============================================================================
 
 add_action( 'admin_init', 'dam_spam_enable_firewall' );
 function dam_spam_enable_firewall() {
@@ -677,6 +430,57 @@ function dam_spam_enable_custom_login() {
 	}
 }
 
+add_action( 'admin_init', 'dam_spam_limit_login_attempts' );
+function dam_spam_limit_login_attempts() {
+	if ( empty( $_POST['dam_spam_login_setting_placeholder'] ) || 'dam_spam_login_setting' !== $_POST['dam_spam_login_setting_placeholder'] ) {
+		return;
+	}
+	if ( !isset( $_POST['dam_spam_advanced_settings_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_advanced_settings_nonce'] ) ), 'dam_spam_advanced_settings' ) ) {
+		return;
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	if ( isset( $_POST['dam_spam_login_attempts'] ) && sanitize_text_field( wp_unslash( $_POST['dam_spam_login_attempts'] ) ) === 'yes' ) {
+		update_option( 'dam_spam_login_attempts', 'yes' );
+	} else {
+		update_option( 'dam_spam_login_attempts', 'no' );
+	}
+	if ( isset( $_POST['dam_spam_login_attempts_threshold'] ) ) {
+		update_option( 'dam_spam_login_attempts_threshold', absint( $_POST['dam_spam_login_attempts_threshold'] ) );
+	}
+	if ( isset( $_POST['dam_spam_login_attempts_duration'] ) ) {
+		update_option( 'dam_spam_login_attempts_duration', absint( $_POST['dam_spam_login_attempts_duration'] ) );
+	}
+	if ( isset( $_POST['dam_spam_login_attempts_unit'] ) ) {
+		update_option( 'dam_spam_login_attempts_unit', sanitize_text_field( wp_unslash( $_POST['dam_spam_login_attempts_unit'] ) ) );
+	}
+	if ( isset( $_POST['dam_spam_login_lockout_duration'] ) ) {
+		update_option( 'dam_spam_login_lockout_duration', absint( $_POST['dam_spam_login_lockout_duration'] ) );
+	}
+	if ( isset( $_POST['dam_spam_login_lockout_unit'] ) ) {
+		update_option( 'dam_spam_login_lockout_unit', sanitize_text_field( wp_unslash( $_POST['dam_spam_login_lockout_unit'] ) ) );
+	}
+}
+
+add_action( 'admin_init', 'dam_spam_login_type_func' );
+function dam_spam_login_type_func() {
+	if ( empty( $_POST['dam_spam_login_type_field'] ) || 'dam_spam_login_type' !== $_POST['dam_spam_login_type_field'] ) {
+		return;
+	}
+	if ( !isset( $_POST['dam_spam_advanced_settings_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_advanced_settings_nonce'] ) ), 'dam_spam_advanced_settings' ) ) {
+		return;
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	if ( isset( $_POST['dam_spam_login_type'] ) ) {
+		$login_type = sanitize_text_field( wp_unslash( $_POST['dam_spam_login_type'] ) );
+		update_option( 'dam_spam_login_type', $login_type );
+		add_action( 'admin_notices', 'dam_spam_admin_notice_success' );
+	}
+}
+
 add_action( 'admin_init', 'dam_spam_update_honeypot' );
 function dam_spam_update_honeypot() {
 	if ( empty( $_POST['dam_spam_honeypot_placeholder'] ) || 'dam_spam_honeypot' !== $_POST['dam_spam_honeypot_placeholder'] ) {
@@ -710,23 +514,259 @@ function dam_spam_update_honeypot() {
 	}
 }
 
-add_action( 'admin_init', 'dam_spam_login_type_func' );
-function dam_spam_login_type_func() {
-	if ( empty( $_POST['dam_spam_login_type_field'] ) || 'dam_spam_login_type' !== $_POST['dam_spam_login_type_field'] ) {
+add_action( 'admin_init', 'dam_spam_process_settings_export' );
+function dam_spam_process_settings_export() {
+	if ( empty( $_POST['dam_spam_action'] ) || 'export_settings' !== $_POST['dam_spam_action'] ) {
 		return;
 	}
-	if ( !isset( $_POST['dam_spam_advanced_settings_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_advanced_settings_nonce'] ) ), 'dam_spam_advanced_settings' ) ) {
+	if ( !isset( $_POST['dam_spam_export_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_export_nonce'] ) ), 'dam_spam_export_nonce' ) ) {
 		return;
 	}
 	if ( !current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	if ( isset( $_POST['dam_spam_login_type'] ) ) {
-		$login_type = sanitize_text_field( wp_unslash( $_POST['dam_spam_login_type'] ) );
-		update_option( 'dam_spam_login_type', $login_type );
-		add_action( 'admin_notices', 'dam_spam_admin_notice_success' );
+	$options = dam_spam_get_options();
+	ignore_user_abort( true );
+	nocache_headers();
+	header( 'Content-Type: application/json; charset=utf-8' );
+	header( 'Content-Disposition: attachment; filename=dam-spam-settings-export-' . gmdate( 'm-d-Y-H-i-s' ) . '.json' );
+	header( 'Expires: 0' );
+	echo wp_json_encode( $options );
+	exit;
+}
+
+add_action( 'admin_init', 'dam_spam_process_settings_import' );
+function dam_spam_process_settings_import() {
+	if ( empty( $_POST['dam_spam_action'] ) || 'import_settings' !== $_POST['dam_spam_action'] ) {
+		return;
+	}
+	if ( !isset( $_POST['dam_spam_import_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_import_nonce'] ) ), 'dam_spam_import_nonce' ) ) {
+		return;
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	if ( !isset( $_FILES['import_file'] ) || !isset( $_FILES['import_file']['type'] ) ) {
+		wp_die( esc_html__( 'Please upload a file to import', 'dam-spam' ) );
+	}
+	$extension = sanitize_text_field( wp_unslash( $_FILES['import_file']['type'] ) );
+	if ( $extension !== 'application/json' ) {
+		wp_die( esc_html__( 'Please upload a valid .json file', 'dam-spam' ) );
+	}
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- tmp_name validated with is_uploaded_file() on next line
+	$import_file = isset( $_FILES['import_file']['tmp_name'] ) ? $_FILES['import_file']['tmp_name'] : '';
+	if ( empty( $import_file ) || !is_uploaded_file( $import_file ) ) {
+		wp_die( esc_html__( 'Invalid file upload', 'dam-spam' ) );
+	}
+	global $wp_filesystem;
+	if ( empty( $wp_filesystem ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+	}
+	$file_contents = $wp_filesystem->get_contents( $import_file );
+	if ( false === $file_contents ) {
+		wp_die( esc_html__( 'Error reading import file', 'dam-spam' ) );
+	}
+	$options = json_decode( $file_contents, true );
+	if ( !is_array( $options ) || json_last_error() !== JSON_ERROR_NONE ) {
+		wp_die( esc_html__( 'Invalid JSON file format', 'dam-spam' ) );
+	}
+	dam_spam_set_options( $options );
+	add_action( 'admin_notices', 'dam_spam_admin_notice_success' );
+}
+
+add_action( 'admin_init', 'dam_spam_process_settings_reset' );
+function dam_spam_process_settings_reset() {
+	if ( empty( $_POST['dam_spam_action'] ) || 'reset_settings' !== $_POST['dam_spam_action'] ) {
+		return;
+	}
+	if ( !isset( $_POST['dam_spam_reset_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_reset_nonce'] ) ), 'dam_spam_reset_nonce' ) ) {
+		return;
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	$url = DAM_SPAM_PATH . 'modules/config/default.json';
+	global $wp_filesystem;
+	if ( empty( $wp_filesystem ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+	}
+	$file_contents = $wp_filesystem->get_contents( $url );
+	if ( false === $file_contents ) {
+		wp_die( esc_html__( 'Error reading default settings file', 'dam-spam' ) );
+	}
+	$options = json_decode( $file_contents, true );
+	if ( !is_array( $options ) || json_last_error() !== JSON_ERROR_NONE ) {
+		wp_die( esc_html__( 'Error reading default settings file', 'dam-spam' ) );
+	}
+	dam_spam_set_options( $options );
+	add_action( 'admin_notices', 'dam_spam_admin_notice_success' );
+}
+
+// ============================================================================
+// Honeypots
+// ============================================================================
+
+if ( get_option( 'dam_spam_honeypot_cf7' ) === 'yes' ) {
+	add_filter( 'wpcf7_form_elements', 'dam_spam_cf7_add_honeypot', 10, 1 );
+	function dam_spam_cf7_add_honeypot( $form ) {
+		$html  = '';
+		$html .= '<p class="dam-spam-user">';
+		$html .= '<label>' . esc_html__( 'Your Website (required)', 'dam-spam' ) . '<br>';
+		$html .= '<span class="wpcf7-form-control-wrap your-website">';
+		$html .= '<input type="text" name="your-website" value="https://example.com/" autocomplete="off" tabindex="-1" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" required>';
+		$html .= '</span>';
+		$html .= '<label>';
+		$html .= '</p>';
+		$html .= '<style>.dam-spam-user{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
+		return $html . $form;
+	}
+	add_filter( 'wpcf7_spam', 'dam_spam_cf7_verify_honeypot', 10, 1 );
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Contact Form 7 honeypot verification hook
+	function dam_spam_cf7_verify_honeypot( $spam ) {
+		if ( $spam ) {
+			return $spam;
+		}
+		$your_website = isset( $_POST['your-website'] ) ? sanitize_url( wp_unslash( $_POST['your-website'] ) ) : '';
+		if ( $your_website !== 'https://example.com/' ) {
+			return true;
+		}
+		return $spam;
 	}
 }
+
+if ( get_option( 'dam_spam_honeypot_bbpress' ) === 'yes' ) {
+	add_action( 'bbp_theme_before_reply_form_submit_wrapper', 'dam_spam_bbp_add_honeypot' );
+	add_action( 'bbp_theme_before_topic_form_submit_wrapper', 'dam_spam_bbp_add_honeypot' );
+	function dam_spam_bbp_add_honeypot() {
+		$html  = '';
+		$html .= '<p class="dam-spam-user">';
+		$html .= '<label for="bbp_your-website">' . esc_html__( 'Your Website:', 'dam-spam' ) . '</label><br>';
+		$html .= '<input type="text" value="https://example.com/" autocomplete="off" tabindex="-1" size="40" name="bbp_your-website" id="bbp_your-website" required>';
+		$html .= '</p>';
+		$html .= '<style>.dam-spam-user{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
+		echo wp_kses_post( $html );
+	}
+	add_action( 'bbp_new_reply_pre_extras', 'dam_spam_bbp_verify_honeypot' );
+	add_action( 'bbp_new_topic_pre_extras', 'dam_spam_bbp_verify_honeypot' );
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- bbPress honeypot verification hook
+	function dam_spam_bbp_verify_honeypot() {
+		$your_website = isset( $_POST['bbp_your-website'] ) ? sanitize_url( wp_unslash( $_POST['bbp_your-website'] ) ) : '';
+		if ( $your_website !== 'https://example.com/' ) {
+			bbp_add_error( 'bbp_throw_error', __( '<strong>ERROR</strong>: Something went wrong!', 'dam-spam' ) );
+		}
+	}
+}
+
+if ( get_option( 'dam_spam_honeypot_elementor' ) === 'yes' ) {
+	add_action( 'elementor/widget/render_content', 'dam_spam_elementor_add_honeypot', 10, 2 );
+	add_action( 'elementor_pro/forms/validation', 'dam_spam_elementor_verify_honeypot', 10, 2 );
+	function dam_spam_elementor_add_honeypot( $content, $widget ) {
+		if ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
+			return $content;
+		}
+		if ( 'form' === $widget->get_name() ) {
+			$html    = '';
+			$html   .= '<div class="elementor-field-type-text">';
+			$html   .= '<input size="40" type="text" value="https://example.com/" autocomplete="off" tabindex="-1" name="form_fields[your-website]" id="form-field-your-website" class="elementor-field elementor-size-sm">';
+			$html   .= '</div>';
+			$html   .= '<style>#form-field-your-website{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
+			$content = str_replace( '<div class="elementor-field-group', $html . '<div class="elementor-field-group', $content );
+			return $content;
+		}
+		return $content;
+	}
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Elementor honeypot verification hook
+	function dam_spam_elementor_verify_honeypot( $record, $ajax_handler ) {
+		$form_fields = isset( $_POST['form_fields'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['form_fields'] ) ) : array();
+		$your_website = isset( $form_fields['your-website'] ) ? sanitize_url( $form_fields['your-website'] ) : '';
+		if ( $your_website !== 'https://example.com/' ) {
+			$ajax_handler->add_error( 'your-website', esc_html__( 'Something went wrong!', 'dam-spam' ) );
+		}
+	}
+}
+
+if ( get_option( 'dam_spam_honeypot_divi' ) === 'yes' ) {
+	add_action( 'init', 'dam_spam_divi_contact_verify_honeypot_early', 1 );
+	function dam_spam_divi_contact_verify_honeypot_early() {
+		if ( isset( $_POST['your-website'] ) ) {
+			$your_website = sanitize_url( wp_unslash( $_POST['your-website'] ) );
+			if ( $your_website !== 'https://example.com/' ) {
+				wp_die( esc_html__( 'Invalid submission. Please refresh the page and try again.', 'dam-spam' ) );
+			}
+			unset( $_POST['your-website'] );
+			foreach ( $_POST as $key => $value ) {
+				if ( strpos( $key, 'et_pb_contact_email_fields_' ) === 0 ) {
+					$form_json = json_decode( str_replace( '\\', '', $value ), true );
+					if ( is_array( $form_json ) ) {
+						foreach ( $form_json as $index => $field ) {
+							if ( isset( $field['field_id'] ) && $field['field_id'] === 'your-website' ) {
+								unset( $form_json[$index] );
+								$_POST[$key] = wp_json_encode( array_values( $form_json ) );
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	add_filter( 'et_module_shortcode_output', 'dam_spam_et_add_honeypot', 20, 3 );
+	function dam_spam_et_add_honeypot( $output, $render_slug, $module ) {
+		if ( function_exists( 'et_fb_is_enabled' ) && et_fb_is_enabled() ) {
+			return $output;
+		}
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['et_fb_ajax_nonce'] ) ) {
+			return $output;
+		}
+		$html = '';
+		if ( $render_slug === 'et_pb_contact_form' ) {
+			$html  .= '<input type="text" name="your-website" id="your-website" value="https://example.com/" autocomplete="off" style="position:absolute;opacity:0;pointer-events:none;left:-9999px" tabindex="-1" aria-hidden="true">';
+			$output = str_replace( '</form>', $html . '</form>', $output );
+		} elseif ( $render_slug === 'et_pb_signup' ) {
+			$html   = '';
+			$html  .= '<p class="et_pb_signup_custom_field et_pb_signup_your_website et_pb_newsletter_field et_pb_contact_field_last et_pb_contact_field_last_tablet et_pb_contact_field_last_phone">';
+			$html  .= '<label for="et_pb_signup_your_website" class="et_pb_contact_form_label">' . esc_html__( 'Your Website', 'dam-spam' ) . '</label>';
+			$html  .= '<input type="text" class="input" id="et_pb_signup_your_website" placeholder="' . esc_attr__( 'Your Website', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" data-original_id="your-website" required>';
+			$html  .= '</p>';
+			$html  .= '<style>.et_pb_signup_your_website{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}</style>';
+			$html  .= '<p class="et_pb_newsletter_button_wrap">';
+			$output = str_replace( '<p class="et_pb_newsletter_button_wrap">', $html, $output );
+		}
+		return $output;
+	}
+	add_filter( 'et_contact_error_messages', 'dam_spam_divi_contact_verify_honeypot', 10, 1 );
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Divi contact form honeypot verification hook
+	function dam_spam_divi_contact_verify_honeypot( $error_messages ) {
+		if ( isset( $_POST['et_pb_contact_your_website'] ) ) {
+			$your_website = sanitize_url( wp_unslash( $_POST['et_pb_contact_your_website'] ) );
+			if ( $your_website !== 'https://example.com/' ) {
+				$error_messages[] = esc_html__( 'Invalid submission. Please refresh the page and try again.', 'dam-spam' );
+			} else {
+				unset( $_POST['et_pb_contact_your_website'] );
+			}
+		}
+		return $error_messages;
+	}
+	add_action( 'et_pb_newsletter_fieldam_spam_before', 'dam_spam_divi_email_optin_verify_honeypot' );
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Divi honeypot verification hook
+	function dam_spam_divi_email_optin_verify_honeypot() {
+		if ( isset( $_POST['et_custom_fields']['your-website'] ) ) {
+			$your_website = sanitize_url( wp_unslash( $_POST['et_custom_fields']['your-website'] ) );
+			if ( $your_website !== 'https://example.com/' ) {
+				echo '{"error":"Subscription Error: An error occurred, please try later."}';
+				exit;
+			} else {
+				unset( $_POST['et_custom_fields']['your-website'] );
+			}
+		}
+	}
+}
+
+// ============================================================================
+// Custom Login - Installation
+// ============================================================================
 
 function dam_spam_install_custom_login() {
 	$pages = array(
@@ -784,165 +824,26 @@ function dam_spam_get_page_id( $slug ) {
 	}
 }
 
-add_action( 'template_redirect', function() {
-	global $post;
-	if ( !is_object( $post ) || !isset( $post->post_name ) ) {
-		return;
-	}
-	if ( is_page( 'logout' ) ) {
-		if ( !isset( $_REQUEST['_wpnonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'dam_spam_logout' ) ) {
-			wp_die( esc_html__( 'Security check failed', 'dam-spam' ), 403 );
-		}
-		$user = wp_get_current_user();
-		wp_logout();
-		if ( !empty( $_REQUEST['redirect_to'] ) ) {
-			$redirect_to = sanitize_url( wp_unslash( $_REQUEST['redirect_to'] ) );
-			$requested_redirect_to = $redirect_to;
-		} else {
-			$redirect_to = site_url( 'login/?loggedout=true' );
-			$requested_redirect_to = '';
-		}
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook
-		$redirect_to = apply_filters( 'logout_redirect', $redirect_to, $requested_redirect_to, $user );
-		wp_safe_redirect( $redirect_to );
-		exit;
-	}
-	if ( is_user_logged_in() && ( $post->post_name === 'login' || $post->post_name === 'register' || $post->post_name === 'forgot' ) ) {
-		wp_safe_redirect( admin_url() );
-		exit;
-	}
-	if ( $post->post_name === 'login' ) {
-		dam_spam_login();
-	} elseif ( $post->post_name === 'register' ) {
-		dam_spam_register();
-	} elseif ( $post->post_name === 'forgot' ) {
-		dam_spam_forgot_password();
-	}
-} );
+// ============================================================================
+// Custom Login - Helper Functions
+// ============================================================================
 
-function dam_spam_forgot_password() {
-	global $wpdb, $wp_hasher;
-	if ( empty( $_POST ) ) {
-		return;
-	}
-	if ( !isset( $_POST['dam_spam_forgot_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_forgot_nonce'] ) ), 'dam_spam_forgot_password' ) ) {
-		return;
-	}
-	$errors = new WP_Error();
-	if ( empty( $_POST['user_login'] ) ) {
-		$errors->add( 'empty_username', esc_html__( 'ERROR: Enter a username or email address.', 'dam-spam' ) );
-	} elseif ( isset( $_POST['user_login'] ) && strpos( sanitize_text_field( wp_unslash( $_POST['user_login'] ) ), '@' ) ) {
-		$user_data = get_user_by( 'email', trim( sanitize_email( wp_unslash( $_POST['user_login'] ) ) ) );
-		if ( empty( $user_data ) ) {
-			$errors->add( 'invalid_email', esc_html__( 'ERROR: There is no user registered with that email address.', 'dam-spam' ) );
-		}
-	} else {
-		$login = trim( sanitize_text_field( wp_unslash( $_POST['user_login'] ) ) );
-		$user_data = get_user_by( 'login', $login );
-	}
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook
-	do_action( 'lostpassword_post', $errors );
-	if ( $errors->get_error_code() ) {
-		$GLOBALS['dam_spam_error'] = $errors;
-		return;
-	}
-	if ( !$user_data ) {
-		$errors->add( 'invalidcombo', esc_html__( 'ERROR: Invalid username or email.', 'dam-spam' ) );
-		$GLOBALS['dam_spam_error'] = $errors;
-		return;
-	}
-	$user_login = $user_data->user_login;
-	$user_email = $user_data->user_email;
-	$key = get_password_reset_key( $user_data );
-	if ( is_wp_error( $key ) ) {
-		$GLOBALS['dam_spam_error'] = $key;
-	}
-	$message  = esc_html__( 'Someone requested that the password be reset for the following account:', 'dam-spam' ) . "\r\n\r\n";
-	$message .= network_home_url( '/' ) . "\r\n\r\n";
-	// translators: %s is the username
-	$message .= sprintf( esc_html__( 'Username: %s', 'dam-spam' ), $user_login ) . "\r\n\r\n";
-	$message .= esc_html__( 'If this was a mistake, just ignore this email and nothing will happen.', 'dam-spam' ) . "\r\n\r\n";
-	$message .= esc_html__( 'To reset your password, visit the following address:', 'dam-spam' ) . "\r\n\r\n";
-	$message .= '<' . network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' ) . ">\r\n";
-	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-	// translators: %s is the website name
-	$title = sprintf( esc_html__( '[%s] Password Reset', 'dam-spam' ), $blogname );
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook
-	$title = apply_filters( 'retrieve_password_title', $title, $user_login, $user_data );
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook
-	$message = apply_filters( 'retrieve_password_message', $message, $key, $user_login, $user_data );
-	if ( $message && !wp_mail( $user_email, $title, $message ) ) {
-		wp_die( esc_html__( 'The email could not be sent.', 'dam-spam' ) . "<br>\n" . esc_html__( 'Possible reason: your host may have disabled the mail() function...', 'dam-spam' ) );
-		wp_safe_redirect( home_url( '/login/?rp=link-sent' ) );
-		exit;
-	}
+function dam_spam_set_error( $error ) {
+	$GLOBALS['dam_spam_error'] = $error;
 }
 
-add_shortcode( 'dam-spam-login', 'dam_spam_login_cb' );
-function dam_spam_login_cb() {
-	global $post;
-	if ( !is_page() ) {
-		return;
-	}
-	switch ( $post->post_name ) {
-		case 'login':
-			dam_spam_login_page();
-			break;
-		case 'register':
-			dam_spam_register_page();
-			break;
-		case 'forgot':
-			dam_spam_forgot_password_page();
-			break;
-		default:
-			break;
-	}
+function dam_spam_safe_redirect( $url ) {
+	wp_safe_redirect( $url );
+	exit;
 }
 
-function dam_spam_login_page() {
-	include DAM_SPAM_PLUGIN_FILE . '/templates/login.php';
+function dam_spam_validate_honeypot() {
+	return isset( $_POST['user_url'] ) && sanitize_url( wp_unslash( $_POST['user_url'] ) ) === 'https://example.com/';
 }
 
-function dam_spam_register_page() {
-	include DAM_SPAM_PLUGIN_FILE . '/templates/register.php';
-}
-
-function dam_spam_forgot_password_page() {
-	include DAM_SPAM_PLUGIN_FILE . '/templates/forgot.php';
-}
-
-function dam_spam_show_error() {
-	global $dam_spam_error;
-	if ( isset( $dam_spam_error->errors ) ) {
-		foreach ( $dam_spam_error->errors as $errors ) {
-			foreach ( $errors as $e ) {
-				echo '<div style="color:#721c24;background-color:#f8d7da;padding:.75rem 1.25rem;margin-bottom:1rem;border:1px solid #f5c6cb">' . esc_html( $e ) . '</div>';
-			}
-		}
-	}
-}
-
-// phpcs:disable WordPress.Security.NonceVerification.Missing -- Public registration form with honeypot protection
-function dam_spam_register() {
-	if ( !get_option( 'users_can_register' ) ) {
-		$redirect_to = site_url( 'wp-login.php?registration=disabled' );
-		wp_safe_redirect( $redirect_to );
-		exit;
-	}
-	$user_login = '';
-	$user_email = '';
-	if ( !empty( $_POST ) && ( isset( $_POST['user_url'] ) && sanitize_url( wp_unslash( $_POST['user_url'] ) ) === 'https://example.com/' ) ) {
-		$user_login = isset( $_POST['user_login'] ) ? sanitize_user( wp_unslash( $_POST['user_login'] ) ) : '';
-		$user_email = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
-		$register_error = register_new_user( $user_login, $user_email );
-		if ( !is_wp_error( $register_error ) ) {
-			$redirect_to = !empty( $_POST['redirect_to'] ) ? sanitize_url( wp_unslash( $_POST['redirect_to'] ) ) : site_url( 'wp-login.php?checkemail=registered' );
-			wp_safe_redirect( $redirect_to );
-			exit;
-		}
-		$GLOBALS['dam_spam_error'] = $register_error;
-	}
-}
+// ============================================================================
+// Custom Login - Core Functions
+// ============================================================================
 
 // phpcs:disable WordPress.Security.NonceVerification -- WordPress core login handler, uses wp_signon() authentication
 function dam_spam_login() {
@@ -980,53 +881,162 @@ function dam_spam_login() {
 	}
 }
 
-add_filter( 'login_url', 'dam_spam_login_url', 10, 2 );
-function dam_spam_login_url( $url ) {
-	if ( get_option( 'dam_spam_enable_custom_login', '' ) === 'yes' && !is_user_logged_in() ) {
-		global $wp_query;
-		$wp_query->set_404();
-		status_header( 404 );
-		include get_query_template( '404' );
-		exit;
+// phpcs:disable WordPress.Security.NonceVerification.Missing -- Public registration form with honeypot protection
+function dam_spam_register() {
+	if ( empty( $_POST ) ) {
+		return;
 	}
-	return $url;
+	if ( !get_option( 'users_can_register' ) ) {
+		dam_spam_set_error( new WP_Error( 'registration_disabled', esc_html__( 'User registration is currently not allowed.', 'dam-spam' ) ) );
+		return;
+	}
+	if ( !dam_spam_validate_honeypot() ) {
+		return;
+	}
+	$user_login = isset( $_POST['user_login'] ) ? sanitize_user( wp_unslash( $_POST['user_login'] ) ) : '';
+	$user_email = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
+	$errors = new WP_Error();
+	if ( empty( $user_login ) ) {
+		$errors->add( 'empty_username', esc_html__( 'Please enter a username.', 'dam-spam' ) );
+	}
+	if ( empty( $user_email ) ) {
+		$errors->add( 'empty_email', esc_html__( 'Please enter an email address.', 'dam-spam' ) );
+	}
+	if ( username_exists( $user_login ) ) {
+		$errors->add( 'username_exists', esc_html__( 'This username is already registered.', 'dam-spam' ) );
+	}
+	if ( email_exists( $user_email ) ) {
+		$errors->add( 'email_exists', esc_html__( 'This email address is already registered.', 'dam-spam' ) );
+	}
+	if ( $errors->has_errors() ) {
+		dam_spam_set_error( $errors );
+		return;
+	}
+	$user_id = wp_create_user( $user_login, wp_generate_password(), $user_email );
+	if ( is_wp_error( $user_id ) ) {
+		dam_spam_set_error( $user_id );
+		return;
+	}
+	wp_new_user_notification( $user_id, null, 'user' );
+	dam_spam_safe_redirect( home_url( 'login/?checkemail=registered' ) );
 }
 
-add_filter( 'logout_url', 'dam_spam_logout_url', 10, 2 );
-function dam_spam_logout_url( $url, $redirect ) {
-	if ( get_option( 'dam_spam_enable_custom_login', '' ) === 'yes' ) {
-		$url = home_url( 'logout' );
+function dam_spam_forgot_password() {
+	global $wpdb, $wp_hasher;
+	if ( empty( $_POST ) ) {
+		return;
 	}
-	return $url;
-}
-
-add_action( 'init', 'dam_spam_custom_login_module' );
-function dam_spam_custom_login_module() {
-	$login_type = get_option( 'dam_spam_login_type', '' );
-	if ( $login_type === 'username' ) {
-		remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
-	} elseif ( $login_type === 'email' ) {
-		remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
+	if ( !isset( $_POST['dam_spam_forgot_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_forgot_nonce'] ) ), 'dam_spam_forgot_password' ) ) {
+		return;
 	}
-}
-
-function dam_spam_login_text( $translating ) {
-	$login_type = get_option( 'dam_spam_login_type', '' );
-	if ( $login_type === 'username' ) {
-		return str_ireplace( 'Username or Email Address', 'Username', $translating );
-	} elseif ( $login_type === 'email' ) {
-		return str_ireplace( 'Username or Email Address', 'Email Address', $translating );
+	$errors = new WP_Error();
+	if ( empty( $_POST['user_login'] ) ) {
+		$errors->add( 'empty_username', esc_html__( 'ERROR: Enter a username or email address.', 'dam-spam' ) );
+	} elseif ( isset( $_POST['user_login'] ) && strpos( sanitize_text_field( wp_unslash( $_POST['user_login'] ) ), '@' ) ) {
+		$user_data = get_user_by( 'email', trim( sanitize_email( wp_unslash( $_POST['user_login'] ) ) ) );
+		if ( empty( $user_data ) ) {
+			$errors->add( 'invalid_email', esc_html__( 'ERROR: There is no user registered with that email address.', 'dam-spam' ) );
+		}
 	} else {
-		return $translating;
+		$login = trim( sanitize_text_field( wp_unslash( $_POST['user_login'] ) ) );
+		$user_data = get_user_by( 'login', $login );
+	}
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook
+	do_action( 'lostpassword_post', $errors );
+	if ( $errors->get_error_code() ) {
+		dam_spam_set_error( $errors );
+		return;
+	}
+	if ( !$user_data ) {
+		dam_spam_set_error( new WP_Error( 'invalidcombo', esc_html__( 'ERROR: Invalid username or email.', 'dam-spam' ) ) );
+		return;
+	}
+	$user_login = $user_data->user_login;
+	$user_email = $user_data->user_email;
+	$key = get_password_reset_key( $user_data );
+	if ( is_wp_error( $key ) ) {
+		dam_spam_set_error( $key );
+		return;
+	}
+	$message  = esc_html__( 'Someone requested that the password be reset for the following account:', 'dam-spam' ) . "\r\n\r\n";
+	$message .= network_home_url( '/' ) . "\r\n\r\n";
+	// translators: %s is the username
+	$message .= sprintf( esc_html__( 'Username: %s', 'dam-spam' ), $user_login ) . "\r\n\r\n";
+	$message .= esc_html__( 'If this was a mistake, just ignore this email and nothing will happen.', 'dam-spam' ) . "\r\n\r\n";
+	$message .= esc_html__( 'To reset your password, visit the following address:', 'dam-spam' ) . "\r\n\r\n";
+	$message .= '<' . home_url( "forgot/?action=rp&key=$key&login=" . rawurlencode( $user_login ) ) . ">\r\n";
+	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
+	// translators: %s is the website name
+	$title = sprintf( esc_html__( '[%s] Password Reset', 'dam-spam' ), $blogname );
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook
+	$title = apply_filters( 'retrieve_password_title', $title, $user_login, $user_data );
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook
+	$message = apply_filters( 'retrieve_password_message', $message, $key, $user_login, $user_data );
+	if ( $message && !wp_mail( $user_email, $title, $message ) ) {
+		wp_die( esc_html__( 'The email could not be sent.', 'dam-spam' ) . "<br>\n" . esc_html__( 'Possible reason: your host may have disabled the mail() function...', 'dam-spam' ) );
+	}
+	dam_spam_safe_redirect( home_url( 'login/?checkemail=confirm' ) );
+}
+
+function dam_spam_reset_password() {
+	$rp_key = isset( $_REQUEST['key'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['key'] ) ) : '';
+	$rp_login = isset( $_REQUEST['login'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['login'] ) ) : '';
+	$user = check_password_reset_key( $rp_key, $rp_login );
+	if ( is_wp_error( $user ) ) {
+		dam_spam_set_error( $user );
+		return;
+	}
+	if ( isset( $_POST['pass1'] ) && isset( $_POST['pass2'] ) && $_POST['pass1'] !== $_POST['pass2'] ) {
+		dam_spam_set_error( new WP_Error( 'password_reset_mismatch', esc_html__( 'The passwords do not match.', 'dam-spam' ) ) );
+		return;
+	}
+	if ( isset( $_POST['pass1'] ) && !empty( $_POST['pass1'] ) ) {
+		reset_password( $user, sanitize_text_field( wp_unslash( $_POST['pass1'] ) ) );
+		dam_spam_safe_redirect( home_url( 'login/?password=changed' ) );
+	}
+	$GLOBALS['dam_spam_reset_user'] = $user;
+	$GLOBALS['dam_spam_reset_key'] = $rp_key;
+}
+
+// ============================================================================
+// Custom Login - Templates
+// ============================================================================
+
+function dam_spam_login_page() {
+	include DAM_SPAM_PATH . 'templates/login.php';
+}
+
+function dam_spam_register_page() {
+	include DAM_SPAM_PATH . 'templates/register.php';
+}
+
+function dam_spam_forgot_password_page() {
+	include DAM_SPAM_PATH . 'templates/forgot.php';
+}
+
+function dam_spam_show_error() {
+	global $dam_spam_error;
+	if ( isset( $_GET['checkemail'] ) && $_GET['checkemail'] === 'confirm' ) {
+		echo '<div style="color:#155724;background-color:#d4edda;padding:.75rem 1.25rem;margin-bottom:1rem;border:1px solid #c3e6cb">' . esc_html__( 'Check your email for the confirmation link.', 'dam-spam' ) . '</div>';
+	}
+	if ( isset( $_GET['checkemail'] ) && $_GET['checkemail'] === 'registered' ) {
+		echo '<div style="color:#155724;background-color:#d4edda;padding:.75rem 1.25rem;margin-bottom:1rem;border:1px solid #c3e6cb">' . esc_html__( 'Registration complete. Please check your email.', 'dam-spam' ) . '</div>';
+	}
+	if ( isset( $_GET['password'] ) && $_GET['password'] === 'changed' ) {
+		echo '<div style="color:#155724;background-color:#d4edda;padding:.75rem 1.25rem;margin-bottom:1rem;border:1px solid #c3e6cb">' . esc_html__( 'Your password has been reset.', 'dam-spam' ) . '</div>';
+	}
+	if ( isset( $dam_spam_error->errors ) ) {
+		foreach ( $dam_spam_error->errors as $errors ) {
+			foreach ( $errors as $e ) {
+				echo '<div style="color:#721c24;background-color:#f8d7da;padding:.75rem 1.25rem;margin-bottom:1rem;border:1px solid #f5c6cb">' . esc_html( $e ) . '</div>';
+			}
+		}
 	}
 }
 
-add_action( 'admin_head-nav-menus.php', 'dam_spam_add_nav_menu_metabox' );
-function dam_spam_add_nav_menu_metabox() {
-	if ( get_option( 'dam_spam_enable_custom_login', '' ) === 'yes' ) {
-		add_meta_box( 'dam_spam_menu_option', 'Dam Spam', 'dam_spam_nav_menu_metabox', 'nav-menus', 'side', 'default' );
-	}
-}
+// ============================================================================
+// Custom Login - Navigation Menu
+// ============================================================================
 
 function dam_spam_nav_menu_metabox( $object ) {
 	global $nav_menu_selected_id;
@@ -1076,7 +1086,6 @@ function dam_spam_nav_menu_metabox( $object ) {
 	<?php
 }
 
-add_filter( 'wp_setup_nav_menu_item', 'dam_spam_nav_menu_type_label' );
 function dam_spam_nav_menu_type_label( $menu_item ) {
 	$elems = array( '#dam-spam-nav-login', '#dam-spam-nav-logout', '#dam-spam-nav-register', '#dam-spam-nav-loginout' );
 	if ( isset( $menu_item->object, $menu_item->url ) && 'custom' === $menu_item->object && in_array( $menu_item->url, $elems ) ) {
@@ -1094,7 +1103,6 @@ function dam_spam_loginout_title( $title ) {
 	}
 }
 
-add_filter( 'wp_setup_nav_menu_item', 'dam_spam_setup_nav_menu_item' );
 function dam_spam_setup_nav_menu_item( $item ) {
 	global $pagenow;
 	if ( $pagenow !== 'nav-menus.php' && !defined( 'DOING_AJAX' ) && isset( $item->url ) && strstr( $item->url, '#dam-spam-nav' ) && get_option( 'dam_spam_enable_custom_login', '' ) !== 'yes' ) {
@@ -1123,40 +1131,10 @@ function dam_spam_setup_nav_menu_item( $item ) {
 	return $item;
 }
 
-add_action( 'admin_init', 'dam_spam_limit_login_attempts' );
-function dam_spam_limit_login_attempts() {
-	if ( empty( $_POST['dam_spam_login_setting_placeholder'] ) || 'dam_spam_login_setting' !== $_POST['dam_spam_login_setting_placeholder'] ) {
-		return;
-	}
-	if ( !isset( $_POST['dam_spam_advanced_settings_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_advanced_settings_nonce'] ) ), 'dam_spam_advanced_settings' ) ) {
-		return;
-	}
-	if ( !current_user_can( 'manage_options' ) ) {
-		return;
-	}
-	if ( isset( $_POST['dam_spam_login_attempts'] ) && sanitize_text_field( wp_unslash( $_POST['dam_spam_login_attempts'] ) ) === 'yes' ) {
-		update_option( 'dam_spam_login_attempts', 'yes' );
-	} else {
-		update_option( 'dam_spam_login_attempts', 'no' );
-	}
-	if ( isset( $_POST['dam_spam_login_attempts_threshold'] ) ) {
-		update_option( 'dam_spam_login_attempts_threshold', absint( $_POST['dam_spam_login_attempts_threshold'] ) );
-	}
-	if ( isset( $_POST['dam_spam_login_attempts_duration'] ) ) {
-		update_option( 'dam_spam_login_attempts_duration', absint( $_POST['dam_spam_login_attempts_duration'] ) );
-	}
-	if ( isset( $_POST['dam_spam_login_attempts_unit'] ) ) {
-		update_option( 'dam_spam_login_attempts_unit', sanitize_text_field( wp_unslash( $_POST['dam_spam_login_attempts_unit'] ) ) );
-	}
-	if ( isset( $_POST['dam_spam_login_lockout_duration'] ) ) {
-		update_option( 'dam_spam_login_lockout_duration', absint( $_POST['dam_spam_login_lockout_duration'] ) );
-	}
-	if ( isset( $_POST['dam_spam_login_lockout_unit'] ) ) {
-		update_option( 'dam_spam_login_lockout_unit', sanitize_text_field( wp_unslash( $_POST['dam_spam_login_lockout_unit'] ) ) );
-	}
-}
+// ============================================================================
+// Login Security
+// ============================================================================
 
-add_action( 'authenticate', 'dam_spam_authenticate', 100, 3 );
 function dam_spam_authenticate( $user, $username, $password ) {
 	$field = is_email( $username ) ? 'email' : 'login';
 	$time = time();
@@ -1241,94 +1219,128 @@ function dam_spam_unlock_user( $user_id ) {
 	update_user_meta( $user_id, 'dam_spam_failed_login_attempts', array() );
 }
 
-add_action( 'admin_init', 'dam_spam_process_settings_export' );
-function dam_spam_process_settings_export() {
-	if ( empty( $_POST['dam_spam_action'] ) || 'export_settings' !== $_POST['dam_spam_action'] ) {
-		return;
+// ============================================================================
+// Shortcodes
+// ============================================================================
+
+add_shortcode( 'dam-spam-contact-form', 'dam_spam_contact_form_shortcode' );
+// phpcs:disable WordPress.Security.NonceVerification.Missing -- Public contact form shortcode with honeypot protection
+function dam_spam_contact_form_shortcode( $atts ) {
+	$atts = shortcode_atts( array(
+		'email'    => '',
+		'accent'   => '',
+		'unstyled' => '',
+	), $atts );
+	ob_start();
+	echo '
+	<script>
+	function nospam() {
+		var message = document.forms["dam-spam-contact-form"]["message"].value;
+		var comment = document.getElementById("comment");
+		var link = message.indexOf("http");
+		if (link > -1) {
+			comment.setCustomValidity("' . esc_html__( 'Links are welcome, but please remove the https:// portion of them.', 'dam-spam' ) . '");
+			comment.reportValidity();
+		} else {
+			comment.setCustomValidity("");
+			comment.reportValidity();
+		}
 	}
-	if ( !isset( $_POST['dam_spam_export_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_export_nonce'] ) ), 'dam_spam_export_nonce' ) ) {
-		return;
+	</script>
+	<form id="dam-spam-contact-form" name="dam-spam-contact-form" method="post" action="#send">
+		<p id="name"><input type="text" name="sign" placeholder="' . esc_attr__( 'Name', 'dam-spam' ) . '" autocomplete="off" size="35" required></p>
+		<p id="email"><input type="email" name="email" placeholder="' . esc_attr__( 'Email', 'dam-spam' ) . '" autocomplete="off" size="35" required></p>
+		<p id="phone"><input type="tel" name="phone" placeholder="' . esc_attr__( 'Phone (optional)', 'dam-spam' ) . '" autocomplete="off" size="35"></p>
+		<p id="url"><input type="url" name="url" placeholder="' . esc_attr__( 'URL', 'dam-spam' ) . '" value="https://example.com/" autocomplete="off" tabindex="-1" size="35" required></p>
+		<p id="message"><textarea id="comment" name="message" placeholder="' . esc_attr__( 'Message', 'dam-spam' ) . '" rows="5" cols="100" onkeyup="nospam()"></textarea></p>
+		<p id="submit"><input type="submit" value="' . esc_attr__( 'Submit', 'dam-spam' ) . '"></p>
+	</form>
+	';
+	if ( $atts['unstyled'] === 'yes' ) {
+		echo '
+		<style>
+		#dam-spam-contact-form #url{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}
+		#send{text-align:center;padding:5%}
+		#send.success{color:green}
+		#send.fail{color:red}
+		</style>
+		';
+	} else {
+		$accent_color = !empty( $atts['accent'] ) ? esc_attr( $atts['accent'] ) : '#007acc';
+		echo '
+		<style>
+		#dam-spam-contact-form, #dam-spam-contact-form *{box-sizing:border-box;transition:all 0.5s ease}
+		#dam-spam-contact-form input, #dam-spam-contact-form textarea{width:100%;font-family:arial,sans-serif;font-size:14px;color:#767676;padding:15px;border:1px solid transparent;background:#f6f6f6}
+		#dam-spam-contact-form input:focus, #dam-spam-contact-form textarea:focus{color:#000;border:1px solid ' . esc_attr( $accent_color ) . '}
+		#dam-spam-contact-form #submit input{display:inline-block;font-size:18px;color:#fff;text-align:center;text-decoration:none;padding:15px 25px;background:' . esc_attr( $accent_color ) . ';cursor:pointer}
+		#dam-spam-contact-form #submit input:hover, #submit input:focus{opacity:0.8}
+		#dam-spam-contact-form #url{position:absolute;top:0;left:0;width:0;height:0;opacity:0;z-index:-1}
+		#send{text-align:center;padding:5%}
+		#send.success{color:green}
+		#send.fail{color:red}
+		</style>
+		';
 	}
-	if ( !current_user_can( 'manage_options' ) ) {
-		return;
+	$url = isset( $_POST['url'] ) ? sanitize_url( wp_unslash( $_POST['url'] ) ) : '';
+	$message = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
+	if ( ( $url === 'https://example.com/' ) && ( stripos( $message, 'http' ) === false ) ) {
+		if ( !empty( $atts['email'] ) ) {
+			$to = sanitize_email( $atts['email'] );
+		} else {
+			$to = sanitize_email( get_option( 'admin_email' ) );
+		}
+		// translators: %s is the website name
+		$subject = sprintf( esc_html__( 'New Message from %s', 'dam-spam' ), esc_html( get_option( 'blogname' ) ) );
+		$name = isset( $_POST['sign'] ) ? sanitize_text_field( wp_unslash( $_POST['sign'] ) ) : '';
+		$email = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+		$phone = isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '';
+		$body  = '';
+		$body .= esc_html__( 'Name: ', 'dam-spam' );
+		$body .= $name;
+		$body .= "\n";
+		$body .= esc_html__( 'Email: ', 'dam-spam' );
+		$body .= $email;
+		if ( !empty( $phone ) ) {
+			$body .= "\n";
+			$body .= esc_html__( 'Phone: ', 'dam-spam' );
+			$body .= $phone;
+		}
+		$body .= "\n\n";
+		$body .= $message;
+		$body .= "\n";
+		// translators: %1$s is the sender's name, %2$s is the sender's email
+		$headers = sprintf( 'From: %s <%s>', sanitize_text_field( $name ), sanitize_email( $email ) );
+		$success = wp_mail( $to, $subject, $body, $headers );
+		if ( $success ) {
+			print '<p id="send" class="success">' . esc_html__( 'Message Sent Successfully', 'dam-spam' ) . '</p>';
+		} else {
+			print '<p id="send" class="fail">' . esc_html__( 'Message Failed', 'dam-spam' ) . '</p>';
+			exit;
+		}
 	}
-	$options = dam_spam_get_options();
-	ignore_user_abort( true );
-	nocache_headers();
-	header( 'Content-Type: application/json; charset=utf-8' );
-	header( 'Content-Disposition: attachment; filename=dam-spam-settings-export-' . gmdate( 'm-d-Y-H-i-s' ) . '.json' );
-	header( 'Expires: 0' );
-	echo wp_json_encode( $options );
-	exit;
+	$output = ob_get_clean();
+	return $output;
 }
 
-add_action( 'admin_init', 'dam_spam_process_settings_import' );
-function dam_spam_process_settings_import() {
-	if ( empty( $_POST['dam_spam_action'] ) || 'import_settings' !== $_POST['dam_spam_action'] ) {
+add_shortcode( 'dam-spam-login', 'dam_spam_login_cb' );
+function dam_spam_login_cb() {
+	global $post;
+	if ( !is_page() ) {
 		return;
 	}
-	if ( !isset( $_POST['dam_spam_import_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_import_nonce'] ) ), 'dam_spam_import_nonce' ) ) {
-		return;
+	switch ( $post->post_name ) {
+		case 'login':
+			dam_spam_login_page();
+			break;
+		case 'register':
+			dam_spam_register_page();
+			break;
+		case 'forgot':
+			dam_spam_forgot_password_page();
+			break;
+		default:
+			break;
 	}
-	if ( !current_user_can( 'manage_options' ) ) {
-		return;
-	}
-	if ( !isset( $_FILES['import_file'] ) || !isset( $_FILES['import_file']['type'] ) ) {
-		wp_die( esc_html__( 'Please upload a file to import', 'dam-spam' ) );
-	}
-	$extension = sanitize_text_field( wp_unslash( $_FILES['import_file']['type'] ) );
-	if ( $extension !== 'application/json' ) {
-		wp_die( esc_html__( 'Please upload a valid .json file', 'dam-spam' ) );
-	}
-	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- tmp_name validated with is_uploaded_file() on next line
-	$import_file = isset( $_FILES['import_file']['tmp_name'] ) ? $_FILES['import_file']['tmp_name'] : '';
-	if ( empty( $import_file ) || !is_uploaded_file( $import_file ) ) {
-		wp_die( esc_html__( 'Invalid file upload', 'dam-spam' ) );
-	}
-	global $wp_filesystem;
-	if ( empty( $wp_filesystem ) ) {
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		WP_Filesystem();
-	}
-	$file_contents = $wp_filesystem->get_contents( $import_file );
-	if ( false === $file_contents ) {
-		wp_die( esc_html__( 'Error reading import file', 'dam-spam' ) );
-	}
-	$options = json_decode( $file_contents, true );
-	if ( !is_array( $options ) || json_last_error() !== JSON_ERROR_NONE ) {
-		wp_die( esc_html__( 'Invalid JSON file format', 'dam-spam' ) );
-	}
-	dam_spam_set_options( $options );
-	add_action( 'admin_notices', 'dam_spam_admin_notice_success' );
-}
-
-add_action( 'admin_init', 'dam_spam_process_settings_reset' );
-function dam_spam_process_settings_reset() {
-	if ( empty( $_POST['dam_spam_action'] ) || 'reset_settings' !== $_POST['dam_spam_action'] ) {
-		return;
-	}
-	if ( !isset( $_POST['dam_spam_reset_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_reset_nonce'] ) ), 'dam_spam_reset_nonce' ) ) {
-		return;
-	}
-	if ( !current_user_can( 'manage_options' ) ) {
-		return;
-	}
-	$url = DAM_SPAM_PLUGIN_FILE . '/modules/config/default.json';
-	global $wp_filesystem;
-	if ( empty( $wp_filesystem ) ) {
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		WP_Filesystem();
-	}
-	$file_contents = $wp_filesystem->get_contents( $url );
-	if ( false === $file_contents ) {
-		wp_die( esc_html__( 'Error reading default settings file', 'dam-spam' ) );
-	}
-	$options = json_decode( $file_contents, true );
-	if ( !is_array( $options ) || json_last_error() !== JSON_ERROR_NONE ) {
-		wp_die( esc_html__( 'Error reading default settings file', 'dam-spam' ) );
-	}
-	dam_spam_set_options( $options );
-	add_action( 'admin_notices', 'dam_spam_admin_notice_success' );
 }
 
 add_shortcode( 'dam-spam-show-displayname-as', 'dam_spam_show_loggedin_function' );
@@ -1381,4 +1393,109 @@ function dam_spam_show_email_function( $atts ) {
 	}
 }
 
-?>
+// ============================================================================
+// Hooks
+// ============================================================================
+
+add_filter( 'widget_text', 'do_shortcode' );
+
+add_action( 'template_redirect', function() {
+	global $post;
+	if ( !is_object( $post ) || !isset( $post->post_name ) ) {
+		return;
+	}
+	if ( is_page( 'logout' ) ) {
+		if ( !isset( $_REQUEST['_wpnonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'dam_spam_logout' ) ) {
+			wp_die( esc_html__( 'Security check failed', 'dam-spam' ), 403 );
+		}
+		$user = wp_get_current_user();
+		wp_logout();
+		if ( !empty( $_REQUEST['redirect_to'] ) ) {
+			$redirect_to = sanitize_url( wp_unslash( $_REQUEST['redirect_to'] ) );
+			$requested_redirect_to = $redirect_to;
+		} else {
+			$redirect_to = site_url( 'login/?loggedout=true' );
+			$requested_redirect_to = '';
+		}
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook
+		$redirect_to = apply_filters( 'logout_redirect', $redirect_to, $requested_redirect_to, $user );
+		wp_safe_redirect( $redirect_to );
+		exit;
+	}
+	if ( is_user_logged_in() && ( $post->post_name === 'login' || $post->post_name === 'register' || $post->post_name === 'forgot' ) ) {
+		wp_safe_redirect( admin_url() );
+		exit;
+	}
+	if ( $post->post_name === 'login' ) {
+		dam_spam_login();
+	} elseif ( $post->post_name === 'register' ) {
+		dam_spam_register();
+	} elseif ( $post->post_name === 'forgot' ) {
+		if ( isset( $_GET['action'] ) && $_GET['action'] === 'rp' && isset( $_GET['key'] ) && isset( $_GET['login'] ) ) {
+			dam_spam_reset_password();
+		} else {
+			dam_spam_forgot_password();
+		}
+	}
+} );
+
+add_filter( 'login_url', 'dam_spam_login_url', 10, 2 );
+function dam_spam_login_url( $url, $redirect ) {
+	if ( get_option( 'dam_spam_enable_custom_login', '' ) === 'yes' ) {
+		return home_url( 'login/' . ( $redirect ? '?redirect_to=' . urlencode( $redirect ) : '' ) );
+	}
+	return $url;
+}
+
+add_filter( 'logout_url', 'dam_spam_logout_url', 10, 2 );
+function dam_spam_logout_url( $url, $redirect ) {
+	if ( get_option( 'dam_spam_enable_custom_login', '' ) === 'yes' ) {
+		$url = wp_nonce_url( home_url( 'logout' ), 'dam_spam_logout' );
+	}
+	return $url;
+}
+
+add_filter( 'wp_new_user_notification_email', 'dam_spam_filter_new_user_email', 10, 3 );
+function dam_spam_filter_new_user_email( $wp_new_user_notification_email, $user, $blogname ) {
+	if ( get_option( 'dam_spam_enable_custom_login', '' ) === 'yes' ) {
+		$message = $wp_new_user_notification_email['message'];
+		$message = str_replace( network_site_url( 'wp-login.php?action=rp', 'login' ), home_url( 'forgot/?action=rp' ), $message );
+		$message = preg_replace( '#' . preg_quote( site_url( 'wp-login.php' ), '#' ) . '([^\s]*)#', home_url( 'forgot/$1' ), $message );
+		$wp_new_user_notification_email['message'] = $message;
+	}
+	return $wp_new_user_notification_email;
+}
+
+add_action( 'init', 'dam_spam_custom_login_module' );
+function dam_spam_custom_login_module() {
+	$login_type = get_option( 'dam_spam_login_type', '' );
+	if ( $login_type === 'username' ) {
+		remove_filter( 'authenticate', 'wp_authenticate_email_password', 20 );
+	} elseif ( $login_type === 'email' ) {
+		remove_filter( 'authenticate', 'wp_authenticate_username_password', 20 );
+	}
+}
+
+function dam_spam_login_text( $translating ) {
+	$login_type = get_option( 'dam_spam_login_type', '' );
+	if ( $login_type === 'username' ) {
+		return str_ireplace( 'Username or Email Address', 'Username', $translating );
+	} elseif ( $login_type === 'email' ) {
+		return str_ireplace( 'Username or Email Address', 'Email Address', $translating );
+	} else {
+		return $translating;
+	}
+}
+
+add_action( 'admin_head-nav-menus.php', 'dam_spam_add_nav_menu_metabox' );
+function dam_spam_add_nav_menu_metabox() {
+	if ( get_option( 'dam_spam_enable_custom_login', '' ) === 'yes' ) {
+		add_meta_box( 'dam_spam_menu_option', 'Dam Spam', 'dam_spam_nav_menu_metabox', 'nav-menus', 'side', 'default' );
+	}
+}
+
+add_filter( 'wp_setup_nav_menu_item', 'dam_spam_nav_menu_type_label' );
+
+add_filter( 'wp_setup_nav_menu_item', 'dam_spam_setup_nav_menu_item' );
+
+add_action( 'authenticate', 'dam_spam_authenticate', 100, 3 );

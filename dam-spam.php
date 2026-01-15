@@ -21,8 +21,8 @@ if ( !defined( 'ABSPATH' ) ) {
 // ============================================================================
 
 define( 'DAM_SPAM_VERSION', '1.0.1' );
-define( 'DAM_SPAM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'DAM_SPAM_PLUGIN_FILE', plugin_dir_path( __FILE__ ) );
+define( 'DAM_SPAM_URL', plugin_dir_url( __FILE__ ) );
+define( 'DAM_SPAM_PATH', plugin_dir_path( __FILE__ ) );
 
 // ============================================================================
 // Admin UI Functions
@@ -39,7 +39,7 @@ function dam_spam_body_class( $classes ) {
 
 add_action( 'admin_print_styles', 'dam_spam_styles' );
 function dam_spam_styles() {
-	wp_enqueue_style( 'dam-spam-admin', DAM_SPAM_PLUGIN_URL . 'assets/css/admin.css', array(), DAM_SPAM_VERSION );
+	wp_enqueue_style( 'dam-spam-admin', DAM_SPAM_URL . 'assets/css/admin.css', array(), DAM_SPAM_VERSION );
 }
 
 add_action( 'admin_notices', 'dam_spam_admin_notice' );
@@ -149,6 +149,9 @@ function dam_spam_init() {
 		remove_filter( 'pre_user_login', 'dam_spam_user_reg_filter', 1 );
 		return;
 	}
+	if ( isset( $_GET['action'] ) && $_GET['action'] === 'rp' && isset( $_GET['key'] ) && isset( $_GET['login'] ) ) {
+		return;
+	}
 	add_action( 'user_register', 'dam_spam_new_user_ip' );
 	add_action( 'wp_login', 'dam_spam_log_user_ip', 10, 2 );
 	if ( isset( $_POST ) && !empty( $_POST ) ) {
@@ -235,17 +238,17 @@ function dam_spam_load( $file, $ip, &$stats = array(), &$options = array(), &$po
 		unset( $class );
 		return $result;
 	}
-	$ppath = DAM_SPAM_PLUGIN_FILE . 'classes/';
+	$ppath = DAM_SPAM_PATH . 'classes/';
 	$fd = $ppath . $file . '.php';
 	$fd = str_replace( "/", DIRECTORY_SEPARATOR, $fd );
 	if ( !file_exists( $fd ) ) {
-		$ppath = DAM_SPAM_PLUGIN_FILE . 'classes/';
+		$ppath = DAM_SPAM_PATH . 'classes/';
 		$class_file = str_replace( '_', '-', $file );
 		$fd = $ppath . $class_file . '.php';
 		$fd = str_replace( "/", DIRECTORY_SEPARATOR, $fd );
 	}
 	if ( !file_exists( $fd ) ) {
-		$ppath = DAM_SPAM_PLUGIN_FILE . 'modules/';
+		$ppath = DAM_SPAM_PATH . 'modules/';
 		$module_file = str_replace( '_', '-', $file );
 		$fd = $ppath . $module_file . '.php';
 		$fd = str_replace( "/", DIRECTORY_SEPARATOR, $fd );
@@ -910,5 +913,12 @@ new Dam_Spam_Reg_Date();
 require_once( 'includes/utilities.php' );
 
 require_once( 'settings/advanced.php' );
+
+register_activation_hook( __FILE__, 'dam_spam_activation_check' );
+function dam_spam_activation_check() {
+	if ( is_plugin_active( 'stop-spammer-registrations-plugin/stop-spammer-registrations-new.php' ) ) {
+		deactivate_plugins( 'stop-spammer-registrations-plugin/stop-spammer-registrations-new.php' );
+	}
+}
 
 ?>

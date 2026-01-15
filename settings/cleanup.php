@@ -278,7 +278,7 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 		<form method="post" name="DOIT2" action="">
 			<input type="hidden" name="dam_spam_opt_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<?php if ( !isset( $_GET['tab'] ) || sanitize_key( wp_unslash( $_GET['tab'] ) ) === 'disable-users' ) : ?>
-				<?php include_once DAM_SPAM_PLUGIN_FILE . '/includes/user-list-filter.php'; ?>
+				<?php include_once DAM_SPAM_PATH . 'includes/user-list-filter.php'; ?>
 			<?php endif; ?>
 			<?php
 			$pending_comment_ids = $wpdb->get_col( $wpdb->prepare( 'SELECT comment_ID FROM %i WHERE comment_approved = %s', $wpdb->comments, '0' ) );

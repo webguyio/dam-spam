@@ -142,6 +142,7 @@ There are several optional services you may use that involve sending data to thi
 = 1.0.1 =
 * Added option to skip spam checks on payment forms
 * Added safety check for themed login pages
+* Fixed themed login
 
 = 1.0 =
 * Fixed Divi compatibility issues

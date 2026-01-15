@@ -30,12 +30,12 @@ function dam_spam_read_file( $f, $method = 'GET' ) {
 
 function dam_spam_get_icon_urls() {
 	return array(
-		'up'	 => DAM_SPAM_PLUGIN_URL . 'assets/images/up.png',
-		'down'   => DAM_SPAM_PLUGIN_URL . 'assets/images/down.png',
-		'trash'  => DAM_SPAM_PLUGIN_URL . 'assets/images/trash.png',
-		'stop'   => DAM_SPAM_PLUGIN_URL . 'assets/images/stop.png',
-		'whois'  => DAM_SPAM_PLUGIN_URL . 'assets/images/whois.png',
-		'search' => DAM_SPAM_PLUGIN_URL . 'assets/images/search.png',
+		'up'	 => DAM_SPAM_URL . 'assets/images/up.png',
+		'down'   => DAM_SPAM_URL . 'assets/images/down.png',
+		'trash'  => DAM_SPAM_URL . 'assets/images/trash.png',
+		'stop'   => DAM_SPAM_URL . 'assets/images/stop.png',
+		'whois'  => DAM_SPAM_URL . 'assets/images/whois.png',
+		'search' => DAM_SPAM_URL . 'assets/images/search.png',
 	);
 }
 
