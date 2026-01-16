@@ -15,7 +15,7 @@ dam_spam_fix_post_vars();
 
 ?>
 
-<div id="dam-spam-plugin" class="wrap">
+<div id="dam-spam" class="wrap">
 	<h1 id="dam-spam-head"><?php esc_html_e( 'Multisite — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php
 	$now	  = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );

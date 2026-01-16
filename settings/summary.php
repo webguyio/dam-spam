@@ -100,7 +100,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 
 ?>
 
-<div id="dam-spam-plugin" class="wrap">
+<div id="dam-spam" class="wrap">
 	<h1 id="dam-spam-head"><?php esc_html_e( 'Summary — Dam Spam', 'dam-spam' ); ?></h1>
 	<br>
 	<?php esc_html_e( 'Version', 'dam-spam' ); ?>: <strong><?php echo esc_html( DAM_SPAM_VERSION ); ?></strong>

@@ -72,7 +72,7 @@ function dam_spam_advanced_menu() {
 		$dam_spam_honeypot_divi = "checked='checked'";
 	}
 	?>
-	<div id="dam-spam-plugin" class="wrap">
+	<div id="dam-spam" class="wrap">
 		<h1 id="dam-spam-head"><?php esc_html_e( 'Advanced — Dam Spam', 'dam-spam' ); ?></h1>
 		<div class="metabox-holder">
 			<div class="postbox">

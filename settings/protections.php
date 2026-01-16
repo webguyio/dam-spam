@@ -84,7 +84,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 
 ?>
 
-<div id="dam-spam-plugin" class="wrap">
+<div id="dam-spam" class="wrap">
 	<h1 id="dam-spam-head"><?php esc_html_e( 'Protections — Dam Spam', 'dam-spam' ); ?></h1>
 	<br>
 	<?php if ( !empty( $msg ) ) {

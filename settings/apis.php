@@ -80,7 +80,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 
 ?>
 
-<div id="dam-spam-plugin" class="wrap">
+<div id="dam-spam" class="wrap">
 	<h1 id="dam-spam-head"><?php esc_html_e( 'APIs — Dam Spam', 'dam-spam' ); ?></h1>
 	<br>
 	<?php if ( !empty( $msg ) ) {
@@ -96,8 +96,8 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 				<input class="dam_spam_toggle" type="checkbox" id="check_dnsbl" name="check_dnsbl" value="Y" <?php if ( $check_dnsbl == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Check DNSBLs (like Spamhaus.org)', 'dam-spam' ); ?></small>
 			</label>
-		</div>	  
-		<br>		
+		</div>
+		<br>
 		<div class="checkbox switcher">
 	  		<label class="dam-spam-subhead" for="check_sfs">
 				<input class="dam_spam_toggle" type="checkbox" id="check_sfs" name="check_sfs" value="Y" <?php if ( $check_sfs == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>

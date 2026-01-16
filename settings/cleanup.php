@@ -18,7 +18,7 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 
 ?>
 
-<div id="dam-spam-plugin" class="wrap">
+<div id="dam-spam" class="wrap">
 	<h1 id="dam-spam-head"><?php esc_html_e( 'Cleanup — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php if ( array_key_exists( 'autol', $_POST ) || array_key_exists( 'delo', $_POST ) ) {
 		echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';

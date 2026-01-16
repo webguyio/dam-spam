@@ -133,7 +133,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 
 ?>
 
-<div id="dam-spam-plugin" class="wrap">
+<div id="dam-spam" class="wrap">
 	<h1 id="dam-spam-head"><?php esc_html_e( 'Blocked — Dam Spam', 'dam-spam' ); ?></h1>
 	<br>
 	<br>
@@ -159,7 +159,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		?></textarea>
 		<br>
 		<br>
-		<div class="mainsection"><?php esc_html_e( 'Spam Words List', 'dam-spam' ); ?></div>				
+		<div class="mainsection"><?php esc_html_e( 'Spam Words List', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
 			<label class="dam-spam-subhead" for="check_spam_words">
 				<input class="dam_spam_toggle" type="checkbox" id="check_spam_words" name="check_spam_words" value="Y" <?php if ( $check_spam_words == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
@@ -173,7 +173,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 			}
 		?></textarea>
 		<br>
-		<div class="mainsection"><?php esc_html_e( 'URL Shortening Services List', 'dam-spam' ); ?></div>			
+		<div class="mainsection"><?php esc_html_e( 'URL Shortening Services List', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
 			<label class="dam-spam-subhead" for="check_url_short">
 				<input class="dam_spam_toggle" type="checkbox" id="check_url_short" name="check_url_short" value="Y" <?php if ( $check_url_short == 'Y' ) { echo 'checked="checked"'; } ?>>
@@ -187,7 +187,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 				echo esc_html( $p ) . "\r\n";
 			}
 		?></textarea>
-		<div class="mainsection"><?php esc_html_e( 'Check for URLs', 'dam-spam' ); ?></div>	
+		<div class="mainsection"><?php esc_html_e( 'Check for URLs', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
 			<label class="dam-spam-subhead" for="check_urls">
 				<input class="dam_spam_toggle" type="checkbox" id="check_urls" name="check_urls" value="Y" <?php if ( $check_urls == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
@@ -195,7 +195,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 			</label>
 		</div>
 		<br>
-		<div class="mainsection"><?php esc_html_e( 'Bad User Agents List', 'dam-spam' ); ?></div>	
+		<div class="mainsection"><?php esc_html_e( 'Bad User Agents List', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
 			<label class="dam-spam-subhead" for="check_agent">
 				<input class="dam_spam_toggle" type="checkbox" id="check_agent" name="check_agent" value="Y" <?php if ( $check_agent == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
@@ -210,7 +210,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		?></textarea>
 		<br>
 		<br>
-		<div class="mainsection"><?php esc_html_e( 'Blocked TLDs', 'dam-spam' ); ?></div>					
+		<div class="mainsection"><?php esc_html_e( 'Blocked TLDs', 'dam-spam' ); ?></div>
 		<p><?php esc_html_e( 'One TLD per line. Example: .com', 'dam-spam' ); ?></p>
 		<textarea name="bad_tlds" cols="40" rows="8"><?php
 			foreach ( $bad_tlds as $p ) {

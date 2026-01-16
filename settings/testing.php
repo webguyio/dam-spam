@@ -43,7 +43,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 
 ?>
 
-<div id="dam-spam-plugin" class="wrap">
+<div id="dam-spam" class="wrap">
 	<h1 id="dam-spam-head"><?php esc_html_e( 'Testing — Dam Spam', 'dam-spam' ); ?></h1>
 	<form method="post" action="">
 		<div class="dam-spam-info-box">
@@ -325,7 +325,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		$ptab = $pre . 'posts';
 		$sql = $wpdb->prepare(
 			"SELECT ID,post_author,post_title,post_name,guid,post_content,post_mime_type
-			FROM {$wpdb->posts} WHERE 
+			FROM {$wpdb->posts} WHERE
 			INSTR(LCASE(post_author), %s) +
 			INSTR(LCASE(post_title), %s) +
 			INSTR(LCASE(post_name), %s) +
@@ -424,7 +424,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		flush();
 		$sql = $wpdb->prepare(
 			"SELECT comment_ID,comment_author_url,comment_agent,comment_author,comment_author_email,comment_content
-			FROM {$wpdb->comments} WHERE 
+			FROM {$wpdb->comments} WHERE
 			INSTR(LCASE(comment_author_url), %s) +
 			INSTR(LCASE(comment_agent), %s) +
 			INSTR(LCASE(comment_author), %s) +
@@ -526,7 +526,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		flush();
 		$sql = $wpdb->prepare(
 			"SELECT link_ID,link_url,link_image,link_description,link_notes
-			FROM {$wpdb->links} WHERE 
+			FROM {$wpdb->links} WHERE
 			INSTR(LCASE(link_url), %s) +
 			INSTR(LCASE(link_image), %s) +
 			INSTR(LCASE(link_description), %s) +
@@ -613,8 +613,8 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		echo '<br><br>' . esc_html__( 'Testing Users', 'dam-spam' ) . '<br>';
 		flush();
 		$sql = $wpdb->prepare(
-			"SELECT ID,user_login,user_nicename,user_email,user_url,display_name 
-			FROM {$wpdb->users} WHERE 
+			"SELECT ID,user_login,user_nicename,user_email,user_url,display_name
+			FROM {$wpdb->users} WHERE
 			INSTR(LCASE(user_login), %s) +
 			INSTR(LCASE(user_nicename), %s) +
 			INSTR(LCASE(user_email), %s) +
