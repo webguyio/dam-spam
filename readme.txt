@@ -42,7 +42,7 @@ After installation, go to the Dam Spam settings in your WordPress admin to:
 
 **Differences from Stop Spammers**
 
-Dam Spam is a fork of the Stop Spammers. While the core spam protection functionality remains similar, Dam Spam's file and code structure has been significantly cleaned up and modernized.
+Dam Spam is a fork of [Stop Spammers](https://wordpress.org/plugins/stop-spammer-registrations-plugin/). While the core spam protection functionality remains similar, Dam Spam's file and code structure has been significantly cleaned up and modernized.
 
 **Addon Support**
 
@@ -96,6 +96,10 @@ class My_Spam_Check {
 = I'm locked out of my admin! =
 
 Don't panic. Access your site via FTP, navigate to `wp-content/plugins`, and rename the "dam-spam" folder to "1dam-spam" to disable it (remove the "1" to enable again). Then you can log in and adjust your settings.
+
+= Why are Stop Spammers features missing from Dam Spam? =
+
+After careful consideration, certain features have been removed. Most notably, the Block Countries feature has been replaced with Block VPNs. Please [ask for more info on GitHub](https://github.com/webguyio/dam-spam/issues).
 
 = Can I use Dam Spam with Cloudflare? =
 
