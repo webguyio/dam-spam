@@ -267,4 +267,24 @@ function dam_spam_map_old_to_new_stats( $old_stats ) {
 	return $new_stats;
 }
 
+add_action( 'admin_init', 'dam_spam_migrate_allow_list_email' );
+function dam_spam_migrate_allow_list_email() {
+	$options = get_option( 'dam_spam_options' );
+	if ( !$options || !is_array( $options ) ) {
+		return;
+	}
+	if ( !isset( $options['allow_list_email'] ) || !is_array( $options['allow_list_email'] ) || empty( $options['allow_list_email'] ) ) {
+		return;
+	}
+	$allow_list = isset( $options['allow_list'] ) && is_array( $options['allow_list'] ) ? $options['allow_list'] : array();
+	foreach ( $options['allow_list_email'] as $email ) {
+		if ( !in_array( $email, $allow_list, true ) ) {
+			$allow_list[] = $email;
+		}
+	}
+	$options['allow_list'] = $allow_list;
+	$options['allow_list_email'] = array();
+	update_option( 'dam_spam_options', $options );
+}
+
 ?>

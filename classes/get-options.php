@@ -93,7 +93,6 @@ class dam_spam_get_options {
 		$defaultARRAY = array(
 			'block_list'	   => array(),
 			'allow_list'	   => array(),
-			'allow_list_email' => array(),
 			'bad_tlds'		   => array(),
 			'bad_agents'  => array(
 				"Abonti",

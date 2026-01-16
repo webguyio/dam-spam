@@ -130,7 +130,6 @@
 	"_comment_lists": "=== DEFAULT LISTS ===",
 	"block_list": [],
 	"allow_list": [],
-	"allow_list_email": [],
 	"bad_tlds": [],
 	"bad_agents": [
 		"Abonti",
