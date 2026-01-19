@@ -86,32 +86,20 @@ function dam_spam_advanced_menu() {
 								</div>
 								<input type="checkbox" name="dam_spam_firewall_setting" id="dam_spam_firewall_setting" value="yes" <?php echo esc_attr( $dam_spam_firewall_setting ); ?>>
 								<span><small></small></span>
-								<?php esc_html_e( 'Enable Server-side Security Rules', 'dam-spam' ); ?>
+								<?php esc_html_e( 'Server-side Security Rules', 'dam-spam' ); ?>
 							</label>
 						</div>
-						<p><input type="hidden" name="dam_spam_firewall_setting_placeholder" value="dam_spam_firewall_setting"></p>
+						<input type="hidden" name="dam_spam_firewall_setting_placeholder" value="dam_spam_firewall_setting">
 					</div>
+					<br>
 					<hr>
 					<div class="inside">
 						<h3><span><?php esc_html_e( 'Login Settings', 'dam-spam' ); ?></span></h3>
-						<?php if ( $existing_login_pages ): ?>
-							<div class="notice inline">
-								<p><strong><?php esc_html_e( 'Custom login pages detected. You may have added these manually or you are using a plugin that auto creates them.', 'dam-spam' ); ?></strong></p>
-							</div>
-						<?php endif; ?>
-						<div class="checkbox switcher">
-							<label for="dam_spam_login_setting">
-								<input type="checkbox" name="dam_spam_login_setting" id="dam_spam_login_setting" value="yes" <?php echo esc_attr( $dam_spam_login_setting ); ?> <?php echo esc_attr( $dam_spam_login_disabled ); ?>>
-								<span><small></small></span>
-								<?php esc_html_e( 'Enable themed registration and login pages (disables the default wp-login.php).', 'dam-spam' ); ?>
-							</label>
-						</div>
-						<br>
 						<div class="checkbox switcher">
 							<label for="dam_spam_login_attempts">
 								<input type="checkbox" name="dam_spam_login_attempts" id="dam_spam_login_attempts" value="yes" <?php echo esc_attr( $dam_spam_login_attempts ); ?>>
 								<span><small></small></span>
-								<strong><?php esc_html_e( 'Login Attempts:', 'dam-spam' ); ?></strong>
+								<?php esc_html_e( 'Limit Login Attempts:', 'dam-spam' ); ?>
 								<?php
 								// translators: Label before the threshold number input field
 								esc_html_e( 'After', 'dam-spam' );
@@ -136,15 +124,24 @@ function dam_spam_advanced_menu() {
 									<option value="minute" <?php selected( get_option( 'dam_spam_login_lockout_unit', 'hour' ), 'minute' ); ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
 									<option value="hour" <?php selected( get_option( 'dam_spam_login_lockout_unit', 'hour' ), 'hour' ); ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
 									<option value="day" <?php selected( get_option( 'dam_spam_login_lockout_unit', 'hour' ), 'day' ); ?>><?php esc_html_e( 'day(s)', 'dam-spam' ); ?></option>
-								</select>.
+								</select>
 							</label>
 						</div>
-						<p><input type="hidden" name="dam_spam_login_setting_placeholder" value="dam_spam_login_setting"></p>
-					</div>
-					<hr>
-					<div class="inside">
-						<h3><span><?php esc_html_e( 'Allow users to log in using their username or email address', 'dam-spam' ); ?></span></h3>
-						<p><input type="hidden" name="dam_spam_login_type_field" value="dam_spam_login_type"></p>
+						<input type="hidden" name="dam_spam_login_setting_placeholder" value="dam_spam_login_setting">
+						<br>
+						<?php if ( $existing_login_pages ): ?>
+							<div class="notice inline">
+								<p><strong><?php esc_html_e( 'Custom login pages detected. You may have added these manually or you are using a plugin that auto creates them.', 'dam-spam' ); ?></strong></p>
+							</div>
+						<?php endif; ?>
+						<div class="checkbox switcher">
+							<label for="dam_spam_login_setting">
+								<input type="checkbox" name="dam_spam_login_setting" id="dam_spam_login_setting" value="yes" <?php echo esc_attr( $dam_spam_login_setting ); ?> <?php echo esc_attr( $dam_spam_login_disabled ); ?>>
+								<span><small></small></span>
+								<?php esc_html_e( 'Themed Login (disables wp-login.php)', 'dam-spam' ); ?>
+							</label>
+						</div>
+						<h4><span><?php esc_html_e( 'How can users log in?', 'dam-spam' ); ?></span></h4>
 						<div class="checkbox switcher">
 							<label for="dam-spam-login-type-default">
 								<input name="dam_spam_login_type" type="radio" id="dam-spam-login-type-default" value="default" <?php echo esc_attr( $dam_spam_login_type_default ); ?>>
@@ -168,10 +165,12 @@ function dam_spam_advanced_menu() {
 								<?php esc_html_e( 'Email Only', 'dam-spam' ); ?>
 							</label>
 						</div>
+						<input type="hidden" name="dam_spam_login_type_field" value="dam_spam_login_type">
 					</div>
+					<br>
 					<hr>
 					<div class="inside">
-						<h3><span><?php esc_html_e( 'Honeypot', 'dam-spam' ); ?></span></h3>
+						<h3><span><?php esc_html_e( 'Honeypot Settings', 'dam-spam' ); ?></span></h3>
 						<div class="checkbox switcher">
 							<label for="dam_spam_honeypot_cf7">
 								<input type="checkbox" name="dam_spam_honeypot_cf7" id="dam_spam_honeypot_cf7" value="yes" <?php echo ( is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ) ? '' : 'disabled="disabled"' ); ?> <?php echo esc_attr( $dam_spam_honeypot_cf7 ); ?>>
@@ -203,8 +202,9 @@ function dam_spam_advanced_menu() {
 								<?php esc_html_e( 'Divi Forms', 'dam-spam' ); ?>
 							</label>
 						</div>
-						<p><input type="hidden" name="dam_spam_honeypot_placeholder" value="dam_spam_honeypot"></p>
+						<input type="hidden" name="dam_spam_honeypot_placeholder" value="dam_spam_honeypot">
 					</div>
+					<br>
 					<hr>
 					<div class="inside">
 						<p>

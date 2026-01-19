@@ -97,11 +97,15 @@ class My_Spam_Check {
 
 Don't panic. Access your site via FTP, navigate to `wp-content/plugins`, and rename the "dam-spam" folder to "1dam-spam" to disable it (remove the "1" to enable again). Then you can log in and adjust your settings.
 
+= How to migrate from Stop Spammers to Dam Spam? =
+
+Your settings will automatically be copied over to Dam Spam in the background and be retained if you decide to switch back. This requires no action on your part.
+
 = Why are Stop Spammers features missing from Dam Spam? =
 
 After careful consideration, certain features have been removed. Most notably, the Block Countries feature has been replaced with Block VPNs. Please [ask for more info on GitHub](https://github.com/webguyio/dam-spam/issues).
 
-= Can I use Dam Spam with Cloudflare? =
+= Can I use Dam Spam with Cloudflare (and other CDNs and proxies)? =
 
 Yes. But you may need to [restore visitor IPs](https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/).
 
