@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 if ( !current_user_can( 'manage_options' ) ) {
-	die( 'Access Blocked' );
+	die( esc_html__( 'Access Blocked', 'dam-spam' ) );
 }
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery -- Admin cleanup/diagnostic page requires direct DB access

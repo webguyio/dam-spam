@@ -3,7 +3,7 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 1.0.2
+Version: 1.0.3
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -20,7 +20,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DAM_SPAM_VERSION', '1.0.2' );
+define( 'DAM_SPAM_VERSION', '1.0.3' );
 define( 'DAM_SPAM_URL', plugin_dir_url( __FILE__ ) );
 define( 'DAM_SPAM_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -58,7 +58,7 @@ function dam_spam_admin_notice() {
 
 	if ( !get_user_meta( $user_id, 'dam_spam_notice_dismissed_2026' ) && current_user_can( 'manage_options' ) ) {
 		$dismiss_url = wp_nonce_url( $admin_url . $param . 'dismiss', 'dismiss_notice' );
-		echo '<div class="notice notice-info"><p><a href="' . esc_url( $dismiss_url ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'Thank you for helping us Dam Spam!', 'dam-spam' ) . '</strong></big><p><a href="https://damspam.com/donations" class="button-primary" style="border-color:#c6ac40;background:#c6ac40" target="_blank">' . esc_html__( 'I Need Your Help', 'dam-spam' ) . '</a></p></div>';
+		echo '<div class="notice notice-info"><p><a href="' . esc_url( $dismiss_url ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'Thank you for helping us Dam Spam!', 'dam-spam' ) . '</strong></big><p><a href="https://damspam.com/donations" class="button-primary" style="border-color:#c6ac40;background:#c6ac40" target="_blank">' . esc_html__( '♥ Make a Donation', 'dam-spam' ) . '</a></p></div>';
 	}
 }
 
@@ -230,6 +230,9 @@ function dam_spam_load( $file, $ip, &$stats = array(), &$options = array(), &$po
 	}
 	if ( is_array( $file ) ) {
 		if ( !file_exists( $file[0] ) ) {
+			return false;
+		}
+		if ( !class_exists( $file[1] ) ) {
 			return false;
 		}
 		$class = new $file[1]();

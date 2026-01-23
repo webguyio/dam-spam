@@ -755,7 +755,7 @@ if ( get_option( 'dam_spam_honeypot_divi' ) === 'yes' ) {
 		if ( isset( $_POST['et_custom_fields']['your-website'] ) ) {
 			$your_website = sanitize_url( wp_unslash( $_POST['et_custom_fields']['your-website'] ) );
 			if ( $your_website !== 'https://example.com/' ) {
-				echo '{"error":"Subscription Error: An error occurred, please try later."}';
+				echo '{"error":"' . esc_js( esc_html__( 'Subscription Error: An error occurred, please try later.', 'dam-spam' ) ) . '"}';
 				exit;
 			} else {
 				unset( $_POST['et_custom_fields']['your-website'] );

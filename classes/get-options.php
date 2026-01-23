@@ -261,7 +261,6 @@ class dam_spam_get_options {
 				'4u',
 				'Accept credit cards',
 				'Act now',
-				'Ad',
 				'Additional income',
 				'additional-income',
 				'adipex',
@@ -1246,7 +1245,7 @@ class dam_spam_get_options {
 			'dam_spam_cache_em'	=> 4,
 			'redirect_url'		=> '',
 			'log_file_size'		=> 0,
-			'reject_message'	=> "Access Blocked"
+			'reject_message'	=> esc_html__( 'Access Blocked', 'dam-spam' )
 		);
 		$answer = array_merge( $defaultWL, $defaultsCTRL, $defaultBL, $defaultARRAY, $defaultSVC, $defaults );
 		if ( empty( $options ) || !is_array( $options ) ) {

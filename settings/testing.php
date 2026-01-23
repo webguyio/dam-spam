@@ -157,9 +157,9 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 					$a3		    = apply_filters( 'dam_spam_addons_block', $optionlist );
 					$a5		    = apply_filters( 'dam_spam_addons_get', $optionlist );
 					$optionlist = array_merge( $a1, $a3, $a5 );
+					echo esc_html__( 'Add-on Checks', 'dam-spam' );
+					echo '<ul>';
 					if ( !empty( $optionlist ) ) {
-						echo 'Add-on Checks';
-						echo '<ul>';
 						foreach ( $optionlist as $check ) {
 							$answer = dam_spam_load( $check, $ip, $stats, $options, $post );
 							if ( empty( $answer ) ) {
@@ -168,8 +168,10 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 							$nm = $check[1];
 							echo esc_html( $nm ) . ': ' . esc_html( $answer ) . '<br>';
 						}
-						echo '</ul>';
+					} else {
+						echo esc_html__( 'No add-ons registered', 'dam-spam' ) . '<br>';
 					}
+					echo '</ul>';
 					$m1 = memory_get_usage( true );
 					$m2 = memory_get_peak_usage( true );
 					// translators: %1$s is memory used, %2$s is peak memory

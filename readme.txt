@@ -4,13 +4,15 @@ Contributors: webguyio
 Donate link: https://damspam.com/donations
 Tags: spam, security, anti-spam, spam protection, no spam
 Tested up to: 6.9
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPL
 License URI: https://www.gnu.org/licenses/gpl.html
 
 Comprehensive spam protection for WordPress registration, login, comments, and contact forms.
 
 == Description ==
+
+[💬 Ask Question](https://github.com/webguyio/dam-spam/issues) | [📧 Email Me](mailto:webguywork@gmail.com)
 
 Dam Spam is a comprehensive spam protection plugin that blocks spam registrations, login attempts, comments, and contact form submissions. It provides multiple layers of protection including IP blocking, email validation, CAPTCHA challenges, and integration with third-party spam detection services.
 
@@ -71,7 +73,10 @@ class My_Spam_Check {
 
 - Hook into `dam_spam_addons_block` or `dam_spam_addons_allow`
 - Return an array with your file path and class name
-- Create a class with a `process()` method that returns `false` to allow or a string reason to block
+- Create a class with a `process()` method
+- For `dam_spam_addons_block`: return `false` to continue checking, or a string to block
+- For `dam_spam_addons_allow`: return `false` to continue checking, or a string to approve
+- Test using Dam Spam > Testing (spam checks don't run when logged in)
 
 == Installation ==
 
@@ -146,6 +151,10 @@ Yes. Dam Spam does not collect any data for marketing or tracking purposes. All 
 There are several optional services you may use that involve sending data to third parties including: [Google reCAPTCHA](https://policies.google.com/privacy), [hCaptcha](https://www.hcaptcha.com/privacy), [Spamhaus](https://www.spamhaus.org/privacy-notice/), [Stop Forum Spam](https://www.stopforumspam.com/privacy), [Project Honeypot](https://www.projecthoneypot.org/privacy_policy.php), and [BotScout](https://botscout.com/w3c/privacy.htm). You may wish to read each services' privacy policy to see if you're comfortable using them, but generally speaking, whenever someone for example tries to use a contact form on your website, their IP address, name, and email may be sent to these services to check against spam blocklists.
 
 == Changelog ==
+
+= 1.0.3 =
+* Improved add-on handling
+* Added missing translations
 
 = 1.0.2 =
 * Improved handling of emails in allow and block lists
