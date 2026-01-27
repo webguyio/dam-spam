@@ -104,28 +104,18 @@ function dam_spam_advanced_menu() {
 								// translators: Label before the threshold number input field
 								esc_html_e( 'After', 'dam-spam' );
 								?>
-								<input type="text" name="dam_spam_login_attempts_threshold" id="dam_spam_login_attempts_duration" class="dam-spam-small-box" value="<?php echo esc_attr( get_option( 'dam_spam_login_attempts_threshold', 5 ) ); ?>">
+								<input type="number" name="dam_spam_login_attempts_threshold" id="dam_spam_login_attempts_threshold" class="dam-spam-small-box" min="20" value="<?php echo esc_attr( get_option( 'dam_spam_login_attempts_threshold', 20 ) ); ?>">
 								<?php
 								// translators: Label between threshold and duration fields
 								esc_html_e( 'failed login attempts within', 'dam-spam' );
 								?>
-								<input type="text" name="dam_spam_login_attempts_duration" id="dam_spam_login_attempts_duration" class="dam-spam-small-box" value="<?php echo esc_attr( get_option( 'dam_spam_login_attempts_duration', 1 ) ); ?>">
-								<select name="dam_spam_login_attempts_unit" id="dam_spam_login_attempts_unit" class="dam-spam-small-dropbox">
-									<option value="minute" <?php selected( get_option( 'dam_spam_login_attempts_unit', 'hour' ), 'minute' ); ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
-									<option value="hour" <?php selected( get_option( 'dam_spam_login_attempts_unit', 'hour' ), 'hour' ); ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
-									<option value="day" <?php selected( get_option( 'dam_spam_login_attempts_unit', 'hour' ), 'day' ); ?>><?php esc_html_e( 'day(s)', 'dam-spam' ); ?></option>
-								</select>,
+								<input type="number" name="dam_spam_login_attempts_duration" id="dam_spam_login_attempts_duration" class="dam-spam-small-box" min="1" max="1440" value="<?php echo esc_attr( get_option( 'dam_spam_login_attempts_duration', 60 ) ); ?>">
 								<?php
-								// translators: Label before the lockout duration field
-								esc_html_e( 'lockout the account for', 'dam-spam' );
+								// translators: Label after the duration field, now hardcoded to minutes
+								esc_html_e( 'minutes, ban the IP address.', 'dam-spam' );
 								?>
-								<input type="text" name="dam_spam_login_lockout_duration" id="dam_spam_login_lockout_duration" class="dam-spam-small-box" value="<?php echo esc_attr( get_option( 'dam_spam_login_lockout_duration', 24 ) ); ?>">
-								<select name="dam_spam_login_lockout_unit" id="dam_spam_login_lockout_unit" class="dam-spam-small-dropbox">
-									<option value="minute" <?php selected( get_option( 'dam_spam_login_lockout_unit', 'hour' ), 'minute' ); ?>><?php esc_html_e( 'minute(s)', 'dam-spam' ); ?></option>
-									<option value="hour" <?php selected( get_option( 'dam_spam_login_lockout_unit', 'hour' ), 'hour' ); ?>><?php esc_html_e( 'hour(s)', 'dam-spam' ); ?></option>
-									<option value="day" <?php selected( get_option( 'dam_spam_login_lockout_unit', 'hour' ), 'day' ); ?>><?php esc_html_e( 'day(s)', 'dam-spam' ); ?></option>
-								</select>
 							</label>
+							<p class="description"><?php esc_html_e( 'Recommended: 20 attempts within 60 minutes', 'dam-spam' ); ?></p>
 						</div>
 						<input type="hidden" name="dam_spam_login_setting_placeholder" value="dam_spam_login_setting">
 						<br>
@@ -203,6 +193,32 @@ function dam_spam_advanced_menu() {
 							</label>
 						</div>
 						<input type="hidden" name="dam_spam_honeypot_placeholder" value="dam_spam_honeypot">
+					</div>
+					<br>
+					<hr>
+					<div class="inside">
+						<h3><span><?php esc_html_e( 'Ban List Settings', 'dam-spam' ); ?></span></h3>
+						<h4><span><?php esc_html_e( 'Manual Ban List', 'dam-spam' ); ?></span></h4>
+						<p class="description"><?php esc_html_e( 'IPs you add to this list will be permanently banned unless manually removed. One IP per line.', 'dam-spam' ); ?></p>
+						<textarea name="dam_spam_manual_bans" id="dam_spam_manual_bans" rows="10" class="large-text code"><?php echo esc_textarea( get_option( 'dam_spam_manual_bans', '' ) ); ?></textarea>
+						<br><br>
+						<h4><span><?php esc_html_e( 'Automatic Ban List', 'dam-spam' ); ?></span></h4>
+						<p class="description">
+							<?php
+							$auto_bans = get_option( 'dam_spam_automatic_bans', array() );
+							$auto_ban_count = is_array( $auto_bans ) ? count( $auto_bans ) : 0;
+							/* translators: %d: Number of IPs in the automatic ban list */
+							printf( esc_html__( 'IPs automatically banned by Limit Login Attempts and other protections. Auto-culls oldest entries at 100,000 IPs. Currently contains %d IPs.', 'dam-spam' ), $auto_ban_count );
+							?>
+						</p>
+						<textarea id="dam_spam_automatic_bans_display" rows="10" class="large-text code" readonly="readonly" disabled="disabled"><?php
+							if ( !empty( $auto_bans ) && is_array( $auto_bans ) ) {
+								echo esc_textarea( implode( "\n", array_keys( $auto_bans ) ) );
+							}
+						?></textarea>
+						<br><br>
+						<button type="submit" name="dam_spam_clear_auto_bans_action" id="dam_spam_clear_auto_bans" class="button button-secondary" onclick="return confirm('<?php echo esc_js( __( 'Are you sure you want to clear all automatic bans? This cannot be undone.', 'dam-spam' ) ); ?>');"><?php esc_html_e( 'Clear All Automatic Bans', 'dam-spam' ); ?></button>
+						<input type="hidden" name="dam_spam_ban_list_placeholder" value="dam_spam_ban_list">
 					</div>
 					<br>
 					<hr>
@@ -447,19 +463,45 @@ function dam_spam_limit_login_attempts() {
 		update_option( 'dam_spam_login_attempts', 'no' );
 	}
 	if ( isset( $_POST['dam_spam_login_attempts_threshold'] ) ) {
-		update_option( 'dam_spam_login_attempts_threshold', absint( $_POST['dam_spam_login_attempts_threshold'] ) );
+		$threshold = absint( $_POST['dam_spam_login_attempts_threshold'] );
+		if ( $threshold < 20 ) {
+			$threshold = 20;
+		}
+		update_option( 'dam_spam_login_attempts_threshold', $threshold );
 	}
 	if ( isset( $_POST['dam_spam_login_attempts_duration'] ) ) {
-		update_option( 'dam_spam_login_attempts_duration', absint( $_POST['dam_spam_login_attempts_duration'] ) );
+		$duration = absint( $_POST['dam_spam_login_attempts_duration'] );
+		if ( $duration < 1 ) {
+			$duration = 1;
+		} elseif ( $duration > 1440 ) {
+			$duration = 1440;
+		}
+		update_option( 'dam_spam_login_attempts_duration', $duration );
 	}
-	if ( isset( $_POST['dam_spam_login_attempts_unit'] ) ) {
-		update_option( 'dam_spam_login_attempts_unit', sanitize_text_field( wp_unslash( $_POST['dam_spam_login_attempts_unit'] ) ) );
+}
+
+add_action( 'admin_init', 'dam_spam_save_ban_lists' );
+function dam_spam_save_ban_lists() {
+	if ( empty( $_POST['dam_spam_ban_list_placeholder'] ) || 'dam_spam_ban_list' !== $_POST['dam_spam_ban_list_placeholder'] ) {
+		return;
 	}
-	if ( isset( $_POST['dam_spam_login_lockout_duration'] ) ) {
-		update_option( 'dam_spam_login_lockout_duration', absint( $_POST['dam_spam_login_lockout_duration'] ) );
+	if ( !isset( $_POST['dam_spam_advanced_settings_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_advanced_settings_nonce'] ) ), 'dam_spam_advanced_settings' ) ) {
+		return;
 	}
-	if ( isset( $_POST['dam_spam_login_lockout_unit'] ) ) {
-		update_option( 'dam_spam_login_lockout_unit', sanitize_text_field( wp_unslash( $_POST['dam_spam_login_lockout_unit'] ) ) );
+	if ( !current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	if ( isset( $_POST['dam_spam_clear_auto_bans_action'] ) ) {
+		update_option( 'dam_spam_automatic_bans', array() );
+		dam_spam_write_ban_file();
+		add_action( 'admin_notices', 'dam_spam_admin_notice_success' );
+		return;
+	}
+	if ( isset( $_POST['dam_spam_manual_bans'] ) ) {
+		$manual_bans = sanitize_textarea_field( wp_unslash( $_POST['dam_spam_manual_bans'] ) );
+		update_option( 'dam_spam_manual_bans', $manual_bans );
+		dam_spam_write_ban_file();
+		add_action( 'admin_notices', 'dam_spam_admin_notice_success' );
 	}
 }
 
@@ -526,12 +568,39 @@ function dam_spam_process_settings_export() {
 		return;
 	}
 	$options = dam_spam_get_options();
+	$stats = get_option( 'dam_spam_stats', array() );
+	$export_data = array(
+		'options' => $options,
+		'stats' => $stats,
+		'advanced_settings' => array(
+			'enable_firewall' => get_option( 'dam_spam_enable_firewall', '' ),
+			'enable_custom_login' => get_option( 'dam_spam_enable_custom_login', '' ),
+			'login_attempts' => get_option( 'dam_spam_login_attempts', '' ),
+			'login_attempts_threshold' => get_option( 'dam_spam_login_attempts_threshold', 20 ),
+			'login_attempts_duration' => get_option( 'dam_spam_login_attempts_duration', 1 ),
+			'login_attempts_unit' => get_option( 'dam_spam_login_attempts_unit', 'hour' ),
+			'login_type' => get_option( 'dam_spam_login_type', '' ),
+			'honeypot_cf7' => get_option( 'dam_spam_honeypot_cf7', '' ),
+			'honeypot_bbpress' => get_option( 'dam_spam_honeypot_bbpress', '' ),
+			'honeypot_elementor' => get_option( 'dam_spam_honeypot_elementor', '' ),
+			'honeypot_divi' => get_option( 'dam_spam_honeypot_divi', '' ),
+		),
+		'ban_lists' => array(
+			'manual_bans' => get_option( 'dam_spam_manual_bans', '' ),
+			'automatic_bans' => get_option( 'dam_spam_automatic_bans', array() ),
+		),
+		'multisite' => array(
+			'muswitch' => get_option( 'dam_spam_muswitch', '' ),
+		),
+		'export_version' => DAM_SPAM_VERSION,
+		'export_date' => gmdate( 'Y-m-d H:i:s' ),
+	);
 	ignore_user_abort( true );
 	nocache_headers();
 	header( 'Content-Type: application/json; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename=dam-spam-settings-export-' . gmdate( 'm-d-Y-H-i-s' ) . '.json' );
 	header( 'Expires: 0' );
-	echo wp_json_encode( $options );
+	echo wp_json_encode( $export_data );
 	exit;
 }
 
@@ -567,11 +636,68 @@ function dam_spam_process_settings_import() {
 	if ( false === $file_contents ) {
 		wp_die( esc_html__( 'Error reading import file', 'dam-spam' ) );
 	}
-	$options = json_decode( $file_contents, true );
-	if ( !is_array( $options ) || json_last_error() !== JSON_ERROR_NONE ) {
+	$import_data = json_decode( $file_contents, true );
+	if ( !is_array( $import_data ) || json_last_error() !== JSON_ERROR_NONE ) {
 		wp_die( esc_html__( 'Invalid JSON file format', 'dam-spam' ) );
 	}
-	dam_spam_set_options( $options );
+	if ( isset( $import_data['options'] ) && is_array( $import_data['options'] ) ) {
+		dam_spam_set_options( $import_data['options'] );
+	} elseif ( !isset( $import_data['stats'] ) && !isset( $import_data['advanced_settings'] ) && !isset( $import_data['ban_lists'] ) ) {
+		dam_spam_set_options( $import_data );
+	}
+	if ( isset( $import_data['stats'] ) && is_array( $import_data['stats'] ) ) {
+		update_option( 'dam_spam_stats', $import_data['stats'] );
+	}
+	if ( isset( $import_data['advanced_settings'] ) && is_array( $import_data['advanced_settings'] ) ) {
+		$adv = $import_data['advanced_settings'];
+		if ( isset( $adv['enable_firewall'] ) ) {
+			update_option( 'dam_spam_enable_firewall', sanitize_text_field( $adv['enable_firewall'] ) );
+		}
+		if ( isset( $adv['enable_custom_login'] ) ) {
+			update_option( 'dam_spam_enable_custom_login', sanitize_text_field( $adv['enable_custom_login'] ) );
+		}
+		if ( isset( $adv['login_attempts'] ) ) {
+			update_option( 'dam_spam_login_attempts', sanitize_text_field( $adv['login_attempts'] ) );
+		}
+		if ( isset( $adv['login_attempts_threshold'] ) ) {
+			update_option( 'dam_spam_login_attempts_threshold', absint( $adv['login_attempts_threshold'] ) );
+		}
+		if ( isset( $adv['login_attempts_duration'] ) ) {
+			update_option( 'dam_spam_login_attempts_duration', absint( $adv['login_attempts_duration'] ) );
+		}
+		if ( isset( $adv['login_attempts_unit'] ) ) {
+			update_option( 'dam_spam_login_attempts_unit', sanitize_text_field( $adv['login_attempts_unit'] ) );
+		}
+		if ( isset( $adv['login_type'] ) ) {
+			update_option( 'dam_spam_login_type', sanitize_text_field( $adv['login_type'] ) );
+		}
+		if ( isset( $adv['honeypot_cf7'] ) ) {
+			update_option( 'dam_spam_honeypot_cf7', sanitize_text_field( $adv['honeypot_cf7'] ) );
+		}
+		if ( isset( $adv['honeypot_bbpress'] ) ) {
+			update_option( 'dam_spam_honeypot_bbpress', sanitize_text_field( $adv['honeypot_bbpress'] ) );
+		}
+		if ( isset( $adv['honeypot_elementor'] ) ) {
+			update_option( 'dam_spam_honeypot_elementor', sanitize_text_field( $adv['honeypot_elementor'] ) );
+		}
+		if ( isset( $adv['honeypot_divi'] ) ) {
+			update_option( 'dam_spam_honeypot_divi', sanitize_text_field( $adv['honeypot_divi'] ) );
+		}
+	}
+	if ( isset( $import_data['ban_lists'] ) && is_array( $import_data['ban_lists'] ) ) {
+		if ( isset( $import_data['ban_lists']['manual_bans'] ) ) {
+			update_option( 'dam_spam_manual_bans', sanitize_textarea_field( $import_data['ban_lists']['manual_bans'] ) );
+		}
+		if ( isset( $import_data['ban_lists']['automatic_bans'] ) && is_array( $import_data['ban_lists']['automatic_bans'] ) ) {
+			update_option( 'dam_spam_automatic_bans', $import_data['ban_lists']['automatic_bans'] );
+		}
+		dam_spam_write_ban_file();
+	}
+	if ( isset( $import_data['multisite'] ) && is_array( $import_data['multisite'] ) ) {
+		if ( isset( $import_data['multisite']['muswitch'] ) ) {
+			update_option( 'dam_spam_muswitch', sanitize_text_field( $import_data['multisite']['muswitch'] ) );
+		}
+	}
 	add_action( 'admin_notices', 'dam_spam_admin_notice_success' );
 }
 
@@ -601,6 +727,43 @@ function dam_spam_process_settings_reset() {
 		wp_die( esc_html__( 'Error reading default settings file', 'dam-spam' ) );
 	}
 	dam_spam_set_options( $options );
+	if ( isset( $options['dam_spam_enable_firewall'] ) ) {
+		update_option( 'dam_spam_enable_firewall', sanitize_text_field( $options['dam_spam_enable_firewall'] ) );
+	}
+	if ( isset( $options['dam_spam_enable_custom_login'] ) ) {
+		update_option( 'dam_spam_enable_custom_login', sanitize_text_field( $options['dam_spam_enable_custom_login'] ) );
+	}
+	if ( isset( $options['dam_spam_login_attempts'] ) ) {
+		update_option( 'dam_spam_login_attempts', sanitize_text_field( $options['dam_spam_login_attempts'] ) );
+	}
+	if ( isset( $options['dam_spam_login_attempts_threshold'] ) ) {
+		update_option( 'dam_spam_login_attempts_threshold', absint( $options['dam_spam_login_attempts_threshold'] ) );
+	}
+	if ( isset( $options['dam_spam_login_attempts_duration'] ) ) {
+		update_option( 'dam_spam_login_attempts_duration', absint( $options['dam_spam_login_attempts_duration'] ) );
+	}
+	if ( isset( $options['dam_spam_login_type'] ) ) {
+		update_option( 'dam_spam_login_type', sanitize_text_field( $options['dam_spam_login_type'] ) );
+	}
+	if ( isset( $options['dam_spam_honeypot_cf7'] ) ) {
+		update_option( 'dam_spam_honeypot_cf7', sanitize_text_field( $options['dam_spam_honeypot_cf7'] ) );
+	}
+	if ( isset( $options['dam_spam_honeypot_bbpress'] ) ) {
+		update_option( 'dam_spam_honeypot_bbpress', sanitize_text_field( $options['dam_spam_honeypot_bbpress'] ) );
+	}
+	if ( isset( $options['dam_spam_honeypot_elementor'] ) ) {
+		update_option( 'dam_spam_honeypot_elementor', sanitize_text_field( $options['dam_spam_honeypot_elementor'] ) );
+	}
+	if ( isset( $options['dam_spam_honeypot_divi'] ) ) {
+		update_option( 'dam_spam_honeypot_divi', sanitize_text_field( $options['dam_spam_honeypot_divi'] ) );
+	}
+	if ( isset( $options['dam_spam_manual_bans'] ) ) {
+		update_option( 'dam_spam_manual_bans', sanitize_textarea_field( $options['dam_spam_manual_bans'] ) );
+	}
+	if ( isset( $options['dam_spam_automatic_bans'] ) && is_array( $options['dam_spam_automatic_bans'] ) ) {
+		update_option( 'dam_spam_automatic_bans', $options['dam_spam_automatic_bans'] );
+	}
+	dam_spam_write_ban_file();
 	add_action( 'admin_notices', 'dam_spam_admin_notice_success' );
 }
 
@@ -1137,86 +1300,137 @@ function dam_spam_setup_nav_menu_item( $item ) {
 
 function dam_spam_authenticate( $user, $username, $password ) {
 	$field = is_email( $username ) ? 'email' : 'login';
-	$time = time();
 	$userdata = get_user_by( $field, $username );
 	if ( !$userdata ) {
 		return $user;
 	}
-	if ( dam_spam_is_user_locked( $userdata->ID ) && get_option( 'dam_spam_login_attempts', 'no' ) === 'yes' ) {
-		$expiration = dam_spam_get_user_lock_expiration( $userdata->ID );
-		if ( $expiration ) {
-			// translators: %s is the time remaining until the account is unlocked
-			return new WP_Error( 'locked_account', sprintf( '<strong>%s</strong>: %s', esc_html__( 'ERROR', 'dam-spam' ), sprintf( esc_html__( 'This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) ) );
-		} else {
-			// translators: %s is the time remaining until the account is unlocked
-			return new WP_Error( 'locked_account', sprintf( '<strong>%s</strong>: %s', esc_html__( 'ERROR', 'dam-spam' ), esc_html__( 'This account has been locked.', 'dam-spam' ) ) );
-		}
-	} elseif ( is_wp_error( $user ) && 'incorrect_password' === $user->get_error_code() && get_option( 'dam_spam_login_attempts', 'no' ) === 'yes' ) {
-		dam_spam_add_failed_login_attempt( $userdata->ID );
-		$attempts = get_user_meta( $userdata->ID, 'dam_spam_failed_login_attempts', true );
-		if ( count( $attempts ) >= ( get_option( 'dam_spam_login_attempts_threshold', 5 ) * 2 ) ) {
-			$lockout_expiry = '+' . get_option( 'dam_spam_login_lockout_duration', 24 ) . ' ' . get_option( 'dam_spam_login_lockout_unit', 'hour' );
-			$expiration = strtotime( $lockout_expiry );
-			dam_spam_lock_user( $userdata->ID, $expiration );
-			// translators: %s is the time remaining until the account is unlocked
-			return new WP_Error( 'locked_account', sprintf( '<strong>%s</strong>: %s', esc_html__( 'ERROR', 'dam-spam' ), sprintf( esc_html__( 'This account has been locked because of too many failed login attempts. You may try again in %s.', 'dam-spam' ), human_time_diff( $time, $expiration ) ) ) );
-		}
+	if ( dam_spam_is_user_locked( $userdata->ID ) ) {
+		return new WP_Error( 'locked_account', sprintf( '<strong>%s</strong>: %s', esc_html__( 'ERROR', 'dam-spam' ), esc_html__( 'This account is locked.', 'dam-spam' ) ) );
+	}
+	if ( is_wp_error( $user ) && 'incorrect_password' === $user->get_error_code() && get_option( 'dam_spam_login_attempts', 'no' ) === 'yes' ) {
+		dam_spam_track_failed_login_by_ip();
 	}
 	return $user;
 }
 
-function dam_spam_add_failed_login_attempt( $user_id ) {
-	$new_attempts = array();
-	$threshold = '-' . get_option( 'dam_spam_login_attempts_duration', 5 ) . ' ' . get_option( 'dam_spam_login_attempts_unit', 'hour' );
-	$threshold_date_time = strtotime( $threshold );
-	$attempts = get_user_meta( $user_id, 'dam_spam_failed_login_attempts', true );
+function dam_spam_track_failed_login_by_ip() {
+	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+	if ( empty( $ip ) ) {
+		return;
+	}
+	$attempts = get_option( 'dam_spam_login_attempts_by_ip', array() );
 	if ( !is_array( $attempts ) ) {
 		$attempts = array();
 	}
-	$remote_addr = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
-	$attempts[] = array(
-		'time' => time(),
-		'ip'   => $remote_addr,
-	);
-	foreach ( $attempts as $a ) {
-		if ( $threshold_date_time < $a['time'] ) {
-			$new_attempts[] = $a;
-		}
+	$threshold = get_option( 'dam_spam_login_attempts_threshold', 20 );
+	$duration = get_option( 'dam_spam_login_attempts_duration', 60 );
+	$time_limit = strtotime( '-' . $duration . ' minute' );
+	$current_time = time();
+	if ( !isset( $attempts[$ip] ) ) {
+		$attempts[$ip] = array();
 	}
-	update_user_meta( $user_id, 'dam_spam_failed_login_attempts', array() );
-	update_user_meta( $user_id, 'dam_spam_failed_login_attempts', $new_attempts );
+	$attempts[$ip][] = $current_time;
+	$attempts[$ip] = array_filter( $attempts[$ip], function( $timestamp ) use ( $time_limit ) {
+		return $timestamp > $time_limit;
+	});
+	if ( count( $attempts[$ip] ) >= ( $threshold * 2 ) ) {
+		$automatic_bans = get_option( 'dam_spam_automatic_bans', array() );
+		if ( !is_array( $automatic_bans ) ) {
+			$automatic_bans = array();
+		}
+		$automatic_bans[$ip] = $current_time;
+		if ( count( $automatic_bans ) > 100000 ) {
+			asort( $automatic_bans );
+			$automatic_bans = array_slice( $automatic_bans, -100000, null, true );
+		}
+		update_option( 'dam_spam_automatic_bans', $automatic_bans );
+		dam_spam_write_ban_file();
+		unset( $attempts[$ip] );
+	}
+	update_option( 'dam_spam_login_attempts_by_ip', $attempts );
 }
 
 function dam_spam_is_user_locked( $user_id ) {
-	if ( get_user_meta( $user_id, 'dam_spam_is_locked', true ) === false ) {
-		return false;
-	}
-	$expires = dam_spam_get_user_lock_expiration( $user_id );
-	if ( !$expires ) {
-		return true;
-	}
-	$time = time();
-	if ( $time > $expires ) {
-		dam_spam_unlock_user( $user_id );
-		return false;
-	}
-	return true;
+	$is_locked = get_user_meta( $user_id, 'dam_spam_is_locked', true );
+	return !empty( $is_locked );
 }
 
-function dam_spam_get_user_lock_expiration( $user_id ) {
-	return get_user_meta( $user_id, 'dam_spam_lock_expiration', true );
-}
-
-function dam_spam_lock_user( $user_id, $expiration ) {
+function dam_spam_lock_user( $user_id ) {
 	update_user_meta( $user_id, 'dam_spam_is_locked', true );
-	update_user_meta( $user_id, 'dam_spam_lock_expiration', $expiration );
-	update_user_meta( $user_id, 'dam_spam_failed_login_attempts', array() );
 }
 
 function dam_spam_unlock_user( $user_id ) {
-	update_user_meta( $user_id, 'dam_spam_is_locked', false );
-	update_user_meta( $user_id, 'dam_spam_lock_expiration', '' );
-	update_user_meta( $user_id, 'dam_spam_failed_login_attempts', array() );
+	delete_user_meta( $user_id, 'dam_spam_is_locked' );
+}
+
+add_filter( 'user_row_actions', 'dam_spam_user_row_actions', 10, 2 );
+function dam_spam_user_row_actions( $actions, $user_object ) {
+	if ( !current_user_can( 'edit_users' ) ) {
+		return $actions;
+	}
+	if ( get_current_user_id() === $user_object->ID ) {
+		return $actions;
+	}
+	$is_locked = dam_spam_is_user_locked( $user_object->ID );
+	if ( $is_locked ) {
+		$actions['dam_spam_unlock'] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'dam_spam_unlock_user', 'user_id' => $user_object->ID ), admin_url( 'users.php' ) ), 'dam_spam_unlock_user_' . $user_object->ID ) ),
+			esc_html__( 'Unlock account', 'dam-spam' )
+		);
+	} else {
+		$actions['dam_spam_lock'] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'dam_spam_lock_user', 'user_id' => $user_object->ID ), admin_url( 'users.php' ) ), 'dam_spam_lock_user_' . $user_object->ID ) ),
+			esc_html__( 'Lock account', 'dam-spam' )
+		);
+	}
+	return $actions;
+}
+
+add_action( 'admin_init', 'dam_spam_handle_user_lock_actions' );
+function dam_spam_handle_user_lock_actions() {
+	if ( !current_user_can( 'edit_users' ) ) {
+		return;
+	}
+	if ( !isset( $_GET['action'] ) || !isset( $_GET['user_id'] ) ) {
+		return;
+	}
+	$action = sanitize_text_field( wp_unslash( $_GET['action'] ) );
+	$user_id = absint( $_GET['user_id'] );
+	if ( $action === 'dam_spam_lock_user' ) {
+		if ( !isset( $_GET['_wpnonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dam_spam_lock_user_' . $user_id ) ) {
+			return;
+		}
+		dam_spam_lock_user( $user_id );
+		wp_safe_redirect( add_query_arg( array( 'dam_spam_locked' => '1' ), admin_url( 'users.php' ) ) );
+		exit;
+	} elseif ( $action === 'dam_spam_unlock_user' ) {
+		if ( !isset( $_GET['_wpnonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dam_spam_unlock_user_' . $user_id ) ) {
+			return;
+		}
+		dam_spam_unlock_user( $user_id );
+		wp_safe_redirect( add_query_arg( array( 'dam_spam_unlocked' => '1' ), admin_url( 'users.php' ) ) );
+		exit;
+	}
+}
+
+add_action( 'admin_notices', 'dam_spam_user_lock_notices' );
+function dam_spam_user_lock_notices() {
+	if ( isset( $_GET['dam_spam_locked'] ) ) {
+		?>
+		<div class="notice notice-success is-dismissible">
+			<p><?php esc_html_e( 'User account locked.', 'dam-spam' ); ?></p>
+		</div>
+		<?php
+	}
+	if ( isset( $_GET['dam_spam_unlocked'] ) ) {
+		?>
+		<div class="notice notice-success is-dismissible">
+			<p><?php esc_html_e( 'User account unlocked.', 'dam-spam' ); ?></p>
+		</div>
+		<?php
+	}
 }
 
 // ============================================================================

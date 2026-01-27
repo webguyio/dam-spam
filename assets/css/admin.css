@@ -145,7 +145,7 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 }
 
 #dam-spam .dam-spam-small-box {
-	width: 35px;
+	width: 75px;
 	text-align: center;
 	display: initial !important;
 }

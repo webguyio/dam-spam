@@ -287,4 +287,73 @@ function dam_spam_migrate_allow_list_email() {
 	update_option( 'dam_spam_options', $options );
 }
 
+function dam_spam_write_ban_file() {
+	$manual_bans_raw = get_option( 'dam_spam_manual_bans', '' );
+	$automatic_bans = get_option( 'dam_spam_automatic_bans', array() );
+	$manual_bans = array();
+	if ( !empty( $manual_bans_raw ) ) {
+		$lines = explode( "\n", $manual_bans_raw );
+		foreach ( $lines as $line ) {
+			$ip = trim( $line );
+			if ( !empty( $ip ) && filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+				$manual_bans[$ip] = true;
+			}
+		}
+	}
+	if ( !is_array( $automatic_bans ) ) {
+		$automatic_bans = array();
+	}
+	$all_bans = array_merge( $manual_bans, $automatic_bans );
+	global $wp_filesystem;
+	if ( empty( $wp_filesystem ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+	}
+	if ( !$wp_filesystem ) {
+		return;
+	}
+	$mu_plugin_file = WP_CONTENT_DIR . '/mu-plugins/dam-spam-banner.php';
+	if ( empty( $all_bans ) ) {
+		if ( file_exists( $mu_plugin_file ) ) {
+			wp_delete_file( $mu_plugin_file );
+		}
+		return;
+	}
+	$mu_plugin_content = "<?php\n";
+	$mu_plugin_content .= "/*\n";
+	$mu_plugin_content .= "Plugin Name: Dam Spam Banner\n";
+	$mu_plugin_content .= "Description: Loads Dam Spam IP ban list early to block banned IPs before WordPress fully loads.\n";
+	$mu_plugin_content .= "*/\n\n";
+	$mu_plugin_content .= "\$visitor_ip = '';\n\n";
+	$mu_plugin_content .= "if ( isset( \$_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {\n";
+	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['HTTP_CF_CONNECTING_IP'];\n";
+	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['HTTP_X_REAL_IP'] ) ) {\n";
+	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['HTTP_X_REAL_IP'];\n";
+	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {\n";
+	$mu_plugin_content .= "\t\$ips = explode( ',', \$_SERVER['HTTP_X_FORWARDED_FOR'] );\n";
+	$mu_plugin_content .= "\t\$visitor_ip = trim( \$ips[0] );\n";
+	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['REMOTE_ADDR'] ) ) {\n";
+	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['REMOTE_ADDR'];\n";
+	$mu_plugin_content .= "}\n\n";
+	$mu_plugin_content .= "\$dam_spam_banned_ips = array(\n";
+	foreach ( array_keys( $all_bans ) as $ip ) {
+		$mu_plugin_content .= "\t'" . esc_sql( $ip ) . "' => true,\n";
+	}
+	$mu_plugin_content .= ");\n\n";
+	$mu_plugin_content .= "if ( !empty( \$visitor_ip ) && filter_var( \$visitor_ip, FILTER_VALIDATE_IP ) && isset( \$dam_spam_banned_ips[\$visitor_ip] ) ) {\n";
+	$mu_plugin_content .= "\theader( 'Connection: close' );\n";
+	$mu_plugin_content .= "\tignore_user_abort( true );\n";
+	$mu_plugin_content .= "\tob_start();\n";
+	$mu_plugin_content .= "\theader( 'Content-Length: 0' );\n";
+	$mu_plugin_content .= "\tob_end_flush();\n";
+	$mu_plugin_content .= "\tflush();\n";
+	$mu_plugin_content .= "\texit;\n";
+	$mu_plugin_content .= "}";
+	$mu_plugins_dir = WP_CONTENT_DIR . '/mu-plugins';
+	if ( !$wp_filesystem->is_dir( $mu_plugins_dir ) ) {
+		$wp_filesystem->mkdir( $mu_plugins_dir, FS_CHMOD_DIR );
+	}
+	$wp_filesystem->put_contents( $mu_plugin_file, $mu_plugin_content, FS_CHMOD_FILE );
+}
+
 ?>
