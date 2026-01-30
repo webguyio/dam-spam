@@ -11,6 +11,10 @@
 	vertical-align: middle;
 }
 
+.dam-spam-locked th.check-column {
+	border-left: 4px solid #dc3232;
+}
+
 /* prefixed with #dam-spam for styling inside settings pages only */
 body.dam-spam {
 	background: #111;
@@ -68,6 +72,7 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 
 #dam-spam input, #dam-spam textarea, #dam-spam select, #dam-spam option {
 	color: #ccc;
+	text-shadow: none;
 	border: 2px solid #333;
 	outline: 0;
 	margin-bottom: 5px;
@@ -380,4 +385,22 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 #dam-spam .button-secondary-red:hover {
 	background: #ca0000;
 	color: #fff;
+}
+
+@media (prefers-color-scheme: light) {
+	body.dam-spam {
+		background: #f0f0f1;
+	}
+	body.dam-spam .wrap > div.notice, #dam-spam div.notice, #dam-spam .postbox, #dam-spam .dam-spam-info-box, #dam-spam td {
+		background: #fff;
+	}
+	#dam-spam, #dam-spam h2, #dam-spam h3, #dam-spam h4, #dam-spam h5, #dam-spam h6, #dam-spam p {
+		color: #3c434a;
+	}
+	#dam-spam div.mainsection {
+		color: #222
+	}
+	#dam-spam .dam-spam-subhead, #dam-spam .dam-spam-subhead2 {
+		color: #444
+	}
 }

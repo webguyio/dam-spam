@@ -79,6 +79,37 @@ class dam_spam_challenge extends dam_spam_module {
 					exit();
 				}
 				switch ( $check_captcha ) {
+					case 'C':
+						if ( array_key_exists( 'cf-turnstile', $_POST ) && !empty( $_POST['cf-turnstile'] ) && array_key_exists( 'cf-turnstile-response', $_POST ) ) {
+							$turnstileapisecret = isset( $options['turnstileapisecret'] ) ? $options['turnstileapisecret'] : '';
+							$turnstileapisite = isset( $options['turnstileapisite'] ) ? $options['turnstileapisite'] : '';
+							if ( empty( $turnstileapisecret ) || empty( $turnstileapisite ) ) {
+								$msg = esc_html__( 'Cloudflare Turnstile keys are not set.', 'dam-spam' );
+							} else {
+								$t = isset( $_REQUEST['cf-turnstile-response'] ) ? sanitize_textarea_field( wp_unslash( $_REQUEST['cf-turnstile-response'] ) ) : '';
+								$url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+								$response = wp_safe_remote_post( $url, array(
+									'body' => array(
+										'secret' => $turnstileapisecret,
+										'response' => $t,
+										'remoteip' => $ip
+									)
+								) );
+								if ( !is_wp_error( $response ) ) {
+									$parsed = json_decode( wp_remote_retrieve_body( $response ) );
+									if ( isset( $parsed->success ) && $parsed->success === true ) {
+										dam_spam_log_good( $ip, esc_html__( 'Passed Cloudflare Turnstile', 'dam-spam' ), 'pass' );
+										do_action( 'dam_spam_ok', $ip, $post );
+										return false;
+									} else {
+										$msg = esc_html__( 'Cloudflare Turnstile entry does not match. Try again.', 'dam-spam' );
+									}
+								} else {
+									$msg = esc_html__( 'Cloudflare Turnstile verification failed.', 'dam-spam' );
+								}
+							}
+						}
+						break;
 					case 'G':
 						if ( array_key_exists( 'recaptcha', $_POST ) && !empty( $_POST['recaptcha'] ) && array_key_exists( 'g-recaptcha-response', $_POST ) ) {
 							$recaptchaapisecret = isset( $options['recaptchaapisecret'] ) ? $options['recaptchaapisecret'] : '';
@@ -171,7 +202,7 @@ class dam_spam_challenge extends dam_spam_module {
 		}
 		$knonce = wp_create_nonce( 'dam_spam_block' );
 		if ( !empty( $msg ) ) {
-			$msg = "\r\n<br><span style='color:red'> " . esc_html( $msg ) . " </span><hr>\r\n";
+			$msg = "\r\n<br><span style='color:red'> " . esc_html( $msg ) . " </span><br><hr><br>\r\n";
 		}
 		$formtop = '
 			<form action="" method="post">
@@ -194,24 +225,31 @@ class dam_spam_challenge extends dam_spam_module {
 				<textarea name="km" cols="80" rows="6" style="width:100%;box-sizing:border-box" placeholder="' . esc_attr__( 'Explain what you were trying to do or re-enter your message.', 'dam-spam' ) . '"></textarea>
 			';
 		}
-		$captop = '<h1>' . esc_html__( 'Are you human?', 'dam-spam' ) . '</h1>';
+		$captop = '<h1>' . esc_html__( 'Are you human?', 'dam-spam' ) . '</h1><br>';
 		$capbot = '';
 		$cap = '';
 		switch ( $check_captcha ) {
+			case 'C':
+				$turnstileapisite = isset( $options['turnstileapisite'] ) ? $options['turnstileapisite'] : '';
+				// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript, PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- External Turnstile script must be loaded inline
+				$cap = "<script src='https://challenges.cloudflare.com/turnstile/v0/api.js' async defer></script>
+				<input type='hidden' name='cf-turnstile' value='cf-turnstile'>
+				<div class='cf-turnstile' data-sitekey='" . esc_attr( $turnstileapisite ) . "'></div>";
+			break;
 			case 'G':
 				$recaptchaapisite = isset( $options['recaptchaapisite'] ) ? $options['recaptchaapisite'] : '';
-				// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- External reCAPTCHA script must be loaded inline
+				// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript, PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- External reCAPTCHA script must be loaded inline
 				$cap = "<script src='https://www.google.com/recaptcha/api.js' async defer></script>
-					<input type='hidden' name='recaptcha' value='recaptcha'>
-					<div class='g-recaptcha' data-sitekey='" . esc_attr( $recaptchaapisite ) . "'></div>";
-				break;
+				<input type='hidden' name='recaptcha' value='recaptcha'>
+				<div class='g-recaptcha' data-sitekey='" . esc_attr( $recaptchaapisite ) . "'></div>";
+			break;
 			case 'H':
 				$hcaptchaapisite = isset( $options['hcaptchaapisite'] ) ? $options['hcaptchaapisite'] : '';
-				// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- External hCaptcha script must be loaded inline
+				// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript, PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- External hCaptcha script must be loaded inline
 				$cap = "<script src='https://hcaptcha.com/1/api.js' async defer></script>
-					<input type='hidden' name='h-captcha' value='h-captcha'>
-					<div class='h-captcha' data-sitekey='" . esc_attr( $hcaptchaapisite ) . "'></div>";
-				break;
+				<input type='hidden' name='h-captcha' value='h-captcha'>
+				<div class='h-captcha' data-sitekey='" . esc_attr( $hcaptchaapisite ) . "'></div>";
+			break;
 			case 'A':
 			case 'Y':
 				$n1 = wp_rand( 1, 9 );
@@ -223,16 +261,16 @@ class dam_spam_challenge extends dam_spam_module {
 				}
 				$math = $n1 + $n2 - $seed;
 				$cap = '<br>' . esc_html__( 'Enter the SUM of these two numbers: ', 'dam-spam' ) .
-					'<strong>' . esc_html( $n1 ) . ' + ' . esc_html( $n2 ) . '</strong><br>
-					<input name="sum" value="" type="text">
-					<input type="hidden" name="nums" value="' . esc_attr( $math ) . '"><br>';
-				break;
+				'<strong>' . esc_html( $n1 ) . ' + ' . esc_html( $n2 ) . '</strong><br>
+				<input name="sum" value="" type="text">
+				<input type="hidden" name="nums" value="' . esc_attr( $math ) . '"><br>';
+			break;
 			case 'F':
 			default:
 				$captop = '';
 				$capbot = '';
 				$cap = '';
-				break;
+			break;
 		}
 		if ( empty( $msg ) ) {
 			$msg = html_entity_decode( $reject_message );

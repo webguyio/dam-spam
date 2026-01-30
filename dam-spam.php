@@ -3,7 +3,7 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 1.0.4
+Version: 1.0.5
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -20,7 +20,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DAM_SPAM_VERSION', '1.0.4' );
+define( 'DAM_SPAM_VERSION', '1.0.5' );
 define( 'DAM_SPAM_URL', plugin_dir_url( __FILE__ ) );
 define( 'DAM_SPAM_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -86,7 +86,7 @@ function dam_spam_wc_admin_notice() {
 		$param = ( count( $_GET ) ) ? '&' : '?';
 		if ( !get_user_meta( $user_id, 'dam_spam_wc_notice_dismissed' ) && current_user_can( 'manage_options' ) ) {
 			// translators: %1$s and %2$s is the link HTML
-			echo '<div class="notice notice-info"><p style="color:purple"><a href="' . esc_url( $admin_url . $param . 'dam-spam-wc-dismiss' ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'WooCommerce Detected', 'dam-spam' ) . '</strong></big> | ' . sprintf( esc_html__( 'We recommend %1$sadjusting these options%2$s if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ), '<a href="admin.php?page=dam-spam-protections">', '</a>' ) . '</p></div>';
+			echo '<div class="notice notice-info"><p style="color:#c77dff"><a href="' . esc_url( $admin_url . $param . 'dam-spam-wc-dismiss' ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'WooCommerce Detected', 'dam-spam' ) . '</strong></big> | ' . sprintf( esc_html__( 'We recommend %1$sadjusting these options%2$s if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ), '<a href="admin.php?page=dam-spam-protections">', '</a>' ) . '</p></div>';
 		}
 	}
 }
@@ -465,7 +465,18 @@ function dam_spam_add_captcha() {
 	$options = dam_spam_get_options();
 	$html = '';
 	switch ( $options['check_captcha'] ) {
+		case 'C':
+			// phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- Turnstile requires external script
+			wp_enqueue_script( 'cloudflare-turnstile', 'https://challenges.cloudflare.com/turnstile/v0/api.js', array(), '1', array(
+				'strategy'  => 'async',
+				'in_footer' => true,
+			) );
+			$turnstileapisite = $options['turnstileapisite'];
+			$html = '<input type="hidden" name="cf-turnstile" value="cf-turnstile">';
+			$html .= '<div class="cf-turnstile" data-sitekey="' . esc_attr( $turnstileapisite ) . '"></div>';
+		break;
 		case 'G':
+			// phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- reCAPTCHA requires external script
 			wp_enqueue_script( 'google-recaptcha', 'https://www.google.com/recaptcha/api.js', array(), '1', array(
 				'strategy'  => 'async',
 				'in_footer' => true,
@@ -475,6 +486,7 @@ function dam_spam_add_captcha() {
 			$html .= '<div class="g-recaptcha" data-sitekey="' . esc_attr( $recaptchaapisite ) . '"></div>';
 		break;
 		case 'H':
+			// phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- hCaptcha requires external script
 			wp_enqueue_script( 'hcaptcha', 'https://hcaptcha.com/1/api.js', array(), '1', array(
 				'strategy'  => 'async',
 				'in_footer' => true,
@@ -520,6 +532,37 @@ function dam_spam_captcha_verify() {
 	$options = dam_spam_get_options();
 	$ip = dam_spam_get_ip();
 	switch ( $options['check_captcha'] ) {
+		case 'C':
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checking for response, shouldn't have nonce
+			if ( !array_key_exists( 'cf-turnstile', $_POST ) || empty( $_POST['cf-turnstile'] ) || !array_key_exists( 'cf-turnstile-response', $_POST ) ) {
+				$verified = esc_html__( 'Error: Please complete the Cloudflare Turnstile.', 'dam-spam' );
+				return $verified;
+			}
+			$turnstileapisecret = $options['turnstileapisecret'];
+			$turnstileapisite = $options['turnstileapisite'];
+			if ( empty( $turnstileapisecret ) || empty( $turnstileapisite ) ) {
+				$verified = esc_html__( 'Error: Cloudflare Turnstile keys are not set.', 'dam-spam' );
+				return $verified;
+			}
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checking for response, shouldn't have nonce
+			$t = isset( $_POST['cf-turnstile-response'] ) ? sanitize_textarea_field( wp_unslash( $_POST['cf-turnstile-response'] ) ) : '';
+			$response = wp_safe_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
+				'body' => array(
+					'secret' => $turnstileapisecret,
+					'response' => $t,
+					'remoteip' => $ip
+				)
+			) );
+			if ( is_wp_error( $response ) ) {
+				$verified = esc_html__( 'Error: Cloudflare Turnstile connection failed.', 'dam-spam' );
+				return $verified;
+			}
+			$parsed = json_decode( wp_remote_retrieve_body( $response ) );
+			if ( !isset( $parsed->success ) || $parsed->success !== true ) {
+				$verified = esc_html__( 'Error: Cloudflare Turnstile verification failed.', 'dam-spam' );
+				return $verified;
+			}
+		break;
 		case 'G':
 			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checking for response, shouldn't have nonce
 			if ( !array_key_exists( 'recaptcha', $_POST ) || empty( $_POST['recaptcha'] ) || !array_key_exists( 'g-recaptcha-response', $_POST ) ) {

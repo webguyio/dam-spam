@@ -1218,23 +1218,30 @@ class dam_spam_get_options {
 			)
 		);
 		$defaultSVC = array(
-			'apikey'			 => '',
-			'honeyapi'			 => '',
-			'botscoutapi'		 => '',
-			'googleapi'			 => '',
-			'recaptchaapisecret' => '',
-			'recaptchaapisite'	 => '',
-			'hcaptchaapisecret'	 => '',
-			'hcaptchaapisite'	 => '',
-			'sesstime'			 => 4,
-			'sfsfreq'			 => 0,
-			'hnyage'			 => 9999,
-			'botfreq'			 => 0,
-			'sfsage'			 => 9999,
-			'hnylevel'			 => 5,
-			'botage'			 => 9999,
-			'multicount'		 => 5,
-			'multitime'			 => 3
+			'apikey'			   => '',
+			'honeyapi'			   => '',
+			'botscoutapi'		   => '',
+			'googleapi'			   => '',
+			'cf_email'			   => '',
+			'cf_api_key'		   => '',
+			'cf_zone_id'		   => '',
+			'cf_block_countries'   => 'N',
+			'cf_blocked_countries' => array(),
+			'turnstileapisecret'   => '',
+			'turnstileapisite'	   => '',
+			'recaptchaapisecret'   => '',
+			'recaptchaapisite'	   => '',
+			'hcaptchaapisecret'	   => '',
+			'hcaptchaapisite'	   => '',
+			'sesstime'			   => 4,
+			'sfsfreq'			   => 0,
+			'hnyage'			   => 9999,
+			'botfreq'			   => 0,
+			'sfsage'			   => 9999,
+			'hnylevel'			   => 5,
+			'botage'			   => 9999,
+			'multicount'		   => 5,
+			'multitime'			   => 3
 		);
 		$force	  = true;
 		$defaults = array(

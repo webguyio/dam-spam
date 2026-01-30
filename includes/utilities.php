@@ -59,6 +59,351 @@ function dam_spam_get_ajax_allowed_html() {
 	);
 }
 
+function dam_spam_cloudflare_is_configured() {
+	$options = dam_spam_get_options();
+	$cf_email = isset( $options['cf_email'] ) ? trim( $options['cf_email'] ) : '';
+	$cf_api_key = isset( $options['cf_api_key'] ) ? trim( $options['cf_api_key'] ) : '';
+	$cf_zone_id = isset( $options['cf_zone_id'] ) ? trim( $options['cf_zone_id'] ) : '';
+	return !empty( $cf_email ) && !empty( $cf_api_key ) && !empty( $cf_zone_id );
+}
+
+function dam_spam_cloudflare_api_request( $endpoint, $method = 'GET', $data = null ) {
+	$options = dam_spam_get_options();
+	$cf_email = isset( $options['cf_email'] ) ? trim( $options['cf_email'] ) : '';
+	$cf_api_key = isset( $options['cf_api_key'] ) ? trim( $options['cf_api_key'] ) : '';
+	$cf_zone_id = isset( $options['cf_zone_id'] ) ? trim( $options['cf_zone_id'] ) : '';
+	if ( empty( $cf_email ) || empty( $cf_api_key ) || empty( $cf_zone_id ) ) {
+		return array( 'success' => false, 'message' => 'Cloudflare API not configured' );
+	}
+	$url = 'https://api.cloudflare.com/client/v4/' . ltrim( $endpoint, '/' );
+	$args = array(
+		'method' => $method,
+		'headers' => array(
+			'X-Auth-Email' => $cf_email,
+			'X-Auth-Key' => $cf_api_key,
+			'Content-Type' => 'application/json',
+		),
+		'timeout' => 30,
+	);
+	if ( $data !== null && ( $method === 'POST' || $method === 'PUT' || $method === 'PATCH' ) ) {
+		$args['body'] = wp_json_encode( $data );
+	}
+	$response = wp_remote_request( $url, $args );
+	if ( is_wp_error( $response ) ) {
+		return array( 'success' => false, 'message' => $response->get_error_message() );
+	}
+	$body = wp_remote_retrieve_body( $response );
+	$decoded = json_decode( $body, true );
+	if ( !isset( $decoded['success'] ) ) {
+		return array( 'success' => false, 'message' => 'Invalid API response' );
+	}
+	return $decoded;
+}
+
+function dam_spam_cloudflare_clear_cache() {
+	$options = dam_spam_get_options();
+	$cf_zone_id = isset( $options['cf_zone_id'] ) ? trim( $options['cf_zone_id'] ) : '';
+	$result = dam_spam_cloudflare_api_request(
+		'zones/' . $cf_zone_id . '/purge_cache',
+		'POST',
+		array( 'purge_everything' => true )
+	);
+	return $result;
+}
+
+function dam_spam_sync_ban_list_to_cloudflare() {
+	if ( !dam_spam_cloudflare_is_configured() ) {
+		return array( 'success' => false, 'message' => esc_html__( 'Cloudflare not configured', 'dam-spam' ) );
+	}
+	$options = dam_spam_get_options();
+	$cf_zone_id = $options['cf_zone_id'];
+	$manual_bans_raw = get_option( 'dam_spam_manual_bans', '' );
+	$automatic_bans = get_option( 'dam_spam_automatic_bans', array() );
+	$manual_bans = array();
+	if ( !empty( $manual_bans_raw ) ) {
+		$lines = explode( "\n", $manual_bans_raw );
+		foreach ( $lines as $line ) {
+			$ip = trim( $line );
+			if ( !empty( $ip ) && filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+				$manual_bans[] = $ip;
+			}
+		}
+	}
+	if ( !is_array( $automatic_bans ) ) {
+		$automatic_bans = array();
+	}
+	$banned_ips = array_unique( array_merge( $manual_bans, array_keys( $automatic_bans ) ) );
+	if ( empty( $banned_ips ) ) {
+		return array( 'success' => true, 'count' => 0, 'message' => esc_html__( 'No banned IPs to sync', 'dam-spam' ) );
+	}
+	$account_id_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}", 'GET', null );
+	if ( !isset( $account_id_response['success'] ) || $account_id_response['success'] !== true ) {
+		$error = isset( $account_id_response['message'] ) ? $account_id_response['message'] : esc_html__( 'Failed to get account ID', 'dam-spam' );
+		return array( 'success' => false, 'message' => $error );
+	}
+	$account_id = isset( $account_id_response['result']['account']['id'] ) ? $account_id_response['result']['account']['id'] : '';
+	if ( empty( $account_id ) ) {
+		return array( 'success' => false, 'message' => esc_html__( 'Account ID not found', 'dam-spam' ) );
+	}
+	$list_name = 'dam_spam_ips';
+	$lists_response = dam_spam_cloudflare_api_request( "accounts/{$account_id}/rules/lists", 'GET', null );
+	$list_id = null;
+	if ( isset( $lists_response['success'] ) && $lists_response['success'] === true && isset( $lists_response['result'] ) ) {
+		foreach ( $lists_response['result'] as $list ) {
+			if ( isset( $list['name'] ) && $list['name'] === $list_name ) {
+				$list_id = $list['id'];
+				break;
+			}
+		}
+	}
+	$ip_limit = 10000;
+	if ( count( $banned_ips ) > $ip_limit ) {
+		$banned_ips = array_slice( $banned_ips, 0, $ip_limit );
+	}
+	$items = array();
+	foreach ( $banned_ips as $ip ) {
+		$items[] = array(
+			'ip' => $ip,
+			'comment' => 'Dam Spam'
+		);
+	}
+	if ( $list_id ) {
+		$update_response = dam_spam_cloudflare_api_request( "accounts/{$account_id}/rules/lists/{$list_id}/items", 'PUT', $items );
+		if ( !isset( $update_response['success'] ) || $update_response['success'] !== true ) {
+			$error = isset( $update_response['message'] ) ? $update_response['message'] : esc_html__( 'Failed to update list', 'dam-spam' );
+			return array( 'success' => false, 'message' => $error );
+		}
+	} else {
+		$create_response = dam_spam_cloudflare_api_request( "accounts/{$account_id}/rules/lists", 'POST', array(
+			'name' => $list_name,
+			'kind' => 'ip',
+			'description' => 'IP addresses blocked by Dam Spam'
+		) );
+		if ( !isset( $create_response['success'] ) || $create_response['success'] !== true ) {
+			$error_msg = isset( $create_response['errors'][0]['message'] ) ? $create_response['errors'][0]['message'] : '';
+			if ( empty( $error_msg ) ) {
+				$error_msg = isset( $create_response['message'] ) ? $create_response['message'] : esc_html__( 'Failed to create list', 'dam-spam' );
+			}
+			return array( 'success' => false, 'message' => $error_msg );
+		}
+		$list_id = isset( $create_response['result']['id'] ) ? $create_response['result']['id'] : '';
+		if ( empty( $list_id ) ) {
+			return array( 'success' => false, 'message' => esc_html__( 'List ID not found', 'dam-spam' ) );
+		}
+		$update_response = dam_spam_cloudflare_api_request( "accounts/{$account_id}/rules/lists/{$list_id}/items", 'PUT', $items );
+		if ( !isset( $update_response['success'] ) || $update_response['success'] !== true ) {
+			$error = isset( $update_response['message'] ) ? $update_response['message'] : esc_html__( 'Failed to add items to list', 'dam-spam' );
+			return array( 'success' => false, 'message' => $error );
+		}
+	}
+	$rulesets_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets", 'GET', null );
+	$ruleset_id = null;
+	$rule_id = null;
+	if ( isset( $rulesets_response['success'] ) && $rulesets_response['success'] === true && isset( $rulesets_response['result'] ) ) {
+		foreach ( $rulesets_response['result'] as $ruleset ) {
+			if ( isset( $ruleset['phase'] ) && $ruleset['phase'] === 'http_request_firewall_custom' ) {
+				$ruleset_id = $ruleset['id'];
+				break;
+			}
+		}
+	}
+	if ( $ruleset_id ) {
+		$ruleset_detail = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}", 'GET', null );
+		if ( isset( $ruleset_detail['success'] ) && $ruleset_detail['success'] === true && isset( $ruleset_detail['result']['rules'] ) ) {
+			foreach ( $ruleset_detail['result']['rules'] as $rule ) {
+				if ( isset( $rule['description'] ) && $rule['description'] === 'Dam Spam Block List' ) {
+					$rule_id = $rule['id'];
+					break;
+				}
+			}
+		}
+	}
+	if ( $rule_id ) {
+		$update_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}/rules/{$rule_id}", 'PATCH', array(
+			'action' => 'block',
+			'expression' => "(ip.src in \${$list_name})",
+			'description' => 'Dam Spam Block List'
+		) );
+		if ( !isset( $update_rule_response['success'] ) || $update_rule_response['success'] !== true ) {
+			$error_msg = isset( $update_rule_response['errors'][0]['message'] ) ? $update_rule_response['errors'][0]['message'] : '';
+			if ( empty( $error_msg ) ) {
+				$error_msg = isset( $update_rule_response['message'] ) ? $update_rule_response['message'] : esc_html__( 'Failed to update WAF rule', 'dam-spam' );
+			}
+			return array( 'success' => false, 'message' => $error_msg );
+		}
+	} elseif ( $ruleset_id ) {
+		$create_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}/rules", 'POST', array(
+			'action' => 'block',
+			'expression' => "(ip.src in \${$list_name})",
+			'description' => 'Dam Spam Block List'
+		) );
+	} else {
+		$create_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/phases/http_request_firewall_custom/entrypoint", 'PUT', array(
+			'rules' => array(
+				array(
+					'action' => 'block',
+					'expression' => "(ip.src in \${$list_name})",
+					'description' => 'Dam Spam Block List'
+				)
+			)
+		) );
+		if ( !isset( $create_rule_response['success'] ) || $create_rule_response['success'] !== true ) {
+			$error_msg = isset( $create_rule_response['errors'][0]['message'] ) ? $create_rule_response['errors'][0]['message'] : '';
+			if ( empty( $error_msg ) ) {
+				$error_msg = isset( $create_rule_response['message'] ) ? $create_rule_response['message'] : esc_html__( 'Failed to create WAF rule', 'dam-spam' );
+			}
+			return array( 'success' => false, 'message' => $error_msg );
+		}
+	}
+	return array( 'success' => true, 'count' => count( $banned_ips ) );
+}
+
+function dam_spam_sync_countries_to_cloudflare() {
+	if ( !dam_spam_cloudflare_is_configured() ) {
+		return array( 'success' => false, 'message' => esc_html__( 'Cloudflare not configured', 'dam-spam' ) );
+	}
+	$options = dam_spam_get_options();
+	$cf_zone_id = $options['cf_zone_id'];
+	$cf_block_countries = isset( $options['cf_block_countries'] ) ? $options['cf_block_countries'] : 'N';
+	$countries = isset( $options['cf_blocked_countries'] ) && is_array( $options['cf_blocked_countries'] ) ? $options['cf_blocked_countries'] : array();
+	if ( $cf_block_countries != 'Y' || empty( $countries ) ) {
+		return array( 'success' => true, 'count' => 0, 'message' => esc_html__( 'Country blocking disabled or no countries selected', 'dam-spam' ) );
+	}
+	$country_codes = array_map( function( $code ) {
+		return '"' . strtoupper( sanitize_text_field( $code ) ) . '"';
+	}, $countries );
+	$expression = 'ip.geoip.country in {' . implode( ' ', $country_codes ) . '}';
+	$rulesets_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets", 'GET', null );
+	$ruleset_id = null;
+	$rule_id = null;
+	if ( isset( $rulesets_response['success'] ) && $rulesets_response['success'] === true && isset( $rulesets_response['result'] ) ) {
+		foreach ( $rulesets_response['result'] as $ruleset ) {
+			if ( isset( $ruleset['phase'] ) && $ruleset['phase'] === 'http_request_firewall_custom' ) {
+				$ruleset_id = $ruleset['id'];
+				break;
+			}
+		}
+	}
+	if ( $ruleset_id ) {
+		$ruleset_detail = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}", 'GET', null );
+		if ( isset( $ruleset_detail['success'] ) && $ruleset_detail['success'] === true && isset( $ruleset_detail['result']['rules'] ) ) {
+			foreach ( $ruleset_detail['result']['rules'] as $rule ) {
+				if ( isset( $rule['description'] ) && $rule['description'] === 'Dam Spam Country Block' ) {
+					$rule_id = $rule['id'];
+					break;
+				}
+			}
+		}
+	}
+	if ( $rule_id ) {
+		$update_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}/rules/{$rule_id}", 'PATCH', array(
+			'action' => 'block',
+			'expression' => $expression,
+			'description' => 'Dam Spam Country Block'
+		) );
+		if ( !isset( $update_rule_response['success'] ) || $update_rule_response['success'] !== true ) {
+			$error_msg = isset( $update_rule_response['errors'][0]['message'] ) ? $update_rule_response['errors'][0]['message'] : '';
+			if ( empty( $error_msg ) ) {
+				$error_msg = isset( $update_rule_response['message'] ) ? $update_rule_response['message'] : esc_html__( 'Failed to update WAF rule', 'dam-spam' );
+			}
+			return array( 'success' => false, 'message' => $error_msg );
+		}
+	} elseif ( $ruleset_id ) {
+		$create_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}/rules", 'POST', array(
+			'action' => 'block',
+			'expression' => $expression,
+			'description' => 'Dam Spam Country Block'
+		) );
+	} else {
+		$create_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/phases/http_request_firewall_custom/entrypoint", 'PUT', array(
+			'rules' => array(
+				array(
+					'action' => 'block',
+					'expression' => $expression,
+					'description' => 'Dam Spam Country Block'
+				)
+			)
+		) );
+		if ( !isset( $create_rule_response['success'] ) || $create_rule_response['success'] !== true ) {
+			$error_msg = isset( $create_rule_response['errors'][0]['message'] ) ? $create_rule_response['errors'][0]['message'] : '';
+			if ( empty( $error_msg ) ) {
+				$error_msg = isset( $create_rule_response['message'] ) ? $create_rule_response['message'] : esc_html__( 'Failed to create WAF rule', 'dam-spam' );
+			}
+			return array( 'success' => false, 'message' => $error_msg );
+		}
+	}
+	return array( 'success' => true, 'count' => count( $countries ) );
+}
+
+function dam_spam_write_ban_file() {
+	$manual_bans_raw = get_option( 'dam_spam_manual_bans', '' );
+	$automatic_bans = get_option( 'dam_spam_automatic_bans', array() );
+	$manual_bans = array();
+	if ( !empty( $manual_bans_raw ) ) {
+		$lines = explode( "\n", $manual_bans_raw );
+		foreach ( $lines as $line ) {
+			$ip = trim( $line );
+			if ( !empty( $ip ) && filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+				$manual_bans[$ip] = true;
+			}
+		}
+	}
+	if ( !is_array( $automatic_bans ) ) {
+		$automatic_bans = array();
+	}
+	$all_bans = array_merge( $manual_bans, $automatic_bans );
+	global $wp_filesystem;
+	if ( empty( $wp_filesystem ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+	}
+	if ( !$wp_filesystem ) {
+		return;
+	}
+	$mu_plugin_file = WP_CONTENT_DIR . '/mu-plugins/dam-spam-banner.php';
+	if ( empty( $all_bans ) ) {
+		if ( file_exists( $mu_plugin_file ) ) {
+			wp_delete_file( $mu_plugin_file );
+		}
+		return;
+	}
+	$mu_plugin_content = "<?php\n";
+	$mu_plugin_content .= "/*\n";
+	$mu_plugin_content .= "Plugin Name: Dam Spam Banner\n";
+	$mu_plugin_content .= "Description: Loads Dam Spam IP ban list early to block banned IPs before WordPress fully loads.\n";
+	$mu_plugin_content .= "*/\n\n";
+	$mu_plugin_content .= "\$visitor_ip = '';\n\n";
+	$mu_plugin_content .= "if ( isset( \$_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {\n";
+	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['HTTP_CF_CONNECTING_IP'];\n";
+	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['HTTP_X_REAL_IP'] ) ) {\n";
+	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['HTTP_X_REAL_IP'];\n";
+	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {\n";
+	$mu_plugin_content .= "\t\$ips = explode( ',', \$_SERVER['HTTP_X_FORWARDED_FOR'] );\n";
+	$mu_plugin_content .= "\t\$visitor_ip = trim( \$ips[0] );\n";
+	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['REMOTE_ADDR'] ) ) {\n";
+	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['REMOTE_ADDR'];\n";
+	$mu_plugin_content .= "}\n\n";
+	$mu_plugin_content .= "\$dam_spam_banned_ips = array(\n";
+	foreach ( array_keys( $all_bans ) as $ip ) {
+		$mu_plugin_content .= "\t'" . esc_sql( $ip ) . "' => true,\n";
+	}
+	$mu_plugin_content .= ");\n\n";
+	$mu_plugin_content .= "if ( !empty( \$visitor_ip ) && filter_var( \$visitor_ip, FILTER_VALIDATE_IP ) && isset( \$dam_spam_banned_ips[\$visitor_ip] ) ) {\n";
+	$mu_plugin_content .= "\theader( 'Connection: close' );\n";
+	$mu_plugin_content .= "\tignore_user_abort( true );\n";
+	$mu_plugin_content .= "\tob_start();\n";
+	$mu_plugin_content .= "\theader( 'Content-Length: 0' );\n";
+	$mu_plugin_content .= "\tob_end_flush();\n";
+	$mu_plugin_content .= "\tflush();\n";
+	$mu_plugin_content .= "\texit;\n";
+	$mu_plugin_content .= "}";
+	$mu_plugins_dir = WP_CONTENT_DIR . '/mu-plugins';
+	if ( !$wp_filesystem->is_dir( $mu_plugins_dir ) ) {
+		$wp_filesystem->mkdir( $mu_plugins_dir, FS_CHMOD_DIR );
+	}
+	$wp_filesystem->put_contents( $mu_plugin_file, $mu_plugin_content, FS_CHMOD_FILE );
+}
+
 function dam_spam_auto_migrate_from_stop_spammers() {
 	if ( get_option( 'dam_spam_options' ) !== false ) {
 		return;
@@ -285,75 +630,6 @@ function dam_spam_migrate_allow_list_email() {
 	$options['allow_list'] = $allow_list;
 	$options['allow_list_email'] = array();
 	update_option( 'dam_spam_options', $options );
-}
-
-function dam_spam_write_ban_file() {
-	$manual_bans_raw = get_option( 'dam_spam_manual_bans', '' );
-	$automatic_bans = get_option( 'dam_spam_automatic_bans', array() );
-	$manual_bans = array();
-	if ( !empty( $manual_bans_raw ) ) {
-		$lines = explode( "\n", $manual_bans_raw );
-		foreach ( $lines as $line ) {
-			$ip = trim( $line );
-			if ( !empty( $ip ) && filter_var( $ip, FILTER_VALIDATE_IP ) ) {
-				$manual_bans[$ip] = true;
-			}
-		}
-	}
-	if ( !is_array( $automatic_bans ) ) {
-		$automatic_bans = array();
-	}
-	$all_bans = array_merge( $manual_bans, $automatic_bans );
-	global $wp_filesystem;
-	if ( empty( $wp_filesystem ) ) {
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		WP_Filesystem();
-	}
-	if ( !$wp_filesystem ) {
-		return;
-	}
-	$mu_plugin_file = WP_CONTENT_DIR . '/mu-plugins/dam-spam-banner.php';
-	if ( empty( $all_bans ) ) {
-		if ( file_exists( $mu_plugin_file ) ) {
-			wp_delete_file( $mu_plugin_file );
-		}
-		return;
-	}
-	$mu_plugin_content = "<?php\n";
-	$mu_plugin_content .= "/*\n";
-	$mu_plugin_content .= "Plugin Name: Dam Spam Banner\n";
-	$mu_plugin_content .= "Description: Loads Dam Spam IP ban list early to block banned IPs before WordPress fully loads.\n";
-	$mu_plugin_content .= "*/\n\n";
-	$mu_plugin_content .= "\$visitor_ip = '';\n\n";
-	$mu_plugin_content .= "if ( isset( \$_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {\n";
-	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['HTTP_CF_CONNECTING_IP'];\n";
-	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['HTTP_X_REAL_IP'] ) ) {\n";
-	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['HTTP_X_REAL_IP'];\n";
-	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {\n";
-	$mu_plugin_content .= "\t\$ips = explode( ',', \$_SERVER['HTTP_X_FORWARDED_FOR'] );\n";
-	$mu_plugin_content .= "\t\$visitor_ip = trim( \$ips[0] );\n";
-	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['REMOTE_ADDR'] ) ) {\n";
-	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['REMOTE_ADDR'];\n";
-	$mu_plugin_content .= "}\n\n";
-	$mu_plugin_content .= "\$dam_spam_banned_ips = array(\n";
-	foreach ( array_keys( $all_bans ) as $ip ) {
-		$mu_plugin_content .= "\t'" . esc_sql( $ip ) . "' => true,\n";
-	}
-	$mu_plugin_content .= ");\n\n";
-	$mu_plugin_content .= "if ( !empty( \$visitor_ip ) && filter_var( \$visitor_ip, FILTER_VALIDATE_IP ) && isset( \$dam_spam_banned_ips[\$visitor_ip] ) ) {\n";
-	$mu_plugin_content .= "\theader( 'Connection: close' );\n";
-	$mu_plugin_content .= "\tignore_user_abort( true );\n";
-	$mu_plugin_content .= "\tob_start();\n";
-	$mu_plugin_content .= "\theader( 'Content-Length: 0' );\n";
-	$mu_plugin_content .= "\tob_end_flush();\n";
-	$mu_plugin_content .= "\tflush();\n";
-	$mu_plugin_content .= "\texit;\n";
-	$mu_plugin_content .= "}";
-	$mu_plugins_dir = WP_CONTENT_DIR . '/mu-plugins';
-	if ( !$wp_filesystem->is_dir( $mu_plugins_dir ) ) {
-		$wp_filesystem->mkdir( $mu_plugins_dir, FS_CHMOD_DIR );
-	}
-	$wp_filesystem->put_contents( $mu_plugin_file, $mu_plugin_content, FS_CHMOD_FILE );
 }
 
 ?>

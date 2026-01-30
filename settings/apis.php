@@ -15,6 +15,7 @@ dam_spam_fix_post_vars();
 $now	 = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 $options = dam_spam_get_options();
 extract( $options );
+$cf_configured = function_exists( 'dam_spam_cloudflare_is_configured' ) && dam_spam_cloudflare_is_configured();
 $nonce   = '';
 
 if ( array_key_exists( 'dam_spam_control', $_POST ) ) {
@@ -59,6 +60,18 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 			$botfreq = isset( $_POST['botfreq'] ) ? sanitize_text_field( wp_unslash( $_POST['botfreq'] ) ) : '';
 			$options['botfreq'] = $botfreq;
 		}
+		if ( array_key_exists( 'cf_email', $_POST ) ) {
+			$cf_email = isset( $_POST['cf_email'] ) ? sanitize_email( wp_unslash( $_POST['cf_email'] ) ) : '';
+			$options['cf_email'] = $cf_email;
+		}
+		if ( array_key_exists( 'cf_api_key', $_POST ) ) {
+			$cf_api_key = isset( $_POST['cf_api_key'] ) ? sanitize_text_field( wp_unslash( $_POST['cf_api_key'] ) ) : '';
+			$options['cf_api_key'] = $cf_api_key;
+		}
+		if ( array_key_exists( 'cf_zone_id', $_POST ) ) {
+			$cf_zone_id = isset( $_POST['cf_zone_id'] ) ? sanitize_text_field( wp_unslash( $_POST['cf_zone_id'] ) ) : '';
+			$options['cf_zone_id'] = $cf_zone_id;
+		}
 		$optionlist = array( 'check_sfs', 'check_dnsbl' );
 		foreach ( $optionlist as $check ) {
 			$v = 'N';
@@ -73,7 +86,17 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 		dam_spam_set_options( $options );
 		extract( $options );
 	}
-	$msg = '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
+	if ( array_key_exists( 'cf_clear_cache', $_POST ) ) {
+		$result = function_exists( 'dam_spam_cloudflare_clear_cache' ) ? dam_spam_cloudflare_clear_cache() : array( 'success' => false, 'message' => 'Function not available' );
+		if ( isset( $result['success'] ) && $result['success'] === true ) {
+			$msg = '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Cloudflare cache cleared successfully.', 'dam-spam' ) . '</p></div>';
+		} else {
+			$error_msg = isset( $result['message'] ) ? $result['message'] : esc_html__( 'Unknown error', 'dam-spam' );
+			$msg = '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Cloudflare cache clear failed: ', 'dam-spam' ) . esc_html( $error_msg ) . '</p></div>';
+		}
+	} else {
+		$msg = '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
+	}
 }
 
 $nonce = wp_create_nonce( 'dam_spam_update' );
@@ -90,6 +113,40 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 	<form method="post" action="">
 		<input type="hidden" name="action" value="update">
 		<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
+		<div id="cloudflare" class="mainsection"><?php esc_html_e( 'Cloudflare Integration', 'dam-spam' ); ?></div>
+		<p class="description">
+			<?php
+			printf(
+				/* translators: %s: URL to Cloudflare dashboard */
+				esc_html__( 'Get your credentials from your %s.', 'dam-spam' ),
+				'<a href="https://dash.cloudflare.com/" target="_blank">' . esc_html__( 'Cloudflare Dashboard', 'dam-spam' ) . '</a>'
+			);
+			?>
+		</p>
+		<br>
+		<label class="keyhead">
+			<?php esc_html_e( 'Cloudflare Email', 'dam-spam' ); ?>
+			<br>
+			<input size="32" name="cf_email" type="email" value="<?php echo esc_attr( $cf_email ); ?>">
+		</label>
+		<br>
+		<label class="keyhead">
+			<?php esc_html_e( 'Cloudflare Global API Key', 'dam-spam' ); ?>
+			<br>
+			<input size="32" name="cf_api_key" type="password" value="<?php echo esc_attr( $cf_api_key ); ?>">
+		</label>
+		<br>
+		<label class="keyhead">
+			<?php esc_html_e( 'Cloudflare Zone ID', 'dam-spam' ); ?>
+			<br>
+			<input size="32" name="cf_zone_id" type="text" value="<?php echo esc_attr( $cf_zone_id ); ?>">
+		</label>
+		<br>
+		<button type="submit" name="cf_clear_cache" class="button-secondary" <?php if ( !$cf_configured ) { echo 'disabled="disabled"'; } ?>>
+			<?php esc_html_e( 'Clear Cloudflare Cache', 'dam-spam' ); ?>
+		</button>
+		<br>
+		<br>
 		<div id="formchecking" class="mainsection"><?php esc_html_e( 'Blacklist Checking', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
 	  		<label class="dam-spam-subhead" for="check_dnsbl">

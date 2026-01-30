@@ -220,6 +220,28 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		<input type="hidden" name="clear" value="clear summary">
 		<p class="submit" style="clear:both"><input class="button-primary" value="<?php esc_attr_e( 'Clear Summary', 'dam-spam' ); ?>" type="submit"></p>
 	</form>
+	<h2><?php esc_html_e( 'Helpful Links', 'dam-spam' ); ?></h2>
+	<p>
+		<a href="https://damspam.com/donations" class="button-primary" target="_blank">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="vertical-align:text-bottom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>
+			<?php esc_html_e( 'Donate', 'dam-spam' ); ?>
+		</a>
+		&nbsp;
+		<a href="https://github.com/webguyio/dam-spam/wiki" class="button-primary" target="_blank">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="vertical-align:text-bottom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+			<?php esc_html_e( 'Docs', 'dam-spam' ); ?>
+		</a>
+		&nbsp;
+		<a href="https://github.com/webguyio/dam-spam/issues" class="button-primary" target="_blank">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="vertical-align:text-bottom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+			<?php esc_html_e( 'Ask', 'dam-spam' ); ?>
+		</a>
+		&nbsp;
+		<a href="mailto:webguywork@gmail.com" class="button-primary" target="_blank">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="vertical-align:text-bottom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+			<?php esc_html_e( 'Email', 'dam-spam' ); ?>
+		</a>
+	</p>
 	<?php
 	function dam_spam_control() {
 		if ( array_key_exists( 'resetOptions', $_POST ) && isset( $_POST['dam_spam_control'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_control'] ) ), 'dam_spam_update' ) ) {

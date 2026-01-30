@@ -51,23 +51,31 @@ if ( wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 			$check_captcha = isset( $_POST['check_captcha'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['check_captcha'] ) ) ) : '';
 			$options['check_captcha'] = $check_captcha;
 		}
-		if ( array_key_exists( 'form_captcha_login', $_POST ) and ( $check_captcha == 'G' or $check_captcha == 'H' or $check_captcha == 'S' ) ) {
+		if ( array_key_exists( 'form_captcha_login', $_POST ) and ( $check_captcha == 'C' or $check_captcha == 'G' or $check_captcha == 'H' or $check_captcha == 'S' ) ) {
 			$form_captcha_login = isset( $_POST['form_captcha_login'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['form_captcha_login'] ) ) ) : '';
 			$options['form_captcha_login'] = $form_captcha_login;
 		} else {
 			$options['form_captcha_login'] = 'N';
 		}
-		if ( array_key_exists( 'form_captcha_registration', $_POST ) and ( $check_captcha == 'G' or $check_captcha == 'H' or $check_captcha == 'S' ) ) {
+		if ( array_key_exists( 'form_captcha_registration', $_POST ) and ( $check_captcha == 'C' or $check_captcha == 'G' or $check_captcha == 'H' or $check_captcha == 'S' ) ) {
 			$form_captcha_login = isset( $_POST['form_captcha_registration'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['form_captcha_registration'] ) ) ) : '';
 			$options['form_captcha_registration'] = $form_captcha_login;
 		} else {
 			$options['form_captcha_registration'] = 'N';
 		}
-		if ( array_key_exists( 'form_captcha_comment', $_POST ) and ( $check_captcha == 'G' or $check_captcha == 'H' or $check_captcha == 'S' ) ) {
+		if ( array_key_exists( 'form_captcha_comment', $_POST ) and ( $check_captcha == 'C' or $check_captcha == 'G' or $check_captcha == 'H' or $check_captcha == 'S' ) ) {
 			$form_captcha_login = isset( $_POST['form_captcha_comment'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['form_captcha_comment'] ) ) ) : '';
 			$options['form_captcha_comment'] = $form_captcha_login;
 		} else {
 			$options['form_captcha_comment'] = 'N';
+		}
+		if ( array_key_exists( 'turnstileapisecret', $_POST ) ) {
+			$turnstileapisecret = isset( $_POST['turnstileapisecret'] ) ? sanitize_text_field( wp_unslash( $_POST['turnstileapisecret'] ) ) : '';
+			$options['turnstileapisecret'] = $turnstileapisecret;
+		}
+		if ( array_key_exists( 'turnstileapisite', $_POST ) ) {
+			$turnstileapisite = isset( $_POST['turnstileapisite'] ) ? sanitize_text_field( wp_unslash( $_POST['turnstileapisite'] ) ) : '';
+			$options['turnstileapisite'] = $turnstileapisite;
 		}
 		if ( array_key_exists( 'recaptchaapisecret', $_POST ) ) {
 			$recaptchaapisecret = isset( $_POST['recaptchaapisecret'] ) ? sanitize_text_field( wp_unslash( $_POST['recaptchaapisecret'] ) ) : '';
@@ -84,6 +92,11 @@ if ( wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 		if ( array_key_exists( 'hcaptchaapisite', $_POST ) ) {
 			$hcaptchaapisite = isset( $_POST['hcaptchaapisite'] ) ? sanitize_text_field( wp_unslash( $_POST['hcaptchaapisite'] ) ) : '';
 			$options['hcaptchaapisite'] = $hcaptchaapisite;
+		}
+		if ( $check_captcha == 'C' && ( $turnstileapisecret == '' || $turnstileapisite == '' ) ) {
+			$check_captcha = 'Y';
+			$options['check_captcha'] = $check_captcha;
+			$msg = esc_html__( 'You cannot use Cloudflare Turnstile unless you have entered an API key.', 'dam-spam' );
 		}
 		if ( $check_captcha == 'G' && ( $recaptchaapisecret == '' || $recaptchaapisite == '' ) ) {
 			$check_captcha = 'Y';
@@ -171,6 +184,13 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		</div>
 		<br>
 		<div class="checkbox switcher">
+			<label class="dam-spam-subhead" for="check_captcha4">
+				<input class="dam_spam_toggle" type="radio" id="check_captcha4" name="check_captcha" value="C" <?php if ( $check_captcha == 'C' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
+		  		<small><?php esc_html_e( 'Cloudflare Turnstile', 'dam-spam' ); ?></small>
+			</label>
+		</div>
+		<br>
+		<div class="checkbox switcher">
 			<label class="dam-spam-subhead" for="check_captcha2">
 				<input class="dam_spam_toggle" type="radio" id="check_captcha2" name="check_captcha" value="G" <?php if ( $check_captcha == 'G' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Google reCAPTCHA', 'dam-spam' ); ?></small>
@@ -214,23 +234,58 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		<br>
 		<br>
 		<div>
-			<?php esc_html_e( 'Google reCAPTCHA', 'dam-spam' ); ?><br>
+			<?php
+			printf(
+				/* translators: %s: URL to get Turnstile keys */
+				esc_html__( 'Cloudflare Turnstile %s', 'dam-spam' ),
+				'(<a href="https://dash.cloudflare.com/?to=/:account/turnstile" target="_blank">' . esc_html__( 'Get Keys', 'dam-spam' ) . '</a>)'
+			);
+			?>
+			<br>
+			<input size="64" name="turnstileapisite" type="text" placeholder="<?php esc_html_e( 'Site Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $turnstileapisite ); ?>">
+			<br>
+			<input size="64" name="turnstileapisecret" type="text" placeholder="<?php esc_html_e( 'Secret Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $turnstileapisecret ); ?>">
+			<br>
+			<?php if ( !empty( $turnstileapisite ) ) {
+				// phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- Turnstile requires external script
+				wp_enqueue_script( 'dam-spam-turnstile', 'https://challenges.cloudflare.com/turnstile/v0/api.js', array(), '1', array( 'strategy' => 'async', 'in_footer' => true ) );
+			?>
+				<div class="cf-turnstile" data-sitekey="<?php echo esc_attr( $turnstileapisite ); ?>"></div>
+			<?php } ?>
+			<br>
+			<?php
+			printf(
+				/* translators: %s: URL to get reCAPTCHA keys */
+				esc_html__( 'Google reCAPTCHA %s', 'dam-spam' ),
+				'(<a href="https://www.google.com/recaptcha/admin/create" target="_blank">' . esc_html__( 'Get Keys', 'dam-spam' ) . '</a>)'
+			);
+			?>
+			<br>
 			<input size="64" name="recaptchaapisite" type="text" placeholder="<?php esc_html_e( 'Site Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $recaptchaapisite ); ?>">
 			<br>
 			<input size="64" name="recaptchaapisecret" type="text" placeholder="<?php esc_html_e( 'Secret Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $recaptchaapisecret ); ?>">
 			<br>
 			<?php if ( !empty( $recaptchaapisite ) ) {
+				// phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- reCAPTCHA requires external script
 				wp_enqueue_script( 'dam-spam-recaptcha', 'https://www.google.com/recaptcha/api.js', array(), '1', array( 'strategy' => 'async', 'in_footer' => true ) );
 			?>
 				<div class="g-recaptcha" data-sitekey="<?php echo esc_attr( $recaptchaapisite ); ?>"></div>
 			<?php } ?>
 			<br>
-			<?php esc_html_e( 'hCaptcha', 'dam-spam' ); ?><br>
+			<?php
+			printf(
+				/* translators: %s: URL to get hCaptcha keys */
+				esc_html__( 'hCaptcha %s', 'dam-spam' ),
+				'(<a href="https://dashboard.hcaptcha.com/sites" target="_blank">' . esc_html__( 'Get Keys', 'dam-spam' ) . '</a>)'
+			);
+			?>
+			<br>
 			<input size="64" name="hcaptchaapisite" type="text" placeholder="<?php esc_html_e( 'Site Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $hcaptchaapisite ); ?>">
 			<br>
 			<input size="64" name="hcaptchaapisecret" type="text" placeholder="<?php esc_html_e( 'Secret Key', 'dam-spam' ); ?>" value="<?php echo esc_attr( $hcaptchaapisecret ); ?>">
 			<br>
 			<?php if ( !empty( $hcaptchaapisite ) ) {
+				// phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- hCaptcha requires external script
 				wp_enqueue_script( 'dam-spam-hcaptcha', 'https://hcaptcha.com/1/api.js', array(), '1', array( 'strategy' => 'async', 'in_footer' => true ) );
 			?>
 				<div class="h-captcha" data-sitekey="<?php echo esc_attr( $hcaptchaapisite ); ?>"></div>

@@ -310,7 +310,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 	?>
 	<div class="dam-spam-info-box">
 		<div id="scan" class="mainsection"><?php esc_html_e( 'Threat Scan', 'dam-spam' ); ?></div>
-		<p><?php esc_html_e( 'Simple scan that looks for odd thing in /wp-content and the database.', 'dam-spam' ); ?></p>
+		<p><?php esc_html_e( 'Simple scan that looks for odd things in /wp-content and the database.', 'dam-spam' ); ?></p>
 		<form method="post" action="#scan">
 			<input type="hidden" name="update_options" value="update">
 			<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">

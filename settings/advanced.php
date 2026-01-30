@@ -18,6 +18,7 @@ function dam_spam_admin_notice_success() {
 }
 
 function dam_spam_advanced_menu() {
+	$cf_configured = function_exists( 'dam_spam_cloudflare_is_configured' ) && dam_spam_cloudflare_is_configured();
 	$dam_spam_firewall_setting = '';
 	if ( get_option( 'dam_spam_enable_firewall', '' ) === 'yes' ) {
 		$dam_spam_firewall_setting = "checked='checked'";
@@ -208,7 +209,7 @@ function dam_spam_advanced_menu() {
 							$auto_bans = get_option( 'dam_spam_automatic_bans', array() );
 							$auto_ban_count = is_array( $auto_bans ) ? count( $auto_bans ) : 0;
 							/* translators: %d: Number of IPs in the automatic ban list */
-							printf( esc_html__( 'IPs automatically banned by Limit Login Attempts and other protections. Auto-culls oldest entries at 100,000 IPs. Currently contains %d IPs.', 'dam-spam' ), $auto_ban_count );
+							printf( esc_html__( 'IPs automatically banned by Limit Login Attempts and other protections. Auto-culls oldest entries at 100,000 IPs. Currently contains %d IPs.', 'dam-spam' ), absint( $auto_ban_count ) );
 							?>
 						</p>
 						<textarea id="dam_spam_automatic_bans_display" rows="10" class="large-text code" readonly="readonly" disabled="disabled"><?php
@@ -217,8 +218,17 @@ function dam_spam_advanced_menu() {
 							}
 						?></textarea>
 						<br><br>
+						<button type="submit" name="dam_spam_action" value="copy_to_cloudflare" class="button button-secondary" <?php if ( !$cf_configured ) { echo 'disabled="disabled"'; } ?>><?php esc_html_e( 'Copy to Cloudflare', 'dam-spam' ); ?></button>
 						<button type="submit" name="dam_spam_clear_auto_bans_action" id="dam_spam_clear_auto_bans" class="button button-secondary" onclick="return confirm('<?php echo esc_js( __( 'Are you sure you want to clear all automatic bans? This cannot be undone.', 'dam-spam' ) ); ?>');"><?php esc_html_e( 'Clear All Automatic Bans', 'dam-spam' ); ?></button>
+						<?php if ( !$cf_configured ) { ?>
+							<br>
+							<br>
+							<p class="description">
+								<?php esc_html_e( 'Configure Cloudflare on the APIs page to enable this feature.', 'dam-spam' ); ?>
+							</p>
+						<?php } ?>
 						<input type="hidden" name="dam_spam_ban_list_placeholder" value="dam_spam_ban_list">
+						<?php wp_nonce_field( 'dam_spam_cloudflare_nonce', 'dam_spam_cloudflare_nonce' ); ?>
 					</div>
 					<br>
 					<hr>
@@ -767,6 +777,39 @@ function dam_spam_process_settings_reset() {
 	add_action( 'admin_notices', 'dam_spam_admin_notice_success' );
 }
 
+add_action( 'admin_init', 'dam_spam_process_copy_to_cloudflare' );
+function dam_spam_process_copy_to_cloudflare() {
+	if ( empty( $_POST['dam_spam_action'] ) || 'copy_to_cloudflare' !== $_POST['dam_spam_action'] ) {
+		return;
+	}
+	if ( !isset( $_POST['dam_spam_cloudflare_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_cloudflare_nonce'] ) ), 'dam_spam_cloudflare_nonce' ) ) {
+		return;
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	if ( !function_exists( 'dam_spam_cloudflare_is_configured' ) || !dam_spam_cloudflare_is_configured() ) {
+		return;
+	}
+	if ( !function_exists( 'dam_spam_sync_ban_list_to_cloudflare' ) ) {
+		return;
+	}
+	$result = dam_spam_sync_ban_list_to_cloudflare();
+	if ( isset( $result['success'] ) && $result['success'] === true ) {
+		$count = isset( $result['count'] ) ? absint( $result['count'] ) : 0;
+		/* translators: %d: number of IPs copied */
+		$message = sprintf( esc_html__( 'Copied %d IPs to Cloudflare successfully.', 'dam-spam' ), $count );
+		add_action( 'admin_notices', function() use ( $message ) {
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $message ) . '</p></div>';
+		} );
+	} else {
+		$error_msg = isset( $result['message'] ) ? $result['message'] : esc_html__( 'Unknown error', 'dam-spam' );
+		add_action( 'admin_notices', function() use ( $error_msg ) {
+			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Cloudflare sync failed: ', 'dam-spam' ) . esc_html( $error_msg ) . '</p></div>';
+		} );
+	}
+}
+
 // ============================================================================
 // Honeypots
 // ============================================================================
@@ -974,7 +1017,9 @@ function dam_spam_uninstall_custom_login() {
 	);
 	foreach ( $pages as $slug => $title ) {
 		$page_id = dam_spam_get_page_id( $slug );
-		wp_delete_post( $page_id, true );
+		if ( $page_id ) {
+			wp_delete_post( $page_id, true );
+		}
 	}
 }
 

@@ -31,18 +31,18 @@
 	}
 
 	function damSpamAjaxReturnProcess(response) {
-		if (response === "OK") {
+		if (response === 'OK') {
 			return false;
 		}
-		if (response.substring(0, 3) === "err") {
+		if (response.substring(0, 3) === 'err') {
 			alert(response);
 			return false;
 		}
-		if (response.substring(0, 4) === "\r\n\r\n") {
+		if (response.substring(0, 4) === '\r\n\r\n') {
 			alert(response);
 			return false;
 		}
-		if (damSpamAjaxWho !== "") {
+		if (damSpamAjaxWho !== '') {
 			var el = document.getElementById(damSpamAjaxWho);
 			if (el) {
 				el.innerHTML = response;
@@ -78,21 +78,21 @@
 
 	function damSpamAjaxReturnSpam(response) {
 		if (!damSpamAjaxWho) return;
-		damSpamAjaxWho.innerHTML = " Spam Reported";
-		damSpamAjaxWho.style.color = "green";
-		damSpamAjaxWho.style.fontWeight = "bolder";
+		damSpamAjaxWho.innerHTML = ' Spam Reported';
+		damSpamAjaxWho.style.color = 'green';
+		damSpamAjaxWho.style.fontWeight = 'bolder';
 		if (response.indexOf('data submitted successfully') > 0) {
 			return false;
 		}
 		if (response.indexOf('recent duplicate entry') > 0) {
-			damSpamAjaxWho.innerHTML = " Spam Already Reported";
-			damSpamAjaxWho.style.color = "yellow";
-			damSpamAjaxWho.style.fontWeight = "bolder";
+			damSpamAjaxWho.innerHTML = ' Spam Already Reported';
+			damSpamAjaxWho.style.color = 'yellow';
+			damSpamAjaxWho.style.fontWeight = 'bolder';
 			return false;
 		}
-		damSpamAjaxWho.innerHTML = " Status: " + response;
-		damSpamAjaxWho.style.color = "black";
-		damSpamAjaxWho.style.fontWeight = "bolder";
+		damSpamAjaxWho.innerHTML = ' Status: ' + response;
+		damSpamAjaxWho.style.color = 'black';
+		damSpamAjaxWho.style.fontWeight = 'bolder';
 		alert(response);
 		return false;
 	}
@@ -124,24 +124,24 @@
 	}
 
 	function damSpamSortTable(n) {
-		var table = document.getElementById("dam-spam-table");
+		var table = document.getElementById('dam-spam-table');
 		if (!table) return;
 		var rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
 		switching = true;
-		dir = "asc";
+		dir = 'asc';
 		while (switching) {
 			switching = false;
 			rows = table.rows;
 			for (i = 1; i < (rows.length - 1); i++) {
 				shouldSwitch = false;
-				x = rows[i].getElementsByTagName("TD")[n];
-				y = rows[i + 1].getElementsByTagName("TD")[n];
-				if (dir === "asc") {
+				x = rows[i].getElementsByTagName('TD')[n];
+				y = rows[i + 1].getElementsByTagName('TD')[n];
+				if (dir === 'asc') {
 					if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
 						shouldSwitch = true;
 						break;
 					}
-				} else if (dir === "desc") {
+				} else if (dir === 'desc') {
 					if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
 						shouldSwitch = true;
 						break;
@@ -153,8 +153,8 @@
 				switching = true;
 				switchcount++;
 			} else {
-				if (switchcount === 0 && dir === "asc") {
-					dir = "desc";
+				if (switchcount === 0 && dir === 'asc') {
+					dir = 'desc';
 					switching = true;
 				}
 			}
@@ -162,19 +162,19 @@
 	}
 
 	function damSpamSearch() {
-		var input = document.getElementById("dam-spam-input");
-		var table = document.getElementById("dam-spam-table");
+		var input = document.getElementById('dam-spam-input');
+		var table = document.getElementById('dam-spam-table');
 		if (!input || !table) return;
 		var filter = input.value.toUpperCase();
-		var tr = table.getElementsByTagName("tr");
+		var tr = table.getElementsByTagName('tr');
 		for (var i = 0; i < tr.length; i++) {
-			var td = tr[i].getElementsByTagName("td")[0];
+			var td = tr[i].getElementsByTagName('td')[0];
 			if (td) {
 				var txtValue = td.textContent || td.innerText;
 				if (txtValue.toUpperCase().indexOf(filter) > -1) {
 					tr[i].style.display = '';
 				} else {
-					tr[i].style.display = "none";
+					tr[i].style.display = 'none';
 				}
 			}
 		}
@@ -223,6 +223,13 @@
 				}
 			});
 		}
+		var lockedLinks = document.querySelectorAll('.row-actions .dam_spam_unlock a');
+		lockedLinks.forEach(function(link) {
+			var row = link.closest('tr');
+			if (row) {
+				row.classList.add('dam-spam-locked');
+			}
+		});
 	});
 
 	window.damSpamAjaxProcess = damSpamAjaxProcess;
