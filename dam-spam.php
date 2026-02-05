@@ -3,7 +3,7 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 1.0.5
+Version: 1.0.6
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -20,7 +20,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DAM_SPAM_VERSION', '1.0.5' );
+define( 'DAM_SPAM_VERSION', '1.0.6' );
 define( 'DAM_SPAM_URL', plugin_dir_url( __FILE__ ) );
 define( 'DAM_SPAM_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -126,6 +126,10 @@ function dam_spam_init() {
 	remove_action( 'init', 'dam_spam_init' );
 	add_filter( 'pre_user_login', 'dam_spam_user_reg_filter', 1, 1 );
 	add_action( 'akismet_spam_caught', 'dam_spam_log_akismet' );
+	if ( get_option( 'dam_spam_require_activation', 'no' ) === 'yes' ) {
+		remove_action( 'register_new_user', 'wp_send_new_user_notifications' );
+		remove_action( 'edit_user_created_user', 'wp_send_new_user_notifications', 10, 2 );
+	}
 	$muswitch = 'N';
 	if ( is_multisite() ) {
 		switch_to_blog( 1 );
@@ -370,6 +374,49 @@ function dam_spam_log_user_ip( $user_login = "", $user = "" ) {
 function dam_spam_sfs_ip_column_head( $column_headers ) {
 	$column_headers['signup_ip'] = 'IP Address';
 	return $column_headers;
+}
+
+add_action( 'user_register', 'dam_spam_handle_user_activation', 0 );
+function dam_spam_handle_user_activation( $user_id ) {
+	if ( get_option( 'dam_spam_require_activation', 'no' ) !== 'yes' ) {
+		return;
+	}
+	$user = get_userdata( $user_id );
+	if ( !$user ) {
+		return;
+	}
+	$password = wp_generate_password( 12, false );
+	wp_set_password( $password, $user_id );
+	$activation_key = wp_hash( wp_generate_password( 20, false ) . time() . $user_id );
+	update_user_meta( $user_id, 'dam_spam_activation_pending', 'Y' );
+	update_user_meta( $user_id, 'dam_spam_activation_key', $activation_key );
+	update_user_meta( $user_id, 'dam_spam_activation_sent', time() );
+	dam_spam_send_activation_email( $user, $password, $activation_key );
+}
+
+function dam_spam_send_activation_email( $user, $password, $activation_key ) {
+	$activation_link = add_query_arg( array(
+		'page' => 'activate',
+		'key' => $activation_key,
+		'user' => $user->ID
+	), home_url( '/' ) );
+	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
+	// translators: %s is the site name
+	$subject = sprintf( esc_html__( 'Activate your account at %s', 'dam-spam' ), $blogname );
+	// translators: %s is the site name
+	$message = sprintf( esc_html__( 'Welcome to %s!', 'dam-spam' ), $blogname ) . "\r\n\r\n";
+	$message .= esc_html__( 'Your account has been created with the following credentials:', 'dam-spam' ) . "\r\n\r\n";
+	// translators: %s is the username
+	$message .= sprintf( esc_html__( 'Username: %s', 'dam-spam' ), $user->user_login ) . "\r\n";
+	// translators: %s is the password
+	$message .= sprintf( esc_html__( 'Password: %s', 'dam-spam' ), $password ) . "\r\n\r\n";
+	$message .= esc_html__( 'Please click the link below to activate your account:', 'dam-spam' ) . "\r\n";
+	$message .= $activation_link . "\r\n\r\n";
+	$message .= esc_html__( 'After activation, you can change your password in your profile.', 'dam-spam' ) . "\r\n\r\n";
+	$message .= esc_html__( 'This link will expire in 7 days.', 'dam-spam' ) . "\r\n\r\n";
+	$message .= esc_html__( 'If you did not create an account, please ignore this email.', 'dam-spam' );
+	$headers = 'From: ' . get_option( 'admin_email' ) . "\r\n";
+	wp_mail( $user->user_email, $subject, $message, $headers );
 }
 
 // ============================================================================
@@ -672,6 +719,24 @@ function dam_spam_comment_captcha_verify( $approved ) {
 // ============================================================================
 // User Registration & Authentication
 // ============================================================================
+
+add_filter( 'authenticate', 'dam_spam_block_unverified_login', 100, 3 );
+function dam_spam_block_unverified_login( $user, $username, $password ) {
+	if ( get_option( 'dam_spam_require_activation', 'no' ) !== 'yes' ) {
+		return $user;
+	}
+	if ( is_wp_error( $user ) ) {
+		return $user;
+	}
+	if ( !isset( $user->ID ) ) {
+		return $user;
+	}
+	$is_pending = get_user_meta( $user->ID, 'dam_spam_activation_pending', true );
+	if ( $is_pending === 'Y' ) {
+		return new WP_Error( 'dam_spam_activation_required', esc_html__( 'Please activate your account via the email sent to you.', 'dam-spam' ) );
+	}
+	return $user;
+}
 
 function dam_spam_user_reg_filter( $user_login ) {
 	$options = dam_spam_get_options();

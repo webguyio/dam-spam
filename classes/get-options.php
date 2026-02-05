@@ -88,7 +88,9 @@ class dam_spam_get_options {
 			'notify'                   => 'N',
 			'email_request'            => 'N',
 			'check_spoof'              => 'N',
-			'filter_registrations'     => 'Y'
+			'filter_registrations'     => 'Y',
+			'require_activation'       => 'N',
+			'activation_auto_delete'   => 'N'
 		);
 		$defaultARRAY = array(
 			'block_list'	   => array(),

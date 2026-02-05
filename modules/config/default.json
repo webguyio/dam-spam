@@ -90,6 +90,8 @@
 	"allow_list_request": "Y",
 	"allow_list_request_email": "",
 	"filter_registrations": "Y",
+	"require_activation": "N",
+	"activation_auto_delete": "N",
 	"redir": "N",
 	"check_captcha": "N",
 	"check_xff": "N",

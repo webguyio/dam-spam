@@ -37,7 +37,7 @@ class dam_spam_get_allow_requests {
 				// translators: %s is the IP address being added to block list
 				$addtoallow = "<a href=\"\" onclick=\"damSpamAjaxProcess('" . esc_js( $value[0] ) . "','" . esc_js( $container ) . "','add_white','" . esc_js( $ajaxurl ) . "', '" . esc_js( $value[1] ) . "');return false;\" title=\"" . sprintf( esc_attr__( 'Add %s to Allow List', 'dam-spam' ), $value[0] ) . "\" alt=\"" . sprintf( esc_attr__( 'Add %s to Allow List', 'dam-spam' ), $value[0] ) . "\"><img src=\"$up\" class=\"icon-action\"></a>";
 				$show .= "<td>$key $trsh $addtoblock $addtoallow</td>";
-				$who = "<br><a title=\"" . esc_attr__( 'Look up WHOIS', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://whois.domaintools.com/$value[0]\"><img src=\"$whois\" class=\"icon-action\"/></a> ";
+				$who = "<br><a title=\"" . esc_attr__( 'Look up WHOIS', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://whois.domaintools.com/$value[0]\"><img src=\"$whois\" class=\"icon-action\"/></a> ";
 				// translators: %s is the IP address for WHOIS lookup
 				$trsh = "<a href=\"\" onclick=\"damSpamAjaxProcess('" . esc_js( $value[0] ) . "','allow_list_request','delete_wlip','" . esc_js( $ajaxurl ) . "');return false;\" title=\"" . sprintf( esc_attr__( 'Delete all %s', 'dam-spam' ), $value[0] ) . "\" alt=\"" . sprintf( esc_attr__( 'Delete all %s', 'dam-spam' ), $value[0] ) . "\"><img src=\"$trash\" class=\"icon-action\"></a>";
 				$show .= "<td>$value[0] $who $trsh</td>";

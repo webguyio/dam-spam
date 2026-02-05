@@ -81,10 +81,10 @@
 		damSpamAjaxWho.innerHTML = ' Spam Reported';
 		damSpamAjaxWho.style.color = 'green';
 		damSpamAjaxWho.style.fontWeight = 'bolder';
-		if (response.indexOf('data submitted successfully') > 0) {
+		if (response.indexOf('data submitted successfully') >= 0) {
 			return false;
 		}
-		if (response.indexOf('recent duplicate entry') > 0) {
+		if (response.indexOf('recent duplicate entry') >= 0) {
 			damSpamAjaxWho.innerHTML = ' Spam Already Reported';
 			damSpamAjaxWho.style.color = 'yellow';
 			damSpamAjaxWho.style.fontWeight = 'bolder';
@@ -220,6 +220,18 @@
 			checkForm.addEventListener('change', function() {
 				if (this.dataset.status === 'valid') {
 					damSpamCheckFormStatus();
+				}
+			});
+		}
+		var activationCheckbox = document.getElementById('dam_spam_require_activation');
+		var autoDeleteCheckbox = document.getElementById('dam_spam_activation_auto_delete');
+		if (activationCheckbox && autoDeleteCheckbox) {
+			activationCheckbox.addEventListener('change', function() {
+				if (this.checked) {
+					autoDeleteCheckbox.disabled = false;
+				} else {
+					autoDeleteCheckbox.disabled = true;
+					autoDeleteCheckbox.checked = false;
 				}
 			});
 		}

@@ -88,9 +88,9 @@ function dam_spam_row( $actions, $comment ) {
 	$ip	      = $comment->comment_author_ip;
 	$action   = '';
 	$whois	  = DAM_SPAM_URL . 'assets/images/whois.png';
-	$who	  = "<a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://whois.domaintools.com/$ip\"><img src=\"$whois\" class=\"icon-action\"></a>";
+	$who	  = "<a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://whois.domaintools.com/$ip\"><img src=\"$whois\" class=\"icon-action\"></a>";
 	$stop	  = DAM_SPAM_URL . 'assets/images/stop.png';
-	$hand	  = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/search.php?q=$ip\"><img src=\"$stop\" class=\"icon-action\"> </a>";
+	$hand	  = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.stopforumspam.com/search.php?q=$ip\"><img src=\"$stop\" class=\"icon-action\"> </a>";
 	$action  .= " $who $hand";
 	$email = urlencode( $comment->comment_author_email );
 	if ( empty( $email ) ) {
@@ -121,22 +121,25 @@ function dam_spam_row( $actions, $comment ) {
 	if ( is_array( $urls3 ) ) {
 		$evidence .= "\r\n" . implode( "\r\n", $urls3 );
 	}
-	$evidence = urlencode( trim( $evidence, "\r\n" ) );
+	$evidence = trim( $evidence, "\r\n" );
 	if ( strlen( $evidence ) > 128 ) {
 		$evidence = substr( $evidence, 0, 125 ) . '...';
 	}
-	$target  = " target=\"_blank\" ";
-	$href	 = "href=\"https://www.stopforumspam.com/add.php?username=$uname&email=$email&ip_addr=$ip&evidence=$evidence&api_key=$apikey\" ";
-	$onclick = '';
-	$blog	 = 1;
+	$evidence = urlencode( $evidence );
+	$blog = 1;
 	global $blog_id;
 	if ( !isset( $blog_id ) || $blog_id != 1 ) {
 		$blog = $blog_id;
 	}
 	$ajaxurl = admin_url( 'admin-ajax.php' );
 	if ( !empty( $apikey ) ) {
+		$target  = "";
 		$href	 = "href=\"#\"";
-		$onclick = "onclick=\"damSpamAjaxReportSpam(this,'$ID','$blog','$ajaxurl');return false;\"";
+		$onclick = "onclick=\"damSpamAjaxReportSpam(this,'$ID','$blog','$ajaxurl','$email','$ip','$uname');return false;\"";
+	} else {
+		$target  = " target=\"_blank\" ";
+		$href	 = "href=\"https://www.stopforumspam.com/add.php?username=$uname&email=$email&ip_addr=$ip&evidence=$evidence&api_key=$apikey\" ";
+		$onclick = '';
 	}
 	$action .= '<span title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" onclick="damSpamAjaxProcess(\'' . esc_js( $comment->comment_author_ip ) . '\',\'log\',\'add_black\',\'' . esc_js( $ajaxurl ) . '\');return false;"><img src="' . esc_url( DAM_SPAM_URL . 'assets/images/down.png' ) . '" class="icon-action"></span> ';
 	$action .= '<span title="' . esc_attr__( 'Add to Allow List', 'dam-spam' ) . '" onclick="damSpamAjaxProcess(\'' . esc_js( $comment->comment_author_ip ) . '\',\'log\',\'add_white\',\'' . esc_js( $ajaxurl ) . '\');return false;"><img src="' . esc_url( DAM_SPAM_URL . 'assets/images/up.png' ) . '" class="icon-action"> | </span>';
@@ -174,23 +177,23 @@ function dam_spam_sfs_handle_ajax_sub( $data ) {
 		exit();
 	}
 	extract( $options );
-	$comment_id = isset( $_GET['comment_id'] ) ? urlencode( sanitize_text_field( wp_unslash( $_GET['comment_id'] ) ) ) : '';
+	$comment_id = isset( $_POST['comment_id'] ) ? sanitize_text_field( wp_unslash( $_POST['comment_id'] ) ) : '';
 	if ( empty( $comment_id ) ) {
 		esc_html_e( ' No Comment ID Found', 'dam-spam' );
 		exit();
 	}
 	$blog = '';
-	if ( isset( $_GET['blog_id'] ) && !empty( $_GET['blog_id'] ) && is_numeric( $_GET['blog_id'] ) ) {
+	if ( isset( $_POST['blog_id'] ) && !empty( $_POST['blog_id'] ) && is_numeric( $_POST['blog_id'] ) ) {
 		if ( function_exists( 'switch_to_blog' ) ) {
-			switch_to_blog( ( int ) $_GET['blog_id'] );
+			switch_to_blog( ( int ) $_POST['blog_id'] );
 		}
 	}
 	$comment = get_comment( $comment_id, ARRAY_A );
 	if ( $comment_id == 'registration' ) {
 		$comment = array(
-			'comment_author_email' => isset( $_GET['email'] ) ? sanitize_email( wp_unslash( $_GET['email'] ) ) : '',
-			'comment_author' => isset( $_GET['user'] ) ? sanitize_user( wp_unslash( $_GET['user'] ) ) : '',
-			'comment_author_ip' => isset( $_GET['ip'] ) ? sanitize_text_field( wp_unslash( $_GET['ip'] ) ) : '',
+			'comment_author_email' => isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '',
+			'comment_author' => isset( $_POST['user'] ) ? sanitize_user( wp_unslash( $_POST['user'] ) ) : '',
+			'comment_author_ip' => isset( $_POST['ip'] ) ? sanitize_text_field( wp_unslash( $_POST['ip'] ) ) : '',
 			'comment_content' => 'registration',
 			'comment_author_url' => ''
 		);
@@ -232,10 +235,11 @@ function dam_spam_sfs_handle_ajax_sub( $data ) {
 	if ( is_array( $urls3 ) ) {
 		$evidence .= "\r\n" . implode( "\r\n", $urls3 );
 	}
-	$evidence = urlencode( trim( $evidence, "\r\n" ) );
+	$evidence = trim( $evidence, "\r\n" );
 	if ( strlen( $evidence ) > 128 ) {
 		$evidence = substr( $evidence, 0, 125 ) . '...';
 	}
+	$evidence = urlencode( $evidence );
 	if ( empty( $apikey ) ) {
 		esc_html_e( 'Cannot Report Spam without API Key', 'dam-spam' );
 		exit();
@@ -247,7 +251,7 @@ function dam_spam_sfs_handle_ajax_sub( $data ) {
 	} else if ( stripos( $ret, esc_html__( 'recent duplicate entry', 'dam-spam' ) ) !== false ) {
 		esc_html_e( ' Recent Duplicate Entry ', 'dam-spam' );
 	} else {
-		esc_html_e( ' Returning from AJAX: ', 'dam-spam' ) . $hget . ' - ' . $ret;
+		echo esc_html__( ' Returning from AJAX: ', 'dam-spam' ) . esc_html( $hget ) . ' - ' . esc_html( $ret );
 	}
 	exit();
 }
@@ -438,16 +442,22 @@ function dam_spam_sfs_ip_column( $value, $column_name, $user_id ) {
 			$user_info   = get_userdata( $user_id );
 			$useremail   = urlencode( $user_info->user_email );
 			$userurl	 = urlencode( $user_info->user_url );
-			$username	 = $user_info->display_name;
-			$stopper	 = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/search.php?q=$signup_ip\"><img src=\"$stop\" class=\"icon-action\"></a>";
-			$honeysearch = "<a title=\"" . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.projecthoneypot.org/ip_$signup_ip\"><img src=\"$search\" class=\"icon-action\"></a>";
-			$botsearch   = "<a title=\"" . esc_attr__( 'Check BotScout', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://botscout.com/search.htm?stype=q&sterm=$signup_ip\"><img src=\"$search\" class=\"icon-action\"></a>";
-			$who		 = "<br><a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://whois.domaintools.com/$signup_ip\"><img src=\"$whois\" class=\"icon-action\"></a>";
+			$username	 = urlencode( $user_info->user_login );
+			$stopper	 = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.stopforumspam.com/search.php?q=$signup_ip\"><img src=\"$stop\" class=\"icon-action\"></a>";
+			$honeysearch = "<a title=\"" . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.projecthoneypot.org/ip_$signup_ip\"><img src=\"$search\" class=\"icon-action\"></a>";
+			$botsearch   = "<a title=\"" . esc_attr__( 'Check BotScout', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://botscout.com/search.htm?stype=q&sterm=$signup_ip\"><img src=\"$search\" class=\"icon-action\"></a>";
+			$who		 = "<br><a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://whois.domaintools.com/$signup_ip\"><img src=\"$whois\" class=\"icon-action\"></a>";
 			$action	     = " $who $stopper $honeysearch $botsearch";
 			$options	 = dam_spam_get_options();
 			$apikey	     = $options['apikey'];
 			if ( !empty( $apikey ) ) {
-				$report  = "<a title=\"" . esc_attr__( 'Report to SFS', 'dam-spam' ) . "\" target=\"_blank\" href=\"https://www.stopforumspam.com/add.php?username=$username&email=$useremail&ip_addr=$signup_ip&evidence=$userurl&api_key=$apikey\"><img src=\"$stop\" class=\"icon-action\"></a>";
+				$ajaxurl = admin_url( 'admin-ajax.php' );
+				$blog = 1;
+				global $blog_id;
+				if ( !isset( $blog_id ) || $blog_id != 1 ) {
+					$blog = $blog_id;
+				}
+				$report  = "<a title=\"" . esc_attr__( 'Report to SFS', 'dam-spam' ) . "\" href=\"#\" onclick=\"damSpamAjaxReportSpam(this,'registration','" . esc_js( $blog ) . "','" . esc_js( $ajaxurl ) . "','" . esc_js( $useremail ) . "','" . esc_js( $signup_ip ) . "','" . esc_js( $username ) . "');return false;\"><img src=\"$stop\" class=\"icon-action\"></a>";
 				$action .= $report;
 			}
 			return $ipline . $action;

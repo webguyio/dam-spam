@@ -896,6 +896,26 @@ Automatically ban IPs after a specified number of failed login attempts within a
 
 ---
 
+#### Require Email Verification for New Users
+
+Users must click activation link in email before they can log in. Works with all registration forms.
+
+> **Why Use:** Verifies email addresses are real, prevents spam bot registrations, automatically cleans up unverified accounts.
+
+> **Why Not:** May conflict with plugins that have their own email verification (e.g., Ultimate Member Pro). Users must have working email to complete registration.
+
+---
+
+#### Auto-Delete Unverified Users After 7 Days
+
+Automatically remove user accounts that haven't clicked their activation link within 7 days.
+
+> **Why Use:** Prevents buildup of spam accounts with fake email addresses. Keeps user database clean.
+
+> **Why Not:** Deletes legitimate users who didn't check their email in time (they can re-register).
+
+---
+
 #### Themed Login (disables wp-login.php)
 
 Replace default WordPress login system with custom themed pages.

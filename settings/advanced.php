@@ -116,9 +116,24 @@ function dam_spam_advanced_menu() {
 								esc_html_e( 'minutes, ban the IP address.', 'dam-spam' );
 								?>
 							</label>
-							<p class="description"><?php esc_html_e( 'Recommended: 20 attempts within 60 minutes', 'dam-spam' ); ?></p>
 						</div>
 						<input type="hidden" name="dam_spam_login_setting_placeholder" value="dam_spam_login_setting">
+						<br>
+						<div class="checkbox switcher">
+							<label for="dam_spam_require_activation">
+								<input type="checkbox" name="dam_spam_require_activation" id="dam_spam_require_activation" value="yes" <?php if ( get_option( 'dam_spam_require_activation', 'no' ) === 'yes' ) { echo 'checked="checked"'; } ?>>
+								<span><small></small></span>
+								<?php esc_html_e( 'Require Email Verification for New Users', 'dam-spam' ); ?>
+							</label>
+						</div>
+						<br>
+						<div class="checkbox switcher">
+							<label for="dam_spam_activation_auto_delete">
+								<input type="checkbox" name="dam_spam_activation_auto_delete" id="dam_spam_activation_auto_delete" value="yes" <?php if ( get_option( 'dam_spam_activation_auto_delete', 'no' ) === 'yes' ) { echo 'checked="checked"'; } ?> <?php if ( get_option( 'dam_spam_require_activation', 'no' ) !== 'yes' ) { echo 'disabled="disabled"'; } ?>>
+								<span><small></small></span>
+								<?php esc_html_e( 'Auto-Delete Unverified Users After 7 Days', 'dam-spam' ); ?>
+							</label>
+						</div>
 						<br>
 						<?php if ( $existing_login_pages ): ?>
 							<div class="notice inline">
@@ -487,6 +502,33 @@ function dam_spam_limit_login_attempts() {
 			$duration = 1440;
 		}
 		update_option( 'dam_spam_login_attempts_duration', $duration );
+	}
+}
+
+add_action( 'admin_init', 'dam_spam_save_activation_settings' );
+function dam_spam_save_activation_settings() {
+	if ( empty( $_POST['dam_spam_login_setting_placeholder'] ) || 'dam_spam_login_setting' !== $_POST['dam_spam_login_setting_placeholder'] ) {
+		return;
+	}
+	if ( !isset( $_POST['dam_spam_advanced_settings_nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_advanced_settings_nonce'] ) ), 'dam_spam_advanced_settings' ) ) {
+		return;
+	}
+	if ( !current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	if ( isset( $_POST['dam_spam_require_activation'] ) && sanitize_text_field( wp_unslash( $_POST['dam_spam_require_activation'] ) ) === 'yes' ) {
+		update_option( 'dam_spam_require_activation', 'yes' );
+		if ( !wp_next_scheduled( 'dam_spam_cleanup_unverified' ) ) {
+			wp_schedule_event( time(), 'daily', 'dam_spam_cleanup_unverified' );
+		}
+	} else {
+		update_option( 'dam_spam_require_activation', 'no' );
+		wp_clear_scheduled_hook( 'dam_spam_cleanup_unverified' );
+	}
+	if ( isset( $_POST['dam_spam_activation_auto_delete'] ) && sanitize_text_field( wp_unslash( $_POST['dam_spam_activation_auto_delete'] ) ) === 'yes' ) {
+		update_option( 'dam_spam_activation_auto_delete', 'yes' );
+	} else {
+		update_option( 'dam_spam_activation_auto_delete', 'no' );
 	}
 }
 
@@ -1125,7 +1167,9 @@ function dam_spam_register() {
 		dam_spam_set_error( $user_id );
 		return;
 	}
-	wp_new_user_notification( $user_id, null, 'user' );
+	if ( get_option( 'dam_spam_require_activation', 'no' ) !== 'yes' ) {
+		wp_new_user_notification( $user_id, null, 'user' );
+	}
 	dam_spam_safe_redirect( home_url( 'login/?checkemail=registered' ) );
 }
 
@@ -1658,12 +1702,76 @@ function dam_spam_show_email_function( $atts ) {
 
 add_filter( 'widget_text', 'do_shortcode' );
 
+add_action( 'template_redirect', 'dam_spam_handle_activation_page', 5 );
+function dam_spam_handle_activation_page() {
+	if ( !isset( $_GET['page'] ) || $_GET['page'] !== 'activate' ) {
+		return;
+	}
+	if ( !isset( $_GET['key'] ) || !isset( $_GET['user'] ) ) {
+		wp_die( esc_html__( 'Invalid activation link.', 'dam-spam' ), 403 );
+	}
+	$user_id = absint( $_GET['user'] );
+	$key = sanitize_text_field( wp_unslash( $_GET['key'] ) );
+	$user = get_userdata( $user_id );
+	if ( !$user ) {
+		wp_die( esc_html__( 'Invalid activation link.', 'dam-spam' ), 403 );
+	}
+	$stored_key = get_user_meta( $user_id, 'dam_spam_activation_key', true );
+	$is_pending = get_user_meta( $user_id, 'dam_spam_activation_pending', true );
+	if ( $is_pending !== 'Y' || empty( $stored_key ) ) {
+		wp_die( esc_html__( 'This account has already been activated or the link is invalid.', 'dam-spam' ), 403 );
+	}
+	if ( $key !== $stored_key ) {
+		wp_die( esc_html__( 'Invalid or expired activation link.', 'dam-spam' ), 403 );
+	}
+	delete_user_meta( $user_id, 'dam_spam_activation_pending' );
+	delete_user_meta( $user_id, 'dam_spam_activation_key' );
+	delete_user_meta( $user_id, 'dam_spam_activation_sent' );
+	wp_set_auth_cookie( $user_id );
+	wp_safe_redirect( admin_url() );
+	exit;
+}
+
+add_action( 'dam_spam_cleanup_unverified', 'dam_spam_delete_unverified_users' );
+function dam_spam_delete_unverified_users() {
+	if ( get_option( 'dam_spam_require_activation', 'no' ) !== 'yes' ) {
+		return;
+	}
+	if ( get_option( 'dam_spam_activation_auto_delete', 'no' ) !== 'yes' ) {
+		return;
+	}
+	$seven_days_ago = time() - ( 7 * 24 * 60 * 60 );
+	$args = array(
+		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Necessary for finding unverified users by activation timestamp
+		'meta_query' => array(
+			'relation' => 'AND',
+			array(
+				'key' => 'dam_spam_activation_pending',
+				'value' => 'Y',
+				'compare' => '='
+			),
+			array(
+				'key' => 'dam_spam_activation_sent',
+				'value' => $seven_days_ago,
+				'compare' => '<',
+				'type' => 'NUMERIC'
+			)
+		),
+		'fields' => 'ID'
+	);
+	$users = get_users( $args );
+	foreach ( $users as $user_id ) {
+		require_once( ABSPATH . 'wp-admin/includes/user.php' );
+		wp_delete_user( $user_id );
+	}
+}
+
 add_action( 'template_redirect', function() {
 	global $post;
 	if ( !is_object( $post ) || !isset( $post->post_name ) ) {
 		return;
 	}
-	if ( is_page( 'logout' ) ) {
+	if ( is_page( 'logout' ) && get_option( 'dam_spam_enable_custom_login', '' ) === 'yes' ) {
 		if ( !isset( $_REQUEST['_wpnonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'dam_spam_logout' ) ) {
 			wp_die( esc_html__( 'Security check failed', 'dam-spam' ), 403 );
 		}

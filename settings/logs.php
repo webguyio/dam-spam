@@ -140,10 +140,10 @@ $now = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 				if ( empty( $reason ) ) {
 					$reason = "passed";
 				}
-				$stopper	 = '<a title="' . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . '" target="_blank" href="https://www.stopforumspam.com/search.php?q=' . $ip . '"><img src="' . $stop . '" class="icon-action"></a>';
-				$honeysearch = '<a title="' . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . '" target="_blank" href="https://www.projecthoneypot.org/ip_' . $ip . '"><img src="' . $search . '" class="icon-action"></a>';
-				$botsearch   = '<a title="' . esc_attr__( 'Check BotScout', 'dam-spam' ) . '" target="_blank" href="https://botscout.com/search.htm?stype=q&sterm=' . $ip . '"><img src="' . $search . '" class="icon-action"></a>';
-				$who		 = '<br><a title="' . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . '" target="_blank" href="https://whois.domaintools.com/' . $ip . '"><img src="' . $whois . '" class="icon-action"></a>';
+				$stopper	 = '<a title="' . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . '" target="dam_spam_check" href="https://www.stopforumspam.com/search.php?q=' . $ip . '"><img src="' . $stop . '" class="icon-action"></a>';
+				$honeysearch = '<a title="' . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . '" target="dam_spam_check" href="https://www.projecthoneypot.org/ip_' . $ip . '"><img src="' . $search . '" class="icon-action"></a>';
+				$botsearch   = '<a title="' . esc_attr__( 'Check BotScout', 'dam-spam' ) . '" target="dam_spam_check" href="https://botscout.com/search.htm?stype=q&sterm=' . $ip . '"><img src="' . $search . '" class="icon-action"></a>';
+				$who		 = '<br><a title="' . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . '" target="dam_spam_check" href="https://whois.domaintools.com/' . $ip . '"><img src="' . $whois . '" class="icon-action"></a>';
 				echo '
 					<tr>
 					<td>' . wp_kses_post( $dt ) . '</td>
