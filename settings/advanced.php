@@ -693,8 +693,14 @@ function dam_spam_process_settings_import() {
 		wp_die( esc_html__( 'Invalid JSON file format', 'dam-spam' ) );
 	}
 	if ( isset( $import_data['options'] ) && is_array( $import_data['options'] ) ) {
+		if ( isset( $import_data['options']['reject_message'] ) ) {
+			$import_data['options']['reject_message'] = wp_kses_post( $import_data['options']['reject_message'] );
+		}
 		dam_spam_set_options( $import_data['options'] );
 	} elseif ( !isset( $import_data['stats'] ) && !isset( $import_data['advanced_settings'] ) && !isset( $import_data['ban_lists'] ) ) {
+		if ( isset( $import_data['reject_message'] ) ) {
+			$import_data['reject_message'] = wp_kses_post( $import_data['reject_message'] );
+		}
 		dam_spam_set_options( $import_data );
 	}
 	if ( isset( $import_data['stats'] ) && is_array( $import_data['stats'] ) ) {
@@ -1242,8 +1248,9 @@ function dam_spam_reset_password() {
 		dam_spam_set_error( new WP_Error( 'password_reset_mismatch', esc_html__( 'The passwords do not match.', 'dam-spam' ) ) );
 		return;
 	}
-	if ( isset( $_POST['pass1'] ) && !empty( $_POST['pass1'] ) ) {
-		reset_password( $user, sanitize_text_field( wp_unslash( $_POST['pass1'] ) ) );
+	if ( isset( $_POST['pass1'] ) && !empty( $_POST['pass1'] ) && isset( $_POST['dam_spam_reset_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_reset_nonce'] ) ), 'dam_spam_reset_password' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords must not be sanitized, hashed by wp_set_password()
+		reset_password( $user, wp_unslash( $_POST['pass1'] ) );
 		dam_spam_safe_redirect( home_url( 'login/?password=changed' ) );
 	}
 	$GLOBALS['dam_spam_reset_user'] = $user;
@@ -1403,7 +1410,7 @@ function dam_spam_authenticate( $user, $username, $password ) {
 }
 
 function dam_spam_track_failed_login_by_ip() {
-	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+	$ip = dam_spam_get_ip();
 	if ( empty( $ip ) ) {
 		return;
 	}
@@ -1721,7 +1728,7 @@ function dam_spam_handle_activation_page() {
 	if ( $is_pending !== 'Y' || empty( $stored_key ) ) {
 		wp_die( esc_html__( 'This account has already been activated or the link is invalid.', 'dam-spam' ), 403 );
 	}
-	if ( $key !== $stored_key ) {
+	if ( !hash_equals( $stored_key, $key ) ) {
 		wp_die( esc_html__( 'Invalid or expired activation link.', 'dam-spam' ), 403 );
 	}
 	delete_user_meta( $user_id, 'dam_spam_activation_pending' );

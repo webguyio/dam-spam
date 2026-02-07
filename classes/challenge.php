@@ -420,6 +420,11 @@ class dam_spam_challenge extends dam_spam_module {
 		if ( empty( $allow_list_requests ) || !is_array( $allow_list_requests ) ) {
 			$allow_list_requests = array();
 		}
+		foreach ( $allow_list_requests as $existing ) {
+			if ( is_array( $existing ) && $existing[0] === $ip ) {
+				return false;
+			}
+		}
 		$allow_list_requests[ $now ] = $req;
 		$stats['allow_list_requests'] = $allow_list_requests;
 		dam_spam_set_stats( $stats );

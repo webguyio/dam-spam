@@ -3,7 +3,7 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 1.0.6
+Version: 1.0.7
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -20,7 +20,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DAM_SPAM_VERSION', '1.0.6' );
+define( 'DAM_SPAM_VERSION', '1.0.7' );
 define( 'DAM_SPAM_URL', plugin_dir_url( __FILE__ ) );
 define( 'DAM_SPAM_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -56,7 +56,7 @@ function dam_spam_admin_notice() {
 	$admin_url = $protocol . '://' . $http_host . $request_uri;
 	$param = ( count( $_GET ) ) ? '&' : '?';
 
-	if ( !get_user_meta( $user_id, 'dam_spam_notice_dismissed_2026' ) && current_user_can( 'manage_options' ) ) {
+	if ( !get_user_meta( $user_id, 'dam_spam_notice_dismissed_2026_1' ) && current_user_can( 'manage_options' ) ) {
 		$dismiss_url = wp_nonce_url( $admin_url . $param . 'dismiss', 'dismiss_notice' );
 		echo '<div class="notice notice-info"><p><a href="' . esc_url( $dismiss_url ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'Thank you for helping us Dam Spam!', 'dam-spam' ) . '</strong></big><p><a href="https://damspam.com/donations" class="button-primary" style="border-color:#c6ac40;background:#c6ac40" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="vertical-align:text-bottom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg> ' . esc_html__( 'Donate', 'dam-spam' ) . '</a> &nbsp; <a href="https://github.com/webguyio/dam-spam/issues" class="button-primary" style="border-color:#c6ac40;background:#c6ac40" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="vertical-align:text-bottom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg> ' . esc_html__( 'Ask', 'dam-spam' ) . '</a> &nbsp; <a href="mailto:webguywork@gmail.com" class="button-primary" style="border-color:#c6ac40;background:#c6ac40" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="vertical-align:text-bottom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg> ' . esc_html__( 'Email', 'dam-spam' ) . '</a></p></div>';
 	}
@@ -66,7 +66,7 @@ add_action( 'admin_init', 'dam_spam_notice_dismissed' );
 function dam_spam_notice_dismissed() {
 	$user_id = get_current_user_id();
 	if ( isset( $_GET['dismiss'] ) && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'dismiss_notice' ) ) {
-		update_user_meta( $user_id, 'dam_spam_notice_dismissed_2026', 'true' );
+		update_user_meta( $user_id, 'dam_spam_notice_dismissed_2026_1', 'true' );
 	}
 }
 
@@ -413,7 +413,7 @@ function dam_spam_send_activation_email( $user, $password, $activation_key ) {
 	$message .= esc_html__( 'Please click the link below to activate your account:', 'dam-spam' ) . "\r\n";
 	$message .= $activation_link . "\r\n\r\n";
 	$message .= esc_html__( 'After activation, you can change your password in your profile.', 'dam-spam' ) . "\r\n\r\n";
-	$message .= esc_html__( 'This link will expire in 7 days.', 'dam-spam' ) . "\r\n\r\n";
+	$message .= esc_html__( 'Please activate your account within 7 days.', 'dam-spam' ) . "\r\n\r\n";
 	$message .= esc_html__( 'If you did not create an account, please ignore this email.', 'dam-spam' );
 	$headers = 'From: ' . get_option( 'admin_email' ) . "\r\n";
 	wp_mail( $user->user_email, $subject, $message, $headers );

@@ -20,6 +20,7 @@ if ( isset( $dam_spam_reset_user ) && isset( $dam_spam_reset_key ) ):
 		<input type="password" name="pass2" id="pass2" class="input" size="20" value="" autocomplete="off">
 	</p>
 	<?php do_action( 'resetpass_form' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook ?>
+	<?php wp_nonce_field( 'dam_spam_reset_password', 'dam_spam_reset_nonce' ); ?>
 	<p class="submit">
 		<input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_html_e( 'Reset Password', 'dam-spam' ); ?>">
 	</p>

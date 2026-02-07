@@ -90,10 +90,9 @@
 			damSpamAjaxWho.style.fontWeight = 'bolder';
 			return false;
 		}
-		damSpamAjaxWho.innerHTML = ' Status: ' + response;
-		damSpamAjaxWho.style.color = 'black';
+		damSpamAjaxWho.textContent = ' Status: ' + response.replace(/<[^>]*>/g, '').trim();
+		damSpamAjaxWho.style.color = 'red';
 		damSpamAjaxWho.style.fontWeight = 'bolder';
-		alert(response);
 		return false;
 	}
 

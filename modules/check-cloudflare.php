@@ -29,7 +29,7 @@ class dam_spam_check_cloudflare extends dam_spam_module {
 			'188.114.96.0/20',
 			'190.93.240.0/20',
 			'197.234.240.0/22',
-			'198.41.128.0/17'
+			'198.41.128.0/17',
 		);
 		$ip6ranges = array(
 			'2400:cb00::/32',
@@ -38,36 +38,23 @@ class dam_spam_check_cloudflare extends dam_spam_module {
 			'2606:4700::/32',
 			'2803:f800::/32',
 			'2a06:98c0::/29',
-			'2c0f:f248::/32'
+			'2c0f:f248::/32',
 		);
-		$cf_found  = false;
-		if ( strpos( $ip, '.' ) !== false ) {
-			$ipl = ip2long( $ip );
-			foreach ( $ip4ranges as $ip4 ) {
-				list( $range, $bits ) = explode( '/', $ip4, 2 );
-				$ipr = ip2long( $range );
-				$mask = - 1 << ( 32 - $bits );
-				$ipt = $ipl & $mask;
-				$ipr = $ipr & $mask;
-				if ( $ipt == $ipr ) {
-					$cf_found = true;
-					break;
-				}
-			}
-		} else if ( strpos( $ip, ':' ) !== false && strlen( $ip ) >= 9 ) {
-			$ip = strtolower( $ip );
-			foreach ( $ip6ranges as $ip6 ) {
-				if ( substr( $ip6, 0, 9 ) == substr( $ip, 0, 9 ) ) {
-					$cf_found = true;
-					break;
-				}
-			}
-		}
-		if ( !$cf_found ) {
+		$bin_ip = inet_pton( $ip );
+		if ( $bin_ip === false ) {
 			return false;
 		}
-		if ( array_key_exists( 'HTTP_CF_CONNECTING_IP', $_SERVER ) ) {
-			if ( array_key_exists( 'REMOTE_ADDR', $_SERVER ) ) {
+		$cf_ranges = strlen( $bin_ip ) === 4 ? $ip4ranges : $ip6ranges;
+		$len = strlen( $bin_ip );
+		foreach ( $cf_ranges as $range ) {
+			list( $net, $bits ) = explode( '/', $range, 2 );
+			$bin_net = inet_pton( $net );
+			if ( $bin_net === false || strlen( $bin_net ) !== $len ) {
+				continue;
+			}
+			$mask = str_repeat( "\xff", (int) ( $bits / 8 ) ) . ( $bits % 8 ? chr( 0xff << ( 8 - $bits % 8 ) ) : '' );
+			$mask = str_pad( $mask, $len, "\x00" );
+			if ( ( $bin_ip & $mask ) === ( $bin_net & $mask ) ) {
 				$_SERVER['REMOTE_ADDR'] = isset( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) : '';
 				return false;
 			}
@@ -75,5 +62,3 @@ class dam_spam_check_cloudflare extends dam_spam_module {
 		return false;
 	}
 }
-
-?>

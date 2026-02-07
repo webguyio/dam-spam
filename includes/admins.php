@@ -182,10 +182,11 @@ function dam_spam_sfs_handle_ajax_sub( $data ) {
 		esc_html_e( ' No Comment ID Found', 'dam-spam' );
 		exit();
 	}
-	$blog = '';
+	$blog = false;
 	if ( isset( $_POST['blog_id'] ) && !empty( $_POST['blog_id'] ) && is_numeric( $_POST['blog_id'] ) ) {
 		if ( function_exists( 'switch_to_blog' ) ) {
 			switch_to_blog( ( int ) $_POST['blog_id'] );
+			$blog = true;
 		}
 	}
 	$comment = get_comment( $comment_id, ARRAY_A );
@@ -207,9 +208,16 @@ function dam_spam_sfs_handle_ajax_sub( $data ) {
 	$email	  = urlencode( $comment['comment_author_email'] );
 	$uname	  = urlencode( $comment['comment_author'] );
 	$ip_addr  = $comment['comment_author_ip'];
+	if ( !empty( $ip_addr ) && !filter_var( $ip_addr, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
+		$ip_addr = '';
+	}
+	if ( empty( $ip_addr ) && empty( $email ) ) {
+		esc_html_e( 'Cannot report: no valid IP address or email found for this comment.', 'dam-spam' );
+		exit();
+	}
 	$content  = $comment['comment_content'];
 	$evidence = $comment['comment_author_url'];
-	if ( $blog != '' ) {
+	if ( $blog ) {
 		if ( function_exists( 'restore_current_blog' ) ) {
 			restore_current_blog();
 		}
@@ -244,14 +252,14 @@ function dam_spam_sfs_handle_ajax_sub( $data ) {
 		esc_html_e( 'Cannot Report Spam without API Key', 'dam-spam' );
 		exit();
 	}
-	$hget = "https://www.stopforumspam.com/add.php?ip_addr=$ip_addr&api_key=$apikey&email=$email&username=$uname&evidence=$evidence";
+	$hget = "https://www.stopforumspam.com/add.php?ip_addr=" . urlencode( $ip_addr ) . "&api_key=$apikey&email=$email&username=$uname&evidence=$evidence";
 	$ret  = dam_spam_read_file( $hget );
-	if ( stripos( $ret, esc_html__( 'data submitted successfully', 'dam-spam' ) ) !== false ) {
-		echo esc_html( $ret );
-	} else if ( stripos( $ret, esc_html__( 'recent duplicate entry', 'dam-spam' ) ) !== false ) {
+	if ( stripos( $ret, 'data submitted successfully' ) !== false ) {
+		esc_html_e( 'Spam reported successfully.', 'dam-spam' );
+	} else if ( stripos( $ret, 'recent duplicate entry' ) !== false ) {
 		esc_html_e( ' Recent Duplicate Entry ', 'dam-spam' );
 	} else {
-		echo esc_html__( ' Returning from AJAX: ', 'dam-spam' ) . esc_html( $hget ) . ' - ' . esc_html( $ret );
+		echo esc_html__( 'Report failed: ', 'dam-spam' ) . esc_html( wp_strip_all_tags( $ret ) );
 	}
 	exit();
 }

@@ -8,12 +8,11 @@ if ( !defined( 'ABSPATH' ) ) {
 // phpcs:disable WordPress.DB.DirectDatabaseQuery -- Utility functions require direct DB access
 
 function dam_spam_read_file( $f, $method = 'GET' ) {
-	$request = new WP_Http();
 	$parms = array(
 		'timeout' => 10,
 		'method'  => $method,
 	);
-	$result = $request->request( $f, $parms );
+	$result = wp_safe_remote_request( $f, $parms );
 	if ( empty( $result ) ) {
 		return '';
 	}
@@ -370,21 +369,46 @@ function dam_spam_write_ban_file() {
 	$mu_plugin_content = "<?php\n";
 	$mu_plugin_content .= "/*\n";
 	$mu_plugin_content .= "Plugin Name: Dam Spam Banner\n";
-	$mu_plugin_content .= "Description: Loads Dam Spam IP ban list early to block banned IPs before WordPress fully loads.\n";
+	$mu_plugin_content .= "Description: Blocks banned IPs before WordPress fully loads.\n";
 	$mu_plugin_content .= "*/\n\n";
-	$mu_plugin_content .= "\$visitor_ip = '';\n\n";
-	$mu_plugin_content .= "if ( isset( \$_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {\n";
-	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['HTTP_CF_CONNECTING_IP'];\n";
-	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['HTTP_X_REAL_IP'] ) ) {\n";
-	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['HTTP_X_REAL_IP'];\n";
-	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {\n";
-	$mu_plugin_content .= "\t\$ips = explode( ',', \$_SERVER['HTTP_X_FORWARDED_FOR'] );\n";
-	$mu_plugin_content .= "\t\$visitor_ip = trim( \$ips[0] );\n";
-	$mu_plugin_content .= "} elseif ( isset( \$_SERVER['REMOTE_ADDR'] ) ) {\n";
-	$mu_plugin_content .= "\t\$visitor_ip = \$_SERVER['REMOTE_ADDR'];\n";
+	$mu_plugin_content .= "\$visitor_ip = isset( \$_SERVER['REMOTE_ADDR'] ) ? \$_SERVER['REMOTE_ADDR'] : '';\n\n";
+	$mu_plugin_content .= "if ( isset( \$_SERVER['HTTP_CF_CONNECTING_IP'] ) && !empty( \$visitor_ip ) ) {\n";
+	$mu_plugin_content .= "\t\$cf_ip4 = array(\n";
+	$mu_plugin_content .= "\t\t'103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22',\n";
+	$mu_plugin_content .= "\t\t'104.16.0.0/13', '104.24.0.0/14', '108.162.192.0/18',\n";
+	$mu_plugin_content .= "\t\t'131.0.72.0/22', '141.101.64.0/18', '162.158.0.0/15',\n";
+	$mu_plugin_content .= "\t\t'172.64.0.0/13', '173.245.48.0/20', '188.114.96.0/20',\n";
+	$mu_plugin_content .= "\t\t'190.93.240.0/20', '197.234.240.0/22', '198.41.128.0/17',\n";
+	$mu_plugin_content .= "\t);\n";
+	$mu_plugin_content .= "\t\$cf_ip6 = array(\n";
+	$mu_plugin_content .= "\t\t'2400:cb00::/32', '2405:8100::/32', '2405:b500::/32',\n";
+	$mu_plugin_content .= "\t\t'2606:4700::/32', '2803:f800::/32', '2a06:98c0::/29',\n";
+	$mu_plugin_content .= "\t\t'2c0f:f248::/32',\n";
+	$mu_plugin_content .= "\t);\n";
+	$mu_plugin_content .= "\t\$bin_ip = inet_pton( \$visitor_ip );\n";
+	$mu_plugin_content .= "\tif ( \$bin_ip !== false ) {\n";
+	$mu_plugin_content .= "\t\t\$cf_ranges = strlen( \$bin_ip ) === 4 ? \$cf_ip4 : \$cf_ip6;\n";
+	$mu_plugin_content .= "\t\t\$len = strlen( \$bin_ip );\n";
+	$mu_plugin_content .= "\t\tforeach ( \$cf_ranges as \$range ) {\n";
+	$mu_plugin_content .= "\t\t\tlist( \$net, \$bits ) = explode( '/', \$range, 2 );\n";
+	$mu_plugin_content .= "\t\t\t\$bin_net = inet_pton( \$net );\n";
+	$mu_plugin_content .= "\t\t\tif ( \$bin_net === false || strlen( \$bin_net ) !== \$len ) {\n";
+	$mu_plugin_content .= "\t\t\t\tcontinue;\n";
+	$mu_plugin_content .= "\t\t\t}\n";
+	$mu_plugin_content .= "\t\t\t\$mask = str_repeat( \"\\xff\", (int) ( \$bits / 8 ) ) . ( \$bits % 8 ? chr( 0xff << ( 8 - \$bits % 8 ) ) : '' );\n";
+	$mu_plugin_content .= "\t\t\t\$mask = str_pad( \$mask, \$len, \"\\x00\" );\n";
+	$mu_plugin_content .= "\t\t\tif ( ( \$bin_ip & \$mask ) === ( \$bin_net & \$mask ) ) {\n";
+	$mu_plugin_content .= "\t\t\t\t\$visitor_ip = \$_SERVER['HTTP_CF_CONNECTING_IP'];\n";
+	$mu_plugin_content .= "\t\t\t\tbreak;\n";
+	$mu_plugin_content .= "\t\t\t}\n";
+	$mu_plugin_content .= "\t\t}\n";
+	$mu_plugin_content .= "\t}\n";
 	$mu_plugin_content .= "}\n\n";
 	$mu_plugin_content .= "\$dam_spam_banned_ips = array(\n";
 	foreach ( array_keys( $all_bans ) as $ip ) {
+		if ( !filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+			continue;
+		}
 		$mu_plugin_content .= "\t'" . esc_sql( $ip ) . "' => true,\n";
 	}
 	$mu_plugin_content .= ");\n\n";
