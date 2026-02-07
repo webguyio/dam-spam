@@ -117,9 +117,9 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		<p class="description">
 			<?php
 			printf(
-				/* translators: %s: URL to Cloudflare dashboard */
-				esc_html__( 'Get your credentials from your %s.', 'dam-spam' ),
-				'<a href="https://dash.cloudflare.com/" target="_blank">' . esc_html__( 'Cloudflare Dashboard', 'dam-spam' ) . '</a>'
+				/* translators: %s: URL to documentation */
+				esc_html__( 'Need help finding these? See the %s.', 'dam-spam' ),
+				'<a href="https://github.com/webguyio/dam-spam/wiki#cloudflare-integration" target="_blank">' . esc_html__( 'setup guide', 'dam-spam' ) . '</a>'
 			);
 			?>
 		</p>

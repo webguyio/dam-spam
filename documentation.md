@@ -2,6 +2,12 @@
 
 Dam Spam is a comprehensive spam protection plugin for WordPress that blocks spam registrations, login attempts, comments, and contact form submissions through multiple layers of protection.
 
+## Activation, Deactivation, and Migration
+
+If you are migrating from Stop Spammers, simply install and activate Dam Spam. All existing settings, lists, and statistics will be migrated automatically in the background. Stop Spammers will be deactivated and can then be safely deleted.
+
+When Dam Spam is deactivated or deleted, all settings and data are preserved in the database so you can reactivate later without losing your configuration. To move settings between sites, use Export and Import under *Advanced*.
+
 ## How Dam Spam Works
 
 Dam Spam runs a series of configurable checks whenever someone tries to register, log in, comment, or submit a form on your WordPress site. Each submission goes through two main stages:
@@ -10,6 +16,20 @@ Dam Spam runs a series of configurable checks whenever someone tries to register
 2. **Block Checks** - If not on the allow list, Dam Spam runs various spam detection checks (disposable emails, known spam IPs, suspicious behavior, etc.)
 
 When a submission is flagged as suspicious, you can either block it outright or present a CAPTCHA challenge. Legitimate users are cached to speed up future submissions, while known spam sources are permanently blocked.
+
+## Recommended Setup
+
+Dam Spam works out of the box with sensible defaults, but the best results come from tuning it to your site over time. As your Allow and Block lists grow and you refine settings based on your logs, false positives decrease and spam catch rates improve.
+
+**Blogs and content sites:** The defaults are a good starting point. Enable a CAPTCHA on your comment form if comment spam is heavy. Check your logs periodically and add persistent offenders to the Block List.
+
+**Membership and community sites:** Enable "Require Email Verification for New Users" under *Advanced* to ensure real email addresses. Consider enabling "Limit Login Attempts" to protect against brute force attacks. Review the Allow List Requests page regularly to approve legitimate users who were caught.
+
+**WooCommerce and ecommerce:** Enable "Skip WooCommerce Forms" and "Skip Payment Forms" under *Protections* to prevent checkout interference. Make sure the relevant payment gateway allow lists (PayPal, Stripe, etc.) are enabled under *Allowed*.
+
+**High-security sites:** Enable "Block 404 Exploit Probing," "Check for Exploits," "Limit Login Attempts," and a CAPTCHA. Consider enabling "Block Missing HTTP_ACCEPT Header" and "Block Invalid HTTP_REFERER," but monitor logs closely for false positives.
+
+The key is to check your logs after making changes. If legitimate users are being blocked, loosen the relevant check or add them to the Allow List. If spam is getting through, enable additional protections or add patterns to the Block List.
 
 ---
 
@@ -638,9 +658,9 @@ Configure third-party spam detection services and API keys.
 Configure Cloudflare API access for advanced features like country blocking, ban list syncing, and cache management.
 
 **Required Fields:**
-- **Cloudflare Email** - Your Cloudflare account email address
-- **Cloudflare Global API Key** - Found in your Cloudflare profile under API Tokens
-- **Cloudflare Zone ID** - Found in your domain's Cloudflare dashboard overview
+- **Cloudflare Email** - Your Cloudflare account email address ([find it here](https://dash.cloudflare.com/profile/managed-profile/preferences))
+- **Cloudflare Global API Key** - Found under API Keys, not API Tokens ([find it here](https://dash.cloudflare.com/profile/api-tokens))
+- **Cloudflare Zone ID** - Go to your [Cloudflare dashboard](https://dash.cloudflare.com/), click on your domain to open its Overview page, then scroll to the bottom-right to find the Zone ID
 
 **Actions:**
 - **Clear Cloudflare Cache** - Purge Cloudflare's cache for your site (requires API configuration)
@@ -888,7 +908,10 @@ Add security rules to your .htaccess file for server-level protection.
 
 #### Limit Login Attempts
 
-Automatically ban IPs after a specified number of failed login attempts within a time window.
+Automatically ban IPs after a specified number of failed login attempts within a time window. Banned IPs are added to the Automatic Ban List and blocked before WordPress loads.
+
+- **Threshold** - Number of failed attempts before banning (default: 20, minimum: 20)
+- **Duration** - Time window in minutes to count attempts (default: 60, maximum: 1440)
 
 > **Why Use:** Protects against brute force password attacks.
 
@@ -1028,8 +1051,11 @@ Remove all automatically-generated ban entries.
 
 Dam Spam provides several shortcodes for adding forms and user info to pages:
 
-- `[dam-spam-contact-form]` - Display the Dam Spam contact form
-- `[dam-spam-login]` - Display custom login form
+- `[dam-spam-contact-form]` - Display a simple contact form with name, email, phone, and message fields. Includes built-in honeypot spam protection. Messages are sent to the site admin email by default. Optional attributes:
+  - `email` - Send messages to a specific email address instead of the site admin (e.g., `[dam-spam-contact-form email="you@example.com"]`)
+  - `accent` - Set the accent color for the form (e.g., `[dam-spam-contact-form accent="#ff6600"]`)
+  - `unstyled` - Set to "yes" to remove default styling so the form inherits your theme's styles (e.g., `[dam-spam-contact-form unstyled="yes"]`)
+- `[dam-spam-login]` - Display custom login, registration, or forgot password form depending on the page slug. Requires pages with the slugs "login", "register", and "forgot" to be created. Works with Themed Login enabled under Advanced.
 - `[dam-spam-show-displayname-as]` - Show logged-in user's display name
 - `[dam-spam-show-fullname-as]` - Show logged-in user's first and last name
 - `[dam-spam-show-email-as]` - Show logged-in user's email address
@@ -1067,6 +1093,23 @@ Reset all Dam Spam settings to defaults.
 > **Why Use:** Start over with a clean configuration if settings become problematic.
 
 > **Why Not:** Permanently deletes all custom settings. Export first if you want to preserve current configuration.
+
+---
+
+## Multisite
+
+For WordPress multisite installations, Dam Spam includes a network-level settings page.
+
+#### Networked Mode
+
+Control whether Dam Spam settings are managed centrally from the main site or independently on each sub-site.
+
+- **Networked ON** - All sites share the same Dam Spam settings, managed from the main site's admin
+- **Networked OFF** - Each site has its own independent Dam Spam configuration
+
+> **Why Use:** Networked ON simplifies management for networks where all sites need the same protection. Networked OFF gives site admins control over their own spam settings.
+
+> **Why Not:** Switching modes doesn't migrate settings between sites. Choose your preferred mode early.
 
 ---
 
