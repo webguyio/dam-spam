@@ -59,7 +59,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 ?>
 
 <div id="dam-spam" class="wrap">
-	<h1 id="dam-spam-head"><?php esc_html_e( 'Cache — Dam Spam', 'dam-spam' ); ?></h1>
+	<h1 id="dam-spam-header"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg> <?php esc_html_e( 'Cache — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php
 	if ( !empty( $msg ) ) {
 		echo wp_kses_post( $msg );
@@ -69,7 +69,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 	<form method="post" action="">
 		<input type="hidden" name="update_options" value="update">
 		<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
-		<label class="keyhead">
+		<label class="key-header">
 			<?php esc_html_e( 'Bad Cache Size', 'dam-spam' ); ?>
 			<br>
 			<select name="dam_spam_cache">
@@ -86,7 +86,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		</label>
 		<br>
 		<br>
-		<label class="keyhead">
+		<label class="key-header">
 			<?php esc_html_e( 'Good Cache Size', 'dam-spam' ); ?>
 			<br>
 			<select name="dam_spam_good">

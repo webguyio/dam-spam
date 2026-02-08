@@ -119,7 +119,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 ?>
 
 <div id="dam-spam" class="wrap">
-	<h1 id="dam-spam-head"><?php esc_html_e( 'Challenges — Dam Spam', 'dam-spam' ); ?></h1>
+	<h1 id="dam-spam-header"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg> <?php esc_html_e( 'Challenges — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php if ( !empty( $update ) ) {
 		echo wp_kses_post( $update );
 	} ?>
@@ -130,12 +130,12 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
 		<input type="hidden" name="action" value="update challenge">
 		<br>
-		<div class="mainsection"><?php esc_html_e( 'Access Blocked Message', 'dam-spam' ); ?></div>
+		<div class="main-section"><?php esc_html_e( 'Access Blocked Message', 'dam-spam' ); ?></div>
 		<textarea id="reject_message" name="reject_message" cols="40" rows="5"><?php echo wp_kses_post( $reject_message ); ?></textarea>
 		<br>
-		<div class="mainsection"><?php esc_html_e( 'Routing and Notifications', 'dam-spam' ); ?></div>
+		<div class="main-section"><?php esc_html_e( 'Routing and Notifications', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="redir">
+			<label class="dam-spam-sub-header" for="redir">
 				<input class="dam_spam_toggle" type="checkbox" id="redir" name="redir" value="Y" onclick="dam_spam_show_option()" <?php if ( $redir == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Send Blocked Users to URL', 'dam-spam' ); ?></small>
 			</label>
@@ -144,14 +144,14 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		<span id="dam_spam_show_option" style="display:none"><?php esc_html_e( 'URL:', 'dam-spam' ); ?>
 		<input size="77" name="redirect_url" type="text" placeholder="https://example.com/" value="<?php echo esc_url( $redirect_url ); ?>"></span>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="allow_list_request">
+			<label class="dam-spam-sub-header" for="allow_list_request">
 				<input class="dam_spam_toggle" type="checkbox" id="allow_list_request" name="allow_list_request" value="Y" <?php if ( $allow_list_request == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 				<small><?php esc_html_e( 'Send Blocked Users to Allow Request Form', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="notify">
+			<label class="dam-spam-sub-header" for="notify">
 				<input class="dam_spam_toggle" type="checkbox" id="notify" name="notify" value="Y" onclick="dam_spam_show_notify()" <?php if ( $notify == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Email Admin for New Requests', 'dam-spam' ); ?></small>
 			</label>
@@ -160,13 +160,13 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		<span id="dam_spam_show_notify" style="display:none"><?php esc_html_e( 'Email:', 'dam-spam' ); ?>
 		<input id="dam-spam-input" size="48" name="allow_list_request_email" type="text" value="<?php echo esc_html( $allow_list_request_email ); ?>"></span>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="email_request">
+			<label class="dam-spam-sub-header" for="email_request">
 				<input class="dam_spam_toggle" type="checkbox" id="email_request" name="email_request" value="Y" <?php if ( $email_request == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 				<small><?php esc_html_e( 'Email Blocked Users when They\'re Allowed', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
-		<div class="mainsection"><?php esc_html_e( 'CAPTCHA', 'dam-spam' ); ?></div>
+		<div class="main-section"><?php esc_html_e( 'CAPTCHA', 'dam-spam' ); ?></div>
 		<p><?php esc_html_e( 'Second Chance Challenge for Blocked Users', 'dam-spam' ); ?></p>
 		<p><?php esc_html_e( 'Google reCAPTCHA and hCaptcha require an API Key (entered below).', 'dam-spam' ); ?></p>
 		<div>
@@ -177,56 +177,56 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 			?>
 		</div>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="check_captcha1">
+			<label class="dam-spam-sub-header" for="check_captcha1">
 				<input class="dam_spam_toggle" type="radio" id="check_captcha1" name="check_captcha" value="N" <?php if ( $check_captcha == 'N' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'No CAPTCHA (default)', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="check_captcha4">
+			<label class="dam-spam-sub-header" for="check_captcha4">
 				<input class="dam_spam_toggle" type="radio" id="check_captcha4" name="check_captcha" value="C" <?php if ( $check_captcha == 'C' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Cloudflare Turnstile', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="check_captcha2">
+			<label class="dam-spam-sub-header" for="check_captcha2">
 				<input class="dam_spam_toggle" type="radio" id="check_captcha2" name="check_captcha" value="G" <?php if ( $check_captcha == 'G' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Google reCAPTCHA', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="check_captcha3">
+			<label class="dam-spam-sub-header" for="check_captcha3">
 				<input class="dam_spam_toggle" type="radio" id="check_captcha3" name="check_captcha" value="H" <?php if ( $check_captcha == 'H' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'hCaptcha', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="check_captcha5">
+			<label class="dam-spam-sub-header" for="check_captcha5">
 				<input class="dam_spam_toggle" type="radio" id="check_captcha5" name="check_captcha" value="A" <?php if ( $check_captcha == 'A' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Math Question', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<p><?php esc_html_e( 'Enable CAPTCHAs on common WordPress forms.', 'dam-spam' ); ?></p>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="form_captcha_login">
+			<label class="dam-spam-sub-header" for="form_captcha_login">
 				<input class="dam_spam_toggle" type="checkbox" id="form_captcha_login" name="form_captcha_login" value="Y" <?php if ( isset( $form_captcha_login ) and $form_captcha_login == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Login', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="form_captcha_registration">
+			<label class="dam-spam-sub-header" for="form_captcha_registration">
 				<input class="dam_spam_toggle" type="checkbox" id="form_captcha_registration" name="form_captcha_registration" value="Y" <?php if ( isset( $form_captcha_registration ) and $form_captcha_registration == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Registration', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="form_captcha_comment">
+			<label class="dam-spam-sub-header" for="form_captcha_comment">
 				<input class="dam_spam_toggle" type="checkbox" id="form_captcha_comment" name="form_captcha_comment" value="Y" <?php if ( isset( $form_captcha_comment ) and $form_captcha_comment == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Comment', 'dam-spam' ); ?></small>
 			</label>

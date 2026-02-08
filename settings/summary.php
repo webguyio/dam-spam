@@ -101,7 +101,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 ?>
 
 <div id="dam-spam" class="wrap">
-	<h1 id="dam-spam-head"><?php esc_html_e( 'Summary — Dam Spam', 'dam-spam' ); ?></h1>
+	<h1 id="dam-spam-header"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg> <?php esc_html_e( 'Summary — Dam Spam', 'dam-spam' ); ?></h1>
 	<br>
 	<?php esc_html_e( 'Version', 'dam-spam' ); ?>: <strong><?php echo esc_html( DAM_SPAM_VERSION ); ?></strong>
 	<?php

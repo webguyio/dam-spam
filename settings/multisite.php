@@ -16,7 +16,7 @@ dam_spam_fix_post_vars();
 ?>
 
 <div id="dam-spam" class="wrap">
-	<h1 id="dam-spam-head"><?php esc_html_e( 'Multisite — Dam Spam', 'dam-spam' ); ?></h1>
+	<h1 id="dam-spam-header"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></svg> <?php esc_html_e( 'Multisite — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php
 	$now	  = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 	$ip 	  = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';

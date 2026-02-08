@@ -110,31 +110,31 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 	max-width: 170px !important;
 }
 
-#dam-spam #dam-spam-head {
+#dam-spam #dam-spam-header {
 	font-size: 30px;
 	font-weight: bold;
 }
 
-#dam-spam .dam-spam-subhead, #dam-spam .dam-spam-subhead2 {
+#dam-spam .dam-spam-sub-header, #dam-spam .dam-spam-sub-header-2 {
 	color: #aaa;
 	font-size: 20px !important;
 	font-weight: 500;
 }
 
-#dam-spam .dam-spam-subhead2 {
+#dam-spam .dam-spam-sub-header-2 {
 	font-size: 16px;
 }
 
-#dam-spam .dam-spam-subhead div.container {
+#dam-spam .dam-spam-sub-header div.container {
 	padding: 5% 0;
 }
 
-#dam-spam .keyhead {
+#dam-spam .key-header {
 	display: block;
 	font-size: 16px !important;
 }
 
-#dam-spam div.mainsection {
+#dam-spam div.main-section {
 	font-size: 18px;
 	font-weight: bold;
 	color: #eae4ca;
@@ -186,7 +186,7 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 	background: #222;
 }
 
-#dam-spam .filterhead {
+#dam-spam .filter-header {
 	cursor: pointer;
 }
 
@@ -397,10 +397,10 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 	#dam-spam, #dam-spam h2, #dam-spam h3, #dam-spam h4, #dam-spam h5, #dam-spam h6, #dam-spam p {
 		color: #3c434a;
 	}
-	#dam-spam div.mainsection {
+	#dam-spam div.main-section {
 		color: #222
 	}
-	#dam-spam .dam-spam-subhead, #dam-spam .dam-spam-subhead2 {
+	#dam-spam .dam-spam-sub-header, #dam-spam .dam-spam-sub-header-2 {
 		color: #444
 	}
 }

@@ -82,13 +82,13 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 ?>
 
 <div id="dam-spam" class="wrap">
-	<h1 id="dam-spam-head"><?php esc_html_e( 'Allowed — Dam Spam', 'dam-spam' ); ?></h1>
+	<h1 id="dam-spam-header"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> <?php esc_html_e( 'Allowed — Dam Spam', 'dam-spam' ); ?></h1>
 	<?php if ( !empty( $msg ) ) {
 		echo wp_kses_post( $msg );
 	} ?>
 	<br>
 	<br>
-	<div class="mainsection"><?php esc_html_e( 'Requests', 'dam-spam' ); ?></div>
+	<div class="main-section"><?php esc_html_e( 'Requests', 'dam-spam' ); ?></div>
 	<?php
 	if ( count( $allow_list_requests ) == 0 ) {
 		esc_html_e( 'There are currently no pending requests.', 'dam-spam' );
@@ -152,10 +152,10 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 	<form method="post" action="">
 		<input type="hidden" name="action" value="update">
 		<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
-		<div class="mainsection"><?php esc_html_e( 'Allow List', 'dam-spam' ); ?></div>
+		<div class="main-section"><?php esc_html_e( 'Allow List', 'dam-spam' ); ?></div>
 		<p><?php esc_html_e( 'One email or IP per line. You can use wild cards here for emails.', 'dam-spam' ); ?></p>
 		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_allowed_user_id">
+	  		<label class="dam-spam-sub-header" for="check_allowed_user_id">
 				<input class="dam_spam_toggle" type="checkbox" id="check_allowed_user_id" name="check_allowed_user_id" value="Y" <?php if ( $check_allowed_user_id == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Allow Usernames', 'dam-spam' ); ?></small>
 			</label>
@@ -167,66 +167,66 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 			}
 		?></textarea>
 		<br>
-		<div class="mainsection"><?php esc_html_e( 'Allow Options', 'dam-spam' ); ?></div>
+		<div class="main-section"><?php esc_html_e( 'Allow Options', 'dam-spam' ); ?></div>
 		<br>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="check_google">
+			<label class="dam-spam-sub-header" for="check_google">
 				<input class="dam_spam_toggle" type="checkbox" id="check_google" name="check_google" value="Y" <?php if ( $check_google == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 				<small><?php esc_html_e( 'Google (keep enabled under most circumstances)', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_misc_allow_list">
+	  		<label class="dam-spam-sub-header" for="check_misc_allow_list">
 				<input class="dam_spam_toggle" type="checkbox" id="check_misc_allow_list" name="check_misc_allow_list" value="Y" <?php if ( $check_misc_allow_list == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 				<small><?php esc_html_e( 'Other Allow Lists', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_paypal">
+	  		<label class="dam-spam-sub-header" for="check_paypal">
 				<input class="dam_spam_toggle" type="checkbox" id="check_paypal" name="check_paypal" value="Y" <?php if ( $check_paypal == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> PayPal</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_stripe">
+	  		<label class="dam-spam-sub-header" for="check_stripe">
 				<input class="dam_spam_toggle" type="checkbox" id="check_stripe" name="check_stripe" value="Y" <?php if ( $check_stripe == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Stripe</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_authorize_net">
+	  		<label class="dam-spam-sub-header" for="check_authorize_net">
 				<input class="dam_spam_toggle" type="checkbox" id="check_authorize_net" name="check_authorize_net" value="Y" <?php if ( $check_authorize_net == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Authorize.Net</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_braintree">
+	  		<label class="dam-spam-sub-header" for="check_braintree">
 				<input class="dam_spam_toggle" type="checkbox" id="check_braintree" name="check_braintree" value="Y" <?php if ( $check_braintree == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Braintree</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_recurly">
+	  		<label class="dam-spam-sub-header" for="check_recurly">
 				<input class="dam_spam_toggle" type="checkbox" id="check_recurly" name="check_recurly" value="Y" <?php if ( $check_recurly == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Recurly</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_square">
+	  		<label class="dam-spam-sub-header" for="check_square">
 				<input class="dam_spam_toggle" type="checkbox" id="check_square" name="check_square" value="Y" <?php if ( $check_square == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Square</small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-			<label class="dam-spam-subhead" for="check_aws">
+			<label class="dam-spam-sub-header" for="check_aws">
 				<input class="dam_spam_toggle" type="checkbox" id="check_aws" name="check_aws" value="Y" <?php if ( $check_aws == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 				<small><?php esc_html_e( 'Allow', 'dam-spam' ); ?> Amazon Cloud</small>
 			</label>

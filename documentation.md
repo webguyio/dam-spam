@@ -27,7 +27,7 @@ Dam Spam works out of the box with sensible defaults, but the best results come 
 
 **WooCommerce and ecommerce:** Enable "Skip WooCommerce Forms" and "Skip Payment Forms" under *Protections* to prevent checkout interference. Make sure the relevant payment gateway allow lists (PayPal, Stripe, etc.) are enabled under *Allowed*.
 
-**High-security sites:** Enable "Block 404 Exploit Probing," "Check for Exploits," "Limit Login Attempts," and a CAPTCHA. Consider enabling "Block Missing HTTP_ACCEPT Header" and "Block Invalid HTTP_REFERER," but monitor logs closely for false positives.
+**High-security sites:** Enable "Check for 404 Exploit Probing," "Check for Exploits," "Limit Login Attempts," and a CAPTCHA. Consider enabling "Check for Missing HTTP_ACCEPT Header" and "Check for Invalid HTTP_REFERER," but monitor logs closely for false positives.
 
 The key is to check your logs after making changes. If legitimate users are being blocked, loosen the relevant check or add them to the Allow List. If spam is getting through, enable additional protections or add patterns to the Block List.
 
@@ -141,9 +141,31 @@ Verify username and password exist before running other spam checks.
 
 ---
 
+### Login Protection
+
+#### Check for "admin" Username in Login Attempts
+
+Block all login attempts using "admin" as the username.
+
+> **Why Use:** "admin" is the most commonly attacked username; blocking it stops many automated attacks.
+
+> **Why Not:** If you actually have an admin user named "admin", you'll need to create a new admin account with a different username first.
+
+---
+
+#### Filter Login Requests
+
+Apply spam filtering to login attempts.
+
+> **Why Use:** Protects login page from automated attacks.
+
+> **Why Not:** May interfere with programmatic login systems or mobile apps.
+
+---
+
 ### Validate Requests
 
-#### Block Missing HTTP_ACCEPT Header
+#### Check for Missing HTTP_ACCEPT Header
 
 Block requests that don't include an HTTP_ACCEPT header.
 
@@ -153,7 +175,7 @@ Block requests that don't include an HTTP_ACCEPT header.
 
 ---
 
-#### Block Invalid HTTP_REFERER
+#### Check for Invalid HTTP_REFERER
 
 Block requests with suspicious or invalid referrer headers.
 
@@ -163,7 +185,19 @@ Block requests with suspicious or invalid referrer headers.
 
 ---
 
-#### Block Disposable Email Addresses
+#### Check for Quick Responses
+
+Block form submissions that happen too quickly after page load.
+
+> **Why Use:** Humans need time to read and fill forms; bots submit instantly.
+
+> **Why Not:** May block users with form auto-fill tools or very fast typists. May not work with caching plugins. Adjust timeout value if getting false positives.
+
+---
+
+### Validate Input
+
+#### Check for Disposable Email Addresses
 
 Block registration attempts using temporary/disposable email services.
 
@@ -223,36 +257,6 @@ Flag excessive hyphens in usernames or emails.
 
 ---
 
-#### Check for Quick Responses
-
-Block form submissions that happen too quickly after page load.
-
-> **Why Use:** Humans need time to read and fill forms; bots submit instantly.
-
-> **Why Not:** May block users with form auto-fill tools or very fast typists. May not work with caching plugins. Adjust timeout value if getting false positives.
-
----
-
-#### Block 404 Exploit Probing
-
-Block IPs that hit multiple non-existent URLs in a short time.
-
-> **Why Use:** Attackers scan for vulnerable files by trying many URLs; this detects that behavior.
-
-> **Why Not:** May block legitimate users if they repeatedly mistype URLs. Rare false positives.
-
----
-
-#### Block IPs Detected by Akismet
-
-Block IPs that Akismet has flagged as spam.
-
-> **Why Use:** Leverages Akismet's spam database for additional protection.
-
-> **Why Not:** Requires Akismet to be installed and configured. May block users who were falsely flagged by Akismet.
-
----
-
 #### Check for Exploits
 
 Scan submissions for common exploit patterns (SQL injection, XSS, etc.).
@@ -263,35 +267,17 @@ Scan submissions for common exploit patterns (SQL injection, XSS, etc.).
 
 ---
 
-#### Block Login Attempts for "admin" Username
+#### Check for URLs
 
-Block all login attempts using "admin" as the username.
+Block submissions containing URLs.
 
-> **Why Use:** "admin" is the most commonly attacked username; blocking it stops many automated attacks.
+> **Why Use:** Spammers frequently include links in registrations and comments.
 
-> **Why Not:** If you actually have an admin user named "admin", you'll need to create a new admin account with a different username first.
-
----
-
-#### Check Ubiquity-Nobis and Other Blacklists
-
-Check against Ubiquity server networks and other hosting provider blocklists.
-
-> **Why Use:** These networks host many spam operations.
-
-> **Why Not:** May block legitimate users on shared hosting from these providers. Rare false positives.
+> **Why Not:** Will block legitimate submissions that contain links. Best suited for registration forms where URLs are rarely needed.
 
 ---
 
-#### Check for Major Hosting Companies and Cloud Services
-
-Flag traffic from major hosting providers and cloud services.
-
-> **Why Use:** Spammers often use hosting/cloud IPs rather than residential connections.
-
-> **Why Not:** May block legitimate users who browse from their work environment if their company uses these services. May block legitimate API requests.
-
----
+### IP Reputation
 
 #### Check for VPNs
 
@@ -313,13 +299,23 @@ Detect and block Tor exit nodes.
 
 ---
 
-#### Check for Many Hits in a Short Time
+#### Check for Ubiquity-Nobis and Other Blocklists
 
-Block IPs that make multiple requests in a short time period.
+Check against Ubiquity server networks and other hosting provider blocklists.
 
-> **Why Use:** Catches bots that rapidly attempt multiple registrations or submissions.
+> **Why Use:** These networks host many spam operations.
 
-> **Why Not:** May block legitimate users who refresh pages frequently or submit forms multiple times due to errors.
+> **Why Not:** May block legitimate users on shared hosting from these providers. Rare false positives.
+
+---
+
+#### Check for Major Hosting Companies and Cloud Services
+
+Flag traffic from major hosting providers and cloud services.
+
+> **Why Use:** Spammers often use hosting/cloud IPs rather than residential connections.
+
+> **Why Not:** May block legitimate users who browse from their work environment if their company uses these services. May block legitimate API requests.
 
 ---
 
@@ -333,13 +329,35 @@ Flag traffic from Amazon AWS IP ranges.
 
 ---
 
-#### Filter Login Requests
+#### Check for IPs Detected by Akismet
 
-Apply spam filtering to login attempts.
+Block IPs that Akismet has flagged as spam.
 
-> **Why Use:** Protects login page from automated attacks.
+> **Why Use:** Leverages Akismet's spam database for additional protection.
 
-> **Why Not:** May interfere with programmatic login systems or mobile apps.
+> **Why Not:** Requires Akismet to be installed and configured. May block users who were falsely flagged by Akismet.
+
+---
+
+### Behavior Detection
+
+#### Check for 404 Exploit Probing
+
+Block IPs that hit multiple non-existent URLs in a short time.
+
+> **Why Use:** Attackers scan for vulnerable files by trying many URLs; this detects that behavior.
+
+> **Why Not:** May block legitimate users if they repeatedly mistype URLs. Rare false positives.
+
+---
+
+#### Check for Many Hits in a Short Time
+
+Block IPs that make multiple requests in a short time period.
+
+> **Why Use:** Catches bots that rapidly attempt multiple registrations or submissions.
+
+> **Why Not:** May block legitimate users who refresh pages frequently or submit forms multiple times due to errors.
 
 ---
 
@@ -509,16 +527,6 @@ Manage which URL shortening services are blocked.
 
 ---
 
-### Check for URLs
-
-Configure how many URLs are allowed in submissions before blocking.
-
-> **Why Use:** Limit URL spam without blocking all links.
-
-> **Why Not:** May block legitimate posts with multiple helpful links. Adjust threshold as needed.
-
----
-
 ### Bad User Agents List
 
 Block specific browser user agents known to be used by bots.
@@ -529,7 +537,7 @@ Block specific browser user agents known to be used by bots.
 
 ---
 
-### Blocked TLDs
+### TLDs List
 
 Block email addresses from specific top-level domains.
 
@@ -671,11 +679,11 @@ Configure Cloudflare API access for advanced features like country blocking, ban
 
 ---
 
-### Blacklist Checking
+### Blocklist Checking
 
 #### Check DNSBLs (like Spamhaus.org)
 
-Query DNS-based blacklists to check if IPs are known spam sources.
+Query DNS-based blocklists to check if IPs are known spam sources.
 
 > **Why Use:** Leverages Spamhaus and other DNSBLs maintained by anti-spam organizations.
 

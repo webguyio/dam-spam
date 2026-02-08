@@ -104,7 +104,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 ?>
 
 <div id="dam-spam" class="wrap">
-	<h1 id="dam-spam-head"><?php esc_html_e( 'APIs — Dam Spam', 'dam-spam' ); ?></h1>
+	<h1 id="dam-spam-header"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg> <?php esc_html_e( 'APIs — Dam Spam', 'dam-spam' ); ?></h1>
 	<br>
 	<?php if ( !empty( $msg ) ) {
 		echo wp_kses_post( $msg );
@@ -113,7 +113,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 	<form method="post" action="">
 		<input type="hidden" name="action" value="update">
 		<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
-		<div id="cloudflare" class="mainsection"><?php esc_html_e( 'Cloudflare Integration', 'dam-spam' ); ?></div>
+		<div id="cloudflare" class="main-section"><?php esc_html_e( 'Cloudflare Integration', 'dam-spam' ); ?></div>
 		<p class="description">
 			<?php
 			printf(
@@ -124,19 +124,19 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 			?>
 		</p>
 		<br>
-		<label class="keyhead">
+		<label class="key-header">
 			<?php esc_html_e( 'Cloudflare Email', 'dam-spam' ); ?>
 			<br>
 			<input size="32" name="cf_email" type="email" value="<?php echo esc_attr( $cf_email ); ?>">
 		</label>
 		<br>
-		<label class="keyhead">
+		<label class="key-header">
 			<?php esc_html_e( 'Cloudflare Global API Key', 'dam-spam' ); ?>
 			<br>
 			<input size="32" name="cf_api_key" type="password" value="<?php echo esc_attr( $cf_api_key ); ?>">
 		</label>
 		<br>
-		<label class="keyhead">
+		<label class="key-header">
 			<?php esc_html_e( 'Cloudflare Zone ID', 'dam-spam' ); ?>
 			<br>
 			<input size="32" name="cf_zone_id" type="text" value="<?php echo esc_attr( $cf_zone_id ); ?>">
@@ -147,22 +147,22 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		</button>
 		<br>
 		<br>
-		<div id="formchecking" class="mainsection"><?php esc_html_e( 'Blacklist Checking', 'dam-spam' ); ?></div>
+		<div id="blocklist-checking" class="main-section"><?php esc_html_e( 'Blocklist Checking', 'dam-spam' ); ?></div>
 		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_dnsbl">
+	  		<label class="dam-spam-sub-header" for="check_dnsbl">
 				<input class="dam_spam_toggle" type="checkbox" id="check_dnsbl" name="check_dnsbl" value="Y" <?php if ( $check_dnsbl == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Check DNSBLs (like Spamhaus.org)', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
 		<div class="checkbox switcher">
-	  		<label class="dam-spam-subhead" for="check_sfs">
+	  		<label class="dam-spam-sub-header" for="check_sfs">
 				<input class="dam_spam_toggle" type="checkbox" id="check_sfs" name="check_sfs" value="Y" <?php if ( $check_sfs == 'Y' ) { echo 'checked="checked"'; } ?>><span><small></small></span>
 		  		<small><?php esc_html_e( 'Check Stop Forum Spam', 'dam-spam' ); ?></small>
 			</label>
 		</div>
 		<br>
-		<label class="keyhead">
+		<label class="key-header">
 			<?php esc_html_e( 'StopForumSpam.com API Key', 'dam-spam' ); ?>
 			<br>
 			<input size="32" name="apikey" type="text" value="<?php echo esc_attr( $apikey ); ?>">
@@ -176,7 +176,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		); ?>
 		<br>
 		<br>
-		<label class="keyhead">
+		<label class="key-header">
 			<?php esc_html_e( 'Project Honeypot API Key', 'dam-spam' ); ?>
 			<br>
 			<input size="32" name="honeyapi" type="text" value="<?php echo esc_attr( $honeyapi ); ?>">
@@ -190,7 +190,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		); ?>
 		<br>
 		<br>
-		<label class="keyhead">
+		<label class="key-header">
 			<?php esc_html_e( 'BotScout API Key', 'dam-spam' ); ?>
 			<br>
 			<input size="32" name="botscoutapi" type="text" value="<?php echo esc_attr( $botscoutapi ); ?>">
@@ -202,7 +202,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 		); ?>
 		<br>
 		<br>
-		<label class="keyhead">
+		<label class="key-header">
 			<?php esc_html_e( 'Google Safe Browsing API Key', 'dam-spam' ); ?>
 			<br>
 			<input size="32" name="googleapi" type="text" value="<?php echo esc_attr( $googleapi ); ?>">

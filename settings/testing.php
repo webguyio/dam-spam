@@ -44,12 +44,12 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 ?>
 
 <div id="dam-spam" class="wrap">
-	<h1 id="dam-spam-head"><?php esc_html_e( 'Testing — Dam Spam', 'dam-spam' ); ?></h1>
+	<h1 id="dam-spam-header"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/></svg> <?php esc_html_e( 'Testing — Dam Spam', 'dam-spam' ); ?></h1>
 	<form method="post" action="">
 		<div class="dam-spam-info-box">
 			<input type="hidden" name="action" value="update">
 			<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
-			<div class="mainsection"><?php esc_html_e( 'Option Testing', 'dam-spam' ); ?></div>
+			<div class="main-section"><?php esc_html_e( 'Option Testing', 'dam-spam' ); ?></div>
 			<p><?php esc_html_e( 'Run the settings against an IP address to test.', 'dam-spam' ); ?></p>
 			<?php esc_html_e( 'IP Address:', 'dam-spam' ); ?><br>
 			<input id="dam-spam-input" name="ip" type="text" value="<?php echo esc_attr( $ip ); ?>">
@@ -309,9 +309,9 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 	$nonce = wp_create_nonce( 'dam_spam_update' );
 	?>
 	<div class="dam-spam-info-box">
-		<div id="scan" class="mainsection"><?php esc_html_e( 'Threat Scan', 'dam-spam' ); ?></div>
+		<div id="threat-scan" class="main-section"><?php esc_html_e( 'Threat Scan', 'dam-spam' ); ?></div>
 		<p><?php esc_html_e( 'Simple scan that looks for odd things in /wp-content and the database.', 'dam-spam' ); ?></p>
-		<form method="post" action="#scan">
+		<form method="post" action="#threat-scan">
 			<input type="hidden" name="update_options" value="update">
 			<input type="hidden" name="dam_spam_control" value="<?php echo esc_attr( $nonce ); ?>">
 			<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Run Scan', 'dam-spam' ); ?>" type="submit"></p>
