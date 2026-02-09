@@ -268,7 +268,7 @@ if ( isset( $_POST['dam_spam_search'] ) && isset( $_POST['dam_spam_user_filter_n
 		foreach ( $_POST as $key => $value ) {
 			$sanitized_post[ sanitize_key( $key ) ] = wp_unslash( $value );
 		}
-		$userListObject = dam_spam_getUsersList( $sanitized_post, '' );
+		$userListObject = dam_spam_getUsersList( '', $sanitized_post );
 		$user_list = $userListObject->rows;
 		$total = $userListObject->total;
 		if ( empty( $userListObject->rows ) ) {
@@ -462,7 +462,7 @@ function dam_spam_getUsersList( $environment, $ARGS = array() ) {
 			SELECT COUNT(WP.ID) as recs, WU.ID
 			FROM {$wpdb->posts} WP
 			LEFT JOIN {$wpdb->users} WU ON WP.post_author = WU.ID
-			WHERE 1 
+			WHERE 1
 			AND NOT WP.post_type in ( 'attachment', 'revision' ) AND post_status = 'publish'
 			GROUP BY WU.ID
 			HAVING COUNT(WP.ID) > 0";
@@ -471,7 +471,7 @@ function dam_spam_getUsersList( $environment, $ARGS = array() ) {
 			SELECT COUNT(WP.ID) as recs, WU.ID
 			FROM {$wpdb->posts} WP
 			LEFT JOIN {$wpdb->users} WU ON WP.post_author = WU.ID
-			WHERE 1 AND WU.user_registered < %s 
+			WHERE 1 AND WU.user_registered < %s
 			AND NOT WP.post_type in ( 'attachment', 'revision' ) AND post_status = 'publish'
 			GROUP BY WU.ID
 			HAVING COUNT(WP.ID) > 0",

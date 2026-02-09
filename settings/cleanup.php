@@ -20,10 +20,6 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 
 <div id="dam-spam" class="wrap">
 	<h1 id="dam-spam-header"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg> <?php esc_html_e( 'Cleanup — Dam Spam', 'dam-spam' ); ?></h1>
-	<?php if ( array_key_exists( 'autol', $_POST ) || array_key_exists( 'delo', $_POST ) ) {
-		echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
-	}
-	?>
 	<div class="dam-spam-info-box">
 		<h2 class="nav-tab-wrapper">
 			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dam-spam-cleanup&tab=disable-users' ) ); ?>" class="nav-tab <?php echo 'disable-users' === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html__( 'Disable Users', 'dam-spam' ); ?></a>
@@ -39,6 +35,9 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 			$nonce = sanitize_text_field( wp_unslash( $_POST['dam_spam_opt_control'] ) );
 		}
 		if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
+			if ( array_key_exists( 'autol', $_POST ) || array_key_exists( 'delo', $_POST ) ) {
+				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Options Updated', 'dam-spam' ) . '</p></div>';
+			}
 			if ( array_key_exists( 'view', $_POST ) ) {
 				$op = sanitize_text_field( wp_unslash( $_POST['view'] ) );
 				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- Admin diagnostic tool, capability checked, nonce verified, input sanitized. Viewing any option is intentional functionality.
@@ -89,7 +88,7 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 			}
 		}
 		$magic_string = __( "I am sure I want to delete all pending comments and realize this can't be undone", 'dam-spam' );
-		if ( isset( $_POST['dam_spam_delete_pending_comment'] ) && isset( $_POST['dam_spam_delete_pending_comment_confirmation_text'] ) && sanitize_text_field( wp_unslash( $_POST['dam_spam_delete_pending_comment_confirmation_text'] ) ) === $magic_string ) {
+		if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) && isset( $_POST['dam_spam_delete_pending_comment'] ) && isset( $_POST['dam_spam_delete_pending_comment_confirmation_text'] ) && sanitize_text_field( wp_unslash( $_POST['dam_spam_delete_pending_comment_confirmation_text'] ) ) === $magic_string ) {
 			if ( !current_user_can( 'manage_options' ) ) {
 				return;
 			}
