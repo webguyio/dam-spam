@@ -62,6 +62,13 @@ class dam_spam_challenge extends dam_spam_module {
 				$kp = sanitize_textarea_field( wp_unslash( $_POST['kp'] ) );
 			}
 			if ( !empty( $_POST['kn'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['kn'] ) ), 'dam_spam_block' ) ) {
+				$rate_key = 'dam_spam_challenge_' . md5( $ip );
+				$attempts = (int) get_transient( $rate_key );
+				if ( $attempts >= 2 ) {
+					wp_die( esc_html__( 'You have already submitted a request. Please try again later.', 'dam-spam' ), 'Dam Spam', array( 'response' => 429 ) );
+					exit();
+				}
+				set_transient( $rate_key, $attempts + 1, DAY_IN_SECONDS );
 				$emailsent = $this->dam_spam_send_email( $options );
 				$allowset = false;
 				if ( $allow_list_request === 'Y' ) {
