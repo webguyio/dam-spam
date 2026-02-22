@@ -391,7 +391,7 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 	body.dam-spam {
 		background: #f0f0f1;
 	}
-	body.dam-spam .wrap > div.notice, #dam-spam div.notice, #dam-spam .postbox, #dam-spam .dam-spam-info-box, #dam-spam td {
+	body.dam-spam .wrap > div.notice, #dam-spam div.notice, #dam-spam .postbox, #dam-spam .dam-spam-info-box, #dam-spam .stat-box, #dam-spam td {
 		background: #fff;
 	}
 	#dam-spam, #dam-spam h2, #dam-spam h3, #dam-spam h4, #dam-spam h5, #dam-spam h6, #dam-spam p {

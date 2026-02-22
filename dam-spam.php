@@ -3,7 +3,7 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 1.1
+Version: 1.1.1
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -20,7 +20,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DAM_SPAM_VERSION', '1.1' );
+define( 'DAM_SPAM_VERSION', '1.1.1' );
 define( 'DAM_SPAM_URL', plugin_dir_url( __FILE__ ) );
 define( 'DAM_SPAM_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -86,7 +86,7 @@ function dam_spam_wc_admin_notice() {
 		$param = ( count( $_GET ) ) ? '&' : '?';
 		if ( !get_user_meta( $user_id, 'dam_spam_wc_notice_dismissed' ) && current_user_can( 'manage_options' ) ) {
 			// translators: %1$s and %2$s is the link HTML
-			echo '<div class="notice notice-info"><p style="color:#c77dff"><a href="' . esc_url( $admin_url . $param . 'dam-spam-wc-dismiss' ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'WooCommerce Detected', 'dam-spam' ) . '</strong></big> | ' . sprintf( esc_html__( 'We recommend %1$sadjusting these options%2$s if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ), '<a href="admin.php?page=dam-spam-protections">', '</a>' ) . '</p></div>';
+			echo '<div class="notice notice-info"><p style="color:#c77dff"><a href="' . esc_url( wp_nonce_url( $admin_url . $param . 'dam-spam-wc-dismiss', 'dismiss_wc_notice' ) ) . '" class="alignright" style="text-decoration:none"><big>✕</big></a><big><strong>' . esc_html__( 'WooCommerce Detected', 'dam-spam' ) . '</strong></big> | ' . sprintf( esc_html__( 'We recommend %1$sadjusting these options%2$s if you experience any issues using WooCommerce and Dam Spam together.', 'dam-spam' ), '<a href="admin.php?page=dam-spam-protections">', '</a>' ) . '</p></div>';
 		}
 	}
 }
