@@ -87,7 +87,7 @@ if ( !empty( $nonce ) && wp_verify_nonce( $nonce, 'dam_spam_update' ) ) {
 		$multicount = isset( $_POST['multicount'] ) ? sanitize_text_field( wp_unslash( $_POST['multicount'] ) ) : '';
 		$options['multicount'] = $multicount;
 	}
-	if ( array_key_exists( 'cf_blocked_countries', $_POST ) ) {
+	if ( array_key_exists( 'cf_blocked_countries_flag', $_POST ) ) {
 		$cf_blocked_countries = isset( $_POST['cf_blocked_countries'] ) && is_array( $_POST['cf_blocked_countries'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['cf_blocked_countries'] ) ) : array();
 		$options['cf_blocked_countries'] = $cf_blocked_countries;
 	}
@@ -371,263 +371,260 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 			<p class="description">
 				<?php esc_html_e( 'Configure Cloudflare on the APIs page to enable this feature.', 'dam-spam' ); ?>
 			</p>
-		<?php } ?>
-		<br>
-		<label>
-			<?php esc_html_e( 'Select countries to block:', 'dam-spam' ); ?>
 			<br>
-			<select name="cf_blocked_countries[]" multiple="multiple" size="10" <?php if ( !$cf_configured ) { echo 'disabled="disabled"'; } ?>>
-				<option value="AF" <?php if ( in_array( 'AF', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Afghanistan</option>
-				<option value="AX" <?php if ( in_array( 'AX', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Aland Islands</option>
-				<option value="AL" <?php if ( in_array( 'AL', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Albania</option>
-				<option value="DZ" <?php if ( in_array( 'DZ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Algeria</option>
-				<option value="AS" <?php if ( in_array( 'AS', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>American Samoa</option>
-				<option value="AD" <?php if ( in_array( 'AD', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Andorra</option>
-				<option value="AO" <?php if ( in_array( 'AO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Angola</option>
-				<option value="AI" <?php if ( in_array( 'AI', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Anguilla</option>
-				<option value="AQ" <?php if ( in_array( 'AQ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Antarctica</option>
-				<option value="AG" <?php if ( in_array( 'AG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Antigua and Barbuda</option>
-				<option value="AR" <?php if ( in_array( 'AR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Argentina</option>
-				<option value="AM" <?php if ( in_array( 'AM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Armenia</option>
-				<option value="AW" <?php if ( in_array( 'AW', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Aruba</option>
-				<option value="AU" <?php if ( in_array( 'AU', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Australia</option>
-				<option value="AT" <?php if ( in_array( 'AT', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Austria</option>
-				<option value="AZ" <?php if ( in_array( 'AZ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Azerbaijan</option>
-				<option value="BS" <?php if ( in_array( 'BS', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Bahamas</option>
-				<option value="BH" <?php if ( in_array( 'BH', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Bahrain</option>
-				<option value="BD" <?php if ( in_array( 'BD', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Bangladesh</option>
-				<option value="BB" <?php if ( in_array( 'BB', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Barbados</option>
-				<option value="BY" <?php if ( in_array( 'BY', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Belarus</option>
-				<option value="BE" <?php if ( in_array( 'BE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Belgium</option>
-				<option value="BZ" <?php if ( in_array( 'BZ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Belize</option>
-				<option value="BJ" <?php if ( in_array( 'BJ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Benin</option>
-				<option value="BM" <?php if ( in_array( 'BM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Bermuda</option>
-				<option value="BT" <?php if ( in_array( 'BT', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Bhutan</option>
-				<option value="BO" <?php if ( in_array( 'BO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Bolivia</option>
-				<option value="BQ" <?php if ( in_array( 'BQ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Bonaire</option>
-				<option value="BA" <?php if ( in_array( 'BA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Bosnia and Herzegovina</option>
-				<option value="BW" <?php if ( in_array( 'BW', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Botswana</option>
-				<option value="BV" <?php if ( in_array( 'BV', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Bouvet Island</option>
-				<option value="BR" <?php if ( in_array( 'BR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Brazil</option>
-				<option value="IO" <?php if ( in_array( 'IO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>British Indian Ocean Territory</option>
-				<option value="VG" <?php if ( in_array( 'VG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>British Virgin Islands</option>
-				<option value="BN" <?php if ( in_array( 'BN', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Brunei</option>
-				<option value="BG" <?php if ( in_array( 'BG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Bulgaria</option>
-				<option value="BF" <?php if ( in_array( 'BF', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Burkina Faso</option>
-				<option value="BI" <?php if ( in_array( 'BI', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Burundi</option>
-				<option value="KH" <?php if ( in_array( 'KH', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Cambodia</option>
-				<option value="CM" <?php if ( in_array( 'CM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Cameroon</option>
-				<option value="CA" <?php if ( in_array( 'CA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Canada</option>
-				<option value="CV" <?php if ( in_array( 'CV', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Cape Verde</option>
-				<option value="KY" <?php if ( in_array( 'KY', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Cayman Islands</option>
-				<option value="CF" <?php if ( in_array( 'CF', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Central African Republic</option>
-				<option value="TD" <?php if ( in_array( 'TD', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Chad</option>
-				<option value="CL" <?php if ( in_array( 'CL', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Chile</option>
-				<option value="CN" <?php if ( in_array( 'CN', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>China</option>
-				<option value="CX" <?php if ( in_array( 'CX', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Christmas Island</option>
-				<option value="CC" <?php if ( in_array( 'CC', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Cocos Islands</option>
-				<option value="CO" <?php if ( in_array( 'CO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Colombia</option>
-				<option value="KM" <?php if ( in_array( 'KM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Comoros</option>
-				<option value="CK" <?php if ( in_array( 'CK', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Cook Islands</option>
-				<option value="CR" <?php if ( in_array( 'CR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Costa Rica</option>
-				<option value="HR" <?php if ( in_array( 'HR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Croatia</option>
-				<option value="CU" <?php if ( in_array( 'CU', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Cuba</option>
-				<option value="CW" <?php if ( in_array( 'CW', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Curacao</option>
-				<option value="CY" <?php if ( in_array( 'CY', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Cyprus</option>
-				<option value="CZ" <?php if ( in_array( 'CZ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Czech Republic</option>
-				<option value="CD" <?php if ( in_array( 'CD', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Democratic Republic of the Congo</option>
-				<option value="DK" <?php if ( in_array( 'DK', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Denmark</option>
-				<option value="DJ" <?php if ( in_array( 'DJ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Djibouti</option>
-				<option value="DM" <?php if ( in_array( 'DM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Dominica</option>
-				<option value="DO" <?php if ( in_array( 'DO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Dominican Republic</option>
-				<option value="EC" <?php if ( in_array( 'EC', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Ecuador</option>
-				<option value="EG" <?php if ( in_array( 'EG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Egypt</option>
-				<option value="SV" <?php if ( in_array( 'SV', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>El Salvador</option>
-				<option value="GQ" <?php if ( in_array( 'GQ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Equatorial Guinea</option>
-				<option value="ER" <?php if ( in_array( 'ER', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Eritrea</option>
-				<option value="EE" <?php if ( in_array( 'EE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Estonia</option>
-				<option value="SZ" <?php if ( in_array( 'SZ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Eswatini</option>
-				<option value="ET" <?php if ( in_array( 'ET', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Ethiopia</option>
-				<option value="FK" <?php if ( in_array( 'FK', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Falkland Islands</option>
-				<option value="FO" <?php if ( in_array( 'FO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Faroe Islands</option>
-				<option value="FJ" <?php if ( in_array( 'FJ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Fiji</option>
-				<option value="FI" <?php if ( in_array( 'FI', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Finland</option>
-				<option value="FR" <?php if ( in_array( 'FR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>France</option>
-				<option value="GF" <?php if ( in_array( 'GF', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>French Guiana</option>
-				<option value="PF" <?php if ( in_array( 'PF', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>French Polynesia</option>
-				<option value="TF" <?php if ( in_array( 'TF', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>French Southern Territories</option>
-				<option value="GA" <?php if ( in_array( 'GA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Gabon</option>
-				<option value="GM" <?php if ( in_array( 'GM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Gambia</option>
-				<option value="GE" <?php if ( in_array( 'GE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Georgia</option>
-				<option value="DE" <?php if ( in_array( 'DE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Germany</option>
-				<option value="GH" <?php if ( in_array( 'GH', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Ghana</option>
-				<option value="GI" <?php if ( in_array( 'GI', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Gibraltar</option>
-				<option value="GR" <?php if ( in_array( 'GR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Greece</option>
-				<option value="GL" <?php if ( in_array( 'GL', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Greenland</option>
-				<option value="GD" <?php if ( in_array( 'GD', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Grenada</option>
-				<option value="GP" <?php if ( in_array( 'GP', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Guadeloupe</option>
-				<option value="GU" <?php if ( in_array( 'GU', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Guam</option>
-				<option value="GT" <?php if ( in_array( 'GT', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Guatemala</option>
-				<option value="GG" <?php if ( in_array( 'GG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Guernsey</option>
-				<option value="GN" <?php if ( in_array( 'GN', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Guinea</option>
-				<option value="GW" <?php if ( in_array( 'GW', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Guinea-Bissau</option>
-				<option value="GY" <?php if ( in_array( 'GY', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Guyana</option>
-				<option value="HT" <?php if ( in_array( 'HT', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Haiti</option>
-				<option value="HM" <?php if ( in_array( 'HM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Heard Island</option>
-				<option value="HN" <?php if ( in_array( 'HN', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Honduras</option>
-				<option value="HK" <?php if ( in_array( 'HK', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Hong Kong</option>
-				<option value="HU" <?php if ( in_array( 'HU', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Hungary</option>
-				<option value="IS" <?php if ( in_array( 'IS', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Iceland</option>
-				<option value="IN" <?php if ( in_array( 'IN', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>India</option>
-				<option value="ID" <?php if ( in_array( 'ID', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Indonesia</option>
-				<option value="IR" <?php if ( in_array( 'IR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Iran</option>
-				<option value="IQ" <?php if ( in_array( 'IQ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Iraq</option>
-				<option value="IE" <?php if ( in_array( 'IE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Ireland</option>
-				<option value="IM" <?php if ( in_array( 'IM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Isle of Man</option>
-				<option value="IL" <?php if ( in_array( 'IL', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Israel</option>
-				<option value="IT" <?php if ( in_array( 'IT', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Italy</option>
-				<option value="CI" <?php if ( in_array( 'CI', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Ivory Coast</option>
-				<option value="JM" <?php if ( in_array( 'JM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Jamaica</option>
-				<option value="JP" <?php if ( in_array( 'JP', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Japan</option>
-				<option value="JE" <?php if ( in_array( 'JE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Jersey</option>
-				<option value="JO" <?php if ( in_array( 'JO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Jordan</option>
-				<option value="KZ" <?php if ( in_array( 'KZ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Kazakhstan</option>
-				<option value="KE" <?php if ( in_array( 'KE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Kenya</option>
-				<option value="KI" <?php if ( in_array( 'KI', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Kiribati</option>
-				<option value="KW" <?php if ( in_array( 'KW', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Kuwait</option>
-				<option value="KG" <?php if ( in_array( 'KG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Kyrgyzstan</option>
-				<option value="LA" <?php if ( in_array( 'LA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Laos</option>
-				<option value="LV" <?php if ( in_array( 'LV', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Latvia</option>
-				<option value="LB" <?php if ( in_array( 'LB', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Lebanon</option>
-				<option value="LS" <?php if ( in_array( 'LS', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Lesotho</option>
-				<option value="LR" <?php if ( in_array( 'LR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Liberia</option>
-				<option value="LY" <?php if ( in_array( 'LY', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Libya</option>
-				<option value="LI" <?php if ( in_array( 'LI', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Liechtenstein</option>
-				<option value="LT" <?php if ( in_array( 'LT', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Lithuania</option>
-				<option value="LU" <?php if ( in_array( 'LU', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Luxembourg</option>
-				<option value="MO" <?php if ( in_array( 'MO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Macao</option>
-				<option value="MG" <?php if ( in_array( 'MG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Madagascar</option>
-				<option value="MW" <?php if ( in_array( 'MW', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Malawi</option>
-				<option value="MY" <?php if ( in_array( 'MY', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Malaysia</option>
-				<option value="MV" <?php if ( in_array( 'MV', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Maldives</option>
-				<option value="ML" <?php if ( in_array( 'ML', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Mali</option>
-				<option value="MT" <?php if ( in_array( 'MT', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Malta</option>
-				<option value="MH" <?php if ( in_array( 'MH', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Marshall Islands</option>
-				<option value="MQ" <?php if ( in_array( 'MQ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Martinique</option>
-				<option value="MR" <?php if ( in_array( 'MR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Mauritania</option>
-				<option value="MU" <?php if ( in_array( 'MU', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Mauritius</option>
-				<option value="YT" <?php if ( in_array( 'YT', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Mayotte</option>
-				<option value="MX" <?php if ( in_array( 'MX', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Mexico</option>
-				<option value="FM" <?php if ( in_array( 'FM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Micronesia</option>
-				<option value="MD" <?php if ( in_array( 'MD', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Moldova</option>
-				<option value="MC" <?php if ( in_array( 'MC', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Monaco</option>
-				<option value="MN" <?php if ( in_array( 'MN', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Mongolia</option>
-				<option value="ME" <?php if ( in_array( 'ME', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Montenegro</option>
-				<option value="MS" <?php if ( in_array( 'MS', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Montserrat</option>
-				<option value="MA" <?php if ( in_array( 'MA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Morocco</option>
-				<option value="MZ" <?php if ( in_array( 'MZ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Mozambique</option>
-				<option value="MM" <?php if ( in_array( 'MM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Myanmar</option>
-				<option value="NA" <?php if ( in_array( 'NA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Namibia</option>
-				<option value="NR" <?php if ( in_array( 'NR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Nauru</option>
-				<option value="NP" <?php if ( in_array( 'NP', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Nepal</option>
-				<option value="NL" <?php if ( in_array( 'NL', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Netherlands</option>
-				<option value="NC" <?php if ( in_array( 'NC', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>New Caledonia</option>
-				<option value="NZ" <?php if ( in_array( 'NZ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>New Zealand</option>
-				<option value="NI" <?php if ( in_array( 'NI', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Nicaragua</option>
-				<option value="NE" <?php if ( in_array( 'NE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Niger</option>
-				<option value="NG" <?php if ( in_array( 'NG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Nigeria</option>
-				<option value="NU" <?php if ( in_array( 'NU', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Niue</option>
-				<option value="NF" <?php if ( in_array( 'NF', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Norfolk Island</option>
-				<option value="KP" <?php if ( in_array( 'KP', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>North Korea</option>
-				<option value="MK" <?php if ( in_array( 'MK', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>North Macedonia</option>
-				<option value="MP" <?php if ( in_array( 'MP', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Northern Mariana Islands</option>
-				<option value="NO" <?php if ( in_array( 'NO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Norway</option>
-				<option value="OM" <?php if ( in_array( 'OM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Oman</option>
-				<option value="PK" <?php if ( in_array( 'PK', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Pakistan</option>
-				<option value="PW" <?php if ( in_array( 'PW', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Palau</option>
-				<option value="PS" <?php if ( in_array( 'PS', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Palestine</option>
-				<option value="PA" <?php if ( in_array( 'PA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Panama</option>
-				<option value="PG" <?php if ( in_array( 'PG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Papua New Guinea</option>
-				<option value="PY" <?php if ( in_array( 'PY', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Paraguay</option>
-				<option value="PE" <?php if ( in_array( 'PE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Peru</option>
-				<option value="PH" <?php if ( in_array( 'PH', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Philippines</option>
-				<option value="PN" <?php if ( in_array( 'PN', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Pitcairn</option>
-				<option value="PL" <?php if ( in_array( 'PL', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Poland</option>
-				<option value="PT" <?php if ( in_array( 'PT', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Portugal</option>
-				<option value="PR" <?php if ( in_array( 'PR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Puerto Rico</option>
-				<option value="QA" <?php if ( in_array( 'QA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Qatar</option>
-				<option value="CG" <?php if ( in_array( 'CG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Republic of the Congo</option>
-				<option value="RE" <?php if ( in_array( 'RE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Reunion</option>
-				<option value="RO" <?php if ( in_array( 'RO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Romania</option>
-				<option value="RU" <?php if ( in_array( 'RU', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Russia</option>
-				<option value="RW" <?php if ( in_array( 'RW', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Rwanda</option>
-				<option value="BL" <?php if ( in_array( 'BL', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Saint Barthelemy</option>
-				<option value="SH" <?php if ( in_array( 'SH', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Saint Helena</option>
-				<option value="KN" <?php if ( in_array( 'KN', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Saint Kitts and Nevis</option>
-				<option value="LC" <?php if ( in_array( 'LC', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Saint Lucia</option>
-				<option value="MF" <?php if ( in_array( 'MF', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Saint Martin</option>
-				<option value="PM" <?php if ( in_array( 'PM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Saint Pierre and Miquelon</option>
-				<option value="VC" <?php if ( in_array( 'VC', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Saint Vincent and the Grenadines</option>
-				<option value="WS" <?php if ( in_array( 'WS', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Samoa</option>
-				<option value="SM" <?php if ( in_array( 'SM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>San Marino</option>
-				<option value="ST" <?php if ( in_array( 'ST', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Sao Tome and Principe</option>
-				<option value="SA" <?php if ( in_array( 'SA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Saudi Arabia</option>
-				<option value="SN" <?php if ( in_array( 'SN', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Senegal</option>
-				<option value="RS" <?php if ( in_array( 'RS', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Serbia</option>
-				<option value="SC" <?php if ( in_array( 'SC', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Seychelles</option>
-				<option value="SL" <?php if ( in_array( 'SL', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Sierra Leone</option>
-				<option value="SG" <?php if ( in_array( 'SG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Singapore</option>
-				<option value="SX" <?php if ( in_array( 'SX', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Sint Maarten</option>
-				<option value="SK" <?php if ( in_array( 'SK', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Slovakia</option>
-				<option value="SI" <?php if ( in_array( 'SI', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Slovenia</option>
-				<option value="SB" <?php if ( in_array( 'SB', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Solomon Islands</option>
-				<option value="SO" <?php if ( in_array( 'SO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Somalia</option>
-				<option value="ZA" <?php if ( in_array( 'ZA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>South Africa</option>
-				<option value="GS" <?php if ( in_array( 'GS', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>South Georgia</option>
-				<option value="KR" <?php if ( in_array( 'KR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>South Korea</option>
-				<option value="SS" <?php if ( in_array( 'SS', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>South Sudan</option>
-				<option value="ES" <?php if ( in_array( 'ES', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Spain</option>
-				<option value="LK" <?php if ( in_array( 'LK', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Sri Lanka</option>
-				<option value="SD" <?php if ( in_array( 'SD', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Sudan</option>
-				<option value="SR" <?php if ( in_array( 'SR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Suriname</option>
-				<option value="SJ" <?php if ( in_array( 'SJ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Svalbard and Jan Mayen</option>
-				<option value="SE" <?php if ( in_array( 'SE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Sweden</option>
-				<option value="CH" <?php if ( in_array( 'CH', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Switzerland</option>
-				<option value="SY" <?php if ( in_array( 'SY', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Syria</option>
-				<option value="TW" <?php if ( in_array( 'TW', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Taiwan</option>
-				<option value="TJ" <?php if ( in_array( 'TJ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Tajikistan</option>
-				<option value="TZ" <?php if ( in_array( 'TZ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Tanzania</option>
-				<option value="TH" <?php if ( in_array( 'TH', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Thailand</option>
-				<option value="TL" <?php if ( in_array( 'TL', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Timor-Leste</option>
-				<option value="TG" <?php if ( in_array( 'TG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Togo</option>
-				<option value="TK" <?php if ( in_array( 'TK', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Tokelau</option>
-				<option value="TO" <?php if ( in_array( 'TO', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Tonga</option>
-				<option value="TT" <?php if ( in_array( 'TT', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Trinidad and Tobago</option>
-				<option value="TN" <?php if ( in_array( 'TN', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Tunisia</option>
-				<option value="TR" <?php if ( in_array( 'TR', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Turkey</option>
-				<option value="TM" <?php if ( in_array( 'TM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Turkmenistan</option>
-				<option value="TC" <?php if ( in_array( 'TC', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Turks and Caicos Islands</option>
-				<option value="TV" <?php if ( in_array( 'TV', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Tuvalu</option>
-				<option value="UG" <?php if ( in_array( 'UG', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Uganda</option>
-				<option value="UA" <?php if ( in_array( 'UA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Ukraine</option>
-				<option value="AE" <?php if ( in_array( 'AE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>United Arab Emirates</option>
-				<option value="GB" <?php if ( in_array( 'GB', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>United Kingdom</option>
-				<option value="US" <?php if ( in_array( 'US', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>United States</option>
-				<option value="UM" <?php if ( in_array( 'UM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>United States Minor Outlying Islands</option>
-				<option value="UY" <?php if ( in_array( 'UY', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Uruguay</option>
-				<option value="VI" <?php if ( in_array( 'VI', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>US Virgin Islands</option>
-				<option value="UZ" <?php if ( in_array( 'UZ', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Uzbekistan</option>
-				<option value="VU" <?php if ( in_array( 'VU', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Vanuatu</option>
-				<option value="VA" <?php if ( in_array( 'VA', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Vatican City</option>
-				<option value="VE" <?php if ( in_array( 'VE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Venezuela</option>
-				<option value="VN" <?php if ( in_array( 'VN', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Vietnam</option>
-				<option value="WF" <?php if ( in_array( 'WF', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Wallis and Futuna</option>
-				<option value="EH" <?php if ( in_array( 'EH', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Western Sahara</option>
-				<option value="YE" <?php if ( in_array( 'YE', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Yemen</option>
-				<option value="ZM" <?php if ( in_array( 'ZM', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Zambia</option>
-				<option value="ZW" <?php if ( in_array( 'ZW', $cf_blocked_countries ) ) { echo 'selected="selected"'; } ?>>Zimbabwe</option>
-			</select>
-		</label>
+		<?php } ?>
+		<fieldset class="dam-spam-country-list" <?php if ( !$cf_configured ) { echo 'disabled'; } ?>>
+			<input type="hidden" name="cf_blocked_countries_flag" value="1">
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AF" <?php if ( in_array( 'AF', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Afghanistan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AX" <?php if ( in_array( 'AX', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Aland Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AL" <?php if ( in_array( 'AL', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Albania</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="DZ" <?php if ( in_array( 'DZ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Algeria</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AS" <?php if ( in_array( 'AS', $cf_blocked_countries ) ) { echo 'checked'; } ?>> American Samoa</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AD" <?php if ( in_array( 'AD', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Andorra</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AO" <?php if ( in_array( 'AO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Angola</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AI" <?php if ( in_array( 'AI', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Anguilla</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AQ" <?php if ( in_array( 'AQ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Antarctica</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AG" <?php if ( in_array( 'AG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Antigua and Barbuda</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AR" <?php if ( in_array( 'AR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Argentina</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AM" <?php if ( in_array( 'AM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Armenia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AW" <?php if ( in_array( 'AW', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Aruba</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AU" <?php if ( in_array( 'AU', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Australia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AT" <?php if ( in_array( 'AT', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Austria</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AZ" <?php if ( in_array( 'AZ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Azerbaijan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BS" <?php if ( in_array( 'BS', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Bahamas</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BH" <?php if ( in_array( 'BH', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Bahrain</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BD" <?php if ( in_array( 'BD', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Bangladesh</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BB" <?php if ( in_array( 'BB', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Barbados</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BY" <?php if ( in_array( 'BY', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Belarus</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BE" <?php if ( in_array( 'BE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Belgium</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BZ" <?php if ( in_array( 'BZ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Belize</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BJ" <?php if ( in_array( 'BJ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Benin</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BM" <?php if ( in_array( 'BM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Bermuda</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BT" <?php if ( in_array( 'BT', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Bhutan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BO" <?php if ( in_array( 'BO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Bolivia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BQ" <?php if ( in_array( 'BQ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Bonaire</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BA" <?php if ( in_array( 'BA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Bosnia and Herzegovina</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BW" <?php if ( in_array( 'BW', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Botswana</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BV" <?php if ( in_array( 'BV', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Bouvet Island</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BR" <?php if ( in_array( 'BR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Brazil</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="IO" <?php if ( in_array( 'IO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> British Indian Ocean Territory</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="VG" <?php if ( in_array( 'VG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> British Virgin Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BN" <?php if ( in_array( 'BN', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Brunei</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BG" <?php if ( in_array( 'BG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Bulgaria</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BF" <?php if ( in_array( 'BF', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Burkina Faso</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BI" <?php if ( in_array( 'BI', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Burundi</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="KH" <?php if ( in_array( 'KH', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Cambodia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CM" <?php if ( in_array( 'CM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Cameroon</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CA" <?php if ( in_array( 'CA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Canada</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CV" <?php if ( in_array( 'CV', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Cape Verde</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="KY" <?php if ( in_array( 'KY', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Cayman Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CF" <?php if ( in_array( 'CF', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Central African Republic</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TD" <?php if ( in_array( 'TD', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Chad</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CL" <?php if ( in_array( 'CL', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Chile</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CN" <?php if ( in_array( 'CN', $cf_blocked_countries ) ) { echo 'checked'; } ?>> China</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CX" <?php if ( in_array( 'CX', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Christmas Island</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CC" <?php if ( in_array( 'CC', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Cocos Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CO" <?php if ( in_array( 'CO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Colombia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="KM" <?php if ( in_array( 'KM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Comoros</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CK" <?php if ( in_array( 'CK', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Cook Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CR" <?php if ( in_array( 'CR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Costa Rica</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="HR" <?php if ( in_array( 'HR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Croatia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CU" <?php if ( in_array( 'CU', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Cuba</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CW" <?php if ( in_array( 'CW', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Curacao</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CY" <?php if ( in_array( 'CY', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Cyprus</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CZ" <?php if ( in_array( 'CZ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Czech Republic</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CD" <?php if ( in_array( 'CD', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Democratic Republic of the Congo</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="DK" <?php if ( in_array( 'DK', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Denmark</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="DJ" <?php if ( in_array( 'DJ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Djibouti</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="DM" <?php if ( in_array( 'DM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Dominica</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="DO" <?php if ( in_array( 'DO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Dominican Republic</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="EC" <?php if ( in_array( 'EC', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Ecuador</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="EG" <?php if ( in_array( 'EG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Egypt</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SV" <?php if ( in_array( 'SV', $cf_blocked_countries ) ) { echo 'checked'; } ?>> El Salvador</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GQ" <?php if ( in_array( 'GQ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Equatorial Guinea</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="ER" <?php if ( in_array( 'ER', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Eritrea</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="EE" <?php if ( in_array( 'EE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Estonia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SZ" <?php if ( in_array( 'SZ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Eswatini</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="ET" <?php if ( in_array( 'ET', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Ethiopia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="FK" <?php if ( in_array( 'FK', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Falkland Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="FO" <?php if ( in_array( 'FO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Faroe Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="FJ" <?php if ( in_array( 'FJ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Fiji</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="FI" <?php if ( in_array( 'FI', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Finland</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="FR" <?php if ( in_array( 'FR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> France</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GF" <?php if ( in_array( 'GF', $cf_blocked_countries ) ) { echo 'checked'; } ?>> French Guiana</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PF" <?php if ( in_array( 'PF', $cf_blocked_countries ) ) { echo 'checked'; } ?>> French Polynesia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TF" <?php if ( in_array( 'TF', $cf_blocked_countries ) ) { echo 'checked'; } ?>> French Southern Territories</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GA" <?php if ( in_array( 'GA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Gabon</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GM" <?php if ( in_array( 'GM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Gambia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GE" <?php if ( in_array( 'GE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Georgia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="DE" <?php if ( in_array( 'DE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Germany</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GH" <?php if ( in_array( 'GH', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Ghana</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GI" <?php if ( in_array( 'GI', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Gibraltar</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GR" <?php if ( in_array( 'GR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Greece</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GL" <?php if ( in_array( 'GL', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Greenland</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GD" <?php if ( in_array( 'GD', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Grenada</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GP" <?php if ( in_array( 'GP', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Guadeloupe</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GU" <?php if ( in_array( 'GU', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Guam</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GT" <?php if ( in_array( 'GT', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Guatemala</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GG" <?php if ( in_array( 'GG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Guernsey</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GN" <?php if ( in_array( 'GN', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Guinea</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GW" <?php if ( in_array( 'GW', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Guinea-Bissau</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GY" <?php if ( in_array( 'GY', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Guyana</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="HT" <?php if ( in_array( 'HT', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Haiti</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="HM" <?php if ( in_array( 'HM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Heard Island</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="HN" <?php if ( in_array( 'HN', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Honduras</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="HK" <?php if ( in_array( 'HK', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Hong Kong</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="HU" <?php if ( in_array( 'HU', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Hungary</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="IS" <?php if ( in_array( 'IS', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Iceland</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="IN" <?php if ( in_array( 'IN', $cf_blocked_countries ) ) { echo 'checked'; } ?>> India</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="ID" <?php if ( in_array( 'ID', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Indonesia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="IR" <?php if ( in_array( 'IR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Iran</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="IQ" <?php if ( in_array( 'IQ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Iraq</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="IE" <?php if ( in_array( 'IE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Ireland</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="IM" <?php if ( in_array( 'IM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Isle of Man</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="IL" <?php if ( in_array( 'IL', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Israel</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="IT" <?php if ( in_array( 'IT', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Italy</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CI" <?php if ( in_array( 'CI', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Ivory Coast</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="JM" <?php if ( in_array( 'JM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Jamaica</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="JP" <?php if ( in_array( 'JP', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Japan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="JE" <?php if ( in_array( 'JE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Jersey</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="JO" <?php if ( in_array( 'JO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Jordan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="KZ" <?php if ( in_array( 'KZ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Kazakhstan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="KE" <?php if ( in_array( 'KE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Kenya</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="KI" <?php if ( in_array( 'KI', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Kiribati</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="KW" <?php if ( in_array( 'KW', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Kuwait</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="KG" <?php if ( in_array( 'KG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Kyrgyzstan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="LA" <?php if ( in_array( 'LA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Laos</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="LV" <?php if ( in_array( 'LV', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Latvia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="LB" <?php if ( in_array( 'LB', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Lebanon</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="LS" <?php if ( in_array( 'LS', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Lesotho</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="LR" <?php if ( in_array( 'LR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Liberia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="LY" <?php if ( in_array( 'LY', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Libya</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="LI" <?php if ( in_array( 'LI', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Liechtenstein</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="LT" <?php if ( in_array( 'LT', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Lithuania</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="LU" <?php if ( in_array( 'LU', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Luxembourg</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MO" <?php if ( in_array( 'MO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Macao</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MG" <?php if ( in_array( 'MG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Madagascar</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MW" <?php if ( in_array( 'MW', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Malawi</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MY" <?php if ( in_array( 'MY', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Malaysia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MV" <?php if ( in_array( 'MV', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Maldives</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="ML" <?php if ( in_array( 'ML', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Mali</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MT" <?php if ( in_array( 'MT', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Malta</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MH" <?php if ( in_array( 'MH', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Marshall Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MQ" <?php if ( in_array( 'MQ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Martinique</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MR" <?php if ( in_array( 'MR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Mauritania</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MU" <?php if ( in_array( 'MU', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Mauritius</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="YT" <?php if ( in_array( 'YT', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Mayotte</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MX" <?php if ( in_array( 'MX', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Mexico</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="FM" <?php if ( in_array( 'FM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Micronesia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MD" <?php if ( in_array( 'MD', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Moldova</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MC" <?php if ( in_array( 'MC', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Monaco</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MN" <?php if ( in_array( 'MN', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Mongolia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="ME" <?php if ( in_array( 'ME', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Montenegro</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MS" <?php if ( in_array( 'MS', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Montserrat</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MA" <?php if ( in_array( 'MA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Morocco</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MZ" <?php if ( in_array( 'MZ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Mozambique</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MM" <?php if ( in_array( 'MM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Myanmar</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NA" <?php if ( in_array( 'NA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Namibia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NR" <?php if ( in_array( 'NR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Nauru</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NP" <?php if ( in_array( 'NP', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Nepal</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NL" <?php if ( in_array( 'NL', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Netherlands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NC" <?php if ( in_array( 'NC', $cf_blocked_countries ) ) { echo 'checked'; } ?>> New Caledonia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NZ" <?php if ( in_array( 'NZ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> New Zealand</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NI" <?php if ( in_array( 'NI', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Nicaragua</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NE" <?php if ( in_array( 'NE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Niger</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NG" <?php if ( in_array( 'NG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Nigeria</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NU" <?php if ( in_array( 'NU', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Niue</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NF" <?php if ( in_array( 'NF', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Norfolk Island</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="KP" <?php if ( in_array( 'KP', $cf_blocked_countries ) ) { echo 'checked'; } ?>> North Korea</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MK" <?php if ( in_array( 'MK', $cf_blocked_countries ) ) { echo 'checked'; } ?>> North Macedonia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MP" <?php if ( in_array( 'MP', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Northern Mariana Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="NO" <?php if ( in_array( 'NO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Norway</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="OM" <?php if ( in_array( 'OM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Oman</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PK" <?php if ( in_array( 'PK', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Pakistan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PW" <?php if ( in_array( 'PW', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Palau</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PS" <?php if ( in_array( 'PS', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Palestine</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PA" <?php if ( in_array( 'PA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Panama</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PG" <?php if ( in_array( 'PG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Papua New Guinea</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PY" <?php if ( in_array( 'PY', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Paraguay</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PE" <?php if ( in_array( 'PE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Peru</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PH" <?php if ( in_array( 'PH', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Philippines</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PN" <?php if ( in_array( 'PN', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Pitcairn</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PL" <?php if ( in_array( 'PL', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Poland</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PT" <?php if ( in_array( 'PT', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Portugal</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PR" <?php if ( in_array( 'PR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Puerto Rico</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="QA" <?php if ( in_array( 'QA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Qatar</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CG" <?php if ( in_array( 'CG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Republic of the Congo</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="RE" <?php if ( in_array( 'RE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Reunion</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="RO" <?php if ( in_array( 'RO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Romania</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="RU" <?php if ( in_array( 'RU', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Russia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="RW" <?php if ( in_array( 'RW', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Rwanda</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="BL" <?php if ( in_array( 'BL', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Saint Barthelemy</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SH" <?php if ( in_array( 'SH', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Saint Helena</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="KN" <?php if ( in_array( 'KN', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Saint Kitts and Nevis</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="LC" <?php if ( in_array( 'LC', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Saint Lucia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="MF" <?php if ( in_array( 'MF', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Saint Martin</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="PM" <?php if ( in_array( 'PM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Saint Pierre and Miquelon</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="VC" <?php if ( in_array( 'VC', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Saint Vincent and the Grenadines</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="WS" <?php if ( in_array( 'WS', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Samoa</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SM" <?php if ( in_array( 'SM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> San Marino</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="ST" <?php if ( in_array( 'ST', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Sao Tome and Principe</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SA" <?php if ( in_array( 'SA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Saudi Arabia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SN" <?php if ( in_array( 'SN', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Senegal</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="RS" <?php if ( in_array( 'RS', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Serbia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SC" <?php if ( in_array( 'SC', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Seychelles</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SL" <?php if ( in_array( 'SL', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Sierra Leone</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SG" <?php if ( in_array( 'SG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Singapore</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SX" <?php if ( in_array( 'SX', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Sint Maarten</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SK" <?php if ( in_array( 'SK', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Slovakia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SI" <?php if ( in_array( 'SI', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Slovenia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SB" <?php if ( in_array( 'SB', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Solomon Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SO" <?php if ( in_array( 'SO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Somalia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="ZA" <?php if ( in_array( 'ZA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> South Africa</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GS" <?php if ( in_array( 'GS', $cf_blocked_countries ) ) { echo 'checked'; } ?>> South Georgia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="KR" <?php if ( in_array( 'KR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> South Korea</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SS" <?php if ( in_array( 'SS', $cf_blocked_countries ) ) { echo 'checked'; } ?>> South Sudan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="ES" <?php if ( in_array( 'ES', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Spain</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="LK" <?php if ( in_array( 'LK', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Sri Lanka</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SD" <?php if ( in_array( 'SD', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Sudan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SR" <?php if ( in_array( 'SR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Suriname</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SJ" <?php if ( in_array( 'SJ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Svalbard and Jan Mayen</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SE" <?php if ( in_array( 'SE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Sweden</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="CH" <?php if ( in_array( 'CH', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Switzerland</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="SY" <?php if ( in_array( 'SY', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Syria</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TW" <?php if ( in_array( 'TW', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Taiwan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TJ" <?php if ( in_array( 'TJ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Tajikistan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TZ" <?php if ( in_array( 'TZ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Tanzania</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TH" <?php if ( in_array( 'TH', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Thailand</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TL" <?php if ( in_array( 'TL', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Timor-Leste</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TG" <?php if ( in_array( 'TG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Togo</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TK" <?php if ( in_array( 'TK', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Tokelau</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TO" <?php if ( in_array( 'TO', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Tonga</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TT" <?php if ( in_array( 'TT', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Trinidad and Tobago</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TN" <?php if ( in_array( 'TN', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Tunisia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TR" <?php if ( in_array( 'TR', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Turkey</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TM" <?php if ( in_array( 'TM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Turkmenistan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TC" <?php if ( in_array( 'TC', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Turks and Caicos Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="TV" <?php if ( in_array( 'TV', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Tuvalu</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="UG" <?php if ( in_array( 'UG', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Uganda</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="UA" <?php if ( in_array( 'UA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Ukraine</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="AE" <?php if ( in_array( 'AE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> United Arab Emirates</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="GB" <?php if ( in_array( 'GB', $cf_blocked_countries ) ) { echo 'checked'; } ?>> United Kingdom</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="US" <?php if ( in_array( 'US', $cf_blocked_countries ) ) { echo 'checked'; } ?>> United States</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="UM" <?php if ( in_array( 'UM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> United States Minor Outlying Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="UY" <?php if ( in_array( 'UY', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Uruguay</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="VI" <?php if ( in_array( 'VI', $cf_blocked_countries ) ) { echo 'checked'; } ?>> US Virgin Islands</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="UZ" <?php if ( in_array( 'UZ', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Uzbekistan</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="VU" <?php if ( in_array( 'VU', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Vanuatu</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="VA" <?php if ( in_array( 'VA', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Vatican City</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="VE" <?php if ( in_array( 'VE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Venezuela</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="VN" <?php if ( in_array( 'VN', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Vietnam</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="WF" <?php if ( in_array( 'WF', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Wallis and Futuna</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="EH" <?php if ( in_array( 'EH', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Western Sahara</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="YE" <?php if ( in_array( 'YE', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Yemen</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="ZM" <?php if ( in_array( 'ZM', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Zambia</label>
+			<label><input type="checkbox" name="cf_blocked_countries[]" value="ZW" <?php if ( in_array( 'ZW', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Zimbabwe</label>
+		</fieldset>
 		<br style="clear:both">
 		<p class="submit"><input class="button-primary" value="<?php esc_html_e( 'Save Changes', 'dam-spam' ); ?>" type="submit"></p>
 	</form>

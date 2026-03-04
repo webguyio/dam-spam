@@ -132,9 +132,7 @@ function dam_spam_sync_ban_list_to_cloudflare() {
 		$automatic_bans = array();
 	}
 	$banned_ips = array_unique( array_merge( $manual_bans, array_keys( $automatic_bans ) ) );
-	if ( empty( $banned_ips ) ) {
-		return array( 'success' => true, 'count' => 0, 'message' => esc_html__( 'No banned IPs to sync', 'dam-spam' ) );
-	}
+	$disable_ban_list = empty( $banned_ips );
 	$account_id_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}", 'GET', null );
 	if ( !isset( $account_id_response['success'] ) || $account_id_response['success'] !== true ) {
 		$error = isset( $account_id_response['message'] ) ? $account_id_response['message'] : esc_html__( 'Failed to get account ID', 'dam-spam' );
@@ -166,7 +164,11 @@ function dam_spam_sync_ban_list_to_cloudflare() {
 			'comment' => 'Dam Spam'
 		);
 	}
-	if ( $list_id ) {
+	if ( $disable_ban_list && !$list_id ) {
+		return array( 'success' => true, 'count' => 0, 'message' => esc_html__( 'No banned IPs to sync', 'dam-spam' ) );
+	} elseif ( $disable_ban_list && $list_id ) {
+		dam_spam_cloudflare_api_request( "accounts/{$account_id}/rules/lists/{$list_id}/items", 'PUT', array() );
+	} elseif ( $list_id ) {
 		$update_response = dam_spam_cloudflare_api_request( "accounts/{$account_id}/rules/lists/{$list_id}/items", 'PUT', $items );
 		if ( !isset( $update_response['success'] ) || $update_response['success'] !== true ) {
 			$error = isset( $update_response['message'] ) ? $update_response['message'] : esc_html__( 'Failed to update list', 'dam-spam' );
@@ -212,17 +214,17 @@ function dam_spam_sync_ban_list_to_cloudflare() {
 			foreach ( $ruleset_detail['result']['rules'] as $rule ) {
 				if ( isset( $rule['description'] ) && $rule['description'] === 'Dam Spam Block List' ) {
 					$rule_id = $rule['id'];
+					$existing_rule = $rule;
 					break;
 				}
 			}
 		}
 	}
 	if ( $rule_id ) {
-		$update_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}/rules/{$rule_id}", 'PATCH', array(
-			'action' => 'block',
-			'expression' => "(ip.src in \${$list_name})",
-			'description' => 'Dam Spam Block List'
-		) );
+		$update_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}/rules/{$rule_id}", 'PATCH', $disable_ban_list
+			? array( 'action' => 'block', 'expression' => $existing_rule['expression'], 'description' => 'Dam Spam Block List', 'enabled' => false )
+			: array( 'action' => 'block', 'expression' => "(ip.src in \${$list_name})", 'description' => 'Dam Spam Block List', 'enabled' => true )
+		);
 		if ( !isset( $update_rule_response['success'] ) || $update_rule_response['success'] !== true ) {
 			$error_msg = isset( $update_rule_response['errors'][0]['message'] ) ? $update_rule_response['errors'][0]['message'] : '';
 			if ( empty( $error_msg ) ) {
@@ -230,6 +232,8 @@ function dam_spam_sync_ban_list_to_cloudflare() {
 			}
 			return array( 'success' => false, 'message' => $error_msg );
 		}
+	} elseif ( $disable_ban_list ) {
+		return array( 'success' => true, 'count' => 0, 'message' => esc_html__( 'Ban list cleared', 'dam-spam' ) );
 	} elseif ( $ruleset_id ) {
 		$create_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}/rules", 'POST', array(
 			'action' => 'block',
@@ -265,9 +269,7 @@ function dam_spam_sync_countries_to_cloudflare() {
 	$cf_zone_id = $options['cf_zone_id'];
 	$cf_block_countries = isset( $options['cf_block_countries'] ) ? $options['cf_block_countries'] : 'N';
 	$countries = isset( $options['cf_blocked_countries'] ) && is_array( $options['cf_blocked_countries'] ) ? $options['cf_blocked_countries'] : array();
-	if ( $cf_block_countries != 'Y' || empty( $countries ) ) {
-		return array( 'success' => true, 'count' => 0, 'message' => esc_html__( 'Country blocking disabled or no countries selected', 'dam-spam' ) );
-	}
+	$disable_rule = ( $cf_block_countries != 'Y' || empty( $countries ) );
 	$country_codes = array_map( function( $code ) {
 		return '"' . strtoupper( sanitize_text_field( $code ) ) . '"';
 	}, $countries );
@@ -289,17 +291,17 @@ function dam_spam_sync_countries_to_cloudflare() {
 			foreach ( $ruleset_detail['result']['rules'] as $rule ) {
 				if ( isset( $rule['description'] ) && $rule['description'] === 'Dam Spam Country Block' ) {
 					$rule_id = $rule['id'];
+					$existing_rule = $rule;
 					break;
 				}
 			}
 		}
 	}
 	if ( $rule_id ) {
-		$update_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}/rules/{$rule_id}", 'PATCH', array(
-			'action' => 'block',
-			'expression' => $expression,
-			'description' => 'Dam Spam Country Block'
-		) );
+		$update_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}/rules/{$rule_id}", 'PATCH', $disable_rule
+			? array( 'action' => 'block', 'expression' => $existing_rule['expression'], 'description' => 'Dam Spam Country Block', 'enabled' => false )
+			: array( 'action' => 'block', 'expression' => $expression, 'description' => 'Dam Spam Country Block', 'enabled' => true )
+		);
 		if ( !isset( $update_rule_response['success'] ) || $update_rule_response['success'] !== true ) {
 			$error_msg = isset( $update_rule_response['errors'][0]['message'] ) ? $update_rule_response['errors'][0]['message'] : '';
 			if ( empty( $error_msg ) ) {
@@ -307,6 +309,8 @@ function dam_spam_sync_countries_to_cloudflare() {
 			}
 			return array( 'success' => false, 'message' => $error_msg );
 		}
+	} elseif ( $disable_rule ) {
+		return array( 'success' => true, 'count' => 0, 'message' => esc_html__( 'Country blocking disabled', 'dam-spam' ) );
 	} elseif ( $ruleset_id ) {
 		$create_rule_response = dam_spam_cloudflare_api_request( "zones/{$cf_zone_id}/rulesets/{$ruleset_id}/rules", 'POST', array(
 			'action' => 'block',

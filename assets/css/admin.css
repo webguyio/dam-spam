@@ -79,6 +79,11 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 	background: #333;
 }
 
+#dam-spam option:focus, #dam-spam option:checked {
+	color: #000;
+	background-color: #c6ac40;
+}
+
 #dam-spam input:focus, #dam-spam textarea:focus {
 	border: 2px solid #c6ac40;
 }
@@ -101,13 +106,38 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 	max-width: 500px !important;
 }
 
-#dam-spam select.dam-spam-small-dropbox{
+#dam-spam select.dam-spam-small-dropbox {
 	vertical-align: baseline;
 }
 
 #dam-spam #dam-spam-input {
 	width: 170px !important;
 	max-width: 170px !important;
+}
+
+#dam-spam .dam-spam-country-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+	gap: 5px 15px;
+}
+
+#dam-spam .dam-spam-country-list:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+#dam-spam .dam-spam-country-list label {
+	cursor: pointer;
+}
+
+#dam-spam .dam-spam-country-list input[type="checkbox"] {
+	accent-color: #c6ac40;
+}
+
+#dam-spam .dam-spam-country-list legend {
+	width: 100%;
+	padding: 0 5px;
 }
 
 #dam-spam #dam-spam-header {
