@@ -140,6 +140,16 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 	padding: 0 5px;
 }
 
+#dam-spam .dam-spam-country-filter {
+	grid-column: 1 / -1;
+	max-width: 250px !important;
+}
+
+#dam-spam .dam-spam-check-all {
+	grid-column: 1 / -1;
+	font-weight: bold;
+}
+
 #dam-spam #dam-spam-header {
 	font-size: 30px;
 	font-weight: bold;
@@ -385,11 +395,11 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 }
 
 #dam-spam .odd {
-	background-color: #FFFFEE;
+	background-color: #ffffee;
 }
 
 #dam-spam .even {
-	background-color: #EEFFFF;
+	background-color: #eeffff;
 }
 
 #dam-spam .button-secondary-red {
@@ -423,6 +433,11 @@ body.dam-spam .wrap > div.notice, #dam-spam div.notice {
 	}
 	body.dam-spam .wrap > div.notice, #dam-spam div.notice, #dam-spam .postbox, #dam-spam .dam-spam-info-box, #dam-spam .stat-box, #dam-spam td {
 		background: #fff;
+	}
+	#dam-spam input, #dam-spam textarea, #dam-spam select, #dam-spam option {
+		color: #222;
+		border: 2px solid #aaa;
+		background: #ddd;
 	}
 	#dam-spam, #dam-spam h2, #dam-spam h3, #dam-spam h4, #dam-spam h5, #dam-spam h6, #dam-spam p {
 		color: #3c434a;

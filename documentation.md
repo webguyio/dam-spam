@@ -43,6 +43,8 @@ The Summary page displays statistics about blocked spam and allows you to clear 
 
 Reset all spam blocking statistics to zero.
 
+> **Where:** Dam Spam → Summary
+
 > **Why Use:** Useful for starting fresh after testing or making significant configuration changes.
 
 > **Why Not:** None. This only clears statistics and doesn't affect your protection settings or lists.
@@ -61,6 +63,8 @@ The Protections page is where you enable or disable specific spam detection meth
 
 Bypass spam checks for third-party form plugins (Contact Form 7, Gravity Forms, WooCommerce, etc.).
 
+> **Where:** Dam Spam → Protections → Form Checking
+
 > **Why Use:** Prevents conflicts with ecommerce checkout processes or complex forms that have their own validation.
 
 > **Why Not:** WooCommerce users experiencing checkout issues should enable this. May reduce spam protection on third-party forms.
@@ -70,6 +74,8 @@ Bypass spam checks for third-party form plugins (Contact Form 7, Gravity Forms, 
 #### Skip Payment Forms
 
 Skip spam checking on payment processor forms (PayPal, Stripe, Square, etc.).
+
+> **Where:** Dam Spam → Protections → Form Checking
 
 > **Why Use:** Prevents blocking legitimate payment transactions.
 
@@ -81,6 +87,8 @@ Skip spam checking on payment processor forms (PayPal, Stripe, Square, etc.).
 
 Skip spam checking specifically on WooCommerce checkout and registration forms.
 
+> **Where:** Dam Spam → Protections → Form Checking
+
 > **Why Use:** Prevents checkout failures and order processing issues.
 
 > **Why Not:** May allow spam orders or fake customer accounts. Only enable if experiencing issues.
@@ -91,6 +99,8 @@ Skip spam checking specifically on WooCommerce checkout and registration forms.
 
 Skip spam checking on Gravity Forms submissions.
 
+> **Where:** Dam Spam → Protections → Form Checking
+
 > **Why Use:** Prevents conflicts with Gravity Forms' built-in spam protection.
 
 > **Why Not:** May reduce spam protection on Gravity Forms. Only enable if experiencing form submission issues.
@@ -100,6 +110,8 @@ Skip spam checking on Gravity Forms submissions.
 #### Skip WP Forms
 
 Skip spam checking on WP Forms submissions.
+
+> **Where:** Dam Spam → Protections → Form Checking
 
 > **Why Use:** Prevents conflicts with WP Forms' built-in spam protection.
 
@@ -113,6 +125,8 @@ Skip spam checking on WP Forms submissions.
 
 Require authentication to view any part of your site.
 
+> **Where:** Dam Spam → Protections → Private Mode
+
 > **Why Use:** Creates a private members-only site or protects sites during development.
 
 > **Why Not:** Makes your entire site inaccessible to the public, including search engines. Only use for private communities or development sites.
@@ -125,6 +139,8 @@ Require authentication to view any part of your site.
 
 Automatically add administrator IP addresses to the allow list upon login.
 
+> **Where:** Dam Spam → Protections → Prevent Lockouts
+
 > **Why Use:** Ensures you won't accidentally lock yourself out when testing strict settings.
 
 > **Why Not:** If an attacker gains admin access, their IP will be whitelisted. Best for single-admin sites or trusted team environments.
@@ -134,6 +150,8 @@ Automatically add administrator IP addresses to the allow list upon login.
 #### Check Credentials on All Login Attempts
 
 Verify username and password exist before running other spam checks.
+
+> **Where:** Dam Spam → Protections → Prevent Lockouts
 
 > **Why Use:** Prevents logging failed spam attempts with non-existent credentials.
 
@@ -147,6 +165,8 @@ Verify username and password exist before running other spam checks.
 
 Block all login attempts using "admin" as the username.
 
+> **Where:** Dam Spam → Protections → Login Protection
+
 > **Why Use:** "admin" is the most commonly attacked username; blocking it stops many automated attacks.
 
 > **Why Not:** If you actually have an admin user named "admin", you'll need to create a new admin account with a different username first.
@@ -156,6 +176,8 @@ Block all login attempts using "admin" as the username.
 #### Filter Login Requests
 
 Apply spam filtering to login attempts.
+
+> **Where:** Dam Spam → Protections → Login Protection
 
 > **Why Use:** Protects login page from automated attacks.
 
@@ -169,6 +191,8 @@ Apply spam filtering to login attempts.
 
 Block requests that don't include an HTTP_ACCEPT header.
 
+> **Where:** Dam Spam → Protections → Validate Requests
+
 > **Why Use:** Most legitimate browsers send this header; bots often don't.
 
 > **Why Not:** May block some legitimate API requests, mobile apps, or older browsers. Monitor logs after enabling.
@@ -179,6 +203,8 @@ Block requests that don't include an HTTP_ACCEPT header.
 
 Block requests with suspicious or invalid referrer headers.
 
+> **Where:** Dam Spam → Protections → Validate Requests
+
 > **Why Use:** Catches bots that spoof or omit proper referrer information.
 
 > **Why Not:** May block users with referrer-blocking browser extensions or privacy tools. Check logs for false positives.
@@ -188,6 +214,8 @@ Block requests with suspicious or invalid referrer headers.
 #### Check for Quick Responses
 
 Block form submissions that happen too quickly after page load.
+
+> **Where:** Dam Spam → Protections → Validate Requests
 
 > **Why Use:** Humans need time to read and fill forms; bots submit instantly.
 
@@ -201,6 +229,8 @@ Block form submissions that happen too quickly after page load.
 
 Block registration attempts using temporary/disposable email services.
 
+> **Where:** Dam Spam → Protections → Validate Input
+
 > **Why Use:** Prevents spam accounts using throwaway email addresses.
 
 > **Why Not:** May block legitimate users who prefer privacy-focused temporary email services. Rare false positives with lesser-known email providers.
@@ -210,6 +240,8 @@ Block registration attempts using temporary/disposable email services.
 #### Check for Long Emails, Usernames, and Passwords
 
 Flag suspiciously long email addresses, usernames, or passwords.
+
+> **Where:** Dam Spam → Protections → Validate Input
 
 > **Why Use:** Spammers often use extremely long strings to try to break validation.
 
@@ -221,6 +253,8 @@ Flag suspiciously long email addresses, usernames, or passwords.
 
 Flag unusually short email addresses or usernames.
 
+> **Where:** Dam Spam → Protections → Validate Input
+
 > **Why Use:** Catches bots using minimal character combinations.
 
 > **Why Not:** May block users with legitimate short usernames. Consider the minimum length that makes sense for your site.
@@ -230,6 +264,8 @@ Flag unusually short email addresses or usernames.
 #### Check for BBCode
 
 Detect BBCode markup in submissions.
+
+> **Where:** Dam Spam → Protections → Validate Input
 
 > **Why Use:** BBCode in registration forms or comments often indicates spam.
 
@@ -241,6 +277,8 @@ Detect BBCode markup in submissions.
 
 Flag email addresses with unusual period patterns.
 
+> **Where:** Dam Spam → Protections → Validate Input
+
 > **Why Use:** Spammers often use multiple periods or period patterns that real users don't.
 
 > **Why Not:** May block some legitimate international email addresses with unusual formatting. Monitor logs.
@@ -250,6 +288,8 @@ Flag email addresses with unusual period patterns.
 #### Check for Hyphens
 
 Flag excessive hyphens in usernames or emails.
+
+> **Where:** Dam Spam → Protections → Validate Input
 
 > **Why Use:** Multiple hyphens are common in spam patterns.
 
@@ -261,6 +301,8 @@ Flag excessive hyphens in usernames or emails.
 
 Scan submissions for common exploit patterns (SQL injection, XSS, etc.).
 
+> **Where:** Dam Spam → Protections → Validate Input
+
 > **Why Use:** Blocks malicious code injection attempts.
 
 > **Why Not:** Very rare false positives with legitimate technical content. May flag code examples in comments.
@@ -270,6 +312,8 @@ Scan submissions for common exploit patterns (SQL injection, XSS, etc.).
 #### Check for URLs
 
 Block submissions containing URLs.
+
+> **Where:** Dam Spam → Protections → Validate Input
 
 > **Why Use:** Spammers frequently include links in registrations and comments.
 
@@ -283,6 +327,8 @@ Block submissions containing URLs.
 
 Detect and block VPN connections.
 
+> **Where:** Dam Spam → Protections → IP Reputation
+
 > **Why Use:** Spammers and attackers commonly use VPNs to hide their real location.
 
 > **Why Not:** Will block legitimate users who use VPNs for privacy. Not recommended for privacy-conscious audiences.
@@ -292,6 +338,8 @@ Detect and block VPN connections.
 #### Check for Tor
 
 Detect and block Tor exit nodes.
+
+> **Where:** Dam Spam → Protections → IP Reputation
 
 > **Why Use:** Tor is often used by spammers and attackers to hide their identity.
 
@@ -303,6 +351,8 @@ Detect and block Tor exit nodes.
 
 Check against Ubiquity server networks and other hosting provider blocklists.
 
+> **Where:** Dam Spam → Protections → IP Reputation
+
 > **Why Use:** These networks host many spam operations.
 
 > **Why Not:** May block legitimate users on shared hosting from these providers. Rare false positives.
@@ -312,6 +362,8 @@ Check against Ubiquity server networks and other hosting provider blocklists.
 #### Check for Major Hosting Companies and Cloud Services
 
 Flag traffic from major hosting providers and cloud services.
+
+> **Where:** Dam Spam → Protections → IP Reputation
 
 > **Why Use:** Spammers often use hosting/cloud IPs rather than residential connections.
 
@@ -323,6 +375,8 @@ Flag traffic from major hosting providers and cloud services.
 
 Flag traffic from Amazon AWS IP ranges.
 
+> **Where:** Dam Spam → Protections → IP Reputation
+
 > **Why Use:** AWS hosting is popular with spam operations.
 
 > **Why Not:** May block legitimate services hosted on AWS. Many legitimate sites and services use AWS.
@@ -332,6 +386,8 @@ Flag traffic from Amazon AWS IP ranges.
 #### Check for IPs Detected by Akismet
 
 Block IPs that Akismet has flagged as spam.
+
+> **Where:** Dam Spam → Protections → IP Reputation
 
 > **Why Use:** Leverages Akismet's spam database for additional protection.
 
@@ -345,6 +401,8 @@ Block IPs that Akismet has flagged as spam.
 
 Block IPs that hit multiple non-existent URLs in a short time.
 
+> **Where:** Dam Spam → Protections → Behavior Detection
+
 > **Why Use:** Attackers scan for vulnerable files by trying many URLs; this detects that behavior.
 
 > **Why Not:** May block legitimate users if they repeatedly mistype URLs. Rare false positives.
@@ -354,6 +412,8 @@ Block IPs that hit multiple non-existent URLs in a short time.
 #### Check for Many Hits in a Short Time
 
 Block IPs that make multiple requests in a short time period.
+
+> **Where:** Dam Spam → Protections → Behavior Detection
 
 > **Why Use:** Catches bots that rapidly attempt multiple registrations or submissions.
 
@@ -366,6 +426,8 @@ Block IPs that make multiple requests in a short time period.
 #### Block Countries via Cloudflare
 
 Use Cloudflare's firewall to block entire countries.
+
+> **Where:** Dam Spam → Protections → Block Countries
 
 > **Why Use:** Blocks traffic from countries where you have no legitimate users but receive lots of spam.
 
@@ -383,6 +445,8 @@ Manage IP addresses, email addresses, and user IDs that should always be allowed
 
 View and manage requests from blocked users who asked to be added to your allow list.
 
+> **Where:** Dam Spam → Allowed → Requests
+
 > **Why Use:** Legitimate users who were blocked can request access, and you can review and approve them.
 
 > **Why Not:** None. This is a manual review process.
@@ -392,6 +456,8 @@ View and manage requests from blocked users who asked to be added to your allow 
 ### Allow List
 
 Manually add IP addresses that should bypass all spam checks.
+
+> **Where:** Dam Spam → Allowed → Allow List
 
 > **Why Use:** Whitelist your own IP, office IPs, or specific trusted users.
 
@@ -405,6 +471,8 @@ Manually add IP addresses that should bypass all spam checks.
 
 Automatically allow verified Google crawlers (keep enabled under most circumstances).
 
+> **Where:** Dam Spam → Allowed → Allow Options
+
 > **Why Use:** Ensures search engines can index your site for SEO.
 
 > **Why Not:** None. Essential for SEO unless you intentionally want to block search engines.
@@ -414,6 +482,8 @@ Automatically allow verified Google crawlers (keep enabled under most circumstan
 #### Other Allow Lists
 
 Allow traffic from miscellaneous trusted sources and services.
+
+> **Where:** Dam Spam → Allowed → Allow Options
 
 > **Why Use:** Provides additional allow list coverage for legitimate services.
 
@@ -425,6 +495,8 @@ Allow traffic from miscellaneous trusted sources and services.
 
 Automatically allow PayPal's IPs for payment notifications and webhooks.
 
+> **Where:** Dam Spam → Allowed → Allow Options
+
 > **Why Use:** Prevents blocking legitimate payment transactions and notifications.
 
 > **Why Not:** None if you use PayPal. Disable if you don't use PayPal.
@@ -434,6 +506,8 @@ Automatically allow PayPal's IPs for payment notifications and webhooks.
 #### Allow Stripe
 
 Automatically allow Stripe's IPs for payment processing.
+
+> **Where:** Dam Spam → Allowed → Allow Options
 
 > **Why Use:** Ensures Stripe webhooks and payment verifications work.
 
@@ -445,6 +519,8 @@ Automatically allow Stripe's IPs for payment processing.
 
 Automatically allow Authorize.Net's IPs for payment processing.
 
+> **Where:** Dam Spam → Allowed → Allow Options
+
 > **Why Use:** Ensures payment gateway communication isn't blocked.
 
 > **Why Not:** None if you use Authorize.Net. Disable if you don't.
@@ -454,6 +530,8 @@ Automatically allow Authorize.Net's IPs for payment processing.
 #### Allow Braintree
 
 Automatically allow Braintree's IPs for payment processing.
+
+> **Where:** Dam Spam → Allowed → Allow Options
 
 > **Why Use:** Prevents blocking Braintree webhooks and notifications.
 
@@ -465,6 +543,8 @@ Automatically allow Braintree's IPs for payment processing.
 
 Automatically allow Recurly's IPs for subscription billing.
 
+> **Where:** Dam Spam → Allowed → Allow Options
+
 > **Why Use:** Ensures recurring billing webhooks work properly.
 
 > **Why Not:** None if you use Recurly. Disable if you don't.
@@ -475,6 +555,8 @@ Automatically allow Recurly's IPs for subscription billing.
 
 Automatically allow Square's IPs for payment processing.
 
+> **Where:** Dam Spam → Allowed → Allow Options
+
 > **Why Use:** Prevents blocking Square transactions and webhooks.
 
 > **Why Not:** None if you use Square. Disable if you don't.
@@ -484,6 +566,8 @@ Automatically allow Square's IPs for payment processing.
 #### Allow Amazon Cloud
 
 Automatically allow specific Amazon AWS services and IPs.
+
+> **Where:** Dam Spam → Allowed → Allow Options
 
 > **Why Use:** Prevents blocking legitimate AWS-hosted services and APIs your site depends on.
 
@@ -501,6 +585,8 @@ Manage IP addresses, email addresses, and patterns that should always be blocked
 
 Add specific IP addresses or email addresses to permanently block.
 
+> **Where:** Dam Spam → Blocked → Block List
+
 > **Why Use:** Manually block persistent spammers that automated checks don't catch.
 
 > **Why Not:** Blocking entire email domains may block legitimate users from those domains. Be specific.
@@ -510,6 +596,8 @@ Add specific IP addresses or email addresses to permanently block.
 ### Spam Words List
 
 Manage the list of words and phrases that trigger spam blocks.
+
+> **Where:** Dam Spam → Blocked → Spam Words List
 
 > **Why Use:** Block submissions containing specific spam keywords.
 
@@ -521,6 +609,8 @@ Manage the list of words and phrases that trigger spam blocks.
 
 Manage which URL shortening services are blocked.
 
+> **Where:** Dam Spam → Blocked → URL Shortening Services List
+
 > **Why Use:** Many spammers use URL shorteners to hide malicious links.
 
 > **Why Not:** May block legitimate users sharing shortened links. Consider which services to block carefully.
@@ -531,6 +621,8 @@ Manage which URL shortening services are blocked.
 
 Block specific browser user agents known to be used by bots.
 
+> **Where:** Dam Spam → Blocked → Bad User Agents List
+
 > **Why Use:** Catches bots identifying themselves with known spam user agents.
 
 > **Why Not:** May block legitimate browsers if user agents are too broad. Monitor for false positives.
@@ -540,6 +632,8 @@ Block specific browser user agents known to be used by bots.
 ### TLDs List
 
 Block email addresses from specific top-level domains.
+
+> **Where:** Dam Spam → Blocked → TLDs List
 
 > **Why Use:** Some TLDs are predominantly used for spam.
 
@@ -557,6 +651,8 @@ Configure how Dam Spam responds when suspicious activity is detected.
 
 Customize the message shown to blocked users.
 
+> **Where:** Dam Spam → Challenges → Access Blocked Message
+
 > **Why Use:** Provide helpful information or contact details for blocked users.
 
 > **Why Not:** None. This is just the message text.
@@ -569,6 +665,8 @@ Customize the message shown to blocked users.
 
 Redirect blocked users to a specific URL instead of showing the default block message.
 
+> **Where:** Dam Spam → Challenges → Routing and Notifications
+
 > **Why Use:** Direct users to a custom page with contact information or alternative access instructions.
 
 > **Why Not:** Users won't see the standard block message. Ensure your redirect URL is accessible.
@@ -578,6 +676,8 @@ Redirect blocked users to a specific URL instead of showing the default block me
 #### Send Blocked Users to Allow Request Form
 
 Show blocked users a form where they can request to be added to your allow list.
+
+> **Where:** Dam Spam → Challenges → Routing and Notifications
 
 > **Why Use:** Gives legitimate users who were blocked a way to request access with their contact details.
 
@@ -589,6 +689,8 @@ Show blocked users a form where they can request to be added to your allow list.
 
 Receive email notifications when blocked users submit allow list requests.
 
+> **Where:** Dam Spam → Challenges → Routing and Notifications
+
 > **Why Use:** Stay informed about access requests without checking the dashboard regularly.
 
 > **Why Not:** Can generate many emails if you block many users. Emails may be marked as spam by your mail provider.
@@ -598,6 +700,8 @@ Receive email notifications when blocked users submit allow list requests.
 #### Email Blocked Users when They're Allowed
 
 Automatically notify users via email when you approve their allow list request.
+
+> **Where:** Dam Spam → Challenges → Routing and Notifications
 
 > **Why Use:** Provides good user experience by informing approved users they can now access your site.
 
@@ -619,6 +723,8 @@ Choose which CAPTCHA system to present to suspicious users instead of blocking t
 - **hCaptcha** - Privacy-focused alternative to reCAPTCHA
 - **Math Question** - Simple arithmetic challenge
 
+> **Where:** Dam Spam → Challenges → CAPTCHA
+
 > **Why Use:** Reduces false positives by giving suspicious users a chance to prove they're human.
 
 > **Why Not:** Requires API keys for Turnstile, reCAPTCHA, or hCaptcha. Adds friction to user experience.
@@ -635,6 +741,8 @@ After selecting a CAPTCHA type, you can enable it on specific WordPress forms:
 
 **Comment** - Display CAPTCHA on the comment form
 
+> **Where:** Dam Spam → Challenges → CAPTCHA
+
 > **Why Use:** Protects specific forms from automated attacks.
 
 > **Why Not:** Adds extra steps for all users on those forms. May reduce engagement.
@@ -648,6 +756,8 @@ After selecting a CAPTCHA type, you can enable it on specific WordPress forms:
 **Google reCAPTCHA** ([Get Keys](https://www.google.com/recaptcha/admin/create))
 
 **hCaptcha** ([Get Keys](https://dashboard.hcaptcha.com/sites))
+
+> **Where:** Dam Spam → Challenges → CAPTCHA
 
 > **Why Use:** Required to enable Turnstile, reCAPTCHA, or hCaptcha protection.
 
@@ -673,6 +783,8 @@ Configure Cloudflare API access for advanced features like country blocking, ban
 **Actions:**
 - **Clear Cloudflare Cache** - Purge Cloudflare's cache for your site (requires API configuration)
 
+> **Where:** Dam Spam → APIs → Cloudflare Integration
+
 > **Why Use:** Enables Cloudflare-specific features including DNS-level ban list blocking, country blocking, and cache clearing.
 
 > **Why Not:** Requires Cloudflare account. Keep API keys secure. Global API Key has full account access.
@@ -685,6 +797,8 @@ Configure Cloudflare API access for advanced features like country blocking, ban
 
 Query DNS-based blocklists to check if IPs are known spam sources.
 
+> **Where:** Dam Spam → APIs → Blocklist Checking
+
 > **Why Use:** Leverages Spamhaus and other DNSBLs maintained by anti-spam organizations.
 
 > **Why Not:** Requires DNS queries which may add slight latency. Some false positives possible.
@@ -694,6 +808,8 @@ Query DNS-based blocklists to check if IPs are known spam sources.
 #### Check Stop Forum Spam
 
 Query the Stop Forum Spam database for known spammer IPs, emails, and usernames.
+
+> **Where:** Dam Spam → APIs → Blocklist Checking
 
 > **Why Use:** Accesses one of the largest spam databases on the internet.
 
@@ -717,6 +833,8 @@ Query the Stop Forum Spam database for known spammer IPs, emails, and usernames.
 **Google Safe Browsing API Key**
 - Checks URLs in submissions against Google's malware and phishing database
 
+> **Where:** Dam Spam → APIs → API Keys and Thresholds
+
 > **Why Use:** Provides configurable spam detection from multiple trusted databases.
 
 > **Why Not:** Requires API key registration. Some services have daily query limits. May add latency to checks.
@@ -733,6 +851,8 @@ Configure how Dam Spam caches known good and bad IPs.
 
 Configure how many days to cache known bad IPs before removing them from cache.
 
+> **Where:** Dam Spam → Cache
+
 > **Why Use:** Keeps known spammers blocked without repeated API checks. Longer duration = better performance.
 
 > **Why Not:** Very long cache times may keep reformed or reassigned IPs blocked longer than necessary.
@@ -743,6 +863,8 @@ Configure how many days to cache known bad IPs before removing them from cache.
 
 Configure how many days to cache known good IPs before rechecking them.
 
+> **Where:** Dam Spam → Cache
+
 > **Why Use:** Dramatically improves performance by skipping checks for trusted IPs. Longer duration = better performance but slower to detect compromised IPs.
 
 > **Why Not:** Very long cache times may keep compromised IPs whitelisted longer.
@@ -752,6 +874,8 @@ Configure how many days to cache known good IPs before rechecking them.
 ### Clear Cache
 
 Remove all cached IP addresses.
+
+> **Where:** Dam Spam → Cache
 
 > **Why Use:** Forces fresh checks on all IPs. Useful after major configuration changes.
 
@@ -769,6 +893,8 @@ View and manage logs of blocked and allowed requests.
 
 Configure how many log entries to retain (options: 25, 50, 100, 200, 500, 1000).
 
+> **Where:** Dam Spam → Logs
+
 > **Why Use:** Balance database size with historical data retention. Smaller logs = less database space.
 
 > **Why Not:** Changing log size will wipe current logs. Export logs first if you need to keep them.
@@ -779,6 +905,8 @@ Configure how many log entries to retain (options: 25, 50, 100, 200, 500, 1000).
 
 Search and filter through all blocked and allowed attempts by date, IP, email, or reason. The search box filters results in real-time as you type.
 
+> **Where:** Dam Spam → Logs
+
 > **Why Use:** Quickly find specific blocks to identify false positives or verify spam patterns.
 
 > **Why Not:** None. This is a search/filter tool for viewing existing logs.
@@ -788,6 +916,8 @@ Search and filter through all blocked and allowed attempts by date, IP, email, o
 ### Clear Logs
 
 Delete all log entries.
+
+> **Where:** Dam Spam → Logs
 
 > **Why Use:** Free up database space or start fresh after testing.
 
@@ -812,6 +942,8 @@ Test how your current settings would handle specific IP addresses, emails, usern
 - Subject
 - Comment
 
+> **Where:** Dam Spam → Testing
+
 > **Why Use:** Verify settings work as expected before going live. Test if specific IPs or emails would be blocked or allowed. Debug false positives.
 
 > **Why Not:** None. This is a testing tool that doesn't affect live traffic.
@@ -821,6 +953,8 @@ Test how your current settings would handle specific IP addresses, emails, usern
 ### Display All Options
 
 Dump all Dam Spam configuration options in a readable format.
+
+> **Where:** Dam Spam → Testing
 
 > **Why Use:** Useful for debugging, support requests, or backing up settings manually.
 
@@ -832,6 +966,8 @@ Dump all Dam Spam configuration options in a readable format.
 
 Dump all Dam Spam statistics in a readable format.
 
+> **Where:** Dam Spam → Testing
+
 > **Why Use:** View all counter values for every check type and protection method.
 
 > **Why Not:** None. Read-only display of statistics.
@@ -842,6 +978,8 @@ Dump all Dam Spam statistics in a readable format.
 
 Toggle display of PHP configuration information from phpinfo().
 
+> **Where:** Dam Spam → Testing
+
 > **Why Use:** Debug PHP-related issues, verify server configuration, check installed extensions.
 
 > **Why Not:** Contains sensitive server information. Only use when needed and don't share publicly.
@@ -851,6 +989,8 @@ Toggle display of PHP configuration information from phpinfo().
 ### Threat Scan
 
 Scan your WordPress installation for potential security threats and vulnerabilities.
+
+> **Where:** Dam Spam → Testing
 
 > **Why Use:** Identify security issues that spam protection alone won't catch.
 
@@ -868,6 +1008,8 @@ Tools for managing users and database maintenance.
 
 Identify and disable inactive or suspicious user accounts.
 
+> **Where:** Dam Spam → Cleanup → Disable Users
+
 > **Why Use:** Clean up spam accounts that got through or remove inactive users.
 
 > **Why Not:** Disabling users prevents them from logging in. Be careful not to disable legitimate accounts.
@@ -878,6 +1020,8 @@ Identify and disable inactive or suspicious user accounts.
 
 Bulk delete spam comments.
 
+> **Where:** Dam Spam → Cleanup → Delete Comments
+
 > **Why Use:** Remove spam comments that made it through protection.
 
 > **Why Not:** Deletion is permanent. Review before deleting to avoid removing legitimate comments.
@@ -887,6 +1031,8 @@ Bulk delete spam comments.
 ### Database Cleanup
 
 View and manage Dam Spam database options.
+
+> **Where:** Dam Spam → Cleanup → Database Cleanup
 
 > **Why Use:** Advanced troubleshooting and optimization.
 
@@ -906,6 +1052,8 @@ Advanced features for server-level protection and custom login forms.
 
 Add security rules to your .htaccess file for server-level protection.
 
+> **Where:** Dam Spam → Advanced → Firewall Settings
+
 > **Why Use:** Blocks common exploits and attacks before they reach WordPress, reducing server load.
 
 > **Why Not:** Incorrect .htaccess rules can break your site. Only enable if you know how to manually edit .htaccess. May conflict with other security plugins.
@@ -921,6 +1069,8 @@ Automatically ban IPs after a specified number of failed login attempts within a
 - **Threshold** - Number of failed attempts before banning (default: 20, minimum: 20)
 - **Duration** - Time window in minutes to count attempts (default: 60, maximum: 1440)
 
+> **Where:** Dam Spam → Advanced → Login Settings
+
 > **Why Use:** Protects against brute force password attacks.
 
 > **Why Not:** May lock out legitimate users who forget their password. May conflict with other login protection plugins.
@@ -930,6 +1080,8 @@ Automatically ban IPs after a specified number of failed login attempts within a
 #### Require Email Verification for New Users
 
 Users must click activation link in email before they can log in. Works with all registration forms.
+
+> **Where:** Dam Spam → Advanced → Login Settings
 
 > **Why Use:** Verifies email addresses are real, prevents spam bot registrations, automatically cleans up unverified accounts.
 
@@ -941,6 +1093,8 @@ Users must click activation link in email before they can log in. Works with all
 
 Automatically remove user accounts that haven't clicked their activation link within 7 days.
 
+> **Where:** Dam Spam → Advanced → Login Settings
+
 > **Why Use:** Prevents buildup of spam accounts with fake email addresses. Keeps user database clean.
 
 > **Why Not:** Deletes legitimate users who didn't check their email in time (they can re-register).
@@ -951,6 +1105,8 @@ Automatically remove user accounts that haven't clicked their activation link wi
 
 Replace default WordPress login system with custom themed pages.
 
+> **Where:** Dam Spam → Advanced → Login Settings
+
 > **Why Use:** Provides prettier login/registration pages and disables the default wp-login.php (which attackers target).
 
 > **Why Not:** Conflicts with custom login plugins. Disables wp-login.php which some services expect.
@@ -960,6 +1116,8 @@ Replace default WordPress login system with custom themed pages.
 #### Login Type
 
 Choose whether users can log in with username, email, or both.
+
+> **Where:** Dam Spam → Advanced → Login Settings
 
 > **Why Use:** Simplify login or increase security by restricting login method.
 
@@ -973,6 +1131,8 @@ Choose whether users can log in with username, email, or both.
 
 Add invisible honeypot field to Contact Form 7 forms.
 
+> **Where:** Dam Spam → Advanced → Honeypot Settings
+
 > **Why Use:** Catches bots that fill all form fields including hidden ones.
 
 > **Why Not:** Requires Contact Form 7 plugin installed.
@@ -982,6 +1142,8 @@ Add invisible honeypot field to Contact Form 7 forms.
 #### bbPress Honeypot
 
 Add honeypot protection to bbPress forums.
+
+> **Where:** Dam Spam → Advanced → Honeypot Settings
 
 > **Why Use:** Protects forum registrations and posts.
 
@@ -993,6 +1155,8 @@ Add honeypot protection to bbPress forums.
 
 Add honeypot to Elementor forms.
 
+> **Where:** Dam Spam → Advanced → Honeypot Settings
+
 > **Why Use:** Protects Elementor form submissions.
 
 > **Why Not:** Requires Elementor Pro plugin installed.
@@ -1002,6 +1166,8 @@ Add honeypot to Elementor forms.
 #### Divi Honeypot
 
 Add honeypot to Divi forms.
+
+> **Where:** Dam Spam → Advanced → Honeypot Settings
 
 > **Why Use:** Protects Divi form submissions.
 
@@ -1019,6 +1185,8 @@ Add honeypot to Divi forms.
 
 Add specific IP addresses, email addresses, or email domains to permanently ban from the entire website.
 
+> **Where:** Dam Spam → Advanced → Ban List Settings
+
 > **Why Use:** Completely block persistent attackers from accessing any part of your site, not just forms.
 
 > **Why Not:** Bans entire site access. Be certain before adding IPs. Blocking email domains may affect legitimate users.
@@ -1028,6 +1196,8 @@ Add specific IP addresses, email addresses, or email domains to permanently ban 
 #### Automatic Ban List
 
 View IP addresses that were automatically banned by various protections (like login attempt limits). The list auto-culls at 100,000 entries.
+
+> **Where:** Dam Spam → Advanced → Ban List Settings
 
 > **Why Use:** Review automated bans to ensure legitimate users weren't caught.
 
@@ -1039,6 +1209,8 @@ View IP addresses that were automatically banned by various protections (like lo
 
 Copy the ban list to Cloudflare's firewall for DNS-level blocking.
 
+> **Where:** Dam Spam → Advanced → Ban List Settings
+
 > **Why Use:** Blocks banned IPs before they even reach WordPress, reducing server load.
 
 > **Why Not:** Requires Cloudflare account and API configuration. Firewall rules count against Cloudflare limits.
@@ -1048,6 +1220,8 @@ Copy the ban list to Cloudflare's firewall for DNS-level blocking.
 #### Clear All Automatic Bans
 
 Remove all automatically-generated ban entries.
+
+> **Where:** Dam Spam → Advanced → Ban List Settings
 
 > **Why Use:** Clear false positives or start fresh after testing.
 
@@ -1068,6 +1242,8 @@ Dam Spam provides several shortcodes for adding forms and user info to pages:
 - `[dam-spam-show-fullname-as]` - Show logged-in user's first and last name
 - `[dam-spam-show-email-as]` - Show logged-in user's email address
 
+> **Where:** Dam Spam → Advanced → Shortcodes
+
 > **Why Use:** Create custom page layouts with login forms and user information.
 
 > **Why Not:** None. Shortcodes only display content on pages where you add them.
@@ -1077,6 +1253,8 @@ Dam Spam provides several shortcodes for adding forms and user info to pages:
 ### Export Settings
 
 Download your Dam Spam settings as a JSON file for backup or transfer to another site.
+
+> **Where:** Dam Spam → Advanced → Export Settings
 
 > **Why Use:** Back up your configuration or replicate settings across multiple sites.
 
@@ -1088,6 +1266,8 @@ Download your Dam Spam settings as a JSON file for backup or transfer to another
 
 Upload a Dam Spam settings JSON file to restore configuration.
 
+> **Where:** Dam Spam → Advanced → Import Settings
+
 > **Why Use:** Restore backed-up settings or apply settings from another site.
 
 > **Why Not:** Overwrites current settings. Make sure to export current settings first if you want to keep them.
@@ -1097,6 +1277,8 @@ Upload a Dam Spam settings JSON file to restore configuration.
 ### Reset Settings
 
 Reset all Dam Spam settings to defaults.
+
+> **Where:** Dam Spam → Advanced → Reset Settings
 
 > **Why Use:** Start over with a clean configuration if settings become problematic.
 
@@ -1115,6 +1297,8 @@ Control whether Dam Spam settings are managed centrally from the main site or in
 - **Networked ON** - All sites share the same Dam Spam settings, managed from the main site's admin
 - **Networked OFF** - Each site has its own independent Dam Spam configuration
 
+> **Where:** Dam Spam → Multisite
+
 > **Why Use:** Networked ON simplifies management for networks where all sites need the same protection. Networked OFF gives site admins control over their own spam settings.
 
 > **Why Not:** Switching modes doesn't migrate settings between sites. Choose your preferred mode early.
@@ -1131,6 +1315,8 @@ These features work automatically in the background or integrate with WordPress 
 
 Dam Spam automatically tracks and stores the IP address when users register, displayed in a "Signup IP" column in *WordPress Admin > Users*.
 
+> **Where:** WordPress Admin → Users
+
 > **Why Use:** Helps identify spam account patterns (multiple registrations from same IP) and verify suspicious users against spam databases.
 
 > **Why Not:** None. IP tracking for spam prevention is a legitimate security measure.
@@ -1146,6 +1332,8 @@ Dam Spam adds Lock and Unlock action links to the WordPress Users page, allowing
 2. Hover over a user row to see action links
 3. Click "Lock account" to prevent login or "Unlock account" to restore access
 
+> **Where:** WordPress Admin → Users
+
 > **Why Use:** Quickly disable suspicious accounts without deleting them. Useful for temporarily blocking users while investigating.
 
 > **Why Not:** Locked users cannot log in. Make sure to communicate with legitimate users before locking their accounts.
@@ -1156,6 +1344,8 @@ Dam Spam adds Lock and Unlock action links to the WordPress Users page, allowing
 
 Dam Spam adds quick-action icons to the WordPress Comments page for checking IPs against WHOIS, Stop Forum Spam, Project Honeypot, BotScout, and reporting spam.
 
+> **Where:** WordPress Admin → Comments
+
 > **Why Use:** Quickly verify suspicious comments without leaving WordPress admin.
 
 > **Why Not:** None. These are optional quick-action links.
@@ -1165,6 +1355,8 @@ Dam Spam adds quick-action icons to the WordPress Comments page for checking IPs
 ### Dashboard Widget
 
 Dam Spam adds a dashboard widget showing total spammers blocked, users awaiting allow list approval, and a settings link.
+
+> **Where:** WordPress Admin → Dashboard
 
 > **Why Use:** At-a-glance view of Dam Spam activity.
 

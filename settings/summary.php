@@ -164,7 +164,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 				// translators: %1$s is the number of spammers blocked, %2$s is the start date
 				esc_html__( 'Dam Spam has stopped %1$s spammers since %2$s.', 'dam-spam' ),
 				esc_html( $spam_count ),
-				esc_html( $spam_date )
+				esc_html( date_i18n( get_option( 'date_format' ), strtotime( $spam_date ) ) )
 			);
 			?>
 			</p>

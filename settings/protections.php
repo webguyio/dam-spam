@@ -373,8 +373,10 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 			</p>
 			<br>
 		<?php } ?>
-		<fieldset class="dam-spam-country-list" <?php if ( !$cf_configured ) { echo 'disabled'; } ?>>
+		<fieldset class="dam-spam-country-list" <?php if ( !$cf_configured ) { echo 'disabled'; } ?> data-admin-country="<?php echo isset( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ) ) : ''; ?>" data-own-country="<?php esc_attr_e( 'Your own country cannot be blocked.', 'dam-spam' ); ?>">
 			<input type="hidden" name="cf_blocked_countries_flag" value="1">
+			<input type="text" id="dam-spam-country-filter" placeholder="<?php esc_attr_e( 'Filter countries...', 'dam-spam' ); ?>" class="dam-spam-country-filter">
+			<label class="dam-spam-check-all"><input type="checkbox" id="dam-spam-check-all"> <?php esc_html_e( 'Check All', 'dam-spam' ); ?></label>
 			<label><input type="checkbox" name="cf_blocked_countries[]" value="AF" <?php if ( in_array( 'AF', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Afghanistan</label>
 			<label><input type="checkbox" name="cf_blocked_countries[]" value="AX" <?php if ( in_array( 'AX', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Aland Islands</label>
 			<label><input type="checkbox" name="cf_blocked_countries[]" value="AL" <?php if ( in_array( 'AL', $cf_blocked_countries ) ) { echo 'checked'; } ?>> Albania</label>

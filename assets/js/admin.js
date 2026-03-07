@@ -222,6 +222,43 @@
 				}
 			});
 		}
+		var checkAll = document.getElementById( 'dam-spam-check-all' );
+		if ( checkAll ) {
+			var fieldset = checkAll.closest( 'fieldset' );
+			var adminCode = fieldset.getAttribute( 'data-admin-country' );
+			if ( adminCode ) {
+				var adminBox = fieldset.querySelector( 'input[value="' + adminCode + '"]' );
+				if ( adminBox ) {
+					adminBox.checked = false;
+					adminBox.disabled = true;
+					adminBox.parentElement.title = fieldset.getAttribute( 'data-own-country' );
+					adminBox.parentElement.style.color = '#d9534f';
+					adminBox.parentElement.style.cursor = 'not-allowed';
+				}
+			}
+			var enabledBoxes = fieldset.querySelectorAll( 'input[name="cf_blocked_countries[]"]:not(:disabled)' );
+			checkAll.checked = enabledBoxes.length > 0 && Array.from( enabledBoxes ).every( function( b ) { return b.checked; });
+			checkAll.addEventListener( 'change', function() {
+				enabledBoxes.forEach( function( box ) {
+					box.checked = checkAll.checked;
+				});
+			});
+			enabledBoxes.forEach( function( box ) {
+				box.addEventListener( 'change', function() {
+					checkAll.checked = Array.from( enabledBoxes ).every( function( b ) { return b.checked; });
+				});
+			});
+			var countryFilter = document.getElementById( 'dam-spam-country-filter' );
+			if ( countryFilter ) {
+				var allLabels = fieldset.querySelectorAll( 'label:not(.dam-spam-check-all)' );
+				countryFilter.addEventListener( 'input', function() {
+					var val = this.value.toLowerCase();
+					allLabels.forEach( function( label ) {
+						label.style.display = label.textContent.toLowerCase().indexOf( val ) > -1 ? '' : 'none';
+					});
+				});
+			}
+		}
 		var activationCheckbox = document.getElementById('dam_spam_require_activation');
 		var autoDeleteCheckbox = document.getElementById('dam_spam_activation_auto_delete');
 		if (activationCheckbox && autoDeleteCheckbox) {
