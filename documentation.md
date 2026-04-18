@@ -1,6 +1,6 @@
 # Dam Spam Documentation
 
-Dam Spam is a comprehensive spam protection plugin for WordPress that blocks spam registrations, login attempts, comments, and contact form submissions through multiple layers of protection.
+Dam Spam is a spam protection plugin for WordPress that blocks spam registrations, login attempts, comments, and contact form submissions through multiple layers of protection.
 
 ## Activation, Deactivation, and Migration
 

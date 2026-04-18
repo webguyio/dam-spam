@@ -8,13 +8,13 @@ Stable tag: 1.1.3
 License: GPL
 License URI: https://www.gnu.org/licenses/gpl.html
 
-Comprehensive spam protection for WordPress registration, login, comments, and contact forms.
+Spam protection for WordPress registration, login, comments, and contact forms.
 
 ## Description
 
 [💬 Ask Question](https://github.com/webguyio/dam-spam/issues) | [📧 Email Me](mailto:webguywork@gmail.com)
 
-Dam Spam is a comprehensive spam protection plugin that blocks spam registrations, login attempts, comments, and contact form submissions. It provides multiple layers of protection including IP blocking, email validation, CAPTCHA challenges, and integration with third-party spam detection services.
+Dam Spam is a spam protection plugin that blocks spam registrations, login attempts, comments, and contact form submissions. It provides multiple layers of protection including IP blocking, email validation, CAPTCHA challenges, and integration with third-party spam detection services.
 
 **How it Works**
 
@@ -28,7 +28,7 @@ Dam Spam runs a series of configurable checks on registrations, logins, comments
 * **Customizable Challenges** - Present challenges only to suspicious users while allowing legitimate users through
 * **Allow and Block Lists** - Maintain custom lists of allowed and blocked IPs, emails, and user IDs
 * **Smart Caching** - Cache known good and bad IPs to improve performance and reduce API calls
-* **Comprehensive Logging** - Track all blocked attempts and approved submissions for review
+* **Logging** - Track all blocked attempts and approved submissions for review
 * **Custom Login/Registration Forms** - Optional custom forms with built-in spam protection
 * **User Management** - Identify and manage inactive or suspicious user accounts
 
