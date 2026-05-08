@@ -455,7 +455,7 @@ View and manage requests from blocked users who asked to be added to your allow 
 
 ### Allow List
 
-Manually add IP addresses that should bypass all spam checks.
+Manually add IP addresses or email addresses that should bypass all spam checks. One entry per line. Supported formats: exact match (`192.168.1.1` or `user@example.com`), CIDR notation (`192.168.1.0/24`), wildcards (`*` for any characters, `?` for a single character, e.g., `*.example.com`), or prefix match (`192.168.` matches any IP starting with that prefix).
 
 > **Where:** Dam Spam → Allowed → Allow List
 
@@ -583,7 +583,7 @@ Manage IP addresses, email addresses, and patterns that should always be blocked
 
 ### Block List
 
-Add specific IP addresses or email addresses to permanently block.
+Add specific IP addresses or email addresses to permanently block. One entry per line. Supported formats: exact match (`192.168.1.1` or `spammer@example.com`), CIDR notation (`192.168.1.0/24`), wildcards (`*` for any characters, `?` for a single character, e.g., `*.spam.com`), or prefix match (`192.168.` matches any IP starting with that prefix).
 
 > **Where:** Dam Spam → Blocked → Block List
 

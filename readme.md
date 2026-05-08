@@ -4,7 +4,7 @@ Contributors: webguyio
 Donate link: https://damspam.com/donations
 Tags: spam, security, anti-spam, spam protection, no spam
 Tested up to: 6.9
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPL
 License URI: https://www.gnu.org/licenses/gpl.html
 
@@ -22,15 +22,15 @@ Dam Spam runs a series of configurable checks on registrations, logins, comments
 
 **Features**
 
-* **Multiple Protection Layers** - Block spam using IP lists, disposable email detection, and behavioral analysis
-* **CAPTCHA Support** - Integrate with Google reCAPTCHA or hCaptcha to challenge suspicious submissions
-* **Third-Party API Integration** - Connect with Akismet, Stop Forum Spam, BotScout, and other spam detection services
-* **Customizable Challenges** - Present challenges only to suspicious users while allowing legitimate users through
-* **Allow and Block Lists** - Maintain custom lists of allowed and blocked IPs, emails, and user IDs
-* **Smart Caching** - Cache known good and bad IPs to improve performance and reduce API calls
-* **Logging** - Track all blocked attempts and approved submissions for review
-* **Custom Login/Registration Forms** - Optional custom forms with built-in spam protection
-* **User Management** - Identify and manage inactive or suspicious user accounts
+* **Multiple Protection Layers**: Block spam using IP lists, disposable email detection, and behavioral analysis
+* **CAPTCHA Support**: Integrate with Google reCAPTCHA or hCaptcha to challenge suspicious submissions
+* **Third-Party API Integration**: Connect with Akismet, Stop Forum Spam, BotScout, and other spam detection services
+* **Customizable Challenges**: Present challenges only to suspicious users while allowing legitimate users through
+* **Allow and Block Lists**: Maintain custom lists of allowed and blocked IPs, emails, and user IDs
+* **Smart Caching**: Cache known good and bad IPs to improve performance and reduce API calls
+* **Logging**: Track all blocked attempts and approved submissions for review
+* **Custom Login/Registration Forms**: Optional custom forms with built-in spam protection
+* **User Management**: Identify and manage inactive or suspicious user accounts
 
 **Configuration**
 
@@ -151,6 +151,9 @@ Yes. Dam Spam does not collect any data for marketing or tracking purposes. All 
 There are several optional services you may use that involve sending data to third parties including: [Google reCAPTCHA](https://policies.google.com/privacy), [hCaptcha](https://www.hcaptcha.com/privacy), [Spamhaus](https://www.spamhaus.org/privacy-notice/), [Stop Forum Spam](https://www.stopforumspam.com/privacy), [Project Honeypot](https://www.projecthoneypot.org/privacy_policy.php), and [BotScout](https://botscout.com/w3c/privacy.htm). You may wish to read each services' privacy policy to see if you're comfortable using them, but generally speaking, whenever someone for example tries to use a contact form on your website, their IP address, name, and email may be sent to these services to check against spam blocklists.
 
 ## Changelog
+
+### 1.1.4
+* Improved wildcard checking for Allow and Block Lists
 
 ### 1.1.3
 * Improved country blocking

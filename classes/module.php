@@ -110,7 +110,7 @@ class dam_spam_module {
 		if ( is_array( $value ) ) {
 			$return = array();
 			foreach ( $value as $string ) {
-				if ( wildcard_match( $pattern, $string ) ) {
+				if ( dam_spam_module::wildcard_match( $pattern, $string ) ) {
 					$return[] = $string;
 				}
 			}
@@ -128,7 +128,7 @@ class dam_spam_module {
 			}
 		}
 		$pattern = implode( '', $pattern );
-		$pattern = '/^' . $pattern . '$/';
+		$pattern = '/^' . $pattern . '$/i';
 		return preg_match( $pattern, $value );
 	}
 
