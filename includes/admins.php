@@ -88,9 +88,9 @@ function dam_spam_row( $actions, $comment ) {
 	$ip	      = $comment->comment_author_ip;
 	$action   = '';
 	$whois	  = DAM_SPAM_URL . 'assets/images/whois.png';
-	$who	  = "<a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://whois.domaintools.com/$ip\"><img src=\"$whois\" class=\"icon-action\"></a>";
+	$who	  = "<a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://whois.domaintools.com/" . esc_attr( $ip ) . "\"><img src=\"$whois\" class=\"icon-action\"></a>";
 	$stop	  = DAM_SPAM_URL . 'assets/images/stop.png';
-	$hand	  = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.stopforumspam.com/search.php?q=$ip\"><img src=\"$stop\" class=\"icon-action\"> </a>";
+	$hand	  = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.stopforumspam.com/search.php?q=" . esc_attr( $ip ) . "\"><img src=\"$stop\" class=\"icon-action\"> </a>";
 	$action  .= " $who $hand";
 	$email = urlencode( $comment->comment_author_email );
 	if ( empty( $email ) ) {
@@ -135,10 +135,10 @@ function dam_spam_row( $actions, $comment ) {
 	if ( !empty( $apikey ) ) {
 		$target  = "";
 		$href	 = "href=\"#\"";
-		$onclick = "onclick=\"damSpamAjaxReportSpam(this,'$ID','$blog','$ajaxurl','$email','$ip','$uname');return false;\"";
+		$onclick = "onclick=\"damSpamAjaxReportSpam(this,'" . esc_js( $ID ) . "','" . esc_js( $blog ) . "','" . esc_js( $ajaxurl ) . "','" . esc_js( $email ) . "','" . esc_js( $ip ) . "','" . esc_js( $uname ) . "');return false;\"";
 	} else {
 		$target  = " target=\"_blank\" ";
-		$href	 = "href=\"https://www.stopforumspam.com/add.php?username=$uname&email=$email&ip_addr=$ip&evidence=$evidence&api_key=$apikey\" ";
+		$href	 = "href=\"https://www.stopforumspam.com/add.php?username=" . esc_attr( $uname ) . "&email=" . esc_attr( $email ) . "&ip_addr=" . esc_attr( $ip ) . "&evidence=" . esc_attr( $evidence ) . "&api_key=" . esc_attr( $apikey ) . "\" ";
 		$onclick = '';
 	}
 	$action .= '<span title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" onclick="damSpamAjaxProcess(\'' . esc_js( $comment->comment_author_ip ) . '\',\'log\',\'add_black\',\'' . esc_js( $ajaxurl ) . '\');return false;"><img src="' . esc_url( DAM_SPAM_URL . 'assets/images/down.png' ) . '" class="icon-action"></span> ';
@@ -451,10 +451,10 @@ function dam_spam_sfs_ip_column( $value, $column_name, $user_id ) {
 			$useremail   = urlencode( $user_info->user_email );
 			$userurl	 = urlencode( $user_info->user_url );
 			$username	 = urlencode( $user_info->user_login );
-			$stopper	 = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.stopforumspam.com/search.php?q=$signup_ip\"><img src=\"$stop\" class=\"icon-action\"></a>";
-			$honeysearch = "<a title=\"" . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.projecthoneypot.org/ip_$signup_ip\"><img src=\"$search\" class=\"icon-action\"></a>";
-			$botsearch   = "<a title=\"" . esc_attr__( 'Check BotScout', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://botscout.com/search.htm?stype=q&sterm=$signup_ip\"><img src=\"$search\" class=\"icon-action\"></a>";
-			$who		 = "<br><a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://whois.domaintools.com/$signup_ip\"><img src=\"$whois\" class=\"icon-action\"></a>";
+			$stopper	 = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.stopforumspam.com/search.php?q=" . esc_attr( $signup_ip ) . "\"><img src=\"$stop\" class=\"icon-action\"></a>";
+			$honeysearch = "<a title=\"" . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.projecthoneypot.org/ip_" . esc_attr( $signup_ip ) . "\"><img src=\"$search\" class=\"icon-action\"></a>";
+			$botsearch   = "<a title=\"" . esc_attr__( 'Check BotScout', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://botscout.com/search.htm?stype=q&sterm=" . esc_attr( $signup_ip ) . "\"><img src=\"$search\" class=\"icon-action\"></a>";
+			$who		 = "<br><a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://whois.domaintools.com/" . esc_attr( $signup_ip ) . "\"><img src=\"$whois\" class=\"icon-action\"></a>";
 			$action	     = " $who $stopper $honeysearch $botsearch";
 			$options	 = dam_spam_get_options();
 			$apikey	     = $options['apikey'];

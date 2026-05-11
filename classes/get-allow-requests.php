@@ -37,15 +37,15 @@ class dam_spam_get_allow_requests {
 				// translators: %s is the IP address being added to block list
 				$addtoallow = "<a href=\"\" onclick=\"damSpamAjaxProcess('" . esc_js( $value[0] ) . "','" . esc_js( $container ) . "','add_white','" . esc_js( $ajaxurl ) . "', '" . esc_js( $value[1] ) . "');return false;\" title=\"" . sprintf( esc_attr__( 'Add %s to Allow List', 'dam-spam' ), $value[0] ) . "\" alt=\"" . sprintf( esc_attr__( 'Add %s to Allow List', 'dam-spam' ), $value[0] ) . "\"><img src=\"$up\" class=\"icon-action\"></a>";
 				$show .= "<td>$key $trsh $addtoblock $addtoallow</td>";
-				$who = "<br><a title=\"" . esc_attr__( 'Look up WHOIS', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://whois.domaintools.com/$value[0]\"><img src=\"$whois\" class=\"icon-action\"/></a> ";
+				$who = "<br><a title=\"" . esc_attr__( 'Look up WHOIS', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://whois.domaintools.com/" . esc_attr( $value[0] ) . "\"><img src=\"$whois\" class=\"icon-action\"/></a> ";
 				// translators: %s is the IP address for WHOIS lookup
 				$trsh = "<a href=\"\" onclick=\"damSpamAjaxProcess('" . esc_js( $value[0] ) . "','allow_list_request','delete_wlip','" . esc_js( $ajaxurl ) . "');return false;\" title=\"" . sprintf( esc_attr__( 'Delete all %s', 'dam-spam' ), $value[0] ) . "\" alt=\"" . sprintf( esc_attr__( 'Delete all %s', 'dam-spam' ), $value[0] ) . "\"><img src=\"$trash\" class=\"icon-action\"></a>";
-				$show .= "<td>$value[0] $who $trsh</td>";
+				$show .= "<td>" . esc_html( $value[0] ) . " $who $trsh</td>";
 				// translators: %s is the IP address being deleted from allow requests
 				$trsh = "<a href=\"\" onclick=\"damSpamAjaxProcess('" . esc_js( $value[1] ) . "','allow_list_request','delete_wlem','" . esc_js( $ajaxurl ) . "');return false;\" title=\"" . sprintf( esc_attr__( 'Delete all %s', 'dam-spam' ), $value[1] ) . "\" alt=\"" . sprintf( esc_attr__( 'Delete all %s', 'dam-spam' ), $value[1] ) . "\"><img src=\"$trash\" class=\"icon-action\"></a>";
-				$show .= "<td><a target=\"_blank\" href=\"mailto:$value[1]?subject=Website Access\">$value[1] $trsh</td>";
-				$show .= "<td>$value[3]</td>";
-				$show .= "<td>$value[4]</td>";
+				$show .= "<td><a target=\"_blank\" href=\"mailto:" . esc_attr( $value[1] ) . "?subject=Website Access\">" . esc_html( $value[1] ) . " $trsh</td>";
+				$show .= "<td>" . esc_html( $value[3] ) . "</td>";
+				$show .= "<td>" . esc_html( $value[4] ) . "</td>";
 				$show .= "</tr>";
 			}
 		}

@@ -224,7 +224,7 @@ function dam_spam_advanced_menu() {
 							$auto_bans = get_option( 'dam_spam_automatic_bans', array() );
 							$auto_ban_count = is_array( $auto_bans ) ? count( $auto_bans ) : 0;
 							/* translators: %d: Number of IPs in the automatic ban list */
-							printf( esc_html__( 'IPs automatically banned by Limit Login Attempts and other protections. Auto-culls oldest entries at 100,000 IPs. Currently contains %d IPs.', 'dam-spam' ), absint( $auto_ban_count ) );
+							printf( esc_html__( 'IPs automatically banned by Limit Login Attempts. Auto-culls oldest entries at 100,000 IPs. Currently contains %d IPs.', 'dam-spam' ), absint( $auto_ban_count ) );
 							?>
 						</p>
 						<textarea id="dam_spam_automatic_bans_display" rows="10" class="large-text code" readonly="readonly" disabled="disabled"><?php
