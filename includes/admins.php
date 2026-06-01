@@ -84,7 +84,7 @@ function dam_spam_rightnow() {
 function dam_spam_row( $actions, $comment ) {
 	$options  = get_option( 'dam_spam_options' );
 	$apikey   = $options['apikey'];
-	$email	  = urlencode( $comment->comment_author_email );
+	$email	  = rawurlencode( $comment->comment_author_email );
 	$ip	      = $comment->comment_author_ip;
 	$action   = '';
 	$whois	  = DAM_SPAM_URL . 'assets/images/whois.png';
@@ -92,14 +92,14 @@ function dam_spam_row( $actions, $comment ) {
 	$stop	  = DAM_SPAM_URL . 'assets/images/stop.png';
 	$hand	  = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.stopforumspam.com/search.php?q=" . esc_attr( $ip ) . "\"><img src=\"$stop\" class=\"icon-action\"> </a>";
 	$action  .= " $who $hand";
-	$email = urlencode( $comment->comment_author_email );
+	$email = rawurlencode( $comment->comment_author_email );
 	if ( empty( $email ) ) {
 		$actions['check_spam'] = $action;
 		return $actions;
 	}
 	$ID	      = $comment->comment_ID;
 	$exst	  = '';
-	$uname	  = urlencode( $comment->comment_author );
+	$uname	  = rawurlencode( $comment->comment_author );
 	$content  = $comment->comment_content;
 	$evidence = $comment->comment_author_url;
 	if ( empty( $evidence ) ) {
@@ -125,7 +125,7 @@ function dam_spam_row( $actions, $comment ) {
 	if ( strlen( $evidence ) > 128 ) {
 		$evidence = substr( $evidence, 0, 125 ) . '...';
 	}
-	$evidence = urlencode( $evidence );
+	$evidence = rawurlencode( $evidence );
 	$blog = 1;
 	global $blog_id;
 	if ( !isset( $blog_id ) || $blog_id != 1 ) {
@@ -205,8 +205,8 @@ function dam_spam_sfs_handle_ajax_sub( $data ) {
 			exit();
 		}
 	}
-	$email	  = urlencode( $comment['comment_author_email'] );
-	$uname	  = urlencode( $comment['comment_author'] );
+	$email	  = rawurlencode( $comment['comment_author_email'] );
+	$uname	  = rawurlencode( $comment['comment_author'] );
 	$ip_addr  = $comment['comment_author_ip'];
 	if ( !empty( $ip_addr ) && !filter_var( $ip_addr, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
 		$ip_addr = '';
@@ -247,12 +247,12 @@ function dam_spam_sfs_handle_ajax_sub( $data ) {
 	if ( strlen( $evidence ) > 128 ) {
 		$evidence = substr( $evidence, 0, 125 ) . '...';
 	}
-	$evidence = urlencode( $evidence );
+	$evidence = rawurlencode( $evidence );
 	if ( empty( $apikey ) ) {
 		esc_html_e( 'Cannot Report Spam without API Key', 'dam-spam' );
 		exit();
 	}
-	$hget = "https://www.stopforumspam.com/add.php?ip_addr=" . urlencode( $ip_addr ) . "&api_key=$apikey&email=$email&username=$uname&evidence=$evidence";
+	$hget = "https://www.stopforumspam.com/add.php?ip_addr=" . rawurlencode( $ip_addr ) . "&api_key=$apikey&email=$email&username=$uname&evidence=$evidence";
 	$ret  = dam_spam_read_file( $hget );
 	if ( stripos( $ret, 'data submitted successfully' ) !== false ) {
 		esc_html_e( 'Spam reported successfully.', 'dam-spam' );
@@ -285,7 +285,7 @@ function dam_spam_sfs_get_urls( $content ) {
 		return array();
 	}
 	for ( $j = 0; $j < count( $urls3 ); $j ++ ) {
-		$urls3[$j] = urlencode( $urls3[$j] );
+		$urls3[$j] = rawurlencode( $urls3[$j] );
 	}
 	return $urls3;
 }
@@ -448,9 +448,9 @@ function dam_spam_sfs_ip_column( $value, $column_name, $user_id ) {
 		if ( !empty( $signup_ip ) ) {
 			$ipline = apply_filters( 'dam_spam_ip2link', $signup_ip2 );
 			$user_info   = get_userdata( $user_id );
-			$useremail   = urlencode( $user_info->user_email );
-			$userurl	 = urlencode( $user_info->user_url );
-			$username	 = urlencode( $user_info->user_login );
+			$useremail   = rawurlencode( $user_info->user_email );
+			$userurl	 = rawurlencode( $user_info->user_url );
+			$username	 = rawurlencode( $user_info->user_login );
 			$stopper	 = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.stopforumspam.com/search.php?q=" . esc_attr( $signup_ip ) . "\"><img src=\"$stop\" class=\"icon-action\"></a>";
 			$honeysearch = "<a title=\"" . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.projecthoneypot.org/ip_" . esc_attr( $signup_ip ) . "\"><img src=\"$search\" class=\"icon-action\"></a>";
 			$botsearch   = "<a title=\"" . esc_attr__( 'Check BotScout', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://botscout.com/search.htm?stype=q&sterm=" . esc_attr( $signup_ip ) . "\"><img src=\"$search\" class=\"icon-action\"></a>";

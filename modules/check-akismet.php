@@ -40,16 +40,16 @@ class dam_spam_check_akismet {
 		return $response;
 	}
 	function akismet_comment_check( $key, $data ) {
-		$request = 'blog=' . urlencode( $data['blog'] ) .
-				   '&user_ip=' . urlencode( $data['user_ip'] ) .
-				   '&user_agent=' . urlencode( $data['user_agent'] ) .
-				   '&referrer=' . urlencode( $data['referrer'] ) .
-				   '&permalink=' . urlencode( $data['permalink'] ) .
-				   '&comment_type=' . urlencode( $data['comment_type'] ) .
-				   '&comment_author=' . urlencode( $data['comment_author'] ) .
-				   '&comment_author_email=' . urlencode( $data['comment_author_email'] ) .
-				   '&comment_author_url=' . urlencode( $data['comment_author_url'] ) .
-				   '&comment_content=' . urlencode( $data['comment_content'] );
+		$request = 'blog=' . rawurlencode( $data['blog'] ) .
+				   '&user_ip=' . rawurlencode( $data['user_ip'] ) .
+				   '&user_agent=' . rawurlencode( $data['user_agent'] ) .
+				   '&referrer=' . rawurlencode( $data['referrer'] ) .
+				   '&permalink=' . rawurlencode( $data['permalink'] ) .
+				   '&comment_type=' . rawurlencode( $data['comment_type'] ) .
+				   '&comment_author=' . rawurlencode( $data['comment_author'] ) .
+				   '&comment_author_email=' . rawurlencode( $data['comment_author_email'] ) .
+				   '&comment_author_url=' . rawurlencode( $data['comment_author_url'] ) .
+				   '&comment_content=' . rawurlencode( $data['comment_content'] );
 		$host = sanitize_text_field( $key ) . '.rest.akismet.com';
 		$path = '/1.1/comment-check';
 		$akismet_ua = sprintf( 'WordPress/%s | Akismet/%s', $GLOBALS['wp_version'], constant( 'AKISMET_VERSION' ) );

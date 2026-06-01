@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 class dam_spam_check_valid_ip {
-	private static function _is_fake_ip( $client_ip ) {
+	private function _is_fake_ip( $client_ip ) {
 		$client_host = '';
 		$host_by_ip = gethostbyaddr( $client_ip );
 		if ( self::_is_ipv6( $client_ip ) ) {

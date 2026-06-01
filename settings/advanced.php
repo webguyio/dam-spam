@@ -131,7 +131,7 @@ function dam_spam_advanced_menu() {
 							<label for="dam_spam_activation_auto_delete">
 								<input type="checkbox" name="dam_spam_activation_auto_delete" id="dam_spam_activation_auto_delete" value="yes" <?php if ( get_option( 'dam_spam_activation_auto_delete', 'no' ) === 'yes' ) { echo 'checked="checked"'; } ?> <?php if ( get_option( 'dam_spam_require_activation', 'no' ) !== 'yes' ) { echo 'disabled="disabled"'; } ?>>
 								<span><small></small></span>
-								<?php esc_html_e( 'Auto-Delete Unverified Users After 7 Days', 'dam-spam' ); ?>
+								<?php esc_html_e( 'Auto-Delete Unverified Users After 7 Days (falls back to 1 year otherwise)', 'dam-spam' ); ?>
 							</label>
 						</div>
 						<br>
@@ -1731,6 +1731,12 @@ function dam_spam_handle_activation_page() {
 	if ( !hash_equals( $stored_key, $key ) ) {
 		wp_die( esc_html__( 'Invalid or expired activation link.', 'dam-spam' ), 403 );
 	}
+	$sent = (int) get_user_meta( $user_id, 'dam_spam_activation_sent', true );
+	if ( $sent && $sent < ( time() - YEAR_IN_SECONDS ) ) {
+		require_once( ABSPATH . 'wp-admin/includes/user.php' );
+		wp_delete_user( $user_id );
+		wp_die( esc_html__( 'This activation link has expired. Please register again.', 'dam-spam' ), 403 );
+	}
 	delete_user_meta( $user_id, 'dam_spam_activation_pending' );
 	delete_user_meta( $user_id, 'dam_spam_activation_key' );
 	delete_user_meta( $user_id, 'dam_spam_activation_sent' );
@@ -1816,7 +1822,7 @@ add_action( 'template_redirect', function() {
 add_filter( 'login_url', 'dam_spam_login_url', 10, 2 );
 function dam_spam_login_url( $url, $redirect ) {
 	if ( get_option( 'dam_spam_enable_custom_login', '' ) === 'yes' ) {
-		return home_url( 'login/' . ( $redirect ? '?redirect_to=' . urlencode( $redirect ) : '' ) );
+		return home_url( 'login/' . ( $redirect ? '?redirect_to=' . rawurlencode( $redirect ) : '' ) );
 	}
 	return $url;
 }

@@ -1089,9 +1089,9 @@ Users must click activation link in email before they can log in. Works with all
 
 ---
 
-#### Auto-Delete Unverified Users After 7 Days
+#### Auto-Delete Unverified Users After 7 Days (falls back to 1 year otherwise)
 
-Automatically remove user accounts that haven't clicked their activation link within 7 days.
+Automatically remove user accounts that haven't clicked their activation link within 7 days. If this option is disabled, unverified accounts are still automatically deleted when their activation link is clicked after 1 year. Neither behavior applies unless Require Email Verification for New Users is enabled.
 
 > **Where:** Dam Spam → Advanced → Login Settings
 
