@@ -1733,8 +1733,10 @@ function dam_spam_handle_activation_page() {
 	}
 	$sent = (int) get_user_meta( $user_id, 'dam_spam_activation_sent', true );
 	if ( $sent && $sent < ( time() - YEAR_IN_SECONDS ) ) {
-		require_once( ABSPATH . 'wp-admin/includes/user.php' );
-		wp_delete_user( $user_id );
+		if ( !user_can( $user_id, 'manage_options' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/user.php' );
+			wp_delete_user( $user_id );
+		}
 		wp_die( esc_html__( 'This activation link has expired. Please register again.', 'dam-spam' ), 403 );
 	}
 	delete_user_meta( $user_id, 'dam_spam_activation_pending' );
@@ -1774,6 +1776,9 @@ function dam_spam_delete_unverified_users() {
 	);
 	$users = get_users( $args );
 	foreach ( $users as $user_id ) {
+		if ( user_can( $user_id, 'manage_options' ) ) {
+			continue;
+		}
 		require_once( ABSPATH . 'wp-admin/includes/user.php' );
 		wp_delete_user( $user_id );
 	}

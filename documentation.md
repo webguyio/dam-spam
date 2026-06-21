@@ -649,7 +649,7 @@ Configure how Dam Spam responds when suspicious activity is detected.
 
 ### Access Blocked Message
 
-Customize the message shown to blocked users.
+Customize the message shown to blocked users. The challenge page automatically inherits your active theme's stylesheet, so you can style it using your theme's CSS (targeting `#error-page`). If you're using a theme you can't edit directly, use a [child theme](https://developer.wordpress.org/themes/advanced-topics/child-themes/) to add custom styles without modifying the parent theme.
 
 > **Where:** Dam Spam → Challenges → Access Blocked Message
 

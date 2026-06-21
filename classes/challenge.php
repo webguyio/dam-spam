@@ -219,8 +219,7 @@ class dam_spam_challenge extends dam_spam_module {
 				<input type="hidden" name="kr" value="' . esc_attr( $kr ) . '">
 				<input type="hidden" name="ka" value="' . esc_attr( $ka ) . '">
 		';
-		$formbot = '<p><input class="button button-large" type="submit" value="' . esc_attr__( 'Submit Request', 'dam-spam' ) . '"></p>
-			</form>';
+		$formbot = '';
 		$not = '';
 		if ( $allow_list_request === 'Y' ) {
 			$not = '
@@ -231,6 +230,8 @@ class dam_spam_challenge extends dam_spam_module {
 				<p>' . esc_html__( 'Message:', 'dam-spam' ) . '</p>
 				<textarea name="km" cols="80" rows="6" style="width:100%;box-sizing:border-box" placeholder="' . esc_attr__( 'Explain what you were trying to do or re-enter your message.', 'dam-spam' ) . '"></textarea>
 			';
+			$formbot = '<p><input class="button button-large" type="submit" value="' . esc_attr__( 'Submit Request', 'dam-spam' ) . '"></p>
+			</form>';
 		}
 		$captop = '<h1>' . esc_html__( 'Are you human?', 'dam-spam' ) . '</h1><br>';
 		$capbot = '';
@@ -279,12 +280,19 @@ class dam_spam_challenge extends dam_spam_module {
 				$cap = '';
 			break;
 		}
+		if ( !empty( $cap ) && empty( $formbot ) ) {
+			$formbot = '<p><input class="button button-large" type="submit" value="' . esc_attr__( 'Submit Request', 'dam-spam' ) . '"></p>
+			</form>';
+		}
 		if ( empty( $msg ) ) {
 			$msg = html_entity_decode( $reject_message );
 			$msg = str_replace( '[ip]', $ip, $msg );
 			$msg = str_replace( '[reason]', isset( $post['reason'] ) ? $post['reason'] : '', $msg );
 		}
+		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -- wp_die context, enqueue system unavailable
+		$stylesheet = '<link rel="stylesheet" href="' . esc_url( get_stylesheet_uri() ) . '"><style>#error-page{width:100%;max-width:100%;height:100%;min-height:1000px;text-align:center;padding:20%;margin:0}</style>';
 		$answer = "
+			$stylesheet
 			$msg
 			$formtop
 			$not
@@ -294,6 +302,11 @@ class dam_spam_challenge extends dam_spam_module {
 			$formbot
 		";
 		$allowed_html = array(
+			'link' => array(
+				'rel' => array(),
+				'href' => array(),
+			),
+			'style' => array(),
 			'form' => array(
 				'action' => array(),
 				'method' => array(),
@@ -339,7 +352,7 @@ class dam_spam_challenge extends dam_spam_module {
 				'frameborder' => array(),
 			),
 		);
-		wp_die( wp_kses( $answer, $allowed_html ), 'Dam Spam', array( 'response' => 200 ) );
+		wp_die( wp_kses( $answer, $allowed_html ), esc_html__( 'Blocked', 'dam-spam' ), array( 'response' => 200 ) );
 		exit();
 	}
 
