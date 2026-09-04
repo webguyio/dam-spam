@@ -257,7 +257,9 @@ function dam_spam_sfs_handle_ajax_sub( $data ) {
 	if ( stripos( $ret, 'data submitted successfully' ) !== false ) {
 		esc_html_e( 'Spam reported successfully.', 'dam-spam' );
 	} else if ( stripos( $ret, 'recent duplicate entry' ) !== false ) {
-		esc_html_e( ' Recent Duplicate Entry ', 'dam-spam' );
+		esc_html_e( 'Recent duplicate entry.', 'dam-spam' );
+	} else if ( stripos( $ret, 'cannot be added' ) !== false ) {
+		esc_html_e( 'Report skipped: Stop Forum Spam does not accept this IP (it may belong to a shared or trusted provider like Quad9 or Cloudflare).', 'dam-spam' );
 	} else {
 		echo esc_html__( 'Report failed: ', 'dam-spam' ) . esc_html( wp_strip_all_tags( $ret ) );
 	}

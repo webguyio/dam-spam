@@ -3,7 +3,7 @@
 Plugin Name: Dam Spam
 Plugin URI: https://damspam.com/
 Description: Fork of Stop Spammers.
-Version: 1.1.7
+Version: 1.1.8
 Author: Web Guy
 Author URI: https://webguy.io/
 License: GPL
@@ -20,7 +20,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Constants & Configuration
 // ============================================================================
 
-define( 'DAM_SPAM_VERSION', '1.1.7' );
+define( 'DAM_SPAM_VERSION', '1.1.8' );
 define( 'DAM_SPAM_URL', plugin_dir_url( __FILE__ ) );
 define( 'DAM_SPAM_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -593,7 +593,7 @@ function dam_spam_captcha_verify() {
 			}
 			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checking for response, shouldn't have nonce
 			$t = isset( $_POST['cf-turnstile-response'] ) ? sanitize_textarea_field( wp_unslash( $_POST['cf-turnstile-response'] ) ) : '';
-			$response = wp_safe_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
+			$response = wp_safe_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array( // phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Turnstile server-side verification endpoint, not an offloaded asset
 				'body' => array(
 					'secret' => $turnstileapisecret,
 					'response' => $t,

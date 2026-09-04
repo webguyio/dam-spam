@@ -94,7 +94,7 @@ class dam_spam_challenge extends dam_spam_module {
 								$msg = esc_html__( 'Cloudflare Turnstile keys are not set.', 'dam-spam' );
 							} else {
 								$t = isset( $_REQUEST['cf-turnstile-response'] ) ? sanitize_textarea_field( wp_unslash( $_REQUEST['cf-turnstile-response'] ) ) : '';
-								$url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+								$url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'; // phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Turnstile server-side verification endpoint, not an offloaded asset
 								$response = wp_safe_remote_post( $url, array(
 									'body' => array(
 										'secret' => $turnstileapisecret,

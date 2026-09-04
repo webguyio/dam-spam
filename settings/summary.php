@@ -149,7 +149,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 	if ( $showcf && array_key_exists( 'HTTP_CF_CONNECTING_IP', $_SERVER ) && !function_exists( 'cloudflare_init' ) && !defined( 'W3TC' ) ) {
 		echo '<span class="notice notice-warning" style="display:block">';
 		esc_html_e( 'WARNING: Cloudflare Remote IP address detected. Please make sure to ', 'dam-spam' );
-		echo '<a href="https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/" target="_blank">';
+		echo '<a href="https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/" target="_blank">'; // phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Cloudflare documentation, not an offloaded asset
 		esc_html_e( 'restore visitor IPs', 'dam-spam' );
 		echo '</a>.</span>';
 	}

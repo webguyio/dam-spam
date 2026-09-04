@@ -42,8 +42,8 @@ $active_tab = !empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) 
 				$op = sanitize_text_field( wp_unslash( $_POST['view'] ) );
 				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- Admin diagnostic tool, capability checked, nonce verified, input sanitized. Viewing any option is intentional functionality.
 				$v = get_option( $op );
-				if ( is_serialized( $v ) && false !== @unserialize( $v ) ) {
-					$v = @unserialize( $v );
+				if ( is_serialized( $v ) && false !== @unserialize( $v, array( 'allowed_classes' => false ) ) ) {
+					$v = @unserialize( $v, array( 'allowed_classes' => false ) );
 				}
 				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Intentional debug output for viewing option contents
 				$v = print_r( $v, true );

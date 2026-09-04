@@ -49,11 +49,13 @@ class dam_spam_get_allow_requests {
 				$show .= "</tr>";
 			}
 		}
-		$stats['allow_list_requests'] = $nallow_list_requests;
-		if ( array_key_exists( 'addon', $post ) ) {
-			dam_spam_set_stats( $stats, $post['addon'] );
-		} else {
-			dam_spam_set_stats( $stats );
+		if ( $ip !== 'x' ) {
+			$stats['allow_list_requests'] = $nallow_list_requests;
+			if ( array_key_exists( 'addon', $post ) ) {
+				dam_spam_set_stats( $stats, $post['addon'] );
+			} else {
+				dam_spam_set_stats( $stats );
+			}
 		}
 		return $show;
 	}

@@ -238,7 +238,7 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 			printf(
 				/* translators: %s: URL to get Turnstile keys */
 				esc_html__( 'Cloudflare Turnstile %s', 'dam-spam' ),
-				'(<a href="https://dash.cloudflare.com/?to=/:account/turnstile" target="_blank">' . esc_html__( 'Get Keys', 'dam-spam' ) . '</a>)'
+				'(<a href="https://dash.cloudflare.com/?to=/:account/turnstile" target="_blank">' . esc_html__( 'Get Keys', 'dam-spam' ) . '</a>)' // phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Cloudflare account link, not an offloaded asset
 			);
 			?>
 			<br>
