@@ -140,10 +140,10 @@ $now = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 				if ( empty( $reason ) ) {
 					$reason = "passed";
 				}
-				$stopper	 = '<a title="' . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . '" target="dam_spam_check" href="https://www.stopforumspam.com/search.php?q=' . $ip . '"><img src="' . $stop . '" class="icon-action"></a>';
-				$honeysearch = '<a title="' . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . '" target="dam_spam_check" href="https://www.projecthoneypot.org/ip_' . $ip . '"><img src="' . $search . '" class="icon-action"></a>';
-				$botsearch   = '<a title="' . esc_attr__( 'Check BotScout', 'dam-spam' ) . '" target="dam_spam_check" href="https://botscout.com/search.htm?stype=q&sterm=' . $ip . '"><img src="' . $search . '" class="icon-action"></a>';
-				$who		 = '<br><a title="' . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . '" target="dam_spam_check" href="https://whois.domaintools.com/' . $ip . '"><img src="' . $whois . '" class="icon-action"></a>';
+				$stopper	 = '<a title="' . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . '" target="dam_spam_check" href="https://www.stopforumspam.com/search.php?q=' . esc_attr( $ip ) . '"><img src="' . $stop . '" class="icon-action"></a>';
+				$honeysearch = '<a title="' . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . '" target="dam_spam_check" href="https://www.projecthoneypot.org/ip_' . esc_attr( $ip ) . '"><img src="' . $search . '" class="icon-action"></a>';
+				$botsearch   = '<a title="' . esc_attr__( 'Check BotScout', 'dam-spam' ) . '" target="dam_spam_check" href="https://botscout.com/search.htm?stype=q&sterm=' . esc_attr( $ip ) . '"><img src="' . $search . '" class="icon-action"></a>';
+				$who		 = '<br><a title="' . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . '" target="dam_spam_check" href="https://whois.domaintools.com/' . esc_attr( $ip ) . '"><img src="' . $whois . '" class="icon-action"></a>';
 				echo '
 					<tr>
 					<td>' . wp_kses_post( $dt ) . '</td>
@@ -151,12 +151,12 @@ $now = gmdate( 'Y/m/d H:i:s', time() + ( get_option( 'gmt_offset' ) * 3600 ) );
 					<td>' . esc_html( $ip ) . wp_kses_post( $who . $stopper . $honeysearch . $botsearch );
 				if ( stripos( $reason, 'passed' ) !== false && ( $id == '/' || strpos( $id, 'login' ) ) !== false || strpos( $id, 'register' ) !== false && !in_array( $ip, $block_list ) && !in_array( $ip, $allow_list ) ) {
 					$ajaxurl = admin_url( 'admin-ajax.php' );
-					echo '<a href="" onclick="damSpamAjaxProcess(\'' . esc_js( $ip ) . '\',\'log\',\'add_black\',\'' . esc_js( $ajaxurl ) . '\');return false;" title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" alt="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '"><img src="' . esc_url( $down ) . '" class="icon-action"></a>';
+					echo '<a href="" onclick="damSpamAjaxProcess(' . dam_spam_js_arg( $ip ) . ',\'log\',\'add_black\',' . dam_spam_js_arg( $ajaxurl ) . ');return false;" title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" alt="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '"><img src="' . esc_url( $down ) . '" class="icon-action"></a>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dam_spam_js_arg() escapes via esc_attr()
 					$options = get_option( 'dam_spam_options' );
 					$apikey  = $options['apikey'];
 					if ( !empty( $apikey ) && !empty( $em ) ) {
 						echo '| ';
-						echo '<a title="' . esc_attr__( 'Report to Stop Forum Spam', 'dam-spam' ) . '" href="#" onclick="damSpamAjaxReportSpam(this,\'registration\',\'' . esc_js( $blog ) . '\',\'' . esc_js( $ajaxurl ) . '\',\'' . esc_js( $em ) . '\',\'' . esc_js( $ip ) . '\',\'' . esc_js( $au ) . '\');return false;" class="delete:the-comment-list:comment-$id::delete=1 delete vim-d vim-destructive">' . esc_html__( 'Report to SFS', 'dam-spam' ) . '</a>';
+						echo '<a title="' . esc_attr__( 'Report to Stop Forum Spam', 'dam-spam' ) . '" href="#" onclick="damSpamAjaxReportSpam(this,\'registration\',' . dam_spam_js_arg( $blog ) . ',' . dam_spam_js_arg( $ajaxurl ) . ',' . dam_spam_js_arg( $em ) . ',' . dam_spam_js_arg( $ip ) . ',' . dam_spam_js_arg( $au ) . ');return false;" class="delete:the-comment-list:comment-$id::delete=1 delete vim-d vim-destructive">' . esc_html__( 'Report to SFS', 'dam-spam' ) . '</a>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dam_spam_js_arg() escapes via esc_attr()
 					}
 				}
 				echo '

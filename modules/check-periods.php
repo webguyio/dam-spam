@@ -5,7 +5,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class dam_spam_check_periods extends dam_spam_module { 
+class dam_spam_check_periods extends dam_spam_module {
 	public function process( $ip, &$stats=array(), &$options=array(), &$post=array() ) {
 		if ( array_key_exists( 'email', $post ) && $options['check_periods'] == 'Y' ) {
 			$email = $post['email'];
@@ -47,7 +47,7 @@ class dam_spam_check_periods extends dam_spam_module {
 		$tld_two = implode( '.', $domain_array );
 		$tld_one = end( $domain_split );
 		// last updated from https://raw.githubusercontent.com/fbraz3/publicsuffix-json/master/public_suffix_list.json on ???
-		$tld_array = array_flip( json_decode( file_get_contents( __DIR__ . '/config/domains.json' ) ) );
+		$tld_array = array_flip( wp_json_file_decode( __DIR__ . '/config/domains.json' ) );
 		if ( isset( $tld_array[$tld_two] ) ) {
 			return str_replace( ".$tld_two", "", $domain );
 		} else if ( isset( $tld_array[$tld_one] ) ) {

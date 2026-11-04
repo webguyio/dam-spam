@@ -242,27 +242,4 @@ $nonce = wp_create_nonce( 'dam_spam_update' );
 			<?php esc_html_e( 'Email', 'dam-spam' ); ?>
 		</a>
 	</p>
-	<?php
-	function dam_spam_control() {
-		if ( array_key_exists( 'resetOptions', $_POST ) && isset( $_POST['dam_spam_control'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dam_spam_control'] ) ), 'dam_spam_update' ) ) {
-			dam_spam_force_reset_options();
-		}
-		$ip = dam_spam_get_ip();
-		$nonce = wp_create_nonce( 'dam_spam_options' );
-		$options = dam_spam_get_options();
-		extract( $options );
-	}
-	function dam_spam_force_reset_options() {
-		$dam_spam_opt = isset( $_POST['dam_spam_opt'] ) ? sanitize_text_field( wp_unslash( $_POST['dam_spam_opt'] ) ) : '';
-		if ( !wp_verify_nonce( $dam_spam_opt, 'dam_spam_options' ) ) {
-			esc_html_e( 'Session Timeout — Please Refresh the Page', 'dam-spam' );
-			exit;
-		}
-		if ( !function_exists( 'dam_spam_reset_options' ) ) {
-			dam_spam_require( 'includes/dam-spam-init-options.php' );
-		}
-		dam_spam_reset_options();
-		delete_option( 'dam_spam_cache' );
-	}
-	?>
 </div>

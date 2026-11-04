@@ -135,30 +135,19 @@ function dam_spam_row( $actions, $comment ) {
 	if ( !empty( $apikey ) ) {
 		$target  = "";
 		$href	 = "href=\"#\"";
-		$onclick = "onclick=\"damSpamAjaxReportSpam(this,'" . esc_js( $ID ) . "','" . esc_js( $blog ) . "','" . esc_js( $ajaxurl ) . "','" . esc_js( $email ) . "','" . esc_js( $ip ) . "','" . esc_js( $uname ) . "');return false;\"";
+		$onclick = "onclick=\"damSpamAjaxReportSpam(this," . dam_spam_js_arg( $ID ) . "," . dam_spam_js_arg( $blog ) . "," . dam_spam_js_arg( $ajaxurl ) . "," . dam_spam_js_arg( $email ) . "," . dam_spam_js_arg( $ip ) . "," . dam_spam_js_arg( $uname ) . ");return false;\"";
 	} else {
 		$target  = " target=\"_blank\" ";
 		$href	 = "href=\"https://www.stopforumspam.com/add.php?username=" . esc_attr( $uname ) . "&email=" . esc_attr( $email ) . "&ip_addr=" . esc_attr( $ip ) . "&evidence=" . esc_attr( $evidence ) . "&api_key=" . esc_attr( $apikey ) . "\" ";
 		$onclick = '';
 	}
-	$action .= '<span title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" onclick="damSpamAjaxProcess(\'' . esc_js( $comment->comment_author_ip ) . '\',\'log\',\'add_black\',\'' . esc_js( $ajaxurl ) . '\');return false;"><img src="' . esc_url( DAM_SPAM_URL . 'assets/images/down.png' ) . '" class="icon-action"></span> ';
-	$action .= '<span title="' . esc_attr__( 'Add to Allow List', 'dam-spam' ) . '" onclick="damSpamAjaxProcess(\'' . esc_js( $comment->comment_author_ip ) . '\',\'log\',\'add_white\',\'' . esc_js( $ajaxurl ) . '\');return false;"><img src="' . esc_url( DAM_SPAM_URL . 'assets/images/up.png' ) . '" class="icon-action"> | </span>';
+	$action .= '<span title="' . esc_attr__( 'Add to Block List', 'dam-spam' ) . '" onclick="damSpamAjaxProcess(' . dam_spam_js_arg( $comment->comment_author_ip ) . ',\'log\',\'add_black\',' . dam_spam_js_arg( $ajaxurl ) . ');return false;"><img src="' . esc_url( DAM_SPAM_URL . 'assets/images/down.png' ) . '" class="icon-action"></span> ';
+	$action .= '<span title="' . esc_attr__( 'Add to Allow List', 'dam-spam' ) . '" onclick="damSpamAjaxProcess(' . dam_spam_js_arg( $comment->comment_author_ip ) . ',\'log\',\'add_white\',' . dam_spam_js_arg( $ajaxurl ) . ');return false;"><img src="' . esc_url( DAM_SPAM_URL . 'assets/images/up.png' ) . '" class="icon-action"> | </span>';
 	if ( !empty( $email ) ) {
 		$action .= "<a $exst title=\"" . esc_attr__( 'Report to Stop Forum Spam', 'dam-spam' ) . "\" $target $href $onclick class='delete:the-comment-list:comment-$ID::delete=1 delete vim-d vim-destructive'>" . esc_html__( ' Report to SFS', 'dam-spam' ) . "</a>";
 	}
 	$actions['check_spam'] = $action;
 	return $actions;
-}
-
-function dam_spam_ip_check() {
-	$actionvalid = array( 'check_valid_ip', 'check_cloudflare' );
-	foreach ( $actionvalid as $check ) {
-		$reason = dam_spam_load( $check, $ip );
-		if ( $reason !== false ) {
-			return false;
-		}
-	}
-	return true;
 }
 
 function dam_spam_sfs_handle_ajax_sub( $data ) {
@@ -290,36 +279,6 @@ function dam_spam_sfs_get_urls( $content ) {
 		$urls3[$j] = rawurlencode( $urls3[$j] );
 	}
 	return $urls3;
-}
-
-function dam_spam_sfs_handle_ajax_check( $data ) {
-	if ( !dam_spam_ip_check() ) {
-		esc_html_e( ' Not Enabled', 'dam-spam' );
-		exit();
-	}
-	$query = "https://www.stopforumspam.com/api?ip=91.186.18.61";
-	$check = '';
-	$check = dam_spam_sfs_files( $query );
-	if ( !empty( $check ) ) {
-		$check = trim( $check );
-		$check = trim( $check, '0' );
-		if ( substr( $check, 0, 4 ) == "ERR:" ) {
-			esc_html_e( ' Access to the Stop Forum Spam Database Shows Errors\r\n', 'dam-spam' );
-			// translators: %s is the missing container name
-			printf( esc_html__( ' Response Was: %s\r\n', 'dam-spam' ), esc_html( $check ) );
-		}
-		$n = strpos( $check, '<response success="true">' );
-		if ( $n === false ) {
-			esc_html_e( ' Access to the Stop Forum Spam Database is Not Working\r\n', 'dam-spam' );
-			// translators: %s is the count of items in the list
-			printf( esc_html__( ' Response was\r\n %s\r\n', 'dam-spam' ), esc_html( $check ) );
-		} else {
-			esc_html_e( ' Access to the Stop Forum Spam Database is Working', 'dam-spam' );
-		}
-	} else {
-		esc_html_e( ' No Response from the Stop Forum Spam API Call\r\n', 'dam-spam' );
-	}
-	return;
 }
 
 function dam_spam_sfs_handle_process( $data ) {
@@ -467,7 +426,7 @@ function dam_spam_sfs_ip_column( $value, $column_name, $user_id ) {
 				if ( !isset( $blog_id ) || $blog_id != 1 ) {
 					$blog = $blog_id;
 				}
-				$report  = "<a title=\"" . esc_attr__( 'Report to SFS', 'dam-spam' ) . "\" href=\"#\" onclick=\"damSpamAjaxReportSpam(this,'registration','" . esc_js( $blog ) . "','" . esc_js( $ajaxurl ) . "','" . esc_js( $useremail ) . "','" . esc_js( $signup_ip ) . "','" . esc_js( $username ) . "');return false;\"><img src=\"$stop\" class=\"icon-action\"></a>";
+				$report  = "<a title=\"" . esc_attr__( 'Report to SFS', 'dam-spam' ) . "\" href=\"#\" onclick=\"damSpamAjaxReportSpam(this,'registration'," . dam_spam_js_arg( $blog ) . "," . dam_spam_js_arg( $ajaxurl ) . "," . dam_spam_js_arg( $useremail ) . "," . dam_spam_js_arg( $signup_ip ) . "," . dam_spam_js_arg( $username ) . ");return false;\"><img src=\"$stop\" class=\"icon-action\"></a>";
 				$action .= $report;
 			}
 			return $ipline . $action;

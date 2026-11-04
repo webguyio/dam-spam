@@ -58,6 +58,10 @@ function dam_spam_get_ajax_allowed_html() {
 	);
 }
 
+function dam_spam_js_arg( $value ) {
+	return esc_attr( wp_json_encode( (string) $value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) );
+}
+
 function dam_spam_cloudflare_is_configured() {
 	$options = dam_spam_get_options();
 	$cf_email = isset( $options['cf_email'] ) ? trim( $options['cf_email'] ) : '';

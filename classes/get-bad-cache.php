@@ -17,15 +17,15 @@ class dam_spam_get_bad_cache {
 		foreach ( $badips as $key => $value ) {
 			$who	 = "<a title=\"" . esc_attr__( 'Look Up WHOIS', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://whois.domaintools.com/" . esc_attr( $key ) . "\"><img src=\"$whois\" class=\"icon-action\"></a>";
 			$show   .= "<a href=\"https://www.stopforumspam.com/search?q=" . esc_attr( $key ) . "\" target=\"dam_spam_check\">" . esc_html( $key ) . ": " . esc_html( $value ) . "</a> ";
-			$onclick = "onclick=\"damSpamAjaxProcess('" . esc_js( $key ) . "','" . esc_js( $container ) . "','" . esc_js( $cachedel ) . "','" . esc_js( $ajaxurl ) . "');return false;\"";
+			$onclick = "onclick=\"damSpamAjaxProcess(" . dam_spam_js_arg( $key ) . "," . dam_spam_js_arg( $container ) . "," . dam_spam_js_arg( $cachedel ) . "," . dam_spam_js_arg( $ajaxurl ) . ");return false;\"";
 			// translators: %s is the date and reason for cache entry
-			$show   .= " <a href=\"\" $onclick title=\"" . sprintf( esc_attr__( 'Delete %s from Cache', 'dam-spam' ), $key ) . "\" alt=\"" . sprintf( esc_attr__( 'Delete %s from Cache', 'dam-spam' ), $key ) . "\" ><img src=\"$trash\" class=\"icon-action\"></a> ";
-			$onclick = "onclick=\"damSpamAjaxProcess('" . esc_js( $key ) . "','" . esc_js( $container ) . "','add_black','" . esc_js( $ajaxurl ) . "');return false;\"";
+			$show   .= " <a href=\"\" $onclick title=\"" . esc_attr( sprintf( __( 'Delete %s from Cache', 'dam-spam' ), $key ) ) . "\" alt=\"" . esc_attr( sprintf( __( 'Delete %s from Cache', 'dam-spam' ), $key ) ) . "\" ><img src=\"$trash\" class=\"icon-action\"></a> ";
+			$onclick = "onclick=\"damSpamAjaxProcess(" . dam_spam_js_arg( $key ) . "," . dam_spam_js_arg( $container ) . ",'add_black'," . dam_spam_js_arg( $ajaxurl ) . ");return false;\"";
 			// translators: %s is the IP address with actions
-			$show   .= " <a href=\"\" $onclick title=\"" . sprintf( esc_attr__( 'Add to %s Block List', 'dam-spam' ), $key ) . "\" alt=\"" . esc_attr__( 'Add to Block List', 'dam-spam' ) . "\" ><img src=\"$down\" class=\"icon-action\"></a> ";
-			$onclick = "onclick=\"damSpamAjaxProcess('" . esc_js( $key ) . "','" . esc_js( $container ) . "','add_white','" . esc_js( $ajaxurl ) . "');return false;\"";
+			$show   .= " <a href=\"\" $onclick title=\"" . esc_attr( sprintf( __( 'Add to %s Block List', 'dam-spam' ), $key ) ) . "\" alt=\"" . esc_attr__( 'Add to Block List', 'dam-spam' ) . "\" ><img src=\"$down\" class=\"icon-action\"></a> ";
+			$onclick = "onclick=\"damSpamAjaxProcess(" . dam_spam_js_arg( $key ) . "," . dam_spam_js_arg( $container ) . ",'add_white'," . dam_spam_js_arg( $ajaxurl ) . ");return false;\"";
 			// translators: %s is the date and reason details
-			$show   .= " <a href=\"\" $onclick title=\"" . sprintf( esc_attr__( 'Add to %s Allow List', 'dam-spam' ), $key ) . "\" alt=\"" . esc_attr__( 'Add to Allow List', 'dam-spam' ) . "\" ><img src=\"$up\" class=\"icon-action\"></a>";
+			$show   .= " <a href=\"\" $onclick title=\"" . esc_attr( sprintf( __( 'Add to %s Allow List', 'dam-spam' ), $key ) ) . "\" alt=\"" . esc_attr__( 'Add to Allow List', 'dam-spam' ) . "\" ><img src=\"$up\" class=\"icon-action\"></a>";
 			$show   .= $who;
 			$show   .= "<br>";
 		}

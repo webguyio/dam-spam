@@ -287,6 +287,9 @@ function dam_spam_isVIPUser( $userID ) {
 	if ( $userID == 1 ) {
 		return esc_html__( 'I will never delete the super user!', 'dam-spam' );
 	}
+	if ( user_can( $userID, 'manage_options' ) ) {
+		return esc_html__( 'I will never disable an administrator!', 'dam-spam' );
+	}
 	return false;
 }
 
