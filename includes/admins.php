@@ -409,9 +409,8 @@ function dam_spam_sfs_ip_column( $value, $column_name, $user_id ) {
 		if ( !empty( $signup_ip ) ) {
 			$ipline = apply_filters( 'dam_spam_ip2link', $signup_ip2 );
 			$user_info   = get_userdata( $user_id );
-			$useremail   = rawurlencode( $user_info->user_email );
-			$userurl	 = rawurlencode( $user_info->user_url );
-			$username	 = rawurlencode( $user_info->user_login );
+			$useremail   = $user_info->user_email;
+			$username	 = $user_info->user_login;
 			$stopper	 = "<a title=\"" . esc_attr__( 'Check Stop Forum Spam', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.stopforumspam.com/search.php?q=" . esc_attr( $signup_ip ) . "\"><img src=\"$stop\" class=\"icon-action\"></a>";
 			$honeysearch = "<a title=\"" . esc_attr__( 'Check Project HoneyPot', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://www.projecthoneypot.org/ip_" . esc_attr( $signup_ip ) . "\"><img src=\"$search\" class=\"icon-action\"></a>";
 			$botsearch   = "<a title=\"" . esc_attr__( 'Check BotScout', 'dam-spam' ) . "\" target=\"dam_spam_check\" href=\"https://botscout.com/search.htm?stype=q&sterm=" . esc_attr( $signup_ip ) . "\"><img src=\"$search\" class=\"icon-action\"></a>";
